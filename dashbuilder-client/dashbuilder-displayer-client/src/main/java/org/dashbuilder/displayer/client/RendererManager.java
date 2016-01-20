@@ -31,7 +31,7 @@ import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 
 /**
@@ -53,8 +53,8 @@ public class RendererManager {
 
     @PostConstruct
     private void init() {
-        Collection<IOCBeanDef<RendererLibrary>> beanDefs = beanManager.lookupBeans(RendererLibrary.class);
-        for (IOCBeanDef<RendererLibrary> beanDef : beanDefs) {
+        Collection<SyncBeanDef<RendererLibrary>> beanDefs = beanManager.lookupBeans(RendererLibrary.class);
+        for (SyncBeanDef<RendererLibrary> beanDef : beanDefs) {
 
             RendererLibrary lib = beanDef.getInstance();
             renderersList.add(lib);

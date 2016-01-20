@@ -26,9 +26,7 @@
     <div class="well">
 
       <b:FieldSet>
-        <b:Legend>
-          <b:Heading size="H4" text="{i18n.settingsJsonSource_caption}" />
-        </b:Legend>
+        <b:Heading size="H4" text="{i18n.settingsJsonSource_caption}" />
         <db:JsonSourceViewer ui:field="jsonSourceViewer"/>
       </b:FieldSet>
 

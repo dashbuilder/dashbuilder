@@ -180,7 +180,7 @@ class JsonTokenizer {
                     return array;
                 default:
                     back(c);
-                    array.set(array.length(), nextValue());
+                    array.set(array.length(), (JsonValue) nextValue());
                     final int d = nextNonWhitespace();
                     switch (d) {
                         case ']':
@@ -219,7 +219,7 @@ class JsonTokenizer {
                                 "Invalid object: expecting \":\"");
                     }
                     // TODO: Make sure this key is not already set.
-                    object.put(key, nextValue());
+                    object.put(key, (JsonValue) nextValue());
                     switch (nextNonWhitespace()) {
                         case ',':
                             break;
@@ -250,7 +250,7 @@ class JsonTokenizer {
                                     "Invalid object: expecting \":\"");
                         }
                         // TODO: Make sure this key is not already set.
-                        object.put(keyBuffer.toString(), nextValue());
+                        object.put(keyBuffer.toString(), (JsonValue) nextValue());
                         switch (nextNonWhitespace()) {
                             case ',':
                                 break;

@@ -180,6 +180,11 @@
 
     <dependency>
       <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-js</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
       <artifactId>uberfire-client-api</artifactId>
       <scope>provided</scope>
     </dependency>
@@ -405,7 +410,7 @@
 
     <dependency>
       <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-weld-integration</artifactId>
+      <artifactId>errai-cdi-server</artifactId>
     </dependency>
 
     <dependency>
@@ -583,7 +588,7 @@
 
           </compileSourcesArtifacts>
           <runTarget>dashbuilder.html</runTarget>
-          <extraJvmArgs>-Xmx2024m -XX:CompileThreshold=7000 -XX:MaxPermSize=512M -Derrai.jboss.home=${errai.jboss.home}</extraJvmArgs>
+          <extraJvmArgs>-Xmx2024m -XX:CompileThreshold=7000 -Derrai.jboss.home=${errai.jboss.home}</extraJvmArgs>
           <noServer>false</noServer>
           <server>org.jboss.errai.cdi.server.gwt.EmbeddedWildFlyLauncher</server>
           <hostedWebapp>src/main/webapp</hostedWebapp>

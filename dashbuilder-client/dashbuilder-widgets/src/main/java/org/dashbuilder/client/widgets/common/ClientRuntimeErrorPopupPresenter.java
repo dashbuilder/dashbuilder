@@ -5,6 +5,7 @@ import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Specializes;
 import javax.inject.Inject;
 
 /**
@@ -12,6 +13,7 @@ import javax.inject.Inject;
  * @since 0.4.0
  */
 @ApplicationScoped
+@Specializes
 public class ClientRuntimeErrorPopupPresenter extends ErrorPopupPresenter {
 
     @Inject

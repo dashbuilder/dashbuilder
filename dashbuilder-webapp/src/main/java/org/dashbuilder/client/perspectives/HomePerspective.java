@@ -16,21 +16,20 @@
 package org.dashbuilder.client.perspectives;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import javax.enterprise.context.Dependent;
 
-import com.google.gwt.user.client.ui.FlowPanel;
 import org.uberfire.client.annotations.WorkbenchPanel;
 import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.client.util.Layouts;
 
-@ApplicationScoped
+import com.google.gwt.user.client.ui.FlowPanel;
+
+@Dependent
 @WorkbenchPerspective(identifier = "HomePerspective", isDefault = true)
 public class HomePerspective extends FlowPanel {
 
-    @Inject
     @WorkbenchPanel(parts = "HomeScreen")
-    FlowPanel homeScreen;
+    FlowPanel homeScreen = new FlowPanel();
 
     @PostConstruct
     void doLayout() {

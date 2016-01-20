@@ -16,7 +16,7 @@ import org.dashbuilder.dataset.client.editor.DataSetDefRefreshAttributesEditor;
 import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.validations.dataset.DataSetDefValidator;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,8 +52,8 @@ public class DataSetEditWorkflowTest {
     @Mock DataSet dataSet;
     @Mock DataSetEditorWorkflow.View view;
     @Mock DataSetDefRefreshAttributesEditor refreshEditor;
-    @Mock IOCBeanDef<SimpleBeanEditorDriver> simpleBeanEditorDriverIOCBeanDef;
-    @Mock IOCBeanDef<DataSetEditor> dataSetEditorIOCBeanDef;
+    @Mock SyncBeanDef<SimpleBeanEditorDriver> simpleBeanEditorDriverSyncBeanDef;
+    @Mock SyncBeanDef<DataSetEditor> dataSetEditorSyncBeanDef;
     @Mock SimpleBeanEditorDriver driver;
     @Mock DataSetEditor editor;
     
@@ -69,15 +69,15 @@ public class DataSetEditWorkflowTest {
         when(editor.refreshEditor()).thenReturn(refreshEditor);
         
         // Bean instantiation mocks.
-        when(beanManager.lookupBean(SimpleBeanEditorDriver.class)).thenReturn(simpleBeanEditorDriverIOCBeanDef);
-        when( simpleBeanEditorDriverIOCBeanDef.newInstance() ).thenAnswer( new Answer<SimpleBeanEditorDriver>() {
+        when(beanManager.lookupBean(SimpleBeanEditorDriver.class)).thenReturn(simpleBeanEditorDriverSyncBeanDef);
+        when( simpleBeanEditorDriverSyncBeanDef.newInstance() ).thenAnswer( new Answer<SimpleBeanEditorDriver>() {
             @Override
             public SimpleBeanEditorDriver answer( InvocationOnMock invocationOnMock ) throws Throwable {
                 return driver;
             }
         } );
-        when(beanManager.lookupBean(DataSetEditor.class)).thenReturn(dataSetEditorIOCBeanDef);
-        when( dataSetEditorIOCBeanDef.newInstance() ).thenAnswer( new Answer<DataSetEditor>() {
+        when(beanManager.lookupBean(DataSetEditor.class)).thenReturn(dataSetEditorSyncBeanDef);
+        when( dataSetEditorSyncBeanDef.newInstance() ).thenAnswer( new Answer<DataSetEditor>() {
             @Override
             public DataSetEditor answer( InvocationOnMock invocationOnMock ) throws Throwable {
                 return editor;

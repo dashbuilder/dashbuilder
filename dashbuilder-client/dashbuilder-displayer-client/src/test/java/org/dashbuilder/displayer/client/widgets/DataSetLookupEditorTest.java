@@ -38,7 +38,7 @@ import org.dashbuilder.displayer.client.widgets.filter.DataSetFilterEditor;
 import org.dashbuilder.displayer.client.widgets.group.ColumnFunctionEditor;
 import org.dashbuilder.displayer.client.widgets.group.DataSetGroupDateEditor;
 import org.jboss.errai.common.client.api.RemoteCallback;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -149,7 +149,7 @@ public class DataSetLookupEditorTest {
     SyncBeanManager beanManager;
 
     @Mock
-    IOCBeanDef<ColumnFunctionEditor> columnFunctionEditorBeanDef;
+    SyncBeanDef<ColumnFunctionEditor> columnFunctionEditorBeanDef;
 
     @Mock
     ColumnFunctionEditor columnFunctionEditor;

@@ -33,6 +33,10 @@
   <properties>
     <!-- Make OSGi happy -->
     <osgi.snapshot.qualifier>${maven.build.timestamp}</osgi.snapshot.qualifier>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.argument.source>1.8</maven.compiler.argument.source>
+    <maven.compiler.argument.target>1.8</maven.compiler.argument.target>
   </properties>
 
   <scm>
@@ -149,6 +153,7 @@
                       <ignoreClass>javax.interceptor.InvocationContext</ignoreClass>
                       <ignoreClass>javax.inject.Provider</ignoreClass>
                       <ignoreClass>javax.inject.Named</ignoreClass>
+                      <ignoreClass>javax.inject.Singleton</ignoreClass>
                       <ignoreClass>javax.inject.Scope</ignoreClass>
                       <ignoreClass>javax.inject.Qualifier</ignoreClass>
                       <ignoreClass>javax.enterprise.*</ignoreClass>
@@ -223,6 +228,8 @@
             <maxmem>512m</maxmem>
             <showDeprecation>true</showDeprecation>
             <showWarnings>true</showWarnings>
+            <source>${maven.compiler.argument.source}</source>
+            <target>${maven.compiler.argument.target}</target>
           </configuration>
         </plugin>
 
@@ -236,7 +243,7 @@
             <excludes>
               <exclude>**/*IntegrationTest.java</exclude>
             </excludes>
-            <argLine>-Xmx1024m -XX:MaxPermSize=128m -Dfile.encoding=UTF-8</argLine>
+            <argLine>-Xmx1024m -Dfile.encoding=UTF-8</argLine>
             <systemProperties>
               <property>
                 <name>apple.awt.UIElement</name>
@@ -261,7 +268,7 @@
             <includes>
               <include>**/*IntegrationTest.java</include>
             </includes>
-            <argLine>-Xmx1024m -XX:MaxPermSize=128m -Dfile.encoding=UTF-8</argLine>
+            <argLine>-Xmx1024m -Dfile.encoding=UTF-8</argLine>
           </configuration>
         </plugin>
 

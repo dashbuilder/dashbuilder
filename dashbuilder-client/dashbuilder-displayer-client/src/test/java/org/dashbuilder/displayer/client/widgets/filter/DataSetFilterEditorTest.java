@@ -25,7 +25,7 @@ import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.displayer.client.events.ColumnFilterDeletedEvent;
 import org.dashbuilder.displayer.client.events.DataSetFilterChangedEvent;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class DataSetFilterEditorTest {
     SyncBeanManager beanManager;
 
     @Mock
-    IOCBeanDef<ColumnFilterEditor> columnFilterEditorBeanDef;
+    SyncBeanDef<ColumnFilterEditor> columnFilterEditorBeanDef;
 
     @Mock
     DataSetMetadata metadata;
