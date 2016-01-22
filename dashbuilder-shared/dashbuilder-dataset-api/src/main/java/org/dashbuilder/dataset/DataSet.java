@@ -69,11 +69,6 @@ public interface DataSet {
     DataColumn getColumnById(String id);
 
     /**
-     * Get a column by its id with case insensitive matching.
-     */
-    DataColumn getColumnByIdIgnoreCase(String id);
-
-    /**
      * Get a column by its index (starting at 0).
      */
     DataColumn getColumnByIndex(int index);

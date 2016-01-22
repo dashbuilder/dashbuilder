@@ -21,7 +21,7 @@ For instance, to execute the tests under Oracle:
 
         mvn clean install
 
-  (append *-Dorg.slf4j.simpleLogger.log.org.dashbuilder.dataprovider.backend.sql.JDBCUtils=debug*
+  (append *-Dorg.slf4j.simpleLogger.log.org.dashbuilder.dataprovider.sql.JDBCUtils=debug*
    if you want to see the actual SQL logs being executed)
 
      

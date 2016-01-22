@@ -15,11 +15,11 @@
  */
 package org.dashbuilder.dataprovider.backend.sql;
 
-import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.DataSetColumnTest;
 import org.dashbuilder.dataset.DataSetFilterTest;
 import org.dashbuilder.dataset.DataSetGroupTest;
+import org.dashbuilder.dataset.DataSetLookupFactory;
 import org.dashbuilder.dataset.DataSetNestedGroupTest;
 import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.dataset.group.DateIntervalType;
@@ -56,7 +56,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
                     .execute();
 
             DataSet result = dataSetManager.lookupDataSet(
-                    DataSetFactory.newDataSetLookupBuilder()
+                    DataSetLookupFactory.newDataSetLookupBuilder()
                             .dataset(DataSetGroupTest.EXPENSE_REPORTS)
                             .filter(equalsTo(ID.getName(), 9999))
                             .buildLookup());
@@ -81,7 +81,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
     public void testDataSetTrim() throws Exception {
 
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(DataSetGroupTest.EXPENSE_REPORTS)
                         .rowNumber(10)
                         .buildLookup());
@@ -91,7 +91,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         assertThat(result.getValueAt(9, 0)).isEqualTo(10d);
 
         result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(DataSetGroupTest.EXPENSE_REPORTS)
                         .rowNumber(10)
                         .rowOffset(40)
@@ -102,7 +102,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         assertThat(result.getValueAt(9, 0)).isEqualTo(50d);
 
         result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(DataSetGroupTest.EXPENSE_REPORTS)
                         .group(DEPT.getName())
                         .column(DEPT.getName())
@@ -115,7 +115,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         assertThat(result.getRowCountNonTrimmed()).isEqualTo(5);
 
         result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(DataSetGroupTest.EXPENSE_REPORTS)
                         .filter(CITY.getName(), equalsTo("Barcelona"))
                         .rowNumber(3)
@@ -127,35 +127,9 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
     }
 
     @Test
-    public void testDataSetColumns() throws Exception {
-        DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(DataSetGroupTest.EXPENSE_REPORTS)
-                        .column(CITY.getName(), "City")
-                        .column(DEPT.getName(), "Department")
-                        .column(EMPLOYEE.getName(), "Employee")
-                        .column(AMOUNT.getName(), "Amount")
-                        .buildLookup());
-
-        assertThat(result.getRowCount()).isEqualTo(50);
-        assertThat(result.getColumnByIndex(0).getId()).isEqualTo("City");
-        assertThat(result.getColumnByIndex(1).getId()).isEqualTo("Department");
-        assertThat(result.getColumnByIndex(2).getId()).isEqualTo("Employee");
-        assertThat(result.getColumnByIndex(3).getId()).isEqualTo("Amount");
-        assertThat(result.getColumnByIndex(0).getColumnType()).isEqualTo(ColumnType.LABEL);
-        assertThat(result.getColumnByIndex(1).getColumnType()).isEqualTo(ColumnType.LABEL);
-        assertThat(result.getColumnByIndex(2).getColumnType()).isEqualTo(ColumnType.LABEL);
-        assertThat(result.getColumnByIndex(3).getColumnType()).isEqualTo(ColumnType.NUMBER);
-        assertThat(result.getValueAt(0, 0)).isEqualTo("Barcelona");
-        assertThat(result.getValueAt(0, 1)).isEqualTo("Engineering");
-        assertThat(result.getValueAt(0, 2)).isEqualTo("Roxie Foraker");
-        assertThat(result.getValueAt(0, 3)).isEqualTo(120.35d);
-    }
-
-    @Test
     public void testDataSetGroupByHour() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(DataSetGroupTest.EXPENSE_REPORTS)
                         .filter(ID.getName(), FilterFactory.OR(
                                 FilterFactory.equalsTo(40),
@@ -166,6 +140,13 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
 
         assertThat(result.getRowCount()).isEqualTo(25);
         assertThat(result.getValueAt(0,0)).isEqualTo("2012-06-12 12");
+    }
+
+    @Test
+    public void testDataSetColumns() throws Exception {
+        DataSetColumnTest subTest = new DataSetColumnTest();
+        subTest.testDataSetLookupColumns();
+        subTest.testDataSetMetadataColumns();
     }
 
     @Test
@@ -225,39 +206,5 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         if (!testSettings.isMySQL() && !testSettings.isSqlServer()&& !testSettings.isSybase()) {
             subTest.testLikeOperatorCaseSensitive();
         }
-    }
-
-    @Test
-    public void testDataSetColumnsByIdIgnoreCase() throws Exception {
-        DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(DataSetGroupTest.EXPENSE_REPORTS)
-                        .column(CITY.getName(), "City")
-                        .column(DEPT.getName(), "Department")
-                        .column(EMPLOYEE.getName(), "Employee")
-                        .column(AMOUNT.getName(), "Amount")
-                        .buildLookup());
-
-        assertThat(result.getRowCount()).isEqualTo(50);
-        assertThat(result.getColumnByIndex(0).getId()).isEqualTo("City");
-        assertThat(result.getColumnByIndex(1).getId()).isEqualTo("Department");
-        assertThat(result.getColumnByIndex(2).getId()).isEqualTo("Employee");
-        assertThat(result.getColumnByIndex(3).getId()).isEqualTo("Amount");
-
-        assertThat(result.getColumnById("City")).isNotNull();
-        assertThat(result.getColumnById("Department")).isNotNull();
-        assertThat(result.getColumnById("Employee")).isNotNull();
-        assertThat(result.getColumnById("Amount")).isNotNull();
-
-        assertThat(result.getColumnById("city")).isNull();
-        assertThat(result.getColumnById("department")).isNull();
-        assertThat(result.getColumnById("employee")).isNull();
-        assertThat(result.getColumnById("amount")).isNull();
-
-        assertThat(result.getColumnByIdIgnoreCase("city")).isNotNull();
-        assertThat(result.getColumnByIdIgnoreCase("department")).isNotNull();
-        assertThat(result.getColumnByIdIgnoreCase("employee")).isNotNull();
-        assertThat(result.getColumnByIdIgnoreCase("amount")).isNotNull();
-
     }
 }
