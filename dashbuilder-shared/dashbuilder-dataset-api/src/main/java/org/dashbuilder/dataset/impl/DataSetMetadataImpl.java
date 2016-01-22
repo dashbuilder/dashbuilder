@@ -84,13 +84,19 @@ public class DataSetMetadataImpl implements DataSetMetadata {
     }
 
     public ColumnType getColumnType(String columnId) {
-        if (columnId == null) return null;
+        if (columnId == null) {
+            return null;
+        }
         for (int i=0; i<columnIds.size(); i++) {
-            if (columnId.equals(columnIds.get(i))) {
+            if (columnId.equalsIgnoreCase(columnIds.get(i))) {
                 return columnTypes.get(i);
             }
         }
         return null;
+    }
+
+    public List<String> getColumnIds() {
+        return columnIds;
     }
 
     public List<ColumnType> getColumnTypes() {
@@ -121,7 +127,7 @@ public class DataSetMetadataImpl implements DataSetMetadata {
                 return false;
             }
             for (int i=0; i<columnIds.size(); i++) {
-                if (!columnIds.get(i).equals(other.columnIds.get(i))) {
+                if (!columnIds.get(i).equalsIgnoreCase(other.columnIds.get(i))) {
                     return false;
                 }
             }
