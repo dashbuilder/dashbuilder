@@ -17,7 +17,7 @@ Once server is up and running, get the proper WAR file (e.g. `dashbuilder-<versi
     
     NOTES:
         - <path_to_war_file>: is the local path to the application war file.
-        - e.g. $ ./jboss-cli.sh --connect --command="deploy /home/myuser/myfiles/dashbuilder-0.4.0-SNAPSHOT-wildfly8.war" )
+        - e.g. $ ./jboss-cli.sh --connect --command="deploy /home/myuser/myfiles/dashbuilder-0.5.0-SNAPSHOT-wildfly8.war" )
 
 
 User Authentication
