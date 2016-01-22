@@ -16,7 +16,7 @@ ElasticSearch dependencies are optional. Add them depending on what kind of data
           <dependency>
             <groupId>org.dashbuilder</groupId>
             <artifactId>dashbuilder-bom</artifactId>
-            <version>0.4.0-SNAPSHOT</version>
+            <version>0.5.0-SNAPSHOT</version>
             <type>pom</type>
             <scope>import</scope>
           </dependency>    
