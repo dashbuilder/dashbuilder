@@ -46,6 +46,11 @@ public interface DataSetMetadata {
     String getColumnId(int columnIndex);
 
     /**
+     * Get the column ids
+     */
+    List<String> getColumnIds();
+
+    /**
      * Get the type of the specified column.
      * @param columnIndex The column index (starting at 0).
      */

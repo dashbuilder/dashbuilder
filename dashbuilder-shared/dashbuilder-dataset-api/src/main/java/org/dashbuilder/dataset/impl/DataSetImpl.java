@@ -76,18 +76,9 @@ public class DataSetImpl implements DataSet {
 
     public DataColumn getColumnById(String id) {
         for (DataColumn column : columns) {
-            if (column.getId().equals(id)) return column;
-            GroupFunction gf = column.getGroupFunction();
-            if (gf != null && gf.getSourceId() != null && gf.getSourceId().equals(id)) {
+            if (column.getId().equalsIgnoreCase(id)) {
                 return column;
             }
-        }
-        return null;
-    }
-
-    public DataColumn getColumnByIdIgnoreCase(String id) {
-        for (DataColumn column : columns) {
-            if (column.getId().equalsIgnoreCase(id)) return column;
             GroupFunction gf = column.getGroupFunction();
             if (gf != null && gf.getSourceId() != null && gf.getSourceId().equalsIgnoreCase(id)) {
                 return column;
@@ -108,7 +99,7 @@ public class DataSetImpl implements DataSet {
 
     @Override
     public int getColumnIndex( DataColumn dataColumn ) {
-        if (dataColumn == null || "".equals(dataColumn.getId()) ) {
+        if (dataColumn == null || "".equals(dataColumn.getId())) {
             throw new IllegalArgumentException("Wrong column specified.");
         }
         for (int i = 0; i < columns.size(); i++) {
@@ -140,7 +131,7 @@ public class DataSetImpl implements DataSet {
         Iterator<DataColumnImpl> it = columns.iterator();
         while (it.hasNext()) {
             DataColumn column = it.next();
-            if (column.getId().equals(id)) {
+            if (column.getId().equalsIgnoreCase(id)) {
                 it.remove();
             }
         }

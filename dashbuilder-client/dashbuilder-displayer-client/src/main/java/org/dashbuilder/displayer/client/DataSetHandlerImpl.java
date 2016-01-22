@@ -236,6 +236,9 @@ public class DataSetHandlerImpl implements DataSetHandler {
         if (cg != null && metadata != null) {
             IntervalBuilderLocator intervalBuilderLocator = clientServices.getIntervalBuilderLocator();
             ColumnType columnType = metadata.getColumnType(cg.getSourceId());
+            if (columnType == null) {
+                throw new RuntimeException("Column type not found in data set metadata: " + cg.getSourceId());
+            }
             IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(columnType, cg.getStrategy());
             Interval target = intervalBuilder.locate(column, row);
 
