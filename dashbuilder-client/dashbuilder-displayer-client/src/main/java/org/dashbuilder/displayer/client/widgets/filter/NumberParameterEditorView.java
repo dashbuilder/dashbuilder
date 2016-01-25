@@ -18,6 +18,7 @@ package org.dashbuilder.displayer.client.widgets.filter;
 import javax.enterprise.context.Dependent;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -25,9 +26,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.gwtbootstrap3.client.ui.FormGroup;
-import org.gwtbootstrap3.client.ui.Icon;
 import org.gwtbootstrap3.client.ui.TextBox;
-import org.gwtbootstrap3.client.ui.Tooltip;
 import org.gwtbootstrap3.client.ui.constants.ValidationState;
 
 @Dependent
@@ -43,9 +42,6 @@ public class NumberParameterEditorView extends Composite implements NumberParame
 
     @UiField
     TextBox input;
-
-    @UiField
-    Icon hintIcon;
 
     public NumberParameterEditorView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -63,17 +59,6 @@ public class NumberParameterEditorView extends Composite implements NumberParame
     }
 
     @Override
-    public void setMultipleHintEnabled(boolean enabled) {
-        hintIcon.setVisible(enabled);
-    }
-
-    @Override
-    public void clear() {
-        input.clear();
-        form.setValidationState(ValidationState.NONE);
-    }
-
-    @Override
     public String getValue() {
         return input.getValue();
     }
@@ -81,6 +66,16 @@ public class NumberParameterEditorView extends Composite implements NumberParame
     @Override
     public void setValue(String value) {
         input.setValue(value);
+        form.setValidationState(ValidationState.NONE);
+    }
+
+    @Override
+    public void setFocus(final boolean focus) {
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            public void execute () {
+                input.setFocus(focus);
+            }
+        });
     }
 
     @Override

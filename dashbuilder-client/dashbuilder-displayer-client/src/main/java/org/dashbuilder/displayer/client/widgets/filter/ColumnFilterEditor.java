@@ -143,16 +143,16 @@ public class ColumnFilterEditor implements IsWidget {
         }
     }
 
-    protected List<IsWidget> createFilterInputControls() {
-        List<IsWidget> filterInputControls = new ArrayList<IsWidget>();
+    protected List<FunctionParameterEditor> createFilterInputControls() {
+        List<FunctionParameterEditor> filterInputControls = new ArrayList<FunctionParameterEditor>();
         CoreFunctionFilter coreFilter = getCoreFilter();
         if (CoreFunctionType.LIKE_TO.equals(coreFilter.getType())) {
-            IsWidget paramInput = createLikeToFunctionWidget(coreFilter);
+            FunctionParameterEditor paramInput = createLikeToFunctionWidget(coreFilter);
             filterInputControls.add(paramInput);
         }
         else {
             for (int i = 0; i < coreFilter.getType().getParametersCount(); i++) {
-                IsWidget paramInput = createParamInputWidget(coreFilter, i);
+                FunctionParameterEditor paramInput = createParamInputWidget(coreFilter, i);
                 filterInputControls.add(paramInput);
             }
         }
@@ -186,11 +186,14 @@ public class ColumnFilterEditor implements IsWidget {
         return functionTypes;
     }
 
-    protected List<IsWidget> initFilterConfig() {
+    protected List<FunctionParameterEditor> initFilterConfig() {
         view.clearFilterConfig();
-        List<IsWidget> inputs = createFilterInputControls();
-        for (IsWidget input : inputs) {
-            view.addFilterConfigWidget(input);
+        List<FunctionParameterEditor> inputs = createFilterInputControls();
+        if (!inputs.isEmpty()) {
+            for (IsWidget input : inputs) {
+                view.addFilterConfigWidget(input);
+            }
+            inputs.get(0).setFocus(true);
         }
         return inputs;
     }
@@ -205,10 +208,11 @@ public class ColumnFilterEditor implements IsWidget {
         changedEvent.fire(new ColumnFilterChangedEvent(this));
     }
 
-    protected IsWidget createParamInputWidget(final CoreFunctionFilter coreFilter, final int paramIndex) {
+    protected FunctionParameterEditor createParamInputWidget(final CoreFunctionFilter coreFilter, final int paramIndex) {
         final List paramList = coreFilter.getParameters();
         ColumnType columnType = metadata.getColumnType(coreFilter.getColumnId());
         CoreFunctionType functionType = coreFilter.getType();
+        boolean isMultiple = CoreFunctionType.IN.equals(functionType) || CoreFunctionType.NOT_IN.equals(functionType);
 
         if (ColumnType.DATE.equals(columnType)) {
             if (CoreFunctionType.TIME_FRAME.equals(coreFilter.getType())) {
@@ -216,14 +220,21 @@ public class ColumnFilterEditor implements IsWidget {
             }
             return createDateInputWidget(paramList, paramIndex);
         }
-        boolean isMultiple = CoreFunctionType.IN.equals(functionType) || CoreFunctionType.NOT_IN.equals(functionType);
-        if (ColumnType.NUMBER.equals(columnType)) {
-            return createNumberInputWidget(paramList, isMultiple);
+
+        if (!isMultiple) {
+            if (ColumnType.NUMBER.equals(columnType)) {
+                return createNumberInputWidget(paramList, paramIndex);
+            }
+            return createTextInputWidget(paramList, paramIndex);
+        } else {
+            if (ColumnType.NUMBER.equals(columnType)) {
+                return createMultipleNumberInputWidget(paramList);
+            }
+            return createMultipleTextInputWidget(paramList);
         }
-        return createTextInputWidget(paramList, isMultiple);
     }
 
-    protected IsWidget createDateInputWidget(final List paramList, final int paramIndex) {
+    protected FunctionParameterEditor createDateInputWidget(final List paramList, final int paramIndex) {
         Date param = (Date) paramList.get(paramIndex);
 
         final DateParameterEditor input = beanManager.lookupBean(DateParameterEditor.class).newInstance();
@@ -237,24 +248,34 @@ public class ColumnFilterEditor implements IsWidget {
         return input;
     }
 
-    protected IsWidget createNumberInputWidget(final List paramList, boolean isMultiple) {
+    protected FunctionParameterEditor createNumberInputWidget(final List paramList, final int paramIndex) {
         final NumberParameterEditor input = beanManager.lookupBean(NumberParameterEditor.class).newInstance();
-        input.setMultiple(isMultiple);
-        input.setValues(paramList);
+        input.setValue(Double.parseDouble(paramList.get(paramIndex).toString()));
         input.setOnChangeCommand(new Command() {
             public void execute() {
+                paramList.set(paramIndex, input.getValue());
                 updateSelectedFilter();
             }
         });
         return input;
     }
 
-    protected IsWidget createTextInputWidget(final List paramList, boolean isMultiple) {
+    protected FunctionParameterEditor createTextInputWidget(final List paramList, final int paramIndex) {
         final TextParameterEditor input = beanManager.lookupBean(TextParameterEditor.class).newInstance();
-        input.setMultiple(isMultiple);
+        input.setValue((String) paramList.get(paramIndex));
+        input.setOnChangeCommand(new Command() {
+            public void execute() {
+                paramList.set(paramIndex, input.getValue());
+                updateSelectedFilter();
+            }
+        });
+        return input;
+    }
+
+    protected FunctionParameterEditor createMultipleNumberInputWidget(final List paramList) {
+        final MultipleNumberParameterEditor input = beanManager.lookupBean(MultipleNumberParameterEditor.class).newInstance();
         input.setValues(paramList);
         input.setOnChangeCommand(new Command() {
-            @Override
             public void execute() {
                 updateSelectedFilter();
             }
@@ -262,7 +283,18 @@ public class ColumnFilterEditor implements IsWidget {
         return input;
     }
 
-    protected IsWidget createTimeFrameWidget(final List paramList, final int paramIndex) {
+    protected FunctionParameterEditor createMultipleTextInputWidget(final List paramList) {
+        final MultipleTextParameterEditor input = beanManager.lookupBean(MultipleTextParameterEditor.class).newInstance();
+        input.setValues(paramList);
+        input.setOnChangeCommand(new Command() {
+            public void execute() {
+                updateSelectedFilter();
+            }
+        });
+        return input;
+    }
+
+    protected FunctionParameterEditor createTimeFrameWidget(final List paramList, final int paramIndex) {
         TimeFrame timeFrame = TimeFrame.parse((String) paramList.get(paramIndex));
 
         final TimeFrameEditor input = beanManager.lookupBean(TimeFrameEditor.class).newInstance();
@@ -275,7 +307,7 @@ public class ColumnFilterEditor implements IsWidget {
         return input;
     }
 
-    protected IsWidget createLikeToFunctionWidget(final CoreFunctionFilter coreFilter) {
+    protected FunctionParameterEditor createLikeToFunctionWidget(final CoreFunctionFilter coreFilter) {
         final LikeToFunctionEditor input = beanManager.lookupBean(LikeToFunctionEditor.class).newInstance();
         final List paramList = coreFilter.getParameters();
         String pattern = (String) paramList.get(0);
