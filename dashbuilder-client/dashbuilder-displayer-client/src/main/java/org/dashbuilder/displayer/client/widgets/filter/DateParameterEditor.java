@@ -26,7 +26,7 @@ import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.Command;
 
 @Dependent
-public class DateParameterEditor implements IsWidget {
+public class DateParameterEditor implements FunctionParameterEditor {
 
     public interface View extends UberView<DateParameterEditor> {
 
@@ -59,6 +59,10 @@ public class DateParameterEditor implements IsWidget {
 
     public void setCurrentValue(Date value) {
         view.setCurrentValue(value);
+    }
+
+    @Override
+    public void setFocus(boolean focus) {
     }
 
     void valueChanged() {

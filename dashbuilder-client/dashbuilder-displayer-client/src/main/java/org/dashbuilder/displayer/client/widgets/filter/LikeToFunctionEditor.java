@@ -24,7 +24,7 @@ import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.Command;
 
 @Dependent
-public class LikeToFunctionEditor implements IsWidget {
+public class LikeToFunctionEditor implements FunctionParameterEditor {
 
     public interface View extends UberView<LikeToFunctionEditor> {
 
@@ -35,9 +35,14 @@ public class LikeToFunctionEditor implements IsWidget {
         String getPattern();
 
         boolean isCaseSensitive();
+
+        void setFocus(boolean focus);
+
+        void error();
     }
 
     Command onChangeCommand = new Command() { public void execute() {} };
+    String pattern;
     View view;
 
     @Inject
@@ -56,6 +61,7 @@ public class LikeToFunctionEditor implements IsWidget {
     }
 
     public void setPattern(String pattern) {
+        this.pattern = pattern;
         view.setPattern(pattern);
     }
 
@@ -64,14 +70,25 @@ public class LikeToFunctionEditor implements IsWidget {
     }
 
     public String getPattern() {
-        return view.getPattern();
+        return pattern;
     }
 
     public boolean isCaseSensitive() {
         return view.isCaseSensitive();
     }
 
+    @Override
+    public void setFocus(boolean focus) {
+        view.setFocus(focus);
+    }
+
     void viewUpdated() {
-        onChangeCommand.execute();
+        String s = view.getPattern();
+        if (s == null || s.trim().length() == 0) {
+            view.error();
+        } else {
+            pattern = s;
+            onChangeCommand.execute();
+        }
     }
 }

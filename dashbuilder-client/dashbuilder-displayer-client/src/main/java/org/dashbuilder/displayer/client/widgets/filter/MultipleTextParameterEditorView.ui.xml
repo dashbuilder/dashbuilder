@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-  ~ Copyright 2015 Red Hat, Inc. and/or its affiliates.
+  ~ Copyright 2012 Red Hat, Inc. and/or its affiliates.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -21,29 +21,14 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-  <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.CommonConstants"/>
+    <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.CommonConstants"/>
 
-  <ui:style>
-    .labelFont {
-      font-size: small;
-    }
-    .checkBox {
-      margin-top: 0px;
-      margin-bottom: 0px;
-      margin-right: 5px;
-    }
-  </ui:style>
-
-  <b:FormGroup ui:field="form"  validationState="NONE">
-    <g:HorizontalPanel>
-      <b:TextBox ui:field="searchPatternTextBox" width="150px" />
-      <b:Tooltip isAnimated="true" placement="RIGHT" title="{i18n.like_to_pattern_instructions}">
-        <b:Icon type="QUESTION_CIRCLE" />
-      </b:Tooltip>
-    </g:HorizontalPanel>
-    <g:HorizontalPanel>
-      <b:CheckBox styleName="{style.checkBox}" ui:field="caseSensitiveCheckbox" />
-      <g:Label styleName="{style.labelFont}" text="{i18n.case_sensitive}"/>
-    </g:HorizontalPanel>
-  </b:FormGroup>
+    <b:FormGroup ui:field="form" validationState="NONE">
+        <g:HorizontalPanel>
+            <b:TextBox ui:field="input" width="150px" />
+            <b:Tooltip isAnimated="true" placement="RIGHT" title="{i18n.multiple_input_descriptions}">
+                <b:Icon ui:field="hintIcon" type="QUESTION_CIRCLE" />
+            </b:Tooltip>
+        </g:HorizontalPanel>
+    </b:FormGroup>
 </ui:UiBinder>
