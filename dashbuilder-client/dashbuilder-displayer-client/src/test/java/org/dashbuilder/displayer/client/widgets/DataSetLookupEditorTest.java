@@ -19,9 +19,9 @@ import java.util.List;
 import javax.enterprise.event.Event;
 
 import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
+import org.dashbuilder.dataset.DataSetLookupFactory;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetMetadataCallback;
@@ -29,7 +29,6 @@ import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefFactory;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.ColumnGroup;
-import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.GroupFunction;
 import org.dashbuilder.dataset.impl.DataSetMetadataImpl;
 import org.dashbuilder.displayer.client.events.DataSetLookupChangedEvent;
@@ -219,7 +218,7 @@ public class DataSetLookupEditorTest {
 
     @Test
     public void testExistingLookup() {
-        presenter.init(DATA_2D_FIXED, DataSetFactory.newDataSetLookupBuilder()
+        presenter.init(DATA_2D_FIXED, DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(POPULATION_UUID)
                 .filter(greaterThan(100))
                 .group("country")
@@ -261,7 +260,7 @@ public class DataSetLookupEditorTest {
 
     @Test
     public void testFromNonExistingLookup() {
-        presenter.init(DATA_2D_FIXED, DataSetFactory.newDataSetLookupBuilder()
+        presenter.init(DATA_2D_FIXED, DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(POPULATION_UUID)
                 .filter(greaterThan(100))
                 .group("country")
@@ -294,7 +293,7 @@ public class DataSetLookupEditorTest {
 
     @Test
     public void testDateGroup() {
-        presenter.init(DATA_2D_FIXED, DataSetFactory.newDataSetLookupBuilder()
+        presenter.init(DATA_2D_FIXED, DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(POPULATION_UUID)
                 .filter(greaterThan(100))
                 .group("year")
@@ -310,7 +309,7 @@ public class DataSetLookupEditorTest {
 
     @Test
     public void testGroupAllowed() {
-        presenter.init(DATA_MULTIPLE, DataSetFactory.newDataSetLookupBuilder()
+        presenter.init(DATA_MULTIPLE, DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(POPULATION_UUID)
                 .column("year")
                 .column("population")
@@ -324,7 +323,7 @@ public class DataSetLookupEditorTest {
 
     @Test
     public void testDeleteColumns() {
-        DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
+        DataSetLookup lookup = DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(POPULATION_UUID)
                 .column("year")
                 .column("population")
@@ -343,7 +342,7 @@ public class DataSetLookupEditorTest {
 
     @Test
     public void testGroupNotAllowed() {
-        presenter.init(DATA_MULTIPLE_NO_GROUP, DataSetFactory.newDataSetLookupBuilder()
+        presenter.init(DATA_MULTIPLE_NO_GROUP, DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(POPULATION_UUID)
                 .column("year")
                 .column("population")
@@ -356,7 +355,7 @@ public class DataSetLookupEditorTest {
 
     @Test
     public void testAutoCreateRequiredGroup() {
-        presenter.init(DATA_2D_FIXED, DataSetFactory.newDataSetLookupBuilder()
+        presenter.init(DATA_2D_FIXED, DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(POPULATION_UUID)
                 .filter(greaterThan(100))
                 .column("country")
@@ -369,7 +368,7 @@ public class DataSetLookupEditorTest {
 
     @Test
     public void testDataSetSelected() {
-        presenter.init(DATA_2D_FIXED, DataSetFactory.newDataSetLookupBuilder()
+        presenter.init(DATA_2D_FIXED, DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(POPULATION_UUID)
                 .group("country")
                 .column("country")
@@ -392,7 +391,7 @@ public class DataSetLookupEditorTest {
 
     @Test
     public void testGroupColumnSelected() {
-        presenter.init(DATA_2D_FIXED, DataSetFactory.newDataSetLookupBuilder()
+        presenter.init(DATA_2D_FIXED, DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(POPULATION_UUID)
                 .group("country")
                 .column("country")
@@ -413,7 +412,7 @@ public class DataSetLookupEditorTest {
 
     @Test
     public void testGroupColumnDeselected() {
-        presenter.init(DATA_MULTIPLE, DataSetFactory.newDataSetLookupBuilder()
+        presenter.init(DATA_MULTIPLE, DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(POPULATION_UUID)
                 .group("country")
                 .column("country")

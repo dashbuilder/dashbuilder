@@ -16,23 +16,20 @@
 package org.dashbuilder.displayer.client.events;
 
 import org.dashbuilder.dataset.filter.ColumnFilter;
+import org.dashbuilder.displayer.client.widgets.filter.ColumnFilterEditor;
 
 public class ColumnFilterChangedEvent {
 
-    ColumnFilter columnFilter;
+    ColumnFilterEditor columnFilterEditor;
 
     public ColumnFilterChangedEvent() {
     }
 
-    public ColumnFilterChangedEvent(ColumnFilter columnFilter) {
-        this.columnFilter = columnFilter;
+    public ColumnFilterChangedEvent(ColumnFilterEditor columnFilterEditor) {
+        this.columnFilterEditor = columnFilterEditor;
     }
 
-    public ColumnFilter getColumnFilter() {
-        return columnFilter;
-    }
-
-    public void setColumnFilter(ColumnFilter columnFilter) {
-        this.columnFilter = columnFilter;
+    public ColumnFilterEditor getColumnFilterEditor() {
+        return columnFilterEditor;
     }
 }
