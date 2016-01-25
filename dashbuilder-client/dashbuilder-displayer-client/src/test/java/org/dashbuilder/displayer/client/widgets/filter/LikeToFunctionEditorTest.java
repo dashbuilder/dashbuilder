@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2016 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  */
 package org.dashbuilder.displayer.client.widgets.filter;
 
-import java.util.Arrays;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,48 +25,39 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class NumberParameterEditorTest {
+public class LikeToFunctionEditorTest {
 
-    NumberParameterEditor presenter;
+    LikeToFunctionEditor presenter;
 
     @Mock
-    NumberParameterEditor.View view;
+    LikeToFunctionEditor.View view;
 
     @Mock
     Command changedEvent;
 
     @Before
     public void init() {
-        presenter = new NumberParameterEditor(view);
+        presenter = new LikeToFunctionEditor(view);
     }
 
     @Test
     public void testShowValue() {
-        presenter.setValue(10d);
-        verify(view).setValue("10.0");
+        presenter.setPattern("%val%");
+        verify(view).setPattern("%val%");
     }
 
     @Test
     public void testParseVoidInput() {
-        when(view.getValue()).thenReturn("");
-        presenter.valueChanged();
-        assertNull(presenter.getValue());
-        verify(view).error();;
-    }
-
-    @Test
-    public void testParseSingleInput() {
-        when(view.getValue()).thenReturn("3");
-        presenter.valueChanged();
-        verify(view, never()).error();;
-        assertEquals(presenter.getValue(), 3d);
-    }
-
-    @Test
-    public void testInputError() {
-        when(view.getValue()).thenReturn("a");
-        presenter.valueChanged();
-        assertNull(presenter.getValue());
+        when(view.getPattern()).thenReturn("");
+        presenter.viewUpdated();
         verify(view).error();
+        assertNull(presenter.getPattern());
+    }
+
+    @Test
+    public void testParseInput() {
+        when(view.getPattern()).thenReturn("val");
+        presenter.viewUpdated();
+        assertEquals(presenter.getPattern(), "val");
     }
 }

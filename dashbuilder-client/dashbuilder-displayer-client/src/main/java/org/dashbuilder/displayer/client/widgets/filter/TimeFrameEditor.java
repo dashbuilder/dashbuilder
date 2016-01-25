@@ -29,7 +29,7 @@ import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.Command;
 
 @Dependent
-public class TimeFrameEditor implements IsWidget {
+public class TimeFrameEditor implements FunctionParameterEditor {
 
     public interface View extends UberView<TimeFrameEditor> {
 
@@ -185,6 +185,10 @@ public class TimeFrameEditor implements IsWidget {
                 instantTo.setFirstMonthOfYear(month);
             }
         }
+    }
+
+    @Override
+    public void setFocus(boolean focus) {
     }
 
     public void changeFirstMonth() {

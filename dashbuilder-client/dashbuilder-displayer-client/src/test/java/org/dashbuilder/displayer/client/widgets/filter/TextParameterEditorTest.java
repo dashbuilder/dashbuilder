@@ -43,57 +43,23 @@ public class TextParameterEditorTest {
     }
 
     @Test
-    public void testShowSingleValue() {
-        presenter.setValues(Arrays.asList("val"));
-        verify(view).clear();
+    public void testShowValue() {
+        presenter.setValue("val");
         verify(view).setValue("val");
-    }
-
-    @Test
-    public void testShowMultipleValues() {
-        presenter.setValues(Arrays.asList("val1", "val2", "val3"));
-        verify(view).clear();
-        verify(view).setValue("val1 | val2 | val3");
     }
 
     @Test
     public void testParseVoidInput() {
         when(view.getValue()).thenReturn("");
         presenter.valueChanged();
-        assertTrue(presenter.getValues().isEmpty());
+        verify(view).error();
+        assertNull(presenter.getValue());
     }
 
     @Test
-    public void testParseSingleInput() {
+    public void testParseInput() {
         when(view.getValue()).thenReturn("val");
         presenter.valueChanged();
-        assertEquals(presenter.getValues().size(), 1);
-        assertEquals(presenter.getValues().get(0), "val");
-    }
-
-    @Test
-    public void testMultipleInput() {
-        when(view.getValue()).thenReturn("|1| 2 | 3|4|  ");
-        presenter.valueChanged();
-        assertEquals(presenter.getValues().size(), 4);
-        assertEquals(presenter.getValues().get(0), "1");
-        assertEquals(presenter.getValues().get(1), "2");
-        assertEquals(presenter.getValues().get(2), "3");
-        assertEquals(presenter.getValues().get(3), "4");
-
-        // Endure values are cleared on every change
-        presenter.valueChanged();
-        assertEquals(presenter.getValues().size(), 4);
-    }
-
-    @Test
-    public void testMultipleInput2() {
-        when(view.getValue()).thenReturn(",1, 2 , 3,4,  ");
-        presenter.valueChanged();
-        assertEquals(presenter.getValues().size(), 4);
-        assertEquals(presenter.getValues().get(0), "1");
-        assertEquals(presenter.getValues().get(1), "2");
-        assertEquals(presenter.getValues().get(2), "3");
-        assertEquals(presenter.getValues().get(3), "4");
+        assertEquals(presenter.getValue(), "val");
     }
 }

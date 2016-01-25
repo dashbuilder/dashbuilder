@@ -15,35 +15,33 @@
  */
 package org.dashbuilder.displayer.client.widgets.filter;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.common.client.StringUtils;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.Command;
 
 @Dependent
-public class TextParameterEditor implements IsWidget {
+public class TextParameterEditor implements FunctionParameterEditor {
 
     public interface View extends UberView<TextParameterEditor> {
-
-        void setMultipleHintEnabled(boolean enabled);
-
-        void clear();
 
         String getValue();
 
         void setValue(String value);
 
         void error();
+
+        void setFocus(boolean focus);
     }
 
-    Command onChangeCommand = new Command() { public void execute() {} };
-    List values = new ArrayList();
+    Command onChangeCommand = new Command() {
+        public void execute() {
+        }
+    };
+    String value;
     View view;
 
     @Inject
@@ -57,51 +55,31 @@ public class TextParameterEditor implements IsWidget {
         return view.asWidget();
     }
 
-    public void setMultiple(boolean multiple) {
-        view.setMultipleHintEnabled(multiple);
-    }
-
     public void setOnChangeCommand(Command onChangeCommand) {
         this.onChangeCommand = onChangeCommand;
     }
 
-    public List getValues() {
-        return values;
+    public String getValue() {
+        return value;
     }
 
-    public void setValues(List input) {
-        values = input;
-        view.clear();
-        view.setValue(format(input));
+    public void setValue(String input) {
+        value = input;
+        view.setValue(input);
+    }
+
+    @Override
+    public void setFocus(boolean focus) {
+        view.setFocus(focus);
     }
 
     void valueChanged() {
-        try {
-            values.clear();
-            values.addAll(parse(view.getValue().trim()));
-            onChangeCommand.execute();
-        } catch (Exception e) {
+        String s = view.getValue();
+        if (s == null || s.trim().length() == 0) {
             view.error();
+        } else {
+            value = s;
+            onChangeCommand.execute();
         }
-    }
-
-    public List parse(String s) throws Exception {
-        List result = new ArrayList();
-        List<String> tokens = s.contains("|") ? StringUtils.split(s, '|') : StringUtils.split(s, ',');
-        for (String token : tokens) {
-            result.add(token.trim());
-        }
-        return result;
-    }
-
-    public String format(List l) {
-        StringBuilder out = new StringBuilder();
-        for (Object val : l) {
-            if (out.length() > 0) {
-                out.append(" | ");
-            }
-            out.append(val);
-        }
-        return out.toString();
     }
 }
