@@ -15,18 +15,21 @@
  */
 package org.dashbuilder.displayer.client.widgets.filter;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.common.client.StringUtils;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.Command;
 
 @Dependent
-public class NumberParameterEditor implements FunctionParameterEditor {
+public class MultipleTextParameterEditor implements FunctionParameterEditor {
 
-    public interface View extends UberView<NumberParameterEditor> {
+    public interface View extends UberView<MultipleTextParameterEditor> {
 
         String getValue();
 
@@ -38,11 +41,11 @@ public class NumberParameterEditor implements FunctionParameterEditor {
     }
 
     Command onChangeCommand = new Command() { public void execute() {} };
-    Number value;
+    List values = new ArrayList();
     View view;
 
     @Inject
-    public NumberParameterEditor(View view) {
+    public MultipleTextParameterEditor(View view) {
         this.view = view;
         this.view.init(this);
     }
@@ -56,13 +59,13 @@ public class NumberParameterEditor implements FunctionParameterEditor {
         this.onChangeCommand = onChangeCommand;
     }
 
-    public Number getValue() {
-        return value;
+    public List getValues() {
+        return values;
     }
 
-    public void setValue(Number input) {
-        value = input;
-        view.setValue(format(value));
+    public void setValues(List input) {
+        values = input;
+        view.setValue(format(input));
     }
 
     @Override
@@ -72,11 +75,12 @@ public class NumberParameterEditor implements FunctionParameterEditor {
 
     void valueChanged() {
         try {
-            Number n = parse(view.getValue());
-            if (n == null) {
+            List l = parse(view.getValue().trim());
+            if (l.isEmpty()) {
                 view.error();
             } else {
-                value = n;
+                values.clear();
+                values.addAll(l);
                 onChangeCommand.execute();
             }
         } catch (Exception e) {
@@ -84,14 +88,23 @@ public class NumberParameterEditor implements FunctionParameterEditor {
         }
     }
 
-    public Number parse(String s) throws Exception {
-        if (s == null || s.trim().length() == 0) {
-            return null;
+    public List parse(String s) throws Exception {
+        List result = new ArrayList();
+        List<String> tokens = s.contains("|") ? StringUtils.split(s, '|') : StringUtils.split(s, ',');
+        for (String token : tokens) {
+            result.add(token.trim());
         }
-        return Double.parseDouble(s.trim());
+        return result;
     }
 
-    public String format(Number n) {
-        return n.toString();
+    public String format(List l) {
+        StringBuilder out = new StringBuilder();
+        for (Object val : l) {
+            if (out.length() > 0) {
+                out.append(" | ");
+            }
+            out.append(val);
+        }
+        return out.toString();
     }
 }

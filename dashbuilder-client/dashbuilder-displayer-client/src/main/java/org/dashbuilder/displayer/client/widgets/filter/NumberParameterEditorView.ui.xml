@@ -18,17 +18,11 @@
 
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-             xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field="i18n" type="org.dashbuilder.displayer.client.resources.i18n.CommonConstants"/>
 
     <b:FormGroup ui:field="form" validationState="NONE">
-        <g:HorizontalPanel>
-            <b:TextBox ui:field="input" width="150px" />
-            <b:Tooltip isAnimated="true" placement="RIGHT" title="{i18n.multiple_input_descriptions}">
-                <b:Icon ui:field="hintIcon" type="QUESTION_CIRCLE" />
-            </b:Tooltip>
-        </g:HorizontalPanel>
+        <b:TextBox ui:field="input" width="150px" />
     </b:FormGroup>
 </ui:UiBinder>
