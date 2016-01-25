@@ -66,7 +66,6 @@ public class DataSetFilterEditor implements IsWidget {
     DataSetMetadata metadata = null;
     SyncBeanManager beanManager;
     Event<DataSetFilterChangedEvent> changeEvent;
-    Map<Integer, ColumnFilterEditor> _editorsMap = new HashMap<Integer, ColumnFilterEditor>();
 
     @Inject
     public DataSetFilterEditor(View view,
@@ -99,13 +98,11 @@ public class DataSetFilterEditor implements IsWidget {
         }
 
         view.clearColumnFilterEditors();
-        _editorsMap.clear();
         if (filter != null) {
             for (ColumnFilter columnFilter : filter.getColumnFilterList()) {
                 ColumnFilterEditor columnFilterEditor = beanManager.lookupBean(ColumnFilterEditor.class).newInstance();
                 columnFilterEditor.init(metadata, columnFilter);
                 view.addColumnFilterEditor(columnFilterEditor);
-                _editorsMap.put(_editorsMap.size(), columnFilterEditor);
             }
         }
     }
@@ -137,7 +134,6 @@ public class DataSetFilterEditor implements IsWidget {
         columnFilterEditor.init(metadata, columnFilter);
         columnFilterEditor.expand();
 
-        _editorsMap.put(_editorsMap.size(), columnFilterEditor);
         view.addColumnFilterEditor(columnFilterEditor);
         view.resetSelectedColumn();
         view.showNewFilterHome();
@@ -151,16 +147,13 @@ public class DataSetFilterEditor implements IsWidget {
     }
 
     protected void onColumnFilterDeleted(@Observes final ColumnFilterDeletedEvent event) {
-       Integer index = filter.getColumnFilterIdx(event.getColumnFilter());
-        if (index != null && index >=0) {
-            filter.getColumnFilterList().remove(index.intValue());
+        ColumnFilterEditor editor = event.getColumnFilterEditor();
+        ColumnFilter columnFilter = editor.getFilter();
+        filter.getColumnFilterList().remove(columnFilter);
+        view.removeColumnFilterEditor(editor);
+        view.showNewFilterHome();
 
-            ColumnFilterEditor editor = _editorsMap.remove(index);
-            view.removeColumnFilterEditor(editor);
-            view.showNewFilterHome();
-
-            beanManager.destroyBean(editor);
-            changeEvent.fire(new DataSetFilterChangedEvent(filter));
-        }
+        beanManager.destroyBean(editor);
+        changeEvent.fire(new DataSetFilterChangedEvent(filter));
     }
 }

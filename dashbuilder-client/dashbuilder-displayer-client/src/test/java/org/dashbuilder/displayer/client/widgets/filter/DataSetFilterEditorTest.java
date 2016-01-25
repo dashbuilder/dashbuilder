@@ -14,12 +14,16 @@
  */
 package org.dashbuilder.displayer.client.widgets.filter;
 
+import javax.enterprise.event.Event;
+
 import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataSetLookupFactory;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.filter.ColumnFilter;
 import org.dashbuilder.dataset.filter.CoreFunctionType;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.filter.FilterFactory;
+import org.dashbuilder.displayer.client.events.ColumnFilterDeletedEvent;
 import org.dashbuilder.displayer.client.events.DataSetFilterChangedEvent;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
@@ -28,7 +32,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -53,7 +56,7 @@ public class DataSetFilterEditorTest {
     DataSetMetadata metadata;
 
     @Mock
-    EventSourceMock<DataSetFilterChangedEvent> changedEvent;
+    Event<DataSetFilterChangedEvent> changedEvent;
 
     @Before
     public void setup() {
@@ -132,5 +135,31 @@ public class DataSetFilterEditorTest {
 
         ColumnFilter expected = FilterFactory.createCoreFunctionFilter("column3", ColumnType.DATE, CoreFunctionType.TIME_FRAME);
         assertEquals(filter.getColumnFilterList().get(0), expected);
+    }
+
+    @Test
+    public void testDeleteDuplicatedFilters() {
+        ColumnFilter columnFilter1 = FilterFactory.notEqualsTo("column", "val1");
+        ColumnFilter columnFilter2 = FilterFactory.notEqualsTo("column", "val1");
+        ColumnFilterEditor columnFilterEditor1 = mock(ColumnFilterEditor.class);
+        ColumnFilterEditor columnFilterEditor2 = mock(ColumnFilterEditor.class);
+        when(columnFilterEditor1.getFilter()).thenReturn(columnFilter1);
+        when(columnFilterEditor2.getFilter()).thenReturn(columnFilter2);
+        when(columnFilterEditorBeanDef.newInstance()).thenReturn(columnFilterEditor1, columnFilterEditor2);
+
+        DataSetFilter filter = new DataSetFilter();
+        filter.addFilterColumn(columnFilter1, columnFilter2);
+
+        DataSetFilterEditor filterEditor = new DataSetFilterEditor(filterView, beanManager, changedEvent);
+        filterEditor.init(filter, metadata);
+        filterEditor.onColumnFilterDeleted(new ColumnFilterDeletedEvent(columnFilterEditor2));
+        filterEditor.onColumnFilterDeleted(new ColumnFilterDeletedEvent(columnFilterEditor1));
+
+        assertEquals(filter.getColumnFilterList().size(), 0);
+        verify(filterView).removeColumnFilterEditor(columnFilterEditor1);
+        verify(filterView).removeColumnFilterEditor(columnFilterEditor2);
+        verify(beanManager).destroyBean(columnFilterEditor1);
+        verify(beanManager).destroyBean(columnFilterEditor2);
+        verify(changedEvent, times(2)).fire(any(DataSetFilterChangedEvent.class));
     }
 }

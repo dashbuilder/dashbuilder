@@ -14,29 +14,16 @@
  */
 package org.dashbuilder.displayer.client.widgets.filter;
 
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 
-import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.filter.CoreFunctionFilter;
-import org.dashbuilder.dataset.filter.CoreFunctionType;
-import org.dashbuilder.displayer.client.events.ColumnFilterChangedEvent;
-import org.dashbuilder.displayer.client.events.ColumnFilterDeletedEvent;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
-import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
