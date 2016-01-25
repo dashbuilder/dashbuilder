@@ -188,7 +188,6 @@ public class DataSetLookupEditorView extends Composite
     @Override
     public void setGroupByDateEnabled(boolean enabled) {
         groupDetailsIcon.setVisible(enabled);
-        groupDatePanel.setVisible(enabled);
     }
 
     @Override
