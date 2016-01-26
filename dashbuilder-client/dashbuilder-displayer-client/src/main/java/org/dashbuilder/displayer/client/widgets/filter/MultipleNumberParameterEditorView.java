@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2014 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,83 +19,64 @@ import javax.enterprise.context.Dependent;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
-import org.gwtbootstrap3.client.ui.CheckBox;
 import org.gwtbootstrap3.client.ui.FormGroup;
+import org.gwtbootstrap3.client.ui.Icon;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.constants.ValidationState;
 
 @Dependent
-public class LikeToFunctionEditorView extends Composite implements LikeToFunctionEditor.View {
+public class MultipleNumberParameterEditorView extends Composite implements MultipleNumberParameterEditor.View {
 
-    interface Binder extends UiBinder<Widget, LikeToFunctionEditorView> {}
+    interface Binder extends UiBinder<Widget, MultipleNumberParameterEditorView> {}
     private static Binder uiBinder = GWT.create(Binder.class);
 
-    LikeToFunctionEditor presenter;
+    MultipleNumberParameterEditor presenter;
 
     @UiField
     FormGroup form;
 
     @UiField
-    TextBox searchPatternTextBox;
+    TextBox input;
 
-    @UiField
-    CheckBox caseSensitiveCheckbox;
-
-    public LikeToFunctionEditorView() {
+    public MultipleNumberParameterEditorView() {
         initWidget(uiBinder.createAndBindUi(this));
     }
 
     @Override
-    public void init(LikeToFunctionEditor presenter) {
+    public void init(final MultipleNumberParameterEditor presenter) {
         this.presenter = presenter;
+        input.addValueChangeHandler(new ValueChangeHandler<String>() {
+            public void onValueChange(ValueChangeEvent<String> event) {
+                form.setValidationState(ValidationState.NONE);
+                presenter.valueChanged();
+            }
+        });
     }
 
     @Override
-    public void setPattern(String pattern) {
+    public String getValue() {
+        return input.getValue();
+    }
+
+    @Override
+    public void setValue(String value) {
+        input.setValue(value);
         form.setValidationState(ValidationState.NONE);
-        searchPatternTextBox.setText(pattern);
-    }
-
-    @Override
-    public void setCaseSensitive(boolean caseSensitive) {
-        caseSensitiveCheckbox.setValue(caseSensitive);
-    }
-
-    @Override
-    public String getPattern() {
-        return searchPatternTextBox.getText();
-    }
-
-    @Override
-    public boolean isCaseSensitive() {
-        return caseSensitiveCheckbox.getValue();
     }
 
     @Override
     public void setFocus(final boolean focus) {
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             public void execute () {
-                searchPatternTextBox.setFocus(focus);
+                input.setFocus(focus);
             }
         });
-    }
-
-    @UiHandler("searchPatternTextBox")
-    public void onPatternChanged(ChangeEvent event) {
-        presenter.viewUpdated();
-        form.setValidationState(ValidationState.NONE);
-    }
-
-    @UiHandler("caseSensitiveCheckbox")
-    public void onCaseChanged(ClickEvent event) {
-        presenter.viewUpdated();
     }
 
     @Override
@@ -103,3 +84,4 @@ public class LikeToFunctionEditorView extends Composite implements LikeToFunctio
         form.setValidationState(ValidationState.ERROR);
     }
 }
+

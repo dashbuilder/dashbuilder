@@ -24,7 +24,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.client.resources.i18n.DateIntervalTypeConstants;
 import org.dashbuilder.dataset.client.resources.i18n.DayOfWeekConstants;
@@ -49,13 +49,13 @@ public class DataSetGroupDateEditorView extends Composite implements DataSetGrou
     ListBox intervalTypeListBox;
 
     @UiField
-    VerticalPanel maxIntervalsGroup;
+    Panel maxIntervalsGroup;
 
     @UiField
-    VerticalPanel firstDayPanel;
+    Panel firstDayPanel;
 
     @UiField
-    VerticalPanel firstMonthPanel;
+    Panel firstMonthPanel;
 
     @UiField
     TextBox maxIntervalsTextBox;

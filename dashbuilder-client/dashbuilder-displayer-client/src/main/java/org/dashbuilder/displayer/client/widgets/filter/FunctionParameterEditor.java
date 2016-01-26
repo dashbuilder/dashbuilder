@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2016 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.displayer.client.events;
+package org.dashbuilder.displayer.client.widgets.filter;
 
-import org.dashbuilder.displayer.client.widgets.filter.ColumnFilterEditor;
+import com.google.gwt.user.client.ui.IsWidget;
 
-public class ColumnFilterDeletedEvent {
+public interface FunctionParameterEditor extends IsWidget {
 
-    ColumnFilterEditor columnFilterEditor;
-
-    public ColumnFilterDeletedEvent() {
-    }
-
-    public ColumnFilterDeletedEvent(ColumnFilterEditor columnFilterEditor) {
-        this.columnFilterEditor = columnFilterEditor;
-    }
-
-    public ColumnFilterEditor getColumnFilterEditor() {
-        return columnFilterEditor;
-    }
+    void setFocus(boolean focus);
 }
