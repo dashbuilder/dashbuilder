@@ -24,7 +24,7 @@
 
   <g:VerticalPanel>
     <g:HorizontalPanel>
-      <b:ListBox ui:field="timeModeList" width="100px" />
+      <b:ListBox ui:field="timeModeList" width="75px" />
       <b:ListBox ui:field="intervalTypeList" width="100px" visible="false" />
     </g:HorizontalPanel>
     <df:TimeAmountEditor ui:field="timeAmountEditor" />
