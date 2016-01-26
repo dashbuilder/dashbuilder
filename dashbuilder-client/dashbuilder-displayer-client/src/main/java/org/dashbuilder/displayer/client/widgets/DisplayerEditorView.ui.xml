@@ -40,7 +40,7 @@
       overflow: auto;
     }
     .viewAsTableButtonRow {
-      font-size: 12pt;
+      font-size: small;
     }
     .viewAsTableButton {
       margin: 10px;
