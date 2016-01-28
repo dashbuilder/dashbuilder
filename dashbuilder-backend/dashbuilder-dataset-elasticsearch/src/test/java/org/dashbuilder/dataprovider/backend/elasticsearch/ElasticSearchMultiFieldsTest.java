@@ -21,12 +21,18 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.impl.DataColumnImpl;
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.elasticsearch.common.util.CollectionUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
  * <p>Data test for the multi-fields feature..</p>
@@ -53,15 +59,6 @@ public class ElasticSearchMultiFieldsTest extends ElasticSearchDataSetTestBase {
 
     /**
      * Test resulting columns.
-     * 
-     * Result should be:
-     * <ul>
-     *     <li>Column 0 -  id=field1 name=field1 type=TEXT </li>
-     *     <li>Column 1 -  id=field2 name=field2 type=TEXT </li>
-     *     <li>Column 2-   id=field2.raw name=field2.raw type=LABEL </li>
-     *     <li>Column 3 -  id=number name=number type=NUMBER </li>
-     *     <li>Column 4 -  id=date name=date type=DATE </li>
-     * </ul>
      */
     @Test
     public void testColumns() throws Exception {
@@ -75,31 +72,28 @@ public class ElasticSearchMultiFieldsTest extends ElasticSearchDataSetTestBase {
         Assert.assertNotNull(result.getColumns());
         Assert.assertTrue(result.getColumns().size() == 5);
 
-        Set<DataColumn> expected = new HashSet<DataColumn>(5);
-        DataColumn colField1 = new DataColumnImpl("FIELD1", ColumnType.TEXT);
-        expected.add(colField1);
+        List<DataColumn> expected = new ArrayList<DataColumn>(5);
         DataColumn colField2 = new DataColumnImpl("FIELD2", ColumnType.TEXT);
         expected.add(colField2);
+        DataColumn colDate = new DataColumnImpl("DATE", ColumnType.DATE);
+        expected.add(colDate);
         DataColumn colField2Raw = new DataColumnImpl("FIELD2.RAW", ColumnType.LABEL);
         expected.add(colField2Raw);
         DataColumn colNumber = new DataColumnImpl("NUMBER", ColumnType.NUMBER);
         expected.add(colNumber);
-        DataColumn colDate = new DataColumnImpl("DATE", ColumnType.DATE);
-        expected.add(colDate);
-
-        // Columns id assertion.
-        Assert.assertTrue(result.getColumnByIndex(0).getId().equals("FIELD2.RAW"));
-        Assert.assertTrue(result.getColumnByIndex(1).getId().equals("FIELD2"));
-        Assert.assertTrue(result.getColumnByIndex(2).getId().equals("DATE"));
-        Assert.assertTrue(result.getColumnByIndex(3).getId().equals("FIELD1"));
-        Assert.assertTrue(result.getColumnByIndex(4).getId().equals("NUMBER"));
-
-        // Columns type assertion.
-        Assert.assertTrue(result.getColumnByIndex(0).getColumnType().equals(ColumnType.LABEL));
-        Assert.assertTrue(result.getColumnByIndex(1).getColumnType().equals(ColumnType.TEXT));
-        Assert.assertTrue(result.getColumnByIndex(2).getColumnType().equals(ColumnType.DATE));
-        Assert.assertTrue(result.getColumnByIndex(3).getColumnType().equals(ColumnType.TEXT));
-        Assert.assertTrue(result.getColumnByIndex(4).getColumnType().equals(ColumnType.NUMBER));
+        DataColumn colField1 = new DataColumnImpl("FIELD1", ColumnType.TEXT);
+        expected.add(colField1);
+        
+        // As we are not providing any default column order neither in the lookup or in the dset defintiion, 
+        // just check columns that all columns are present and are of the given types.
+        Assert.assertTrue(result.getColumns().size() == 5);
+        Assert.assertTrue(result.getColumns().contains(colField1));
+        Assert.assertTrue(result.getColumns().contains(colField2));
+        Assert.assertTrue(result.getColumns().contains(colField2Raw));
+        Assert.assertTrue(result.getColumns().contains(colDate));
+        Assert.assertTrue(result.getColumns().contains(colNumber));
+        
     }
+    
 
 }
