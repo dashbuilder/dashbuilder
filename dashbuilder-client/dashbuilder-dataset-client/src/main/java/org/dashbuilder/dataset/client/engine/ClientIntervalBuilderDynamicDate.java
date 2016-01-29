@@ -45,6 +45,9 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
 
     private ClientDateFormatter dateFormatter;
 
+    public ClientIntervalBuilderDynamicDate() {
+    }
+
     @Inject
     public ClientIntervalBuilderDynamicDate(ClientDateFormatter dateFormatter) {
         this.dateFormatter = dateFormatter;

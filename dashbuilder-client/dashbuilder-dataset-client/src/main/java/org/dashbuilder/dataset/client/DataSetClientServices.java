@@ -79,6 +79,9 @@ public class DataSetClientServices {
      */
     private Map<String,DataSetPushHandler> pushRequestMap = new HashMap<String,DataSetPushHandler>();
 
+    public DataSetClientServices() {
+    }
+
     @Inject
     public DataSetClientServices(ClientDataSetManager clientDataSetManager,
                                  AggregateFunctionManager aggregateFunctionManager,

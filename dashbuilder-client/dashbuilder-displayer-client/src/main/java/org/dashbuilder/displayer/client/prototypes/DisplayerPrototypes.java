@@ -37,6 +37,9 @@ public class DisplayerPrototypes {
 
     protected Map<DisplayerType,DisplayerSettings> prototypeMap = new EnumMap<DisplayerType,DisplayerSettings>(DisplayerType.class);
 
+    public DisplayerPrototypes() {
+    }
+
     @Inject
     public DisplayerPrototypes(DataSetPrototypes dataSetPrototypes, UUIDGenerator uuidGenerator) {
         this.dataSetPrototypes = dataSetPrototypes;

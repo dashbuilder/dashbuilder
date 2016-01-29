@@ -40,6 +40,9 @@ public class DisplayerLocator {
     private ValueFormatterRegistry formatterRegistry;
     private RendererManager rendererManager;
 
+    public DisplayerLocator() {
+    }
+
     @Inject
     public DisplayerLocator(DataSetClientServices clientServices,
                             ClientDataSetManager clientDataSetManager,

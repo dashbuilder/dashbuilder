@@ -63,6 +63,9 @@ public class DataSetPrototypes {
         return dataSetManager.getDataSet("continentPopulationExt");
     }
 
+    public DataSetPrototypes() {
+    }
+
     @Inject
     public DataSetPrototypes(ClientDataSetManager dataSetManager) {
         this.dataSetManager = dataSetManager;

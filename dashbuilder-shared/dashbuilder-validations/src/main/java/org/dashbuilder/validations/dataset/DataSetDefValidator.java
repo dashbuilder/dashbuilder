@@ -23,6 +23,9 @@ public class DataSetDefValidator extends DashbuilderValidator {
 
     SyncBeanManager beanManager;
 
+    public DataSetDefValidator() {
+    }
+
     @Inject
     public DataSetDefValidator(SyncBeanManager beanManager) {
         this.beanManager = beanManager;
