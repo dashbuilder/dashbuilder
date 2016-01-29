@@ -33,6 +33,9 @@ public class ClientIntervalBuilderLocator implements IntervalBuilderLocator {
     ClientIntervalBuilderDynamicDate intervalBuilderDynamicDate;
     IntervalBuilderFixedDate intervalBuilderFixedDate;
 
+    public ClientIntervalBuilderLocator() {
+    }
+
     @Inject
     public ClientIntervalBuilderLocator(IntervalBuilderDynamicLabel intervalBuilderDynamicLabel,
                                         ClientIntervalBuilderDynamicDate intervalBuilderDynamicDate,

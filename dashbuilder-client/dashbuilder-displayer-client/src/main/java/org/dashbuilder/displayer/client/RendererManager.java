@@ -46,6 +46,9 @@ public class RendererManager {
     private Map<DisplayerType, List<RendererLibrary>> renderersByType = new EnumMap<DisplayerType, List<RendererLibrary>>(DisplayerType.class);
     private Map<DisplayerSubType, List<RendererLibrary>> renderersBySubType = new EnumMap<DisplayerSubType, List<RendererLibrary>>(DisplayerSubType.class);
 
+    public RendererManager() {
+    }
+
     @Inject
     public RendererManager(SyncBeanManager beanManager) {
         this.beanManager = beanManager;

@@ -20,6 +20,9 @@ public class LoadingBox {
 
     View view;
 
+    public LoadingBox() {
+    }
+
     @Inject
     public LoadingBox(View view) {
         this.view = view;

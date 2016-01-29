@@ -43,6 +43,9 @@ public class PerspectiveCoordinator {
      */
     boolean editOn = false;
 
+    public PerspectiveCoordinator() {
+    }
+
     @Inject
     public PerspectiveCoordinator(DisplayerCoordinator coordinator) {
         this.displayerCoordinator = coordinator;
