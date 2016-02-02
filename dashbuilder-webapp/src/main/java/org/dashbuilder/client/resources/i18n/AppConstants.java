@@ -44,6 +44,56 @@ public interface AppConstants extends Messages {
 
     String menu_extensions_apps();
 
+    String home_intro();
+
+    String home_upcoming();
+
+    String home_feature1();
+
+    String home_feature2();
+
+    String home_feature3();
+
+    String home_feature4();
+
+    String home_feature5();
+
+    String home_feature6();
+
+    String home_feature7();
+
+    String home_feature8();
+
+    String home_feature9();
+
+    String home_feature10();
+
+    String home_feature11();
+
+    String home_feature12();
+
+    String home_feature13();
+
+    String home_arch();
+
+    String home_arch1();
+
+    String home_arch2();
+
+    String home_arch3();
+
+    String home_arch4();
+
+    String home_arch5();
+
+    String home_arch6a();
+
+    String home_arch6b();
+
+    String home_furtherinfo();
+
+    String home_license();
+
     String notification_dashboard_created(String id);
 
     String notification_dashboard_deleted(String id);
@@ -102,6 +152,16 @@ public interface AppConstants extends Messages {
     String expensesdb_table_column4();
 
     String expensesdb_table_column5();
+
+    String gallerytree_home();
+
+    String gallerytree_home_p1();
+
+    String gallerytree_home_s2a();
+
+    String gallerytree_home_s2b();
+
+    String gallerytree_home_ghublink();
 
     String gallerytree_title();
 
