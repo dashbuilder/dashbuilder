@@ -398,16 +398,16 @@ public class DataSetDefJSONMarshaller {
 
         // Specific provider.
         if (dataSetDef instanceof BeanDataSetDef) {
-            toJsonObject(((BeanDataSetDef)dataSetDef), json);
+            toJsonObject((BeanDataSetDef)dataSetDef, json);
         } 
         else if (dataSetDef instanceof CSVDataSetDef) {
-            toJsonObject(((CSVDataSetDef)dataSetDef), json);
+            toJsonObject((CSVDataSetDef)dataSetDef, json);
         } 
         else if (dataSetDef instanceof SQLDataSetDef) {
-            toJsonObject(((SQLDataSetDef)dataSetDef), json);
+            toJsonObject((SQLDataSetDef)dataSetDef, json);
         } 
         else if (dataSetDef instanceof ElasticSearchDataSetDef) {
-            toJsonObject(((ElasticSearchDataSetDef)dataSetDef), json);
+            toJsonObject((ElasticSearchDataSetDef)dataSetDef, json);
         }
         
         // Data columns.

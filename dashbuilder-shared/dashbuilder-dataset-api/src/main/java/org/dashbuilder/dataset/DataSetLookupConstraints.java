@@ -216,9 +216,9 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
             ColumnType columnType = metadata.getColumnType(gf.getSourceId());
             if (i < types.length && !columnType.equals(types[i])) {
 
-                boolean isGroupColumn = (columnGroup != null && columnGroup.getSourceId().equals(gf.getSourceId()));
-                boolean isGroupLabel = (isGroupColumn && types[i].equals(ColumnType.LABEL));
-                boolean isFunctionColumn = (gf.getFunction() != null && !columnType.equals(ColumnType.NUMBER));
+                boolean isGroupColumn = columnGroup != null && columnGroup.getSourceId().equals(gf.getSourceId());
+                boolean isGroupLabel = isGroupColumn && types[i].equals(ColumnType.LABEL);
+                boolean isFunctionColumn = gf.getFunction() != null && !columnType.equals(ColumnType.NUMBER);
 
                 if (!isGroupLabel && !isFunctionColumn) {
                     return createValidationError(ERROR_COLUMN_TYPE, i, types[i], columnType);

@@ -51,7 +51,7 @@ public class MemSizeEstimator {
 
     public static int sizeOf(Class clazz) {
         Integer size = sizeOfMap.get(clazz);
-        return (size != null ? size : 0);
+        return size != null ? size : 0;
     }
 
     public static int sizeOf(Object o) {
