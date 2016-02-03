@@ -22,11 +22,14 @@ import javax.inject.Inject;
 import com.google.gwt.dom.client.AnchorElement;
 import com.google.gwt.dom.client.ParagraphElement;
 import com.google.gwt.dom.client.SpanElement;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import org.dashbuilder.client.resources.AppResource;
 import org.dashbuilder.client.resources.i18n.AppConstants;
+import org.gwtbootstrap3.client.ui.html.Paragraph;
+import org.gwtbootstrap3.client.ui.html.Span;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
@@ -43,19 +46,19 @@ public class GalleryHomeScreen extends Composite {
 
     @Inject
     @DataField
-    private ParagraphElement paragraph1;
+    private Paragraph paragraph1;
 
     @Inject
     @DataField
-    private SpanElement span2a;
+    private Span span2a;
 
     @Inject
     @DataField
-    private SpanElement span2b;
+    private Span span2b;
 
     @Inject
     @DataField
-    private AnchorElement gitHubLink;
+    private Anchor gitHubLink;
 
     @WorkbenchPartTitle
     public String getScreenTitle() {
@@ -66,9 +69,9 @@ public class GalleryHomeScreen extends Composite {
     void doLayout() {
         Image image = new Image(AppResource.INSTANCE.images().barChartLogo());
         galleryImagePanel.add(image);
-        paragraph1.setInnerText(AppConstants.INSTANCE.gallerytree_home_p1());
-        span2a.setInnerText(AppConstants.INSTANCE.gallerytree_home_s2a());
-        span2b.setInnerText(AppConstants.INSTANCE.gallerytree_home_s2b());
-        gitHubLink.setInnerText(AppConstants.INSTANCE.gallerytree_home_ghublink());
+        paragraph1.setText(AppConstants.INSTANCE.gallerytree_home_p1());
+        span2a.setText(AppConstants.INSTANCE.gallerytree_home_s2a());
+        span2b.setText(AppConstants.INSTANCE.gallerytree_home_s2b());
+        gitHubLink.setText(AppConstants.INSTANCE.gallerytree_home_ghublink());
     }
 }
