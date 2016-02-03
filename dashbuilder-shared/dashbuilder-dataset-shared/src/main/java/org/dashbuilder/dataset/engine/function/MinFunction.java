@@ -47,8 +47,7 @@ public class MinFunction extends AbstractFunction {
         }
         // Adjust to the specified precision.
         if (min == null) return 0;
-        double ret = round(min.doubleValue(), precission);
-        return ret;
+        return round(min.doubleValue(), precission);
     }
 
     public double aggregate(List values, List<Integer> rows) {
@@ -65,7 +64,6 @@ public class MinFunction extends AbstractFunction {
         }
         // Adjust to the specified precision.
         if (min == null) return 0;
-        double ret = round(min.doubleValue(), precission);
-        return ret;
+        return round(min.doubleValue(), precission);
     }
 }
