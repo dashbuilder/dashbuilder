@@ -161,7 +161,7 @@ public class ConfigurationImpl implements HibernateValidatorConfiguration, Confi
 				}
 				else {
 					List<ValidationProvider<?>> providers = providerResolver.getValidationProviders();
-					assert providers.size() != 0; // I run therefore I am
+					assert !providers.isEmpty(); // I run therefore I am
 					factory = providers.get( 0 ).buildValidatorFactory( this );
 				}
 			}

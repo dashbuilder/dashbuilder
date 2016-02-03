@@ -58,7 +58,7 @@ public final class GroupChain {
 	}
 
 	public void insertSequence(List<Group> groups) {
-		if ( groups == null || groups.size() == 0 ) {
+		if ( groups == null || groups.isEmpty() ) {
 			return;
 		}
 

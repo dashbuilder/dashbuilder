@@ -113,7 +113,7 @@ public class ConstraintTree<A extends Annotation> {
 		// main constraint. We already have to generate the message here, since the composing constraints might
 		// not have its own ConstraintValidator.
 		// Also we want to leave it open to the final ConstraintValidator to generate a custom message. 
-		if ( constraintViolations.size() > 0 && reportAsSingleViolation() ) {
+		if ( !constraintViolations.isEmpty() && reportAsSingleViolation() ) {
 			constraintViolations.clear();
 			final String message = ( String ) getDescriptor().getAttributes().get( "message" );
 			MessageAndPath messageAndPath = new MessageAndPath( message, valueContext.getPropertyPath() );
@@ -230,7 +230,7 @@ public class ConstraintTree<A extends Annotation> {
 	}
 
 	private void verifyResolveWasUnique(Type valueClass, List<Type> assignableClasses) {
-		if ( assignableClasses.size() == 0 ) {
+		if ( assignableClasses.isEmpty() ) {
 			String className = valueClass.toString();
 			if ( valueClass instanceof Class ) {
 				Class<?> clazz = ( Class<?> ) valueClass;
@@ -274,7 +274,7 @@ public class ConstraintTree<A extends Annotation> {
 	 * which are handled by at least one of the  validators for the specified constraint.
 	 */
 	private void resolveAssignableTypes(List<Type> assignableTypes) {
-		if ( assignableTypes.size() == 0 || assignableTypes.size() == 1 ) {
+		if ( assignableTypes.isEmpty() || assignableTypes.size() == 1 ) {
 			return;
 		}
 
@@ -291,7 +291,7 @@ public class ConstraintTree<A extends Annotation> {
 				}
 			}
 			assignableTypes.removeAll( typesToRemove );
-		} while ( typesToRemove.size() > 0 );
+		} while ( !typesToRemove.isEmpty() );
 	}
 
 	private <V> void initializeConstraint

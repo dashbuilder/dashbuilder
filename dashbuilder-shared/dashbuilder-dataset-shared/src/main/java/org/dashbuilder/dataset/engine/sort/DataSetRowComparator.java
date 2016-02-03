@@ -39,7 +39,7 @@ public class DataSetRowComparator implements Comparator<Integer> {
 
     public int compare(Integer row1, Integer row2) {
         // Check criteria.
-        if (columns.size() == 0) return 0;
+        if (columns.isEmpty()) return 0;
 
         // Objects must be not null arrays.
         if (row1 == null && row2 != null) return -1;
