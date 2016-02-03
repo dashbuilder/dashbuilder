@@ -100,8 +100,8 @@ public class ComparatorUtils {
         if (o1 == null && o2 != null) comp = -1;
         else if (o1 != null && o2 == null) comp = 1;
         else if (o1 == null && o2 == null) comp = 0;
-        else if (o1.size() == 0 && o2.size() > 0) comp = -1;
-        else if (o1.size() > 0 && o2.size() == 0) comp = 1;
+        else if (o1.isEmpty() && !o2.isEmpty()) comp = -1;
+        else if (!o1.isEmpty() && o2.isEmpty()) comp = 1;
         else {
             // Compare o1 elements vs o2
             int o1comp = 0;
@@ -142,8 +142,8 @@ public class ComparatorUtils {
         // Compare
         int comp = 0;
         if (obj == null && col == null) comp = 0;
-        else if (obj == null && col != null && col.size() > 0) comp = -1;
-        else if (obj != null && (col == null || col.size() == 0)) comp = 1;
+        else if (obj == null && col != null && !col.isEmpty()) comp = -1;
+        else if (obj != null && (col == null || col.isEmpty())) comp = 1;
         else {
             // Both collections have the same size.
             Iterator it = col.iterator();

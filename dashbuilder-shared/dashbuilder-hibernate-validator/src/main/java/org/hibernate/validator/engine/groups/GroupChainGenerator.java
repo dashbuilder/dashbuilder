@@ -43,7 +43,7 @@ public class GroupChainGenerator {
 	 * @return an instance of {@code GroupChain} defining the order in which validation has to occur.
 	 */
 	public GroupChain getGroupChainFor(Collection<Class<?>> groups) {
-		if ( groups == null || groups.size() == 0 ) {
+		if ( groups == null || groups.isEmpty() ) {
 			throw new IllegalArgumentException( "At least one groups has to be specified." );
 		}
 

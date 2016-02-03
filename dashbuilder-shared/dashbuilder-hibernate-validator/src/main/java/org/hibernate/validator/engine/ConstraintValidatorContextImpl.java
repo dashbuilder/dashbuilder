@@ -56,7 +56,7 @@ public class ConstraintValidatorContextImpl implements ConstraintValidatorContex
 	}
 
 	public List<MessageAndPath> getMessageAndPathList() {
-		if ( defaultDisabled && messageAndPaths.size() == 0 ) {
+		if ( defaultDisabled && messageAndPaths.isEmpty() ) {
 			throw new ValidationException(
 					"At least one custom message must be created if the default error message gets disabled."
 			);

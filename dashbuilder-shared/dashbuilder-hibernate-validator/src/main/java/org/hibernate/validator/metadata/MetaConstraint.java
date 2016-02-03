@@ -121,7 +121,7 @@ public class MetaConstraint<T, A extends Annotation> {
 		constraintTree.validateConstraints(
 				typeOfAnnotatedElement(), executionContext, valueContext, constraintViolations
 		);
-		if ( constraintViolations.size() > 0 ) {
+		if ( !constraintViolations.isEmpty() ) {
 			executionContext.addConstraintFailures( constraintViolations );
 			return false;
 		}
