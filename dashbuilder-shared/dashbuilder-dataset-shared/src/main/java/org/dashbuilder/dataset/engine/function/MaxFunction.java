@@ -46,8 +46,7 @@ public class MaxFunction extends AbstractFunction {
             if (max == null || n.doubleValue() > max.doubleValue()) max = n;
         }
         if (max == null) return 0;
-        double ret = round(max.doubleValue(), precission);
-        return ret;
+        return round(max.doubleValue(), precission);
     }
 
     public double aggregate(List values, List<Integer> rows) {
@@ -63,7 +62,6 @@ public class MaxFunction extends AbstractFunction {
             if (max == null || n.doubleValue() > max.doubleValue()) max = n;
         }
         if (max == null) return 0;
-        double ret = round(max.doubleValue(), precission);
-        return ret;
+        return round(max.doubleValue(), precission);
     }
 }
