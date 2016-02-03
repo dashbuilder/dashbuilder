@@ -208,8 +208,8 @@ public class TimeInstant {
             int month = startDate.getMonth();
             int firstMonth = firstMonthOfYear.getIndex()-1;
             int yearInc =  0;
-            if (TimeMode.BEGIN.equals(timeMode)) yearInc = (month < firstMonth ? -1 : 0);
-            else yearInc = (month < firstMonth ? 0 : 1);
+            if (TimeMode.BEGIN.equals(timeMode)) yearInc = month < firstMonth ? -1 : 0;
+            else yearInc = month < firstMonth ? 0 : 1;
 
             startDate.setYear(startDate.getYear() + yearInc);
             startDate.setMonth(firstMonth);
@@ -224,7 +224,7 @@ public class TimeInstant {
             int yearInc = 0;
             int monthInc = 3;
             if (TimeMode.BEGIN.equals(timeMode)) {
-                yearInc = (firstMonth>month ? -1 : 0);
+                yearInc = firstMonth>month ? -1 : 0;
                 monthInc = 0;
             }
             startDate.setYear(startDate.getYear() + yearInc);
