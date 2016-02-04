@@ -21,10 +21,13 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
+import org.gwtbootstrap3.client.shared.event.ModalHiddenEvent;
+import org.gwtbootstrap3.client.shared.event.ModalHiddenHandler;
 import org.gwtbootstrap3.client.shared.event.ModalShownEvent;
 import org.gwtbootstrap3.client.shared.event.ModalShownHandler;
 import org.gwtbootstrap3.client.ui.ModalBody;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
+import org.uberfire.ext.widgets.common.client.common.popups.ButtonPressed;
 import org.uberfire.ext.widgets.common.client.common.popups.footers.ModalFooterOKCancelButtons;
 import org.uberfire.mvp.Command;
 
@@ -44,6 +47,8 @@ public class DisplayerEditorPopup extends BaseModal {
     private String editDisplayerTitle = CommonConstants.INSTANCE.displayer_editor_title();
     private String newDisplayerTitle = CommonConstants.INSTANCE.displayer_editor_new();
 
+    private ButtonPressed buttonPressed = ButtonPressed.CLOSE;
+
     @Inject
     public DisplayerEditorPopup(DisplayerEditor editor) {
         this.editor = editor;
@@ -53,6 +58,7 @@ public class DisplayerEditorPopup extends BaseModal {
         footer.enableOkButton(true);
         add(footer);
         setWidth(1200+"px");
+        addHiddenHandler();
     }
 
     public DisplayerEditorPopup init(DisplayerSettings settings) {
@@ -104,11 +110,27 @@ public class DisplayerEditorPopup extends BaseModal {
         }
     }
 
+    protected void addHiddenHandler() {
+        addHiddenHandler(new ModalHiddenHandler() {
+            @Override
+            public void onHidden(ModalHiddenEvent hiddenEvent) {
+                if (userPressedCloseOrCancel()) {
+                    editor.close();
+                }
+            }
+        } );
+    }
+
+    private boolean userPressedCloseOrCancel() {
+        return ButtonPressed.CANCEL.equals(buttonPressed) || ButtonPressed.CLOSE.equals(buttonPressed);
+    }
+
     protected ModalFooterOKCancelButtons createModalFooterOKCancelButtons() {
         return new ModalFooterOKCancelButtons(
                 new com.google.gwt.user.client.Command() {
                     @Override
                     public void execute() {
+                        buttonPressed = ButtonPressed.OK;
                         hide();
                         editor.save();
                     }
@@ -116,8 +138,8 @@ public class DisplayerEditorPopup extends BaseModal {
                 new com.google.gwt.user.client.Command() {
                     @Override
                     public void execute() {
+                        buttonPressed = ButtonPressed.CANCEL;
                         hide();
-                        editor.close();
                     }
                 });
     }
