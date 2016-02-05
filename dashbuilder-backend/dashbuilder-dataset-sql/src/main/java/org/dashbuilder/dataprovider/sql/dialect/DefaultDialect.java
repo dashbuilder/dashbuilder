@@ -432,8 +432,12 @@ public class DefaultDialect implements Dialect {
 
     @Override
     public String getNotEqualsToConditionSQL(String column, Object param) {
-        String paramStr = getParameterSQL(param);
-        return column + " <> " + paramStr;
+        if (param == null) {
+            return getNotNullConditionSQL(column);
+        } else {
+            String paramStr = getParameterSQL(param);
+            return column + " <> " + paramStr;
+        }
     }
 
     @Override
