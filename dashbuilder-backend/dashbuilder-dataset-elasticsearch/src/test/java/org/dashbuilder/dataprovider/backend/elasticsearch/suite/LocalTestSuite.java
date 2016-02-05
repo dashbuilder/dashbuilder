@@ -23,7 +23,8 @@ import org.slf4j.LoggerFactory;
         ElasticSearchDataSetCustomColumnsTest.class,
         ElasticSearchDataSetTest.class,
         ElasticSearchEmptyIntervalsTest.class,
-        ElasticSearchMultiFieldsTest.class
+        ElasticSearchMultiFieldsTest.class,
+        ElasticSearchEmptyArgumentsTest.class
 })
 public class LocalTestSuite {
 

@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.dataprovider.backend.sql;
 
+import java.util.Arrays;
+
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetColumnTest;
 import org.dashbuilder.dataset.DataSetFilterTest;
@@ -41,20 +43,31 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         testDataSetGroup();
         testDataSetGroupByHour();
         testDataSetNestedGroup();
+        testEmptyArguments();
+    }
+
+    public void insertNullRow() throws Exception {
+        insert(conn).into(EXPENSES)
+                .set(ID, 9999)
+                .set(CITY, null)
+                .set(DEPT, null)
+                .set(EMPLOYEE, null)
+                .set(DATE, null)
+                .set(AMOUNT, null)
+                .execute();
+    }
+
+    public void deleteNullRow() throws Exception {
+        delete(conn)
+                .from(EXPENSES)
+                .where((ID.equalsTo(9999)))
+                .execute();
     }
 
     @Test
     public void testNullValues() throws Exception {
         try {
-            insert(conn).into(EXPENSES)
-                    .set(ID, 9999)
-                    .set(CITY, null)
-                    .set(DEPT, null)
-                    .set(EMPLOYEE, null)
-                    .set(DATE, null)
-                    .set(AMOUNT, null)
-                    .execute();
-
+            insertNullRow();
             DataSet result = dataSetManager.lookupDataSet(
                     DataSetLookupFactory.newDataSetLookupBuilder()
                             .dataset(DataSetGroupTest.EXPENSE_REPORTS)
@@ -70,10 +83,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
             // assertThat(result.getValueAt(0, 5)).isNull();
         }
         finally {
-            delete(conn)
-                    .from(EXPENSES)
-                    .where((ID.equalsTo(9999)))
-                    .execute();
+            deleteNullRow();
         }
     }
 
@@ -205,6 +215,63 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         // Skip this test since MySQL,SQLServer & Sybase are non case sensitive by default
         if (!testSettings.isMySQL() && !testSettings.isSqlServer()&& !testSettings.isSybase()) {
             subTest.testLikeOperatorCaseSensitive();
+        }
+    }
+
+    /**
+     * When a function does not receive an expected argument(s),
+     * the function must be ruled out from the lookup call.
+     *
+     * See https://issues.jboss.org/browse/DASHBUILDE-90
+     */
+    @Test
+    public void testEmptyArguments() throws Exception {
+        try {
+            insertNullRow();
+            assertThat(dataSetManager.lookupDataSet(
+                    DataSetLookupFactory.newDataSetLookupBuilder()
+                            .dataset(DataSetGroupTest.EXPENSE_REPORTS)
+                            .filter(equalsTo(CITY.getName(), (Comparable) null))
+                            .buildLookup()).getRowCount()).isEqualTo(1);
+
+            assertThat(dataSetManager.lookupDataSet(
+                    DataSetLookupFactory.newDataSetLookupBuilder()
+                            .dataset(DataSetGroupTest.EXPENSE_REPORTS)
+                            .filter(equalsTo(CITY.getName(), Arrays.asList()))
+                            .buildLookup()).getRowCount()).isEqualTo(51);
+
+            assertThat(dataSetManager.lookupDataSet(
+                    DataSetLookupFactory.newDataSetLookupBuilder()
+                            .dataset(DataSetGroupTest.EXPENSE_REPORTS)
+                            .filter(notEqualsTo(CITY.getName(), null))
+                            .buildLookup()).getRowCount()).isEqualTo(50);
+
+            assertThat(dataSetManager.lookupDataSet(
+                    DataSetLookupFactory.newDataSetLookupBuilder()
+                            .dataset(DataSetGroupTest.EXPENSE_REPORTS)
+                            .filter(between(AMOUNT.getName(), null, null))
+                            .buildLookup()).getRowCount()).isEqualTo(51);
+
+            assertThat(dataSetManager.lookupDataSet(
+                    DataSetLookupFactory.newDataSetLookupBuilder()
+                            .dataset(DataSetGroupTest.EXPENSE_REPORTS)
+                            .filter(in(CITY.getName(), null))
+                            .buildLookup()).getRowCount()).isEqualTo(51);
+
+            assertThat(dataSetManager.lookupDataSet(
+                    DataSetLookupFactory.newDataSetLookupBuilder()
+                            .dataset(DataSetGroupTest.EXPENSE_REPORTS)
+                            .filter(in(CITY.getName(), Arrays.asList()))
+                            .buildLookup()).getRowCount()).isEqualTo(51);
+
+            assertThat(dataSetManager.lookupDataSet(
+                    DataSetLookupFactory.newDataSetLookupBuilder()
+                            .dataset(DataSetGroupTest.EXPENSE_REPORTS)
+                            .filter(notIn(CITY.getName(), Arrays.asList()))
+                            .buildLookup()).getRowCount()).isEqualTo(51);
+        }
+        finally {
+            deleteNullRow();
         }
     }
 }
