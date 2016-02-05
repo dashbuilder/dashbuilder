@@ -33,12 +33,13 @@ import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.bus.server.api.RpcContext;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 @Service
 public class DataSetDefServicesImpl implements DataSetDefServices {
 
-    protected Logger log;
+    protected static Logger log = LoggerFactory.getLogger(DataSetDefServicesImpl.class);
     protected User identity;
     protected ExceptionManager exceptionManager;
     protected UUIDGenerator uuidGenerator;
@@ -49,12 +50,10 @@ public class DataSetDefServicesImpl implements DataSetDefServices {
     }
 
     @Inject
-    public DataSetDefServicesImpl(Logger log,
-                                  User identity,
+    public DataSetDefServicesImpl(User identity,
                                   ExceptionManager exceptionManager,
                                   DataSetDefRegistryCDI dataSetDefRegistry,
                                   DataSetDefDeployerCDI dataSetDefDeployer) {
-        this.log = log;
         this.identity = identity;
         this.uuidGenerator = DataSetCore.get().getUuidGenerator();
         this.dataSetDefRegistry = dataSetDefRegistry;

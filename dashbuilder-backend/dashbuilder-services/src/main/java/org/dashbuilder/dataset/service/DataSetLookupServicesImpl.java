@@ -34,12 +34,13 @@ import org.dashbuilder.exception.ExceptionManager;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.bus.server.api.RpcContext;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 @Service
 public class DataSetLookupServicesImpl implements DataSetLookupServices {
 
-    protected Logger log;
+    protected static Logger log = LoggerFactory.getLogger(DataSetLookupServicesImpl.class);
     protected DataSetManagerCDI dataSetManager;
     protected UUIDGenerator uuidGenerator;
     protected DataSetDefDeployerCDI dataSetDefDeployer;
@@ -49,11 +50,9 @@ public class DataSetLookupServicesImpl implements DataSetLookupServices {
     }
 
     @Inject
-    public DataSetLookupServicesImpl(Logger log,
-                                     DataSetManagerCDI dataSetManager,
+    public DataSetLookupServicesImpl(DataSetManagerCDI dataSetManager,
                                      DataSetDefDeployerCDI dataSetDefDeployer,
                                      ExceptionManager exceptionManager) {
-        this.log = log;
         this.dataSetManager = dataSetManager;
         this.uuidGenerator = DataSetCore.get().getUuidGenerator();
         this.dataSetDefDeployer = dataSetDefDeployer;
