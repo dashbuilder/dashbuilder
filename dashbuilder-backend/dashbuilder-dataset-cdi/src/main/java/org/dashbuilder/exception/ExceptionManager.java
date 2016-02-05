@@ -20,6 +20,7 @@ import javax.inject.Inject;
 
 import org.jboss.errai.config.rebind.EnvUtil;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Handles backend exceptions.</p>
@@ -29,8 +30,7 @@ import org.slf4j.Logger;
 @ApplicationScoped
 public class ExceptionManager {
 
-    @Inject
-    private Logger log;
+    private static Logger log = LoggerFactory.getLogger(ExceptionManager.class);
     
     /**
      * <p>Return a <code>@Portable RuntimeException</code> that can be captured by client side widgets.</p>

@@ -32,6 +32,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Producer class for primitive fields annotated with @Config
@@ -39,9 +40,7 @@ import org.slf4j.Logger;
 @ApplicationScoped
 public class ConfigReader {
 
-    @Inject
-    private Logger log;
-
+    private static Logger log = LoggerFactory.getLogger(ConfigReader.class);
     private volatile Properties globalProperties;
     private volatile Map<String, Properties> beanPropertyMap;
     public static final String beansConfigFile ="META-INF/beans.config";
