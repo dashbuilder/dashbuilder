@@ -469,12 +469,18 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                 return _column.notNull();
             }
             if (CoreFunctionType.EQUALS_TO.equals(type)) {
+                if (params.isEmpty()) {
+                    return null;
+                }
                 if (params.size() == 1) {
                     return _column.equalsTo(params.get(0));
                 }
                 return _column.in(params);
             }
             if (CoreFunctionType.NOT_EQUALS_TO.equals(type)) {
+                if (params.isEmpty()) {
+                    return null;
+                }
                 if (params.size() == 1) {
                     return _column.notEquals(params.get(0));
                 }
@@ -502,7 +508,18 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                 return _column.greaterOrEquals(params.get(0));
             }
             if (CoreFunctionType.BETWEEN.equals(type)) {
-                return _column.between(params.get(0), params.get(1));
+                Object low = params.get(0);
+                Object high= params.get(1);
+                if (low == null && high == null) {
+                    return null;
+                }
+                if (low != null && high == null) {
+                    return _column.greaterOrEquals(low);
+                }
+                if (low == null && high != null) {
+                    return _column.lowerOrEquals(high);
+                }
+                return _column.between(low, high);
             }
             if (CoreFunctionType.TIME_FRAME.equals(type)) {
                 TimeFrame timeFrame = TimeFrame.parse(params.get(0).toString());
@@ -513,9 +530,15 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                 }
             }
             if (CoreFunctionType.IN.equals(type) && params instanceof List) {
+                if (params.isEmpty()) {
+                    return null;
+                }
                 return _column.inSql((List<?>)params);
             }
             if (CoreFunctionType.NOT_IN.equals(type) && params instanceof List) {
+                if (params.isEmpty()) {
+                    return null;
+                }
                 return _column.notInSql((List<?>)params);
             }
         }

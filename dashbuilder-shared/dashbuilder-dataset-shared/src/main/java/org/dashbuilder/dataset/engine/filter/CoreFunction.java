@@ -88,7 +88,7 @@ public class CoreFunction extends DataSetFunction {
             return isEqualsTo(getCurrentValue());
         }
         if (CoreFunctionType.NOT_IN.equals(type)) {
-            return  isNotEqualsTo(getCurrentValue());
+            return isNotEqualsTo(getCurrentValue());
         }
         throw new IllegalArgumentException("Core function type not supported: " + type);
     }
@@ -102,21 +102,24 @@ public class CoreFunction extends DataSetFunction {
     }
 
     public boolean compare(Comparable c1, Comparable c2) {
+        if (c1 == null && c2 == null) {
+            return true;
+        }
         if (c1 != null && c2 != null) {
             if ((c1 instanceof Number) && (c2 instanceof Number)) {
                 return ((Number) c1).doubleValue() == ((Number) c2).doubleValue();
             }
             return c1.toString().equals(c2.toString());
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     public boolean isEqualsTo(Comparable value) {
-        if (isNull(value)) {
-            return false;
+        // No parameters to compare => return true
+        if (getParameters().isEmpty()) {
+            return true;
         }
+        // At least one parameter match is required
         for (Comparable param : getParameters()) {
             if (compare(param, value)) {
                 return true;
@@ -126,6 +129,10 @@ public class CoreFunction extends DataSetFunction {
     }
 
     public boolean isNotEqualsTo(Comparable value) {
+        // No parameters to compare => return true
+        if (getParameters().isEmpty()) {
+            return true;
+        }
         return !isEqualsTo(value);
     }
 
@@ -170,42 +177,41 @@ public class CoreFunction extends DataSetFunction {
     }
     
     public boolean isLowerThan(Comparable value) {
-        if (isNull(value)) return false;
-
-        Comparable ref = getParameter(0);
-        return value.compareTo(ref) == -1;
+        return !isGreaterThanOrEqualsTo(value);
     }
 
     public boolean isLowerThanOrEqualsTo(Comparable value) {
-        if (isNull(value)) return false;
-
-        Comparable ref = getParameter(0);
-        return value.compareTo(ref) != 1;
+        return !isGreaterThan(value);
     }
 
     public boolean isGreaterThan(Comparable value) {
-        if (isNull(value)) return false;
-
+        if (value == null) {
+            return false;
+        }
         Comparable ref = getParameter(0);
-        return value.compareTo(ref) == 1;
+        return ref == null || value.compareTo(ref) == 1;
     }
 
     public boolean isGreaterThanOrEqualsTo(Comparable value) {
-        if (isNull(value)) return false;
-
         Comparable ref = getParameter(0);
-        return value.compareTo(ref) != -1;
+        if (ref == null) {
+            return true;
+        } else {
+            return value != null && value.compareTo(ref) != -1;
+        }
     }
 
     public boolean isBetween(Comparable value) {
-        if (isNull(value)) return false;
-
         Comparable low = getParameter(0);
         Comparable high = getParameter(1);
-        if (value.compareTo(low) == -1) {
+
+        if (value == null) {
+            return low == null;
+        }
+        if (low != null && value.compareTo(low) == -1) {
             return false;
         }
-        if (value.compareTo(high) == 1) {
+        if (high != null && value.compareTo(high) == 1) {
             return false;
         }
         return true;
@@ -214,11 +220,15 @@ public class CoreFunction extends DataSetFunction {
     Map<String, TimeFrameLimits> _timeFrameExprCache = new HashMap<String, TimeFrameLimits>();
 
     public boolean timeFrame(Comparable value) {
-        if (isNull(value)) return false;
-        if (!(value instanceof Date)) return false;
+        String timeFrameExpr = getParameter(0).toString();
+        if (timeFrameExpr == null || value == null) {
+            return false;
+        }
+        if (!(value instanceof Date)) {
+            return false;
+        }
         Date target = (Date) value;
 
-        String timeFrameExpr = getParameter(0).toString();
         TimeFrameLimits timeFrameLimits = _timeFrameExprCache.get(timeFrameExpr);
         if (timeFrameLimits == null) {
             TimeFrame timeFrame = TimeFrame.parse(getParameter(0).toString());
