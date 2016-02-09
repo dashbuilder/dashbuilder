@@ -69,9 +69,10 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
         assertThat(metadata.getNumberOfColumns()).isEqualTo(3);
         assertThat(metadata.getNumberOfRows()).isEqualTo(6);
 
+        final String uuid = "expense_reports_sql";
         DataSet dataSet = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset("expense_reports_sql")
+                        .dataset(uuid)
                         .filter(COLUMN_AMOUNT, FilterFactory.lowerThan(1000))
                         .group(COLUMN_EMPLOYEE)
                         .column(COLUMN_EMPLOYEE)
@@ -79,7 +80,7 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
                         .sort(COLUMN_EMPLOYEE, SortOrder.ASCENDING)
                         .buildLookup());
 
-        //printDataSet(dataSet);
+        assertDataSetDefinition(dataSet, uuid);
         assertDataSetValues(dataSet, dataSetFormatter, new String[][]{
                 {"Jamie Gilbeau", "792.59"},
                 {"Roxie Foraker", "1,020.45"}
@@ -100,9 +101,10 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
             assertThat(metadata.getEstimatedSize()).isEqualTo(4300);
         }
 
+        final String uuid = "expense_reports_columnset";
         DataSet dataSet = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset("expense_reports_columnset")
+                        .dataset(uuid)
                         .buildLookup());
 
         assertThat(dataSet.getColumns().size()).isEqualTo(4);
@@ -110,6 +112,7 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
         assertThat(dataSet.getValueAt(0, 1)).isEqualTo("Roxie Foraker");
         assertThat(dataSet.getValueAt(0, 2)).isEqualTo(120.35d);
         assertThat(dataSetFormatter.formatValueAt(dataSet, 0, 3)).isEqualTo("12/11/15 12:00");
+        assertDataSetDefinition(dataSet, uuid);
     }
 
     @Test
@@ -120,7 +123,8 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
         SQLDataSetDef def = (SQLDataSetDef) jsonMarshaller.fromJson(json);
         dataSetDefRegistry.registerDataSetDef(def);
 
-        DataSetMetadata metadata = dataSetManager.getDataSetMetadata("expense_reports_filtered");
+        final String uuid = "expense_reports_filtered";
+        DataSetMetadata metadata = dataSetManager.getDataSetMetadata(uuid);
         assertThat(metadata.getNumberOfColumns()).isEqualTo(4);
         if (!testSettings.isMonetDB()) {
             assertThat(metadata.getEstimatedSize()).isEqualTo(516);
@@ -128,7 +132,7 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
 
         DataSet dataSet = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset("expense_reports_filtered")
+                        .dataset(uuid)
                         .group(COLUMN_DEPARTMENT)
                         .column(COLUMN_DEPARTMENT)
                         .column(COLUMN_EMPLOYEE)
@@ -136,7 +140,7 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
                         .sort(COLUMN_DEPARTMENT, SortOrder.DESCENDING)
                         .buildLookup());
 
-        //printDataSet(dataSet);
+        assertDataSetDefinition(dataSet, uuid);
         assertDataSetValues(dataSet, dataSetFormatter, new String[][]{
                 {"Services", "Jamie Gilbeau", "792.59"},
                 {"Engineering", "Roxie Foraker", "2,120.55"}
@@ -144,7 +148,7 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
 
         dataSet = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
-                        .dataset("expense_reports_filtered")
+                        .dataset(uuid)
                         .filter(COLUMN_ID, FilterFactory.lowerThan(4))
                         .group(COLUMN_DEPARTMENT)
                         .column(COLUMN_DEPARTMENT)
@@ -152,9 +156,15 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
                         .column(COLUMN_AMOUNT, AggregateFunctionType.SUM)
                         .buildLookup());
 
-        //printDataSet(dataSet);
+        assertDataSetDefinition(dataSet, uuid);
         assertDataSetValues(dataSet, dataSetFormatter, new String[][]{
                 {"Engineering", "Roxie Foraker", "2,120.55"}
         }, 0);
+    }
+
+    public static void assertDataSetDefinition(final DataSet dataSet, final String uuid) {
+        assertThat(dataSet.getUUID()).isEqualTo(uuid);
+        assertThat(dataSet.getDefinition()).isNotNull();
+        assertThat(dataSet.getDefinition().getUUID()).isEqualTo(uuid);
     }
 }

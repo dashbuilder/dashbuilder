@@ -993,6 +993,8 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
 
         protected DataSet _buildDataSet(List<DataColumn> columns, ResultSet _rs) throws Exception {
             DataSet dataSet = DataSetFactory.newEmptyDataSet();
+            dataSet.setUUID(def.getUUID());
+            dataSet.setDefinition(def);
             DataColumn dateGroupColumn = null;
             boolean dateIncludeEmptyIntervals = false;
 
@@ -1071,6 +1073,8 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
             if (!postProcessingOps.isEmpty()) {
                 DataSet tempSet = opEngine.execute(dataSet, postProcessingOps);
                 dataSet = dataSet.cloneEmpty();
+                dataSet.setUUID(def.getUUID());
+                dataSet.setDefinition(def);
                 for (int i=0; i<columns.size(); i++) {
                     DataColumn source = tempSet.getColumnByIndex(i);
                     DataColumn target = dataSet.getColumnByIndex(i);
