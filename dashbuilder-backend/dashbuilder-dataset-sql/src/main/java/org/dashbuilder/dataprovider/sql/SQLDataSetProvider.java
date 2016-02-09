@@ -323,6 +323,15 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
 
     protected transient Map<String,MetadataHolder> _metadataMap = new HashMap<String,MetadataHolder>();
 
+    protected Column _getDbColumn(Collection<Column> dbColumns, String columnId) {
+        for (Column dbColumn: dbColumns) {
+            if (dbColumn.getName().equalsIgnoreCase(columnId)) {
+                return dbColumn;
+            }
+        }
+        return null;
+    }
+
     protected DataSetMetadata _getDataSetMetadata(SQLDataSetDef def, Connection conn, boolean isTestMode) throws Exception {
         if (!isTestMode) {
             MetadataHolder result = _metadataMap.get(def.getUUID());
@@ -333,22 +342,25 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
 
         int estimatedSize = 0;
         int rowCount = _getRowCount(def, conn);
-        List<String> columnIds = new ArrayList<String>();
-        List<ColumnType> columnTypes = new ArrayList<ColumnType>();
+        Collection<Column> dbColumns = _getColumns(def, conn);
+        List<String> dbColumnIds = new ArrayList<>();
+        List<ColumnType> columnTypes = new ArrayList<>();
 
         if (def.getColumns() != null) {
             for (DataColumnDef column : def.getColumns()) {
-                String columnId = JDBCUtils.fixCase(conn, column.getId());
-                columnIds.add(columnId);
+                Column dbColumn = _getDbColumn(dbColumns, column.getId());
+                if (dbColumn == null) {
+                    throw new IllegalArgumentException("The DataSetDef's column does not exist in DB: " + column.getId());
+                }
+                dbColumnIds.add(dbColumn.getName());
                 columnTypes.add(column.getColumnType());
             }
         }
 
-        Collection<Column> _columns = _getColumns(def, conn);
-        for (Column _column : _columns) {
+        for (Column dbColumn : dbColumns) {
 
-            String columnId = _column.getName();
-            int columnIdx = columnIds.indexOf(columnId);
+            String dbColumnId = dbColumn.getName();
+            int columnIdx = dbColumnIds.indexOf(dbColumnId);
             boolean columnExists  = columnIdx != -1;
 
             // Add or skip non-existing columns depending on the data set definition.
@@ -356,9 +368,9 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
 
                 // Add any table column
                 if (def.isAllColumnsEnabled()) {
-                    columnIds.add(columnId);
-                    columnIdx = columnIds.size()-1;
-                    columnTypes.add(_column.getType());
+                    dbColumnIds.add(dbColumnId);
+                    columnIdx = dbColumnIds.size()-1;
+                    columnTypes.add(dbColumn.getType());
                 }
                 // Skip non existing columns
                 else {
@@ -375,17 +387,20 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                 estimatedSize += MemSizeEstimator.sizeOf(Double.class) * rowCount;
             }
             else {
-                int length = _column.getLength();
+                int length = dbColumn.getLength();
                 estimatedSize += length/2 * rowCount;
             }
         }
-        if (columnIds.isEmpty()) {
-            throw new IllegalArgumentException("No data set columns defined for the table '" + def.getDbTable() +
-                    " in database '" + def.getDataSource()+ "'");
+
+        // Ensure the column set is valid
+        if (dbColumnIds.isEmpty()) {
+            throw new IllegalArgumentException("No data set columns found: " + def);
         }
+
+        // Register the metadata instance
         MetadataHolder result = new MetadataHolder();
-        result.columns = _columns;
-        result.metadata = new DataSetMetadataImpl(def, def.getUUID(), rowCount, columnIds.size(), columnIds, columnTypes, estimatedSize);
+        result.columns = dbColumns;
+        result.metadata = new DataSetMetadataImpl(def, def.getUUID(), rowCount, dbColumnIds.size(), dbColumnIds, columnTypes, estimatedSize);
         if (!isTestMode) {
             final boolean isDefRegistered = def.getUUID() != null && dataSetDefRegistry.getDataSetDef(def.getUUID()) != null;
             if (isDefRegistered) {
@@ -778,7 +793,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                     if (cg != null && cg.getSourceId().equals(sourceId) && gf.getFunction() == null) {
                         column.setColumnType(ColumnType.LABEL);
                         column.setColumnGroup(cg);
-                        if (ColumnType.DATE.equals(_getColumnType(sourceId))) {
+                        if (ColumnType.DATE.equals(metadata.getColumnType(sourceId))) {
                             column.setIntervalType(dateIntervalType != null ? dateIntervalType.toString() : null);
                             column.setMinValue(dateLimits != null ? dateLimits[0] : null);
                             column.setMaxValue(dateLimits != null ? dateLimits[1] : null);
@@ -790,7 +805,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                     }
                     // Existing Column
                     else {
-                        column.setColumnType(_getColumnType(sourceId));
+                        column.setColumnType(metadata.getColumnType(sourceId));
                     }
                 }
             }
@@ -815,8 +830,12 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
 
         protected boolean isDynamicDateGroup(DataSetGroup groupOp) {
             ColumnGroup cg = groupOp.getColumnGroup();
-            if (!ColumnType.DATE.equals(_getColumnType(cg.getSourceId()))) return false;
-            if (!GroupStrategy.DYNAMIC.equals(cg.getStrategy())) return false;
+            if (!ColumnType.DATE.equals(metadata.getColumnType(cg.getSourceId()))) {
+                return false;
+            }
+            if (!GroupStrategy.DYNAMIC.equals(cg.getStrategy())) {
+                return false;
+            }
             return true;
         }
 
@@ -1007,7 +1026,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
 
                 if (ColumnType.LABEL.equals(columnType)) {
                     ColumnGroup cg = column.getColumnGroup();
-                    if (cg != null && ColumnType.DATE.equals(_getColumnType(cg.getSourceId()))) {
+                    if (cg != null && ColumnType.DATE.equals(metadata.getColumnType(cg.getSourceId()))) {
                         dateGroupColumn = column;
                         dateIncludeEmptyIntervals = cg.areEmptyIntervalsAllowed();
 
@@ -1136,7 +1155,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
             String columnId = cg.getSourceId();
             _assertColumnExists(columnId);
 
-            ColumnType type = _getColumnType(columnId);
+            ColumnType type = metadata.getColumnType(columnId);
 
             if (ColumnType.DATE.equals(type)) {
                 DateIntervalType size = calculateDateInterval(cg);
@@ -1153,9 +1172,8 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
 
 
         protected int _assertColumnExists(String columnId) {
-            String targetId = JDBCUtils.fixCase(conn, columnId);
             for (int i = 0; i < metadata.getNumberOfColumns(); i++) {
-                if (metadata.getColumnId(i).equals(targetId)) {
+                if (metadata.getColumnId(i).equalsIgnoreCase(columnId)) {
                     return i;
                 }
             }
@@ -1165,13 +1183,10 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
 
         protected String _getTargetColumnId(GroupFunction gf) {
             String sourceId = gf.getSourceId();
-            if (sourceId != null) _assertColumnExists(sourceId);
+            if (sourceId != null) {
+                _assertColumnExists(sourceId);
+            }
             return gf.getColumnId() == null ?  sourceId : gf.getColumnId();
-        }
-
-        protected ColumnType _getColumnType(String columnId) {
-            String _col = JDBCUtils.fixCase(conn, columnId);
-            return metadata.getColumnType(_col);
         }
     }
 }

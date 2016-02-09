@@ -199,14 +199,18 @@ public class DataSetDef {
     public DataColumnDef getColumnById(final String id) {
         if (id != null && columns != null && !columns.isEmpty()) {
             for (final DataColumnDef columnDef : columns) {
-                if (columnDef.getId().equals(id)) return  columnDef;
+                if (columnDef.getId().equalsIgnoreCase(id)) {
+                    return  columnDef;
+                }
             }
         }
         return  null;
     }
 
     public boolean addColumn(final String id, final ColumnType type) {
-        if (columns == null) columns = new LinkedList<DataColumnDef>();
+        if (columns == null) {
+            columns = new LinkedList<DataColumnDef>();
+        }
         return columns.add(new DataColumnDef(id, type));
     }
 
