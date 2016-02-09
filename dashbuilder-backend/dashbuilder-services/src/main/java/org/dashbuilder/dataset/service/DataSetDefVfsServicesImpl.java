@@ -36,6 +36,7 @@ import org.uberfire.backend.vfs.Path;
 @Service
 public class DataSetDefVfsServicesImpl implements DataSetDefVfsServices {
 
+    private static final String SYSTEM = "system";
     protected User identity;
     protected DataSetDefRegistryCDI dataSetDefRegistry;
     protected DataSetManagerCDI dataSetManager;
@@ -111,7 +112,7 @@ public class DataSetDefVfsServicesImpl implements DataSetDefVfsServices {
     @Override
     public Path save(DataSetDef definition, String commitMessage) {
         dataSetDefRegistry.registerDataSetDef(definition,
-                identity != null ? identity.getIdentifier() : "system",
+                identity != null ? identity.getIdentifier() : SYSTEM,
                 commitMessage);
         return dataSetDefRegistry.resolveVfsPath(definition);
     }
@@ -124,7 +125,7 @@ public class DataSetDefVfsServicesImpl implements DataSetDefVfsServices {
                     new Exception("Data set definition not found: " + path.getFileName()));
         }
         DataSetDef clone = dataSetDefRegistry.copyDataSetDef(def, newName,
-                identity != null ? identity.getIdentifier() : "system",
+                identity != null ? identity.getIdentifier() : SYSTEM,
                 commitMessage);
         return dataSetDefRegistry.resolveVfsPath(clone);
     }
@@ -132,7 +133,7 @@ public class DataSetDefVfsServicesImpl implements DataSetDefVfsServices {
     @Override
     public void delete(Path path, String commitMessage) {
         dataSetDefRegistry.removeDataSetDef(path,
-                identity != null ? identity.getIdentifier() : "system",
+                identity != null ? identity.getIdentifier() : SYSTEM,
                 commitMessage);
     }
 }

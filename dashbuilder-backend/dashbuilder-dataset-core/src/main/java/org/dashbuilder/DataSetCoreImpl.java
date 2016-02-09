@@ -35,6 +35,8 @@ import org.dashbuilder.scheduler.Scheduler;
 
 public class DataSetCoreImpl extends DataSetCore {
 
+    private static final String STATIC_DATA_SET_PROVIDER = "StaticDataSetProvider";
+    private static final String DATA_SET_DEF_REGISTRY = "DataSetDefRegistry";
     private boolean dataSetPushEnabled = false;
     private int dataSetPushMaxSize = 1024;
     private Scheduler scheduler;
@@ -84,9 +86,9 @@ public class DataSetCoreImpl extends DataSetCore {
     public DataSetManagerImpl getDataSetManagerImpl() {
         if (dataSetManagerImpl == null) {
             dataSetManagerImpl = new DataSetManagerImpl(
-                    checkNotNull(getDataSetDefRegistry(), "DataSetDefRegistry"),
+                    checkNotNull(getDataSetDefRegistry(), DATA_SET_DEF_REGISTRY),
                     checkNotNull(getDataSetProviderRegistry(), "DataSetProviderRegistry"),
-                    checkNotNull(getStaticDataSetProvider(), "StaticDataSetProvider"),
+                    checkNotNull(getStaticDataSetProvider(), STATIC_DATA_SET_PROVIDER),
                     dataSetPushEnabled, dataSetPushMaxSize);
 
         }
@@ -105,7 +107,7 @@ public class DataSetCoreImpl extends DataSetCore {
     public DataSetProviderRegistry getDataSetProviderRegistry() {
         if (dataSetProviderRegistry == null) {
             dataSetProviderRegistry = new DataSetProviderRegistryImpl();
-            dataSetProviderRegistry.registerDataProvider(checkNotNull(getStaticDataSetProvider(), "StaticDataSetProvider"));
+            dataSetProviderRegistry.registerDataProvider(checkNotNull(getStaticDataSetProvider(), STATIC_DATA_SET_PROVIDER));
             dataSetProviderRegistry.registerDataProvider(checkNotNull(getBeanDataSetProvider(), "BeanDataSetProvider"));
         }
         return dataSetProviderRegistry;
@@ -114,7 +116,7 @@ public class DataSetCoreImpl extends DataSetCore {
     public DataSetDefDeployer getDataSetDefDeployer() {
         if (dataSetDefDeployer == null) {
             dataSetDefDeployer = new DataSetDefDeployer(
-                    checkNotNull(getDataSetDefRegistry(), "DataSetDefRegistry"));
+                    checkNotNull(getDataSetDefRegistry(), DATA_SET_DEF_REGISTRY));
         }
         return dataSetDefDeployer;
     }
@@ -137,8 +139,8 @@ public class DataSetCoreImpl extends DataSetCore {
     public BeanDataSetProvider getBeanDataSetProvider() {
         if (beanDataSetProvider == null) {
             beanDataSetProvider = new BeanDataSetProvider(
-                    checkNotNull(getStaticDataSetProvider(), "StaticDataSetProvider"),
-                    checkNotNull(getDataSetDefRegistry(), "DataSetDefRegistry"));
+                    checkNotNull(getStaticDataSetProvider(), STATIC_DATA_SET_PROVIDER),
+                    checkNotNull(getDataSetDefRegistry(), DATA_SET_DEF_REGISTRY));
         }
         return beanDataSetProvider;
     }

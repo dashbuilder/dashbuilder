@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Scheduler {
 
+    private static final String TASK = "Task ";
     private Logger log = LoggerFactory.getLogger(Scheduler.class);
 
     protected PausableThreadPoolExecutor executor;
@@ -183,7 +184,7 @@ public class Scheduler {
         if (task != null && !task.isDone() && !task.isRunning()) {
             try {
                 task.run();
-                log.debug("Task " + task + " executed.");
+                log.debug(TASK + task + " executed.");
             } finally {
                 scheduledTasks.remove(key);
                 task.cancel();
@@ -215,8 +216,8 @@ public class Scheduler {
         // Register the new task.
         task.future = executor.schedule(task, delay, TimeUnit.MILLISECONDS);
         scheduledTasks.put(task.getKey(), task);
-        if (date == null) log.debug("Task " + task + " execution requested.");
-        else log.debug("Task " + task + " scheduled to: " + date);
+        if (date == null) log.debug(TASK + task + " execution requested.");
+        else log.debug(TASK + task + " scheduled to: " + date);
     }
 
     protected void _schedule(SchedulerTask task, long seconds) {
@@ -228,7 +229,7 @@ public class Scheduler {
         task.fixedDelaySeconds = seconds;
         task.future = executor.scheduleWithFixedDelay(task, seconds, seconds, TimeUnit.SECONDS);
         scheduledTasks.put(task.getKey(), task);
-        log.debug("Task " + task + " scheduled every " + seconds + " seconds.");
+        log.debug(TASK + task + " scheduled every " + seconds + " seconds.");
     }
 
     protected void _unschedule(String key) {
@@ -236,7 +237,7 @@ public class Scheduler {
         if (task != null && !task.isDone() && !task.isRunning()) {
             task.cancel();
             _purge();
-            log.debug("Task " + task + " unscheduled.");
+            log.debug(TASK + task + " unscheduled.");
         }
     }
 
@@ -259,7 +260,7 @@ public class Scheduler {
             SchedulerTask task = it.next();
             if (task.isDone()) {
                 it.remove();
-                log.debug("Task " + task + " purged.");
+                log.debug(TASK + task + " purged.");
             }
         }
     }

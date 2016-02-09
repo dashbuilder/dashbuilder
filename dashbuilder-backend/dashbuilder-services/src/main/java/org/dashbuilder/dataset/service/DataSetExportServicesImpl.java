@@ -64,6 +64,7 @@ import org.uberfire.java.nio.file.Path;
 @Service
 public class DataSetExportServicesImpl implements DataSetExportServices {
 
+    private static final String TEXT_CELL = "text_cell";
     protected static Logger log = LoggerFactory.getLogger(DataSetExportServicesImpl.class);
     protected DataSetManagerCDI dataSetManager;
     protected DataSetDefRegistryCDI gitStorage;
@@ -196,11 +197,11 @@ public class DataSetExportServicesImpl implements DataSetExportServices {
                         cell.setCellValue((Date) value);
                     } else if (value instanceof Interval) {
                         cell.setCellType(Cell.CELL_TYPE_STRING);
-                        cell.setCellStyle(styles.get("text_cell"));
+                        cell.setCellStyle(styles.get(TEXT_CELL));
                         cell.setCellValue(((Interval) value).getName());
                     } else {
                         cell.setCellType(Cell.CELL_TYPE_STRING);
-                        cell.setCellStyle(styles.get("text_cell"));
+                        cell.setCellStyle(styles.get(TEXT_CELL));
                         cell.setCellValue(value.toString());
                     }
                 }
@@ -281,7 +282,7 @@ public class DataSetExportServicesImpl implements DataSetExportServices {
         style.setFont(cellFont);
         style.setWrapText(false);
         style.setDataFormat( (short) BuiltinFormats.getBuiltinFormat("text") );
-        styles.put("text_cell", style);
+        styles.put(TEXT_CELL, style);
 
         style = wb.createCellStyle();
         style.setAlignment(CellStyle.ALIGN_CENTER);

@@ -595,7 +595,8 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
      */
     private class LookupProcessor {
 
-        SQLDataSetDef def;
+        private static final String NOT_SUPPORTED = "' not supported";
+		SQLDataSetDef def;
         DataSetLookup lookup;
         DataSetMetadata metadata;
         Select _query;
@@ -944,11 +945,11 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
 
             // Group by Number => not supported
             if (ColumnType.NUMBER.equals(columnType)) {
-                throw new IllegalArgumentException("Group by number '" + sourceId + "' not supported");
+                throw new IllegalArgumentException("Group by number '" + sourceId + NOT_SUPPORTED);
             }
             // Group by Text => not supported
             if (ColumnType.TEXT.equals(columnType)) {
-                throw new IllegalArgumentException("Group by text '" + sourceId + "' not supported");
+                throw new IllegalArgumentException("Group by text '" + sourceId + NOT_SUPPORTED);
             }
             // Group by Date
             else if (ColumnType.DATE.equals(columnType)) {
@@ -1166,10 +1167,10 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                 return SQLFactory.column(cg.getSourceId(), cg.getStrategy(), size);
             }
             if (ColumnType.NUMBER.equals(type)) {
-                throw new IllegalArgumentException("Group by number '" + columnId + "' not supported");
+                throw new IllegalArgumentException("Group by number '" + columnId + NOT_SUPPORTED);
             }
             if (ColumnType.TEXT.equals(type)) {
-                throw new IllegalArgumentException("Group by text '" + columnId + "' not supported");
+                throw new IllegalArgumentException("Group by text '" + columnId + NOT_SUPPORTED);
             }
             return SQLFactory.column(columnId);
         }
