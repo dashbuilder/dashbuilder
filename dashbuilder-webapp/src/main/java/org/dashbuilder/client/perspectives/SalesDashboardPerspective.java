@@ -67,7 +67,7 @@ public class SalesDashboardPerspective {
 
     private PlaceRequest createPlaceRequest(DisplayerSettings displayerSettings) {
         String json = jsonMarshaller.toJsonString(displayerSettings);
-        Map<String,String> params = new HashMap<String,String>();
+        Map<String,String> params = new HashMap<>();
         params.put("json", json);
         params.put("edit", "false");
         return new DefaultPlaceRequest("DisplayerScreen", params);

@@ -45,7 +45,7 @@ import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 @Dependent
 public class GalleryTree {
 
-    private List<GalleryTreeNode> mainNodes = new ArrayList<GalleryTreeNode>();
+    private List<GalleryTreeNode> mainNodes = new ArrayList<>();
     private DisplayerSettingsJSONMarshaller jsonMarshaller = DisplayerSettingsJSONMarshaller.get();
 
     public List<GalleryTreeNode> getMainNodes() {
@@ -68,7 +68,7 @@ public class GalleryTree {
 
     private PlaceRequest createPlaceRequest(DisplayerSettings displayerSettings) {
         String json = jsonMarshaller.toJsonString(displayerSettings);
-        Map<String,String> params = new HashMap<String,String>();
+        Map<String,String> params = new HashMap<>();
         params.put("json", json);
         params.put("edit", "false");
         params.put("showRendererSelector", "true");
@@ -76,7 +76,7 @@ public class GalleryTree {
     }
 
     private PlaceRequest createPlaceRequest(String widgetId) {
-        Map<String,String> params = new HashMap<String,String>();
+        Map<String,String> params = new HashMap<>();
         params.put("widgetId", widgetId);
         return new DefaultPlaceRequest("GalleryWidgetScreen", params);
     }

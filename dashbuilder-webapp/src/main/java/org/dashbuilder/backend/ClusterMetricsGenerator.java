@@ -42,8 +42,8 @@ public class ClusterMetricsGenerator implements DataSetGenerator {
     
     DataSet dataSet = null;
     long timeFrameMillis = 100000;
-    List<String> aliveNodes = new ArrayList<String>();
-    List<String> overloadedNodes = new ArrayList<String>();
+    List<String> aliveNodes = new ArrayList<>();
+    List<String> overloadedNodes = new ArrayList<>();
 
     public ClusterMetricsGenerator() {
         dataSet = DataSetFactory.newDataSetBuilder()
@@ -278,7 +278,7 @@ public class ClusterMetricsGenerator implements DataSetGenerator {
 
     public static void main(String[] args) throws Exception {
         ClusterMetricsGenerator g = new ClusterMetricsGenerator();
-        Map<String,String> params = new HashMap<String, String>();
+        Map<String,String> params = new HashMap<>();
         params.put("aliveNodes", "server1");
         params.put("timeFrame", "10second");
         System.out.println("************* Single node not overloaded *******************************");
@@ -290,7 +290,7 @@ public class ClusterMetricsGenerator implements DataSetGenerator {
 
         System.out.println("************* Two nodes and the second one overloaded *******************************");
         g = new ClusterMetricsGenerator();
-        params = new HashMap<String, String>();
+        params = new HashMap<>();
         params.put("aliveNodes", "server1,server2");
         params.put("overloadedNodes", "server2");
         params.put("timeFrame", "10second");
