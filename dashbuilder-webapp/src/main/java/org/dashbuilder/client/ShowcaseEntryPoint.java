@@ -101,13 +101,13 @@ public class ShowcaseEntryPoint {
     }
 
     private List<? extends MenuItem> getAuthoringMenuItems() {
-        final List<MenuItem> result = new ArrayList<MenuItem>(2);
+        final List<MenuItem> result = new ArrayList<>(2);
         result.add(newMenuItem(AppConstants.INSTANCE.menu_dataset_authoring(), "DataSetAuthoringPerspective"));
         return result;
     }
 
     private List<? extends MenuItem> getDashboardMenuItems() {
-        final List<MenuItem> result = new ArrayList<MenuItem>(2);
+        final List<MenuItem> result = new ArrayList<>(2);
 
         // Add the new dashboard creation link
         result.add(MenuFactory.newSimpleItem(AppConstants.INSTANCE.menu_dashboards_new())
@@ -156,7 +156,7 @@ public class ShowcaseEntryPoint {
     }
 
     private List<? extends MenuItem> getExtensionsMenuItems() {
-        final List<MenuItem> result = new ArrayList<MenuItem>(2);
+        final List<MenuItem> result = new ArrayList<>(2);
         result.add(newMenuItem(AppConstants.INSTANCE.menu_extensions_plugins(), "PlugInAuthoringPerspective"));
         result.add(newMenuItem(AppConstants.INSTANCE.menu_extensions_apps(), "AppsPerspective"));
         return result;

@@ -100,12 +100,12 @@ public class DashboardManager {
 
         SyncBeanManagerImpl beanManager = (SyncBeanManagerImpl) IOC.getBeanManager();
         final SyncBeanDef<PerspectiveActivity> beanDef =
-                new SingletonBeanDef<PerspectiveActivity, DashboardPerspectiveActivity>(activity,
-                                                                                        PerspectiveActivity.class,
-                                                                                        new HashSet<Annotation>( Arrays.asList( DEFAULT_QUALIFIERS ) ),
-                                                                                        id,
-                                                                                        true,
-                                                                                        true );
+                new SingletonBeanDef<>(activity,
+                                       PerspectiveActivity.class,
+                                       new HashSet<Annotation>( Arrays.asList( DEFAULT_QUALIFIERS ) ),
+                                       id,
+                                       true,
+                                       true );
         beanManager.registerBean( beanDef );
         activityBeansCache.addNewPerspectiveActivity(beanManager.lookupBeans(id).iterator().next());
         return activity;
@@ -145,7 +145,7 @@ public class DashboardManager {
     }
 
     public Set<DashboardPerspectiveActivity> getDashboards() {
-        Set<DashboardPerspectiveActivity> activities = new HashSet<DashboardPerspectiveActivity>();
+        Set<DashboardPerspectiveActivity> activities = new HashSet<>();
         for (String activityId : activityBeansCache.getActivitiesById()) {
 
             SyncBeanDef<Activity> activityDef = activityBeansCache.getActivity(activityId);

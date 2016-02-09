@@ -91,8 +91,8 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
     @UiField(provided = true)
     Displayer metricsTable;
 
-    List<ClusterMetric> metricDefList = new ArrayList<ClusterMetric>();
-    Map<String,List<Integer>> metricChartDef = new HashMap<String, List<Integer>>();
+    List<ClusterMetric> metricDefList = new ArrayList<>();
+    Map<String,List<Integer>> metricChartDef = new HashMap<>();
     DisplayerCoordinator displayerCoordinator;
     DisplayerLocator displayerLocator;
     Displayer currentMetricChart = null;
