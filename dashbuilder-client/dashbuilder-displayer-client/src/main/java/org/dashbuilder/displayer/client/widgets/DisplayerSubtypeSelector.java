@@ -75,7 +75,7 @@ public class DisplayerSubtypeSelector implements IsWidget {
         RendererLibrary rendererLibrary = rendererManager.getRendererForType(type);
         if (rendererLibrary != null) {
             List<DisplayerSubType> supportedSubTypes = rendererLibrary.getSupportedSubtypes(type);
-            if (supportedSubTypes != null && supportedSubTypes.size() > 0) {
+            if (supportedSubTypes != null && !supportedSubTypes.isEmpty()) {
                 for (int i = 0; i < supportedSubTypes.size(); i++) {
                     DisplayerSubType subtype = supportedSubTypes.get(i);
 

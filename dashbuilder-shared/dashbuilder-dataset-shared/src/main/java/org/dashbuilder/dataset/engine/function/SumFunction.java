@@ -45,8 +45,7 @@ public class SumFunction extends AbstractFunction {
             if (n == null) continue;
             sum += n.doubleValue();
         }
-        double ret = round(sum, precission);
-        return ret;
+        return round(sum, precission);
     }
 
     public double aggregate(List values, List<Integer> rows) {
@@ -61,7 +60,6 @@ public class SumFunction extends AbstractFunction {
             if (n == null) continue;
             sum += n.doubleValue();
         }
-        double ret = round(sum, precission);
-        return ret;
+        return round(sum, precission);
     }
 }

@@ -56,7 +56,7 @@ public class ElementDescriptorImpl implements ElementDescriptor {
 	}
 
 	public boolean hasConstraints() {
-		return constraintDescriptors.size() != 0;
+		return !constraintDescriptors.isEmpty();
 	}
 
 	public Class<?> getElementClass() {
@@ -134,7 +134,7 @@ public class ElementDescriptorImpl implements ElementDescriptor {
 		}
 
 		public boolean hasConstraints() {
-			return getConstraintDescriptors().size() != 0;
+			return !getConstraintDescriptors().isEmpty();
 		}
 
 		private void addMatchingDescriptorsForGroup(Class<?> group, Set<ConstraintDescriptor<?>> matchingDescriptors) {

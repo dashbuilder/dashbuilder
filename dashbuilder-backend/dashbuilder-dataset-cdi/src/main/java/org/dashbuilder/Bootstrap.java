@@ -28,6 +28,7 @@ import org.dashbuilder.dataset.DataSetManagerCDI;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.scheduler.SchedulerCDI;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.uberfire.commons.services.cdi.Startup;
 
 /**
@@ -37,8 +38,7 @@ import org.uberfire.commons.services.cdi.Startup;
 @Startup
 public class Bootstrap {
 
-    @Inject
-    protected Logger log;
+    protected static Logger log = LoggerFactory.getLogger(Bootstrap.class);
 
     @Inject
     protected SchedulerCDI scheduler;

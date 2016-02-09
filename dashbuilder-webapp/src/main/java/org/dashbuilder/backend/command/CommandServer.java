@@ -27,6 +27,7 @@ import javax.inject.Inject;
 
 import org.dashbuilder.config.Config;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.uberfire.commons.services.cdi.Startup;
 
 /**
@@ -37,11 +38,10 @@ import org.uberfire.commons.services.cdi.Startup;
 @Startup
 public class CommandServer implements Runnable {
 
+    private static Logger log = LoggerFactory.getLogger(CommandServer.class);
+
     @Inject @Config("10000")
     private int portNumber;
-
-    @Inject
-    private Logger log;
 
     @Inject
     private Event<CommandEvent> commandEvent;

@@ -477,6 +477,85 @@ public class DataSetFilterTest {
 
     }
 
+    /**
+     * When a function does not receive an expected argument(s),
+     * the function must be ruled out from the lookup call.
+     *
+     * See https://issues.jboss.org/browse/DASHBUILDE-90
+     */
+    @Test
+    public void testEmptyArguments() throws Exception {
+        // Insert a null entry into the dataset
+        DataSet expensesDataSet = dataSetManager.getDataSet(EXPENSE_REPORTS);
+        expensesDataSet.addValuesAt(0, null, null, null, null, null, null);
+
+        assertThat(dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(equalsTo(COLUMN_CITY, (Comparable) null))
+                        .buildLookup()).getRowCount()).isEqualTo(1);
+
+        assertThat(dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(equalsTo(COLUMN_CITY, Arrays.asList()))
+                        .buildLookup()).getRowCount()).isEqualTo(51);
+
+        assertThat(dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(notEqualsTo(COLUMN_CITY, null))
+                        .buildLookup()).getRowCount()).isEqualTo(50);
+
+        assertThat(dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(greaterThan(COLUMN_AMOUNT, null))
+                        .buildLookup()).getRowCount()).isEqualTo(50);
+
+        assertThat(dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(greaterOrEqualsTo(COLUMN_AMOUNT, null))
+                        .buildLookup()).getRowCount()).isEqualTo(51);
+
+        assertThat(dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(lowerThan(COLUMN_AMOUNT, null))
+                        .buildLookup()).getRowCount()).isEqualTo(0);
+
+        assertThat(dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(lowerOrEqualsTo(COLUMN_AMOUNT, null))
+                        .buildLookup()).getRowCount()).isEqualTo(1);
+
+        assertThat(dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(between(COLUMN_AMOUNT, null, null))
+                        .buildLookup()).getRowCount()).isEqualTo(51);
+
+        assertThat(dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(in(COLUMN_CITY, null))
+                        .buildLookup()).getRowCount()).isEqualTo(51);
+
+        assertThat(dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(in(COLUMN_CITY, Arrays.asList()))
+                        .buildLookup()).getRowCount()).isEqualTo(51);
+
+        assertThat(dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .filter(notIn(COLUMN_CITY, Arrays.asList()))
+                        .buildLookup()).getRowCount()).isEqualTo(51);
+    }
+
     private void printDataSet(DataSet dataSet) {
         System.out.print(dataSetFormatter.formatDataSet(dataSet, "{", "}", ",\n", "\"", "\"", ", ") + "\n\n");
     }

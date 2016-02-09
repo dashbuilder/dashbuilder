@@ -112,7 +112,7 @@ public class PathImpl implements Path, Serializable {
 	}
 
 	public Node removeLeafNode() {
-		if ( nodeList.size() == 0 ) {
+		if ( nodeList.isEmpty() ) {
 			throw new IllegalStateException( "No nodes in path!" );
 		}
 		if ( nodeList.size() == 1 ) {
@@ -122,7 +122,7 @@ public class PathImpl implements Path, Serializable {
 	}
 
 	public NodeImpl getLeafNode() {
-		if ( nodeList.size() == 0 ) {
+		if ( nodeList.isEmpty() ) {
 			throw new IllegalStateException( "No nodes in path!" );
 		}
 		return ( NodeImpl ) nodeList.get( nodeList.size() - 1 );

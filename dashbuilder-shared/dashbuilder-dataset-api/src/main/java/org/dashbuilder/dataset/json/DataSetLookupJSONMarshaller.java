@@ -144,7 +144,7 @@ public class DataSetLookupJSONMarshaller {
     }
 
     public JsonArray formatFilterOperations(List<DataSetFilter> filterOps) throws JsonException {
-        if ( filterOps.size() == 0 ) {
+        if ( filterOps.isEmpty() ) {
             return null;
         }
         // There should be only one DataSetFilter
@@ -190,7 +190,7 @@ public class DataSetLookupJSONMarshaller {
     }
 
     public JsonArray formatGroupOperations(List<DataSetGroup> groupOps) throws JsonException {
-        if (groupOps.size() == 0) {
+        if (groupOps.isEmpty()) {
             return null;
         }
         JsonArray groupOpsJsonArray = Json.createArray();
@@ -231,7 +231,7 @@ public class DataSetLookupJSONMarshaller {
     }
 
     public JsonArray formatGroupFunctions(List<GroupFunction> groupFunctions) throws JsonException {
-        if (groupFunctions.size() == 0) {
+        if (groupFunctions.isEmpty()) {
             return null;
         }
         JsonArray groupOpsJsonArray = Json.createArray();
@@ -254,7 +254,7 @@ public class DataSetLookupJSONMarshaller {
     }
 
     public JsonArray formatSelectedIntervals(List<Interval> selectedIntervalList) throws JsonException {
-        if (selectedIntervalList.size() == 0) {
+        if (selectedIntervalList.isEmpty()) {
             return null;
         }
         JsonArray selectedIntervalNamesJsonArray = Json.createArray();
@@ -285,7 +285,7 @@ public class DataSetLookupJSONMarshaller {
     }
 
     public JsonArray formatSortOperations(List<DataSetSort> sortOps) throws JsonException {
-        if (sortOps.size() == 0) {
+        if (sortOps.isEmpty()) {
             return null;
         }
         // There should be only one DataSetFilter
@@ -293,7 +293,7 @@ public class DataSetLookupJSONMarshaller {
     }
 
     public JsonArray formatColumnSorts(List<ColumnSort> columnSorts) throws JsonException {
-        if (columnSorts.size() == 0) {
+        if (columnSorts.isEmpty()) {
             return null;
         }
         JsonArray columnSortsJsonArray = Json.createArray();

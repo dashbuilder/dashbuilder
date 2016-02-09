@@ -476,7 +476,7 @@ public class ValidatorImpl implements Validator {
 			throw new IllegalArgumentException( "Invalid property path." );
 		}
 
-		if ( metaConstraints.size() == 0 ) {
+		if ( metaConstraints.isEmpty() ) {
 			return;
 		}
 
@@ -570,7 +570,7 @@ public class ValidatorImpl implements Validator {
 		Set<MetaConstraint<T, ?>> metaConstraints = new HashSet<MetaConstraint<T, ?>>();
 		collectMetaConstraintsForPath( beanType, null, propertyPath.iterator(), metaConstraints );
 
-		if ( metaConstraints.size() == 0 ) {
+		if ( metaConstraints.isEmpty() ) {
 			return;
 		}
 

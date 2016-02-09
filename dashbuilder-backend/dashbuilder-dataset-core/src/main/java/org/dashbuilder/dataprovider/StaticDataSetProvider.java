@@ -38,6 +38,9 @@ public class StaticDataSetProvider implements DataSetProvider {
 
     private SharedDataSetOpEngine dataSetOpEngine;
 
+    public StaticDataSetProvider() {
+    }
+
     public StaticDataSetProvider(SharedDataSetOpEngine dataSetOpEngine) {
         this.dataSetOpEngine = dataSetOpEngine;
     }

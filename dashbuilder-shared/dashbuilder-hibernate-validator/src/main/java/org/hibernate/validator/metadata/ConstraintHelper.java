@@ -161,7 +161,7 @@ public class ConstraintHelper {
 	public List<Class<? extends ConstraintValidator<? extends Annotation, ?>>> getBuiltInConstraints(Class<? extends Annotation> annotationClass) {
 		final List<Class<? extends ConstraintValidator<?, ?>>> builtInList = builtinConstraints.get( annotationClass );
 
-		if ( builtInList == null || builtInList.size() == 0 ) {
+		if ( builtInList == null || builtInList.isEmpty() ) {
 			throw new ValidationException( "Unable to find constraints for  " + annotationClass );
 		}
 

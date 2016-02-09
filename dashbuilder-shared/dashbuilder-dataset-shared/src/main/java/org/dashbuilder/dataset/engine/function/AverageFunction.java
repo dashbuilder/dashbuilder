@@ -35,8 +35,7 @@ public class AverageFunction extends SumFunction {
     public double aggregate(List values) {
         if (values == null || values.isEmpty()) return 0;
         double average = super.aggregate(values) / values.size();
-        double ret = round(average, precission);
-        return ret;
+        return round(average, precission);
     }
 
     public double aggregate(List values, List<Integer> rows) {
@@ -45,8 +44,7 @@ public class AverageFunction extends SumFunction {
         if (values == null || values.isEmpty()) return 0;
 
         double average = super.aggregate(values, rows) / rows.size();
-        double ret = round(average, precission);
-        return ret;
+        return round(average, precission);
     }
 
 }

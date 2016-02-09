@@ -55,6 +55,7 @@ import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.dashbuilder.exception.ExceptionManager;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
@@ -63,7 +64,7 @@ import org.uberfire.java.nio.file.Path;
 @Service
 public class DataSetExportServicesImpl implements DataSetExportServices {
 
-    protected Logger log;
+    protected static Logger log = LoggerFactory.getLogger(DataSetExportServicesImpl.class);
     protected DataSetManagerCDI dataSetManager;
     protected DataSetDefRegistryCDI gitStorage;
     protected UUIDGenerator uuidGenerator;
@@ -83,11 +84,9 @@ public class DataSetExportServicesImpl implements DataSetExportServices {
     }
 
     @Inject
-    public DataSetExportServicesImpl(Logger log,
-                                     DataSetManagerCDI dataSetManager,
+    public DataSetExportServicesImpl(DataSetManagerCDI dataSetManager,
                                      DataSetDefRegistryCDI gitStorage,
                                      ExceptionManager exceptionManager) {
-        this.log = log;
         this.dataSetManager = dataSetManager;
         this.gitStorage = gitStorage;
         this.uuidGenerator = DataSetCore.get().getUuidGenerator();
