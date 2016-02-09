@@ -18,31 +18,33 @@ package org.dashbuilder.client.navbar;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-
 import org.uberfire.client.workbench.Header;
-import org.uberfire.client.workbench.widgets.menu.WorkbenchMenuBarPresenter;
 
 @ApplicationScoped
-public class AppNavBar
-        extends Composite implements Header {
+public class LogoWidgetPresenter implements Header {
+
+    public interface View extends IsWidget {
+
+    }
 
     @Inject
-    private WorkbenchMenuBarPresenter menuBarPresenter;
-
-    @Override
-    public Widget asWidget() {
-        return menuBarPresenter.getView().asWidget();
-    }
+    private View view;
 
     @Override
     public String getId() {
-        return "AppNavBar";
+        return "LogoWidget";
     }
 
     @Override
     public int getOrder() {
-        return 2;
+        return 3;
     }
+
+    @Override
+    public Widget asWidget() {
+        return view.asWidget();
+    }
+
 }
