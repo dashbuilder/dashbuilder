@@ -22,6 +22,12 @@ public interface AppConstants extends Messages {
 
     public static final AppConstants INSTANCE = GWT.create(AppConstants.class);
 
+    String logoBannerError();
+
+    String logOut();
+
+    String role();
+
     String menu_home();
 
     String menu_gallery();
