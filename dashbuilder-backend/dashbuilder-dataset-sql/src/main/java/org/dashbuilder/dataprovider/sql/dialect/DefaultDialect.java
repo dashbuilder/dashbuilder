@@ -49,6 +49,8 @@ import static org.dashbuilder.dataprovider.sql.SQLFactory.*;
 
 public class DefaultDialect implements Dialect {
 
+    private static final String AND = " AND ";
+
     @Override
     public String[] getExcludedColumns() {
         return new String[] {};
@@ -474,7 +476,7 @@ public class DefaultDialect implements Dialect {
     public String getBetweenConditionSQL(String column, Object from, Object to) {
         String fromStr = getParameterSQL(from);
         String toStr = getParameterSQL(to);
-        return column + " BETWEEN " + fromStr + " AND " + toStr;
+        return column + " BETWEEN " + fromStr + AND + toStr;
     }
 
     @Override
@@ -781,7 +783,7 @@ public class DefaultDialect implements Dialect {
             if (first) {
                 sql.append(getWhereStatement(select)).append(" ");
             } else {
-                sql.append(" AND ");
+                sql.append(AND);
             }
             String str = getConditionSQL(condition);
             sql.append(str);
@@ -799,7 +801,7 @@ public class DefaultDialect implements Dialect {
             if (first) {
                 sql.append(getWhereStatement(delete)).append(" ");
             } else {
-                sql.append(" AND ");
+                sql.append(AND);
             }
             String str = getConditionSQL(condition);
             sql.append(str);

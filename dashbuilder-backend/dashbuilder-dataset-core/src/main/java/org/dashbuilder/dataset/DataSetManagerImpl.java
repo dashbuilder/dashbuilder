@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DataSetManagerImpl implements DataSetManager {
 
+    private static final String DATA_SET_NOT_FOUND = "Data set not found: ";
     protected DataSetDefRegistry dataSetDefRegistry;
     protected DataSetProviderRegistry dataSetProviderRegistry;
     protected StaticDataSetProvider staticDataSetProvider;
@@ -89,7 +90,7 @@ public class DataSetManagerImpl implements DataSetManager {
         try {
             DataSetDef dataSetDef = dataSetDefRegistry.getDataSetDef(uuid);
             if (dataSetDef == null) {
-                throw new RuntimeException("Data set not found: " + uuid);
+                throw new RuntimeException(DATA_SET_NOT_FOUND + uuid);
             }
 
             // Fetch the specified data set
@@ -140,7 +141,7 @@ public class DataSetManagerImpl implements DataSetManager {
 
         DataSetDef dataSetDef = dataSetDefRegistry.getDataSetDef(uuid);
         if (dataSetDef == null) {
-            throw new RuntimeException("Data set not found: " + uuid);
+            throw new RuntimeException(DATA_SET_NOT_FOUND + uuid);
         }
         List<DataSetPreprocessor> dataSetDefPreProcessors = dataSetDefRegistry.getDataSetDefPreProcessors(uuid);
         if (dataSetDefPreProcessors != null) {
@@ -171,7 +172,7 @@ public class DataSetManagerImpl implements DataSetManager {
 
         DataSetDef dataSetDef = dataSetDefRegistry.getDataSetDef(uuid);
         if (dataSetDef == null) {
-            throw new RuntimeException("Data set not found: " + uuid);
+            throw new RuntimeException(DATA_SET_NOT_FOUND + uuid);
         }
 
         try {

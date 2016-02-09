@@ -110,6 +110,9 @@ import java.util.*;
  */
 public class ElasticSearchDataSetProvider implements DataSetProvider, DataSetDefRegistryListener {
 
+    private static final String GROUPING_FUNCTION_NON_EXISTING_COLUMN = "Grouping function by a non existing column [";
+    private static final String IN_DATASET = "] in dataset ";
+    private static final String AND_TYPE = "] and type [";
     public static final int RESPONSE_CODE_OK = 200;
     private static final String COMMA = ",";
 
@@ -252,7 +255,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider, DataSetDef
                         }
                         columns.add(c);
                     } else {
-                        throw new IllegalArgumentException("Grouping function by a non existing column [" + columnId + "] in dataset ");
+                        throw new IllegalArgumentException(GROUPING_FUNCTION_NON_EXISTING_COLUMN + columnId + IN_DATASET);
                     }
                 }
             }
@@ -276,7 +279,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider, DataSetDef
                 if (columnFilters != null && !columnFilters.isEmpty()) {
                     for (ColumnFilter filter: columnFilters) {
                         String fcId = filter.getColumnId();
-                        if (fcId != null && !existColumn(metadata, fcId)) throw new IllegalArgumentException("Filtering by a non existing column [" + fcId + "] in dataset ");
+                        if (fcId != null && !existColumn(metadata, fcId)) throw new IllegalArgumentException("Filtering by a non existing column [" + fcId + IN_DATASET);
                     }
                 }
             }
@@ -324,7 +327,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider, DataSetDef
                 List<ColumnSort> sorts  = sortOp.getColumnSortList();
                 if (sorts != null && !sorts.isEmpty()) {
                     for (ColumnSort sort : sorts) {
-                        if (!existColumn(metadata, sort.getColumnId())) throw new IllegalArgumentException("Sorting by a non existing column [" + sort.getColumnId() + "] in dataset ");
+                        if (!existColumn(metadata, sort.getColumnId())) throw new IllegalArgumentException("Sorting by a non existing column [" + sort.getColumnId() + IN_DATASET);
                     }
                 }
             }
@@ -563,7 +566,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider, DataSetDef
 
         // Retrieve column definitions given by the index mappings response.
         Map<String, DataColumn> indexMappingsColumnsMap = parseColumnsFromIndexMappings(mappingsResponse.getIndexMappings(), elasticSearchDataSetDef);
-        if (indexMappingsColumnsMap == null || indexMappingsColumnsMap.isEmpty()) throw new RuntimeException("There are no column for index [" + index[0] + "] and type [" + ArrayUtils.toString(type) + "].");
+        if (indexMappingsColumnsMap == null || indexMappingsColumnsMap.isEmpty()) throw new RuntimeException("There are no column for index [" + index[0] + AND_TYPE + ArrayUtils.toString(type) + "].");
         Collection<DataColumn> indexMappingsColumns = indexMappingsColumnsMap.values();
 
         // Get the column definitions from the data set definition, if any.
@@ -583,7 +586,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider, DataSetDef
                     // Check that analyzed fields on EL index definition are analyzed too in the dataset definition.
                     ColumnType indexColumnType = indexCol.getColumnType();
                     if (indexColumnType.equals(ColumnType.TEXT) && columnType.equals(ColumnType.LABEL)) {
-                        throw new RuntimeException("The column [" + columnId + "] is defined in dataset definition as LABEL, but the column in the index [" + index[0] + "] and type [" + ArrayUtils.toString(type) + "] is using ANALYZED index, you cannot use it as a label.");
+                        throw new RuntimeException("The column [" + columnId + "] is defined in dataset definition as LABEL, but the column in the index [" + index[0] + AND_TYPE + ArrayUtils.toString(type) + "] is using ANALYZED index, you cannot use it as a label.");
                     }
 
                     columnIds.add(columnId);
@@ -678,7 +681,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider, DataSetDef
 
                 // Document type field/s
                 FieldMappingResponse[] properties = typeMapping.getFields();
-                if (properties == null || properties.length == 0) throw new IllegalArgumentException("There are no fields for index: [" + indexName + "] and type [" + typeName + "[");
+                if (properties == null || properties.length == 0) throw new IllegalArgumentException("There are no fields for index: [" + indexName + AND_TYPE + typeName + "[");
                 for (FieldMappingResponse fieldMapping : properties) {
                     String fieldName = fieldMapping.getName();
                     String format = fieldMapping.getFormat();
