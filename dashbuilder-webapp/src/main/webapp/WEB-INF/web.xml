@@ -180,7 +180,12 @@
       <role-name>admin</role-name>
     </auth-constraint>
   </security-constraint>
-    
+
+  <error-page>
+    <error-code>403</error-code>
+    <location>/not_authorized.jsp</location>
+  </error-page>
+
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
