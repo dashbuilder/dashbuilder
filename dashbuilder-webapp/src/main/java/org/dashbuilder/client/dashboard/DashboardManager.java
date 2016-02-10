@@ -22,14 +22,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.dashbuilder.displayer.client.PerspectiveCoordinator;
 import org.dashbuilder.shared.dashboard.events.DashboardCreatedEvent;
 import org.dashbuilder.shared.dashboard.events.DashboardDeletedEvent;
-import org.jboss.errai.ioc.client.api.AfterInitialization;
-import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
@@ -47,7 +46,7 @@ import org.uberfire.workbench.model.PerspectiveDefinition;
 /**
  * Dashboard manager
  */
-@EntryPoint
+@ApplicationScoped
 public class DashboardManager {
 
     private SyncBeanManager beanManager;
@@ -76,16 +75,17 @@ public class DashboardManager {
         this.dashboardDeletedEvent = dashboardDeletedEvent;
     }
 
-    @AfterInitialization
-    protected void init() {
+    public void loadDashboards(ParameterizedCommand<Set<DashboardPerspectiveActivity>> callback) {
         perspectiveManager.loadPerspectiveStates(new ParameterizedCommand<Set<PerspectiveDefinition>>() {
             public void execute(Set<PerspectiveDefinition> list) {
+                HashSet<DashboardPerspectiveActivity> dashboards = new HashSet<>();
                 for (PerspectiveDefinition p : list) {
                     String id = p.getName();
                     if (id.startsWith("dashboard-")) {
-                        registerPerspective(id);
+                        dashboards.add(registerPerspective(id));
                     }
                 }
+                callback.execute(dashboards);
             }
         });
     }

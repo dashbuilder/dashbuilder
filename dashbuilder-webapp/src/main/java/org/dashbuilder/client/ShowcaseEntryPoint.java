@@ -38,6 +38,7 @@ import org.uberfire.client.views.pfly.menu.UserMenu;
 import org.uberfire.client.workbench.widgets.menu.UtilityMenuBar;
 import org.uberfire.client.workbench.widgets.menu.WorkbenchMenuBar;
 import org.uberfire.mvp.Command;
+import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuFactory;
@@ -49,6 +50,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.INFO;
 import static org.uberfire.workbench.model.menu.MenuFactory.newTopLevelMenu;
@@ -90,8 +92,12 @@ public class ShowcaseEntryPoint {
 
     @AfterInitialization
     public void startApp() {
-        setupMenus();
-        hideLoadingPopup();
+        dashboardManager.loadDashboards(new ParameterizedCommand<Set<DashboardPerspectiveActivity>>() {
+            public void execute(Set<DashboardPerspectiveActivity> parameter) {
+                setupMenus();
+                hideLoadingPopup();
+            }
+        });
     }
 
     private void setupMenus() {
