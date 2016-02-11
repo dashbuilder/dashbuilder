@@ -64,26 +64,6 @@ public class SalesGoals extends Composite implements GalleryWidget {
     DisplayerCoordinator displayerCoordinator;
     DisplayerLocator displayerLocator;
 
-    @Override
-    public String getTitle() {
-        return AppConstants.INSTANCE.sales_goals_title();
-    }
-
-    @Override
-    public void onClose() {
-        displayerCoordinator.closeAll();
-    }
-
-    @Override
-    public boolean feedsFrom(String dataSetId) {
-        return SALES_OPPS.equals(dataSetId);
-    }
-
-    @Override
-    public void redrawAll() {
-        displayerCoordinator.redrawAll();
-    }
-
     @Inject
     public SalesGoals(DisplayerCoordinator displayerCoordinator, DisplayerLocator displayerLocator) {
         this.displayerCoordinator = displayerCoordinator;
@@ -175,5 +155,25 @@ public class SalesGoals extends Composite implements GalleryWidget {
 
         // Draw the charts
         displayerCoordinator.drawAll();
+    }
+
+    @Override
+    public String getTitle() {
+        return AppConstants.INSTANCE.sales_goals_title();
+    }
+
+    @Override
+    public void onClose() {
+        displayerCoordinator.closeAll();
+    }
+
+    @Override
+    public boolean feedsFrom(String dataSetId) {
+        return SALES_OPPS.equals(dataSetId);
+    }
+
+    @Override
+    public void redrawAll() {
+        displayerCoordinator.redrawAll();
     }
 }
