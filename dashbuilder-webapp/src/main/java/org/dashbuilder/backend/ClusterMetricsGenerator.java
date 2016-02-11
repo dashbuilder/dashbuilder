@@ -101,14 +101,14 @@ public class ClusterMetricsGenerator implements DataSetGenerator {
         for (long i = 1; i <=seconds; i++) {
             long metricTime = last + i*1000;
             for (int j = 0; j < aliveNodes.size(); j++) {
-                Double lastCpu0 = (dataSet.getRowCount() > j ? (Double) dataSet.getValueAt(j, 2) : null);
-                Double lastCpu1 = (dataSet.getRowCount() > j ? (Double) dataSet.getValueAt(j, 3) : null);
-                Double lastFreeMem = (dataSet.getRowCount() > j ? (Double) dataSet.getValueAt(j, 4) : null);
-                Double lastTx = (dataSet.getRowCount() > j ? (Double) dataSet.getValueAt(j, 6) : null);
-                Double lastRx = (dataSet.getRowCount() > j ? (Double) dataSet.getValueAt(j, 7) : null);
-                Double lastRunningProc = (dataSet.getRowCount() > j ? (Double) dataSet.getValueAt(j, 8) : null);
-                Double lastSleepingProc = (dataSet.getRowCount() > j ? (Double) dataSet.getValueAt(j, 9) : null);
-                Double lastFreeDisk = (dataSet.getRowCount() > j ? (Double) dataSet.getValueAt(j, 10) : null);
+                Double lastCpu0 = dataSet.getRowCount() > j ? (Double) dataSet.getValueAt(j, 2) : null;
+                Double lastCpu1 = dataSet.getRowCount() > j ? (Double) dataSet.getValueAt(j, 3) : null;
+                Double lastFreeMem = dataSet.getRowCount() > j ? (Double) dataSet.getValueAt(j, 4) : null;
+                Double lastTx = dataSet.getRowCount() > j ? (Double) dataSet.getValueAt(j, 6) : null;
+                Double lastRx = dataSet.getRowCount() > j ? (Double) dataSet.getValueAt(j, 7) : null;
+                Double lastRunningProc = dataSet.getRowCount() > j ? (Double) dataSet.getValueAt(j, 8) : null;
+                Double lastSleepingProc = dataSet.getRowCount() > j ? (Double) dataSet.getValueAt(j, 9) : null;
+                Double lastFreeDisk = dataSet.getRowCount() > j ? (Double) dataSet.getValueAt(j, 10) : null;
 
                 String node = aliveNodes.get(j);
                 double memFree = mem(node, lastFreeMem, 16d, 12d);
