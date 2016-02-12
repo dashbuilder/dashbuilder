@@ -66,6 +66,12 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
     DisplayerCoordinator displayerCoordinator;
     DisplayerLocator displayerLocator;
 
+    @Inject
+    public ExpensesDashboard(DisplayerCoordinator displayerCoordinator, DisplayerLocator displayerLocator) {
+        this.displayerCoordinator = displayerCoordinator;
+        this.displayerLocator = displayerLocator;
+    }
+
     @Override
     public String getTitle() {
         return AppConstants.INSTANCE.expensesdb_title();
@@ -79,12 +85,6 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
     @Override
     public boolean feedsFrom(String dataSetId) {
         return EXPENSES.equals(dataSetId);
-    }
-
-    @Inject
-    public ExpensesDashboard(DisplayerCoordinator displayerCoordinator, DisplayerLocator displayerLocator) {
-        this.displayerCoordinator = displayerCoordinator;
-        this.displayerLocator = displayerLocator;
     }
 
     @PostConstruct

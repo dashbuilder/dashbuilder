@@ -64,6 +64,12 @@ public class SalesTableReports extends Composite implements GalleryWidget {
     DisplayerCoordinator displayerCoordinator;
     DisplayerLocator displayerLocator;
 
+    @Inject
+    public SalesTableReports(DisplayerCoordinator displayerCoordinator, DisplayerLocator displayerLocator) {
+        this.displayerCoordinator = displayerCoordinator;
+        this.displayerLocator = displayerLocator;
+    }
+
     @Override
     public String getTitle() {
         return AppConstants.INSTANCE.sales_tablereports_title();
@@ -82,12 +88,6 @@ public class SalesTableReports extends Composite implements GalleryWidget {
     @Override
     public void redrawAll() {
         displayerCoordinator.redrawAll();
-    }
-
-    @Inject
-    public SalesTableReports(DisplayerCoordinator displayerCoordinator, DisplayerLocator displayerLocator) {
-        this.displayerCoordinator = displayerCoordinator;
-        this.displayerLocator = displayerLocator;
     }
 
     @PostConstruct
