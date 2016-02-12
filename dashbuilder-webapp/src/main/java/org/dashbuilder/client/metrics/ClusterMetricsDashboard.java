@@ -319,11 +319,11 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
 
     @UiHandler("chartTypeSelector")
     public void onChartTypeSelected(ChangeEvent changeEvent) {
-        onMetricSelected(changeEvent);
+        onMetricSelected();
     }
 
     @UiHandler("metricSelector")
-    public void onMetricSelected(ChangeEvent changeEvent) {
+    public void onMetricSelected() {
 
         // Dispose the current metric chart
         currentMetricChart.close();
