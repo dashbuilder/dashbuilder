@@ -64,6 +64,11 @@ import static org.dashbuilder.dataset.filter.FilterFactory.*;
 @Dependent
 public class ClusterMetricsDashboard extends Composite implements GalleryWidget {
 
+    public static final String CPU = AppConstants.INSTANCE.metrics_cluster_metricselector_cpu();
+    public static final String MEMORY = AppConstants.INSTANCE.metrics_cluster_metricselector_mem();
+    public static final String DISK = AppConstants.INSTANCE.metrics_cluster_metricselector_disk();
+    public static final String NETWORK = AppConstants.INSTANCE.metrics_cluster_metricselector_netw();
+
     interface Binder extends UiBinder<Widget, ClusterMetricsDashboard> {}
     private static final Binder uiBinder = GWT.create(Binder.class);
 
@@ -116,6 +121,12 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
         }
     };
 
+    @Inject
+    public ClusterMetricsDashboard(DisplayerCoordinator displayerCoordinator, DisplayerLocator displayerLocator) {
+        this.displayerCoordinator = displayerCoordinator;
+        this.displayerLocator = displayerLocator;
+    }
+
     @Override
     public String getTitle() {
         return AppConstants.INSTANCE.metrics_cluster_title();
@@ -155,17 +166,6 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
             this.tableVisible = tableVisible;
             this.units = units;
         }
-    }
-
-    public static final String CPU = AppConstants.INSTANCE.metrics_cluster_metricselector_cpu();
-    public static final String MEMORY = AppConstants.INSTANCE.metrics_cluster_metricselector_mem();
-    public static final String DISK = AppConstants.INSTANCE.metrics_cluster_metricselector_disk();
-    public static final String NETWORK = AppConstants.INSTANCE.metrics_cluster_metricselector_netw();
-
-    @Inject
-    public ClusterMetricsDashboard(DisplayerCoordinator displayerCoordinator, DisplayerLocator displayerLocator) {
-        this.displayerCoordinator = displayerCoordinator;
-        this.displayerLocator = displayerLocator;
     }
 
     @PostConstruct

@@ -58,6 +58,12 @@ public class SalesDistributionByCountry extends Composite implements GalleryWidg
     DisplayerCoordinator displayerCoordinator;
     DisplayerLocator displayerLocator;
 
+    @Inject
+    public SalesDistributionByCountry(DisplayerCoordinator displayerCoordinator, DisplayerLocator displayerLocator) {
+        this.displayerCoordinator = displayerCoordinator;
+        this.displayerLocator = displayerLocator;
+    }
+
     @Override
     public String getTitle() {
         return AppConstants.INSTANCE.sales_bycountry_title();
@@ -76,12 +82,6 @@ public class SalesDistributionByCountry extends Composite implements GalleryWidg
     @Override
     public void redrawAll() {
         displayerCoordinator.redrawAll();
-    }
-
-    @Inject
-    public SalesDistributionByCountry(DisplayerCoordinator displayerCoordinator, DisplayerLocator displayerLocator) {
-        this.displayerCoordinator = displayerCoordinator;
-        this.displayerLocator = displayerLocator;
     }
 
     @PostConstruct
