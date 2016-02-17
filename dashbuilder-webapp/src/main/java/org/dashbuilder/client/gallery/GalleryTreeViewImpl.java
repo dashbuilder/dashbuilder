@@ -62,7 +62,7 @@ public class GalleryTreeViewImpl extends Composite implements GalleryTreePresent
             public void onSelection(SelectionEvent<TreeItem> event) {
                 TreeItem ti = event.getSelectedItem();
                 GalleryTreeNode node = (GalleryTreeNode) ti.getUserObject();
-                treeItemClicked(ti, node);
+                treeItemClicked(node);
             }
         });
         return navTree;
@@ -80,7 +80,7 @@ public class GalleryTreeViewImpl extends Composite implements GalleryTreePresent
         }
     }
 
-    private void treeItemClicked(TreeItem ti, GalleryTreeNode node) {
+    private void treeItemClicked(GalleryTreeNode node) {
         presenter.navigateToNode(node);
     }
 }

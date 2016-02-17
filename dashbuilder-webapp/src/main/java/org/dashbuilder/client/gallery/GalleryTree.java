@@ -300,7 +300,6 @@ public class GalleryTree {
                         .buildSettings()
         )));
 
-        // nodeList.add(new GalleryNodeDisplayer("Multiple (date)", ...)));
     }
 
     private void initAreaChartCategory() {
@@ -413,7 +412,6 @@ public class GalleryTree {
                         .buildSettings()
         )));
 
-        // nodeList.add(new GalleryNodeDisplayer("Multiple (date)", ...)));
     }
 
     private void initMetricCategory() {

@@ -168,7 +168,7 @@ public class ShowcaseEntryPoint {
 
         // Add dashboards created in runtime
         for (DashboardPerspectiveActivity activity : dashboardManager.getDashboards()) {
-            result.add(newMenuItem(activity.getDisplayName(), activity.getIdentifier(), true, false));
+            result.add(newMenuItem(activity.getDisplayName(), activity.getIdentifier(), false));
         }
 
         return result;
@@ -210,10 +210,10 @@ public class ShowcaseEntryPoint {
     }
     
     private MenuItem newMenuItem(String caption, final String activityId) {
-        return newMenuItem(caption, activityId, false, false);
+        return newMenuItem(caption, activityId, false);
     }
 
-    private MenuItem newMenuItem(String caption, final String activityId, final boolean showSubMenu, final boolean showLogo) {
+    private MenuItem newMenuItem(String caption, final String activityId, final boolean showLogo) {
         return MenuFactory.newSimpleItem(caption)
                 .place(new DefaultPlaceRequest(activityId))
                 .endMenu().build().getItems().get(0);
