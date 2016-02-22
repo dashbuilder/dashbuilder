@@ -98,11 +98,11 @@ public class Scheduler {
     }
 
     public List<SchedulerTask> getScheduledTasks() {
-        return new ArrayList<SchedulerTask>(scheduledTasks.values());
+        return new ArrayList<>(scheduledTasks.values());
     }
 
     public List<SchedulerTask> getRunningTasks() {
-        List<SchedulerTask> result = new ArrayList<SchedulerTask>();
+        List<SchedulerTask> result = new ArrayList<>();
         for (SchedulerTask task : scheduledTasks.values()) {
             if (task.isRunning()) result.add(task);
         }
@@ -110,7 +110,7 @@ public class Scheduler {
     }
 
     public List<SchedulerTask> getMisfiredTasks() {
-        List<SchedulerTask> result = new ArrayList<SchedulerTask>();
+        List<SchedulerTask> result = new ArrayList<>();
         for (SchedulerTask task : scheduledTasks.values()) {
             if (task.isMisfired()) result.add(task);
         }
@@ -118,7 +118,7 @@ public class Scheduler {
     }
 
     public List<SchedulerTask> getWaitingTasks() {
-        List<SchedulerTask> result = new ArrayList<SchedulerTask>();
+        List<SchedulerTask> result = new ArrayList<>();
         for (SchedulerTask task : scheduledTasks.values()) {
             if (!task.isDone() && !task.isRunning() && !task.isMisfired()) result.add(task);
         }
@@ -266,7 +266,7 @@ public class Scheduler {
     }
 
     public String printScheduledTasksReport() {
-        Map<Object, SchedulerTask> temp = new HashMap<Object, SchedulerTask>(scheduledTasks);
+        Map<Object, SchedulerTask> temp = new HashMap<>(scheduledTasks);
         StringBuilder buf = new StringBuilder();
         buf.append("\n\n------------------ SCHEDULED TASKS=").append(temp.size())
                 .append(" (Queue size=").append(executor.getQueue().size()).append(") -----------------------------\n");
