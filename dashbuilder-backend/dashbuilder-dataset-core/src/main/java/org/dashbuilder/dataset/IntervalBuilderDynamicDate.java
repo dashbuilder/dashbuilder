@@ -43,6 +43,8 @@ import static org.dashbuilder.dataset.group.DateIntervalType.*;
  */
 public class IntervalBuilderDynamicDate implements IntervalBuilder {
 
+    private static SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+
     public IntervalList build(DataSetHandler handler, ColumnGroup columnGroup) {
         IntervalDateRangeList results = new IntervalDateRangeList(columnGroup);
         DataSet dataSet = handler.getDataSet();
@@ -317,8 +319,6 @@ public class IntervalBuilderDynamicDate implements IntervalBuilder {
         // Build & return the selected interval
         return new IntervalDateRange(intervalIndex, intervalType, intervalMinDate, intervalMaxDate);
     }
-
-    private static SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
 
     /**
      * A list containing date range intervals.
