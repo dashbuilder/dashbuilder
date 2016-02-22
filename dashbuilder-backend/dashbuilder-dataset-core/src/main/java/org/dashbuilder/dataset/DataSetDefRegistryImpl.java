@@ -43,8 +43,8 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
     protected Logger log = LoggerFactory.getLogger(DataSetDefRegistryImpl.class);
     protected DataSetProviderRegistry dataSetProviderRegistry;
     protected Scheduler scheduler;
-    protected Map<String, DataSetDefEntry> dataSetDefMap = new HashMap<String, DataSetDefEntry>();
-    protected Set<DataSetDefRegistryListener> listenerSet = new HashSet<DataSetDefRegistryListener>();
+    protected Map<String, DataSetDefEntry> dataSetDefMap = new HashMap<>();
+    protected Set<DataSetDefRegistryListener> listenerSet = new HashSet<>();
 
     public DataSetDefRegistryImpl() {
     }
@@ -93,7 +93,7 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
 
         public void registerDataSetPreprocessor(DataSetPreprocessor preprocessor) {
             if (preprocessors == null) {
-                preprocessors = new ArrayList<DataSetPreprocessor>();
+                preprocessors = new ArrayList<>();
             }
             preprocessors.add(preprocessor);
         }
@@ -157,7 +157,7 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
     }
 
     public synchronized List<DataSetDef> getDataSetDefs(boolean onlyPublic) {
-        List<DataSetDef> results = new ArrayList<DataSetDef>();
+        List<DataSetDef> results = new ArrayList<>();
         for (DataSetDefEntry r : dataSetDefMap.values()) {
             if (!onlyPublic || r.def.isPublic()) {
                 results.add(r.def);

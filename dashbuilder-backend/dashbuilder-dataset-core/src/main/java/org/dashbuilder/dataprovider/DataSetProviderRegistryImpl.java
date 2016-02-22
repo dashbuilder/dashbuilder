@@ -22,8 +22,8 @@ import java.util.Map;
 
 public class DataSetProviderRegistryImpl implements DataSetProviderRegistry {
 
-    private Map<DataSetProviderType,DataSetProvider> dataSetProviderMap = new HashMap<DataSetProviderType,DataSetProvider>();
-    private List<DataSetProviderType> availableTypes = new ArrayList<DataSetProviderType>();
+    private Map<DataSetProviderType,DataSetProvider> dataSetProviderMap = new HashMap<>();
+    private List<DataSetProviderType> availableTypes = new ArrayList<>();
 
     public void registerDataProvider(DataSetProvider dataProvider) {
         DataSetProviderType type = dataProvider.getType();
