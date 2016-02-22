@@ -115,7 +115,7 @@ public class ElasticSearchValueTypeMapper {
         String coreType = definition.getPattern(columnId);
         if (isEmpty(coreType)) coreType = defaulNumberFormat();
 
-        String result = null;
+        String result;
         if (coreType.equalsIgnoreCase(NUMERIC_FLOAT)) {
             result = Float.toString(number.floatValue());
         } else if (coreType.equalsIgnoreCase(NUMERIC_DOUBLE)) {

@@ -302,9 +302,9 @@ public class QuerySerializer extends AbstractAdapter<QuerySerializer> implements
 
         JsonObject result = new JsonObject();
 
-        JsonElement mustObject = null;
-        JsonElement mustNotObject = null;
-        JsonElement shouldObject = null;
+        JsonElement mustObject;
+        JsonElement mustNotObject;
+        JsonElement shouldObject;
         try {
             mustObject = translateGsonQueries((List<Query>) query.getParam(Query.Parameter.MUST.name()));
         } catch (ClassCastException e) {

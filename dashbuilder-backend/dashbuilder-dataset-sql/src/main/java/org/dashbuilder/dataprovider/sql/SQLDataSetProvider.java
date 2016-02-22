@@ -920,7 +920,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                 }
 
                 // Apply the filter
-                ColumnFilter filter = null;
+                ColumnFilter filter;
                 if (min != null && max != null) {
                     filter = FilterFactory.between(cg.getSourceId(), min, max);
                 }
