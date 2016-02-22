@@ -449,7 +449,7 @@ public class ElasticSearchJestClient implements ElasticSearchClient<ElasticSearc
     }
 
     public static String getInterval(DateIntervalType dateIntervalType) {
-        String intervalExpression = null;
+        String intervalExpression;
         switch (dateIntervalType) {
             case MILLISECOND:
                 intervalExpression = "0.001s";

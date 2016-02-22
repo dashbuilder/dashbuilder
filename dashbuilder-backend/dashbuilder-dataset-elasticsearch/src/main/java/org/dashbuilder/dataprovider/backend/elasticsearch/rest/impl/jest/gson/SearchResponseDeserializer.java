@@ -36,7 +36,7 @@ public class SearchResponseDeserializer extends AbstractAdapter<SearchResponseDe
                 int successfulShards = shardsObject.get("successful").getAsInt();
                 int shardFailures = shardsObject.get("failed").getAsInt();
 
-                List<SearchHitResponse> hits = null;
+                List<SearchHitResponse> hits;
                 Object[] hitsParseResult = parseTotalAndScore(responseObject);
                 long totalHits = (Long) hitsParseResult[0];
                 float maxScore = (Float) hitsParseResult[1];

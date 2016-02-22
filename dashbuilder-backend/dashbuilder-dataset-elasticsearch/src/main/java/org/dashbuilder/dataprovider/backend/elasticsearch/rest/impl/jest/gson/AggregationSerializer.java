@@ -282,7 +282,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
         
         // Supported intervals for FIXED strategy - @see DateIntervalType.FIXED_INTERVALS_SUPPORTED
         String script = "new Date(doc[\"{0}\"].value).format(\"{1}\")";
-        String pattern = null;
+        String pattern;
         switch (intervalType) {
             case QUARTER:
                 // For quarters use this pseudocode script: <code>quarter = round-up(date.month / 3)</code>

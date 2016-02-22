@@ -181,7 +181,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
     private Query joinQueriesAndFilters(List<Query> queries, Operator operator) {
         if (queries == null || queries.isEmpty()) return null;
 
-        Query result = null;
+        Query result;
 
         List<Query> subQueries = getQueries(queries);
         List<Query> subFilters = getFilters(queries);
@@ -224,7 +224,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
         } else {
 
             // Join all the filters.
-            Query filter = null;
+            Query filter;
             if (subFilters.size() == 1) {
                 filter = subFilters.get(0);
             } else {
@@ -233,7 +233,7 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
             }
 
             // Join all the queries.
-            Query booleanQuery = null;
+            Query booleanQuery;
             if (subQueries.size() == 1) {
                 booleanQuery = subQueries.get(0);
             } else {
