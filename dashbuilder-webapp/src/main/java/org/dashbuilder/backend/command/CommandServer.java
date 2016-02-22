@@ -59,7 +59,7 @@ public class CommandServer implements Runnable {
             Socket clientSocket = serverSocket.accept();
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            String commandStr = null;
+            String commandStr;
             while ((commandStr = in.readLine()) != null) {
                 commandEvent.fire(new CommandEvent(commandStr));
                 out.println(">>> " + commandStr + " [OK]");

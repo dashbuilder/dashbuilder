@@ -40,6 +40,18 @@ public class DataSetDefDeployer {
     protected Thread watcherThread;
     protected DataSetDefJSONMarshaller jsonMarshaller = DataSetDefJSONMarshaller.get();
 
+    FilenameFilter _deployFilter = new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+            return name.endsWith(".deploy");
+        }
+    };
+
+    FilenameFilter _undeployFilter = new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+            return name.endsWith(".undeploy");
+        }
+    };
+
     public DataSetDefDeployer() {
     }
 
@@ -192,18 +204,6 @@ public class DataSetDefDeployer {
             }
         }
     }
-
-    FilenameFilter _deployFilter = new FilenameFilter() {
-        public boolean accept(File dir, String name) {
-            return name.endsWith(".deploy");
-        }
-    };
-
-    FilenameFilter _undeployFilter = new FilenameFilter() {
-        public boolean accept(File dir, String name) {
-            return name.endsWith(".undeploy");
-        }
-    };
 
     public File getCSVFile(CSVDataSetDef def) throws Exception {
         String path = def.getFilePath();

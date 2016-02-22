@@ -56,7 +56,7 @@ public class LogoWidgetView
             }
         } );
         try {
-            final Request r = rb.send();
+            rb.send();
         } catch ( RequestException re ) {
             container.setWidget( new Label( AppConstants.INSTANCE.logoBannerError() ) );
         }
