@@ -104,7 +104,6 @@ public class DashboardManager {
                                        PerspectiveActivity.class,
                                        new HashSet<Annotation>( Arrays.asList( DEFAULT_QUALIFIERS ) ),
                                        id,
-                                       true,
                                        true );
         beanManager.registerBean( beanDef );
         activityBeansCache.addNewPerspectiveActivity(beanManager.lookupBeans(id).iterator().next());
