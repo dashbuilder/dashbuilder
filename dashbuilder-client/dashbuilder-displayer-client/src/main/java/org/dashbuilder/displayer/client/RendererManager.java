@@ -73,7 +73,8 @@ public class RendererManager {
                 for (DisplayerType type : types) {
                     List<RendererLibrary> set = renderersByType.get(type);
                     if (set == null) {
-                        renderersByType.put(type, set = new ArrayList<RendererLibrary>());
+                        set = new ArrayList<RendererLibrary>();
+                        renderersByType.put(type, set);
                     }
                     set.add(lib);
 
@@ -82,7 +83,8 @@ public class RendererManager {
                         for (DisplayerSubType subType : subTypes) {
                             List<RendererLibrary> subset = renderersBySubType.get(subType);
                             if (subset == null) {
-                                renderersBySubType.put(subType, subset = new ArrayList<RendererLibrary>());
+                                subset = new ArrayList<RendererLibrary>();
+                                renderersBySubType.put(subType, subset);
                             }
                             subset.add(lib);
                         }

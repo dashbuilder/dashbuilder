@@ -27,13 +27,19 @@ public class ValueFormatterRegistry {
 
     public void register(String columnId, ValueFormatter formatter) {
         Map<String,ValueFormatter> m = formatterMap.get(_UNASSIGNED);
-        if (m == null) formatterMap.put(_UNASSIGNED, m = new HashMap<String,ValueFormatter>());
+        if (m == null) {
+            m = new HashMap<String,ValueFormatter>();
+            formatterMap.put(_UNASSIGNED, m);
+        }
         m.put(columnId, formatter);
     }
 
     public void register(String displayerUuid, String columnId, ValueFormatter formatter) {
         Map<String,ValueFormatter> m = formatterMap.get(displayerUuid);
-        if (m == null) formatterMap.put(displayerUuid, m = new HashMap<String,ValueFormatter>());
+        if (m == null) {
+            m = new HashMap<String,ValueFormatter>();
+            formatterMap.put(displayerUuid, m);
+        }
         m.put(columnId, formatter);
     }
 
