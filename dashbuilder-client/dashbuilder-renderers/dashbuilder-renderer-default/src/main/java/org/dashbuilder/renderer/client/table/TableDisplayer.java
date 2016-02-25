@@ -169,8 +169,8 @@ public class TableDisplayer extends AbstractDisplayer {
 
     @Override
     protected void updateVisualization() {
-        tableProvider.gotoFirstPage();
         table.setRowCount(numberOfRows, true);
+        tableProvider.gotoFirstPage();
 
         int height = 42 + 37 * (dataSet.getRowCount() == 0 ? 1 : dataSet.getRowCount());
         table.setHeight((height > (Window.getClientHeight() - this.getAbsoluteTop()) ? (Window.getClientHeight() - this.getAbsoluteTop()) : height) + "px");
