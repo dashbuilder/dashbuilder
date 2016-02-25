@@ -66,7 +66,8 @@ public class DisplayerGwtFormatter implements AbstractDisplayer.Formatter {
         }
         NumberFormat format = numberPatternMap.get(pattern);
         if (format == null) {
-            numberPatternMap.put(pattern, format = NumberFormat.getFormat(pattern));
+            format = NumberFormat.getFormat(pattern);
+            numberPatternMap.put(pattern, format);
         }
         return format;
     }
@@ -77,7 +78,8 @@ public class DisplayerGwtFormatter implements AbstractDisplayer.Formatter {
         }
         DateTimeFormat format = datePatternMap.get(pattern);
         if (format == null) {
-            datePatternMap.put(pattern, format = DateTimeFormat.getFormat(pattern));
+            format = DateTimeFormat.getFormat(pattern);
+            datePatternMap.put(pattern, format);
         }
         return format;
     }

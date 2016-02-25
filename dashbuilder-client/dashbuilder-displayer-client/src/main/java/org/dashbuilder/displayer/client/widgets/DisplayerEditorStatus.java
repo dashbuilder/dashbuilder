@@ -37,7 +37,8 @@ public class DisplayerEditorStatus {
     private DisplayerStatus fetch(String displayerUuid) {
         DisplayerStatus status = displayerStatusMap.get(displayerUuid);
         if (status != null) return status;
-        displayerStatusMap.put(displayerUuid, status = new DisplayerStatus());
+        status = new DisplayerStatus();
+        displayerStatusMap.put(displayerUuid, status);
         return status;
     }
 

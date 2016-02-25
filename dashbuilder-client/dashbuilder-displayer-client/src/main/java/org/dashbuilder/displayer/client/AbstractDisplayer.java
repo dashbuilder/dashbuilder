@@ -575,7 +575,8 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
                 }
                 else {
                     if (displayerSettings.isFilterSelfApplyEnabled()) {
-                        columnSelectionMap.put(columnId, selectedIntervals = new ArrayList<Interval>());
+                        selectedIntervals = new ArrayList<Interval>();
+                        columnSelectionMap.put(columnId, selectedIntervals);
                     }
                     selectedIntervals.add(intervalSelected);
                     if (maxSelections != null && maxSelections > 0 && selectedIntervals.size() >= maxSelections) {

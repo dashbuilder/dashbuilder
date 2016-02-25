@@ -90,7 +90,8 @@ public class DisplayerCoordinator {
             RendererLibrary renderer = rendererManager.getRendererForDisplayer(displayer.getDisplayerSettings());
             List<Displayer> rendererGroup = rendererMap.get(renderer);
             if (rendererGroup == null) {
-                rendererMap.put(renderer, rendererGroup = new ArrayList<Displayer>());
+                rendererGroup = new ArrayList<Displayer>();
+                rendererMap.put(renderer, rendererGroup);
             }
             rendererGroup.add(displayer);
         }
