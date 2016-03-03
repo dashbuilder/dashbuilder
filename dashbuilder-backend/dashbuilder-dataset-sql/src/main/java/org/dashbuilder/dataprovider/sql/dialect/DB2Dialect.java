@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.dashbuilder.dataprovider.sql.model.Column;
 import org.dashbuilder.dataprovider.sql.model.DynamicDateColumn;
+import org.dashbuilder.dataprovider.sql.model.Select;
 import org.dashbuilder.dataset.group.DateIntervalType;
 
 public class DB2Dialect extends DefaultDialect {
@@ -61,5 +62,30 @@ public class DB2Dialect extends DefaultDialect {
         String datePattern = datePatternMap.get(type);
         String columnName = getColumnNameSQL(column.getName());
         return "VARCHAR_FORMAT(" + columnName + ", '" + datePattern + "')";
+    }
+
+    @Override
+    public String getSQL(Select select) {
+
+        String sql = super.getSQL(select);
+
+        int offset = select.getOffset();
+        int limit = select.getLimit();
+
+        if (limit > 0) {
+            sql += " FETCH FIRST " + (limit + (offset > 0 ? offset : 0)) + " ROWS ONLY";
+        }
+
+        if (offset > 0) {
+            return "SELECT * FROM (SELECT Q.*, ROWNUMBER() OVER(ORDER BY ORDER OF Q) AS RN FROM (" + sql + ") AS Q)  WHERE RN > " + offset + " ORDER BY RN";
+        }
+        else {
+            return sql;
+        }
+    }
+
+    @Override
+    public String getOffsetLimitSQL(Select select) {
+        return null;
     }
 }
