@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dashbuilder.dataprovider.sql.model.Column;
 import org.dashbuilder.dataprovider.sql.model.Condition;
 import org.dashbuilder.dataprovider.sql.model.CoreCondition;
+import org.dashbuilder.dataprovider.sql.model.CreateTable;
 import org.dashbuilder.dataprovider.sql.model.Delete;
 import org.dashbuilder.dataprovider.sql.model.DynamicDateColumn;
 import org.dashbuilder.dataprovider.sql.model.FixedDateColumn;
@@ -344,6 +345,11 @@ public class DefaultDialect implements Dialect {
     }
 
     @Override
+    public String getColumnNameQuotedSQL(String name) {
+        return "\"" + name + "\"";
+    }
+
+    @Override
     public String getAliasForColumnSQL(String alias) {
         return "\"" + alias + "\"";
     }
@@ -630,6 +636,39 @@ public class DefaultDialect implements Dialect {
         } finally {
             select.orderBy(sortColumns);
         }
+    }
+
+    @Override
+    public String getSQL(CreateTable create) {
+        StringBuilder sql = new StringBuilder("CREATE TABLE ");
+        List<String> pkeys = new ArrayList<String>();
+        String tname = getTableSQL(create);
+        sql.append(tname);
+
+        // Columns
+        boolean first = true;
+        sql.append(" (\n");
+        for (Column column : create.getColumns()) {
+            if (!first) {
+                sql.append(",\n");
+            }
+            String name = getColumnNameSQL(column.getName());
+            String type = getColumnTypeSQL(column);
+            sql.append(" ").append(name).append(" ").append(type);
+            if (create.getPrimaryKeys().contains(column)) {
+                sql.append(" NOT NULL");
+                pkeys.add(name);
+            }
+            first = false;
+        }
+        if (!create.getPrimaryKeys().isEmpty()) {
+            sql.append(",\n");
+            sql.append(" PRIMARY KEY(");
+            sql.append(StringUtils.join(pkeys, ","));
+            sql.append(")\n");
+        }
+        sql.append(")");
+        return sql.toString();
     }
 
     @Override

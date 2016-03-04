@@ -20,7 +20,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.dashbuilder.dataprovider.sql.JDBCUtils;
 import org.dashbuilder.dataprovider.sql.dialect.Dialect;
 
@@ -28,6 +27,14 @@ public class CreateTable extends SQLStatement<CreateTable> {
 
     protected List<Column> columns = new ArrayList<Column>();
     protected List<Column> primaryKeys = new ArrayList<Column>();
+
+    public List<Column> getColumns() {
+        return columns;
+    }
+
+    public List<Column> getPrimaryKeys() {
+        return primaryKeys;
+    }
 
     public CreateTable(Connection connection, Dialect dialect) {
         super(connection, dialect);
@@ -48,35 +55,8 @@ public class CreateTable extends SQLStatement<CreateTable> {
     }
 
     public String getSQL() {
-        StringBuilder sql = new StringBuilder("CREATE TABLE ");
-        List<String> pkeys = new ArrayList<String>();
-        String tname = dialect.getTableSQL(this);
-        sql.append(tname);
-
-        // Columns
-        boolean first = true;
-        sql.append(" (\n");
-        for (Column column : columns) {
-            if (!first) {
-                sql.append(",\n");
-            }
-            String name = dialect.getColumnNameSQL(column.getName());
-            String type = dialect.getColumnTypeSQL(column);
-            sql.append(" ").append(name).append(" ").append(type);
-            if (primaryKeys.contains(column)) {
-                sql.append(" NOT NULL");
-                pkeys.add(name);
-            }
-            first = false;
-        }
-        if (!primaryKeys.isEmpty()) {
-            sql.append(",\n");
-            sql.append(" PRIMARY KEY(");
-            sql.append(StringUtils.join(pkeys, ","));
-            sql.append(")\n");
-        }
-        sql.append(")");
-        return sql.toString();
+        fixColumns();
+        return dialect.getSQL(this);
     }
 
     @Override

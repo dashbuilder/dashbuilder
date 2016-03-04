@@ -52,6 +52,11 @@ public class MySQLDialect extends DefaultDialect {
     }
 
     @Override
+    public String getColumnNameQuotedSQL(String name) {
+        return "`" + name + "`";
+    }
+
+    @Override
     public String getAliasForColumnSQL(String alias) {
         return "AS `" + alias + "`";
     }

@@ -166,12 +166,15 @@ public class JDBCUtils {
         for (int i = 1; i <= meta.getColumnCount(); i++) {
             String name = meta.getColumnName(i);
             String alias = meta.getColumnLabel(i);
+            if (alias != null && !alias.trim().isEmpty()) {
+                name = alias.trim();
+            }
 
             if (!columnExcluded.contains(name) && !columnExcluded.contains(alias)) {
                 ColumnType type = JDBCUtils.calculateType(meta.getColumnType(i));
                 if (type != null) {
                     int size = meta.getColumnDisplaySize(i);
-                    Column column = SQLFactory.column(name, type, size).as(alias);
+                    Column column = SQLFactory.column(name, type, size);
                     columnList.add(column);
                 }
             }
@@ -196,21 +199,29 @@ public class JDBCUtils {
 
     public static final String[] QUOTES = new String[]{"\"", "'", "`", "´"};
 
-    public static String changeCaseExcludeQuotes(String s, boolean upper) {
-
-        List<String> keepList = new ArrayList<String>();
-        for (int i = 0; i < QUOTES.length; i++) {
-            String quote = QUOTES[i];
-            String[] words = StringUtils.substringsBetween(s, quote, quote);
-            if (words != null) {
-                keepList.addAll(Arrays.asList(words));
+    public static List<String> getWordsBetweenQuotes(String s) {
+        List<String> result = new ArrayList<String>();
+        if (s != null) {
+            for (int i = 0; i < QUOTES.length; i++) {
+                String quote = QUOTES[i];
+                String[] words = StringUtils.substringsBetween(s, quote, quote);
+                if (words != null) {
+                    result.addAll(Arrays.asList(words));
+                }
             }
         }
+        return result;
 
+    }
+    public static String changeCaseExcludeQuotes(String s, boolean upper) {
+        List<String> keepList = getWordsBetweenQuotes(s);
         String tmpStr = upper ? s.toUpperCase() : s.toLowerCase();
         for (String word : keepList) {
             String tmpWord = upper ? word.toUpperCase() : word.toLowerCase();
-            tmpStr = StringUtils.replace(tmpStr, tmpWord, word);
+            for (int i = 0; i < QUOTES.length; i++) {
+                String quote = QUOTES[i];
+                tmpStr = StringUtils.replace(tmpStr, quote + tmpWord + quote, quote + word + quote);
+            }
         }
         return tmpStr;
     }

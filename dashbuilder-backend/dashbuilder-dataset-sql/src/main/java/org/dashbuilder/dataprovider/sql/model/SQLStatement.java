@@ -16,6 +16,9 @@
 package org.dashbuilder.dataprovider.sql.model;
 
 import java.sql.Connection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.dashbuilder.dataprovider.sql.JDBCUtils;
 import org.dashbuilder.dataprovider.sql.dialect.Dialect;
@@ -24,8 +27,8 @@ public class SQLStatement<T extends SQLStatement> {
 
     protected Connection connection;
     protected Dialect dialect;
-
     protected Table table = null;
+    protected Set<Column> _columnsRefs = new HashSet<>();
 
     public SQLStatement(Connection connection, Dialect dialect) {
         this.connection = connection;
@@ -50,19 +53,24 @@ public class SQLStatement<T extends SQLStatement> {
     }
 
     protected Table fix(Table table) {
-        String name = fix(table.getName());
+        String name = fixCase(table.getName());
         table.setName(name);
         return table;
     }
 
     protected Column fix(Column column) {
-        // Fix column name to match DB case settings
-        String name = fix(column.getName());
-        column.setName(name);
+        _columnsRefs.add(column);
         return column;
     }
 
-    protected String fix(String id) {
-        return JDBCUtils.fixCase(connection, id);
+    protected String fixCase(String id) {
+        return id == null ? null : JDBCUtils.fixCase(connection, id);
+    }
+
+    protected void fixColumns() {
+        for (Column column : _columnsRefs) {
+            String name = fixCase(column.getName());
+            column.setName(name);
+        }
     }
 }
