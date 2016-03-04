@@ -35,6 +35,7 @@ public class Select extends SQLStatement<Select> {
     protected int limit = -1;
     protected int offset = -1;
     protected boolean offsetPostProcessing = false;
+    protected List<String> quotedFields = null;
 
     public Select(Connection connection, Dialect dialect) {
         super(connection, dialect);
@@ -95,7 +96,7 @@ public class Select extends SQLStatement<Select> {
     }
 
     public Select from(String sql) {
-        fromSelect = fix(sql);
+        fromSelect = sql;
         return this;
     }
 
@@ -147,6 +148,18 @@ public class Select extends SQLStatement<Select> {
     }
 
     public String getSQL() {
+        quotedFields = JDBCUtils.getWordsBetweenQuotes(fromSelect);
+
+        for (Column column : _columnsRefs) {
+            String name = column.getName();
+            if (quotedFields.contains(name)) {
+                name = dialect.getColumnNameQuotedSQL(name);
+            } else {
+                name = JDBCUtils.fixCase(connection, name);
+            }
+            column.setName(name);
+        }
+        fromSelect = fixCase(fromSelect);
         return dialect.getSQL(this);
     }
 

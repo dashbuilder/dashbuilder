@@ -20,6 +20,7 @@ import java.util.Date;
 import org.dashbuilder.dataprovider.sql.model.Column;
 import org.dashbuilder.dataprovider.sql.model.Condition;
 import org.dashbuilder.dataprovider.sql.model.CoreCondition;
+import org.dashbuilder.dataprovider.sql.model.CreateTable;
 import org.dashbuilder.dataprovider.sql.model.Delete;
 import org.dashbuilder.dataprovider.sql.model.DynamicDateColumn;
 import org.dashbuilder.dataprovider.sql.model.FixedDateColumn;
@@ -36,6 +37,8 @@ import org.dashbuilder.dataset.sort.SortOrder;
 public interface Dialect {
 
     String getCountQuerySQL(Select select);
+
+    String getSQL(CreateTable create);
 
     String getSQL(Select select);
 
@@ -110,6 +113,8 @@ public interface Dialect {
     String getFixedDateColumnSQL(FixedDateColumn column);
 
     String getColumnNameSQL(String name);
+
+    String getColumnNameQuotedSQL(String name);
 
     String getAliasForColumnSQL(String alias);
 
