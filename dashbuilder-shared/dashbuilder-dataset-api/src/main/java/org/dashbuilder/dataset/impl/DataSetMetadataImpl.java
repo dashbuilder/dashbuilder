@@ -111,6 +111,14 @@ public class DataSetMetadataImpl implements DataSetMetadata {
         this.definition = definition;
     }
 
+    public void setEstimatedSize(int estimatedSize) {
+        this.estimatedSize = estimatedSize;
+    }
+
+    public void setNumberOfRows(int numberOfRows) {
+        this.numberOfRows = numberOfRows;
+    }
+
     public boolean equals(Object obj) {
         try {
             if (obj == null) return false;

@@ -47,6 +47,13 @@ public class JDBCUtilsTest {
     }
 
     @Test
+    public void testFixSQLCase() throws Exception {
+        String sql = "SELECT \"ID\" FROM TABLE";
+        String fix = JDBCUtils.changeCaseExcludeQuotes(sql, false);
+        assertEquals(fix, "select \"ID\" from table");
+    }
+
+    @Test
     public void testSupportedTypes() throws Exception {
         when(metaData.getColumnCount()).thenReturn(35);
         when(metaData.getColumnType(1)).thenReturn(Types.CHAR);
