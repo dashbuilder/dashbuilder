@@ -56,7 +56,7 @@ public class SQLDataSetMetadataTest {
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
                 return 0;
             }
-        }).when(dataSetProvider)._getRowCount(any(SQLDataSetDef.class), any(Connection.class));
+        }).when(dataSetProvider)._getRowCount(any(DataSetMetadata.class), any(SQLDataSetDef.class), any(Connection.class));
 
         doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {

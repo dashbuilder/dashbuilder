@@ -19,7 +19,7 @@ import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.DataSetLookupFactory;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
 import org.dashbuilder.dataset.filter.FilterFactory;
@@ -30,6 +30,7 @@ import org.junit.Test;
 import static org.dashbuilder.dataset.ExpenseReportsData.*;
 import static org.dashbuilder.dataset.Assertions.*;
 import static org.fest.assertions.api.Assertions.*;
+import static org.junit.Assert.*;
 
 public class SQLDataSetDefTest extends SQLDataSetTestBase {
 
@@ -40,6 +41,7 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
         }
         testSQLDataSet();
         testColumnSet();
+        testColumnAlias();
         testFilters();
     }
 
@@ -71,7 +73,7 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
 
         final String uuid = "expense_reports_sql";
         DataSet dataSet = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(uuid)
                         .filter(COLUMN_AMOUNT, FilterFactory.lowerThan(1000))
                         .group(COLUMN_EMPLOYEE)
@@ -103,7 +105,7 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
 
         final String uuid = "expense_reports_columnset";
         DataSet dataSet = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(uuid)
                         .buildLookup());
 
@@ -116,6 +118,36 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
     }
 
     @Test
+    public void testColumnAlias() throws Exception {
+        URL fileURL = Thread.currentThread().getContextClassLoader().getResource("expenseReports_columnalias.dset");
+        String json = IOUtils.toString(fileURL);
+        SQLDataSetDef def = (SQLDataSetDef) jsonMarshaller.fromJson(json);
+        dataSetDefRegistry.registerDataSetDef(def);
+
+        String uuid = "expense_reports_columnalias";
+        DataSetMetadata metadata = dataSetManager.getDataSetMetadata(uuid);
+        assertThat(metadata.getNumberOfColumns()).isEqualTo(3);
+        assertThat(metadata.getColumnId(0)).isEqualTo("Id");
+        assertThat(metadata.getColumnId(1)).isEqualTo("Employee");
+        assertThat(metadata.getColumnId(2)).isEqualTo("Amount");
+
+        DataSet dataSet = dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(uuid)
+                        .filter("id", FilterFactory.notNull())
+                        .column("id", "id")
+                        .column("EMPLOYEE", "employee")
+                        .column("AMOUNT", "amount")
+                        .sort("id", SortOrder.ASCENDING)
+                        .buildLookup());
+
+        assertThat(dataSet.getColumns().size()).isEqualTo(3);
+        assertNotNull(dataSet.getColumnById("ID"));
+        assertNotNull(dataSet.getColumnById("EMPLOYEE"));
+        assertNotNull(dataSet.getColumnById("AMOUNT"));
+    }
+
+    @Test
     public void testFilters() throws Exception {
 
         URL fileURL = Thread.currentThread().getContextClassLoader().getResource("expenseReports_filtered.dset");
@@ -125,13 +157,13 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
 
         final String uuid = "expense_reports_filtered";
         DataSetMetadata metadata = dataSetManager.getDataSetMetadata(uuid);
-        assertThat(metadata.getNumberOfColumns()).isEqualTo(4);
+        assertThat(metadata.getNumberOfColumns()).isEqualTo(5);
         if (!testSettings.isMonetDB()) {
-            assertThat(metadata.getEstimatedSize()).isEqualTo(516);
+            assertThat(metadata.getEstimatedSize()).isEqualTo(666);
         }
 
         DataSet dataSet = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(uuid)
                         .group(COLUMN_DEPARTMENT)
                         .column(COLUMN_DEPARTMENT)
@@ -143,21 +175,6 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
         assertDataSetDefinition(dataSet, uuid);
         assertDataSetValues(dataSet, dataSetFormatter, new String[][]{
                 {"Services", "Jamie Gilbeau", "792.59"},
-                {"Engineering", "Roxie Foraker", "2,120.55"}
-        }, 0);
-
-        dataSet = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
-                        .dataset(uuid)
-                        .filter(COLUMN_ID, FilterFactory.lowerThan(4))
-                        .group(COLUMN_DEPARTMENT)
-                        .column(COLUMN_DEPARTMENT)
-                        .column(COLUMN_EMPLOYEE)
-                        .column(COLUMN_AMOUNT, AggregateFunctionType.SUM)
-                        .buildLookup());
-
-        assertDataSetDefinition(dataSet, uuid);
-        assertDataSetValues(dataSet, dataSetFormatter, new String[][]{
                 {"Engineering", "Roxie Foraker", "2,120.55"}
         }, 0);
     }

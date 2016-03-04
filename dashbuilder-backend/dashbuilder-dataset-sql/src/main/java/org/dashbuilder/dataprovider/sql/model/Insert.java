@@ -51,6 +51,7 @@ public class Insert extends SQLStatement<Insert> {
     }
 
     public String getSQL() {
+        fixColumns();
         return dialect.getSQL(this);
     }
 
