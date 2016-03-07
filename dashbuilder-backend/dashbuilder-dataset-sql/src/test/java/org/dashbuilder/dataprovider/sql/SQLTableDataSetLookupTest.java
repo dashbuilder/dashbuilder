@@ -27,6 +27,7 @@ import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.junit.Test;
 
+import static org.dashbuilder.dataset.ExpenseReportsData.*;
 import static org.dashbuilder.dataprovider.sql.SQLFactory.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
@@ -37,6 +38,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
     @Override
     public void testAll() throws Exception {
         testNullValues();
+        testAvoidDuplicatedGroupColumn();
         testDataSetTrim();
         testDataSetColumns();
         testDataSetFilter();
@@ -85,6 +87,21 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         finally {
             deleteNullRow();
         }
+    }
+
+    @Test
+    public void testAvoidDuplicatedGroupColumn() throws Exception {
+
+        // In some DBs (MonetDB for instance), duplicated columns in "group by" fails
+        dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(DataSetGroupTest.EXPENSE_REPORTS)
+                        .group(COLUMN_DEPARTMENT)
+                        .column("Department")
+                        .column(COLUMN_AMOUNT, SUM)
+                        .rowNumber(3)
+                        .rowOffset(0)
+                        .buildLookup());
     }
 
     @Test

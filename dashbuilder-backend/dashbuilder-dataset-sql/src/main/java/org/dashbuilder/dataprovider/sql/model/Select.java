@@ -106,9 +106,7 @@ public class Select extends SQLStatement<Select> {
 
     public Select where(Condition condition) {
         if (condition != null) {
-            if (condition instanceof CoreCondition) {
-                fix(((CoreCondition) condition).getColumn());
-            }
+            fix(condition);
             wheres.add(condition);
         }
         return this;

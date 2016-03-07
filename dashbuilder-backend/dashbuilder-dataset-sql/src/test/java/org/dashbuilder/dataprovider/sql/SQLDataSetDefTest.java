@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2014 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,6 +29,7 @@ import org.junit.Test;
 
 import static org.dashbuilder.dataset.ExpenseReportsData.*;
 import static org.dashbuilder.dataset.Assertions.*;
+import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.fest.assertions.api.Assertions.*;
 import static org.junit.Assert.*;
 
@@ -135,9 +136,11 @@ public class SQLDataSetDefTest extends SQLDataSetTestBase {
                 DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(uuid)
                         .filter("id", FilterFactory.notNull())
-                        .column("id", "id")
+                        .filter("amount", OR(greaterThan(0), lowerThan(1000)))
+                        .group("employee")
                         .column("EMPLOYEE", "employee")
-                        .column("AMOUNT", "amount")
+                        .column("id", AggregateFunctionType.COUNT, "id")
+                        .column("AMOUNT", AggregateFunctionType.SUM, "amount")
                         .sort("id", SortOrder.ASCENDING)
                         .buildLookup());
 

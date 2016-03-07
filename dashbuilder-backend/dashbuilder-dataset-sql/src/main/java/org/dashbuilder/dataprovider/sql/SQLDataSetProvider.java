@@ -982,7 +982,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
 
             // Also add any non-aggregated column (columns pick up) to the group statement
             for (GroupFunction gf : groupOp.getGroupFunctions()) {
-                if (gf.getFunction() == null && !gf.getSourceId().equals(cg.getSourceId())) {
+                if (gf.getFunction() == null && !gf.getSourceId().equalsIgnoreCase(cg.getSourceId())) {
                     String dbGfId = _columnFromMetadata(metadata, gf.getSourceId());
                     _query.groupBy(SQLFactory.column(dbGfId));
                 }
