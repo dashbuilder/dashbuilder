@@ -17,7 +17,6 @@ package org.dashbuilder.dataprovider.sql.model;
 
 import java.sql.Connection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.dashbuilder.dataprovider.sql.JDBCUtils;
@@ -61,6 +60,18 @@ public class SQLStatement<T extends SQLStatement> {
     protected Column fix(Column column) {
         _columnsRefs.add(column);
         return column;
+    }
+
+    protected Condition fix(Condition condition) {
+        if (condition instanceof CoreCondition) {
+            fix(((CoreCondition) condition).getColumn());
+        }
+        if (condition instanceof LogicalCondition) {
+            for (Condition term : ((LogicalCondition) condition).getConditions()) {
+                fix(term);
+            }
+        }
+        return condition;
     }
 
     protected String fixCase(String id) {
