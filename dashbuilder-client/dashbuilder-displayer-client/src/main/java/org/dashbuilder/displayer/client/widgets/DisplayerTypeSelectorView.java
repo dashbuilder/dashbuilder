@@ -27,7 +27,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerType;
-import org.dashbuilder.displayer.client.resources.i18n.DisplayerTypeLiterals;
+import org.dashbuilder.displayer.client.resources.i18n.DisplayerTypeConstants;
 import org.gwtbootstrap3.client.ui.NavTabs;
 import org.gwtbootstrap3.client.ui.TabListItem;
 import org.gwtbootstrap3.client.ui.TabPane;
@@ -52,15 +52,15 @@ public class DisplayerTypeSelectorView extends Composite implements DisplayerTyp
     public void init(DisplayerTypeSelector presenter) {
         this.presenter = presenter;
 
-        displayerNames.put(DisplayerType.BARCHART, DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_bar());
-        displayerNames.put(DisplayerType.PIECHART, DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_pie());
-        displayerNames.put(DisplayerType.LINECHART, DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_line());
-        displayerNames.put(DisplayerType.AREACHART, DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_area());
-        displayerNames.put(DisplayerType.BUBBLECHART, DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_bubble());
-        displayerNames.put(DisplayerType.METERCHART, DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_meter());
-        displayerNames.put(DisplayerType.METRIC, DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_metric());
-        displayerNames.put(DisplayerType.MAP, DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_map());
-        displayerNames.put(DisplayerType.TABLE, DisplayerTypeLiterals.INSTANCE.displayer_type_selector_tab_table());
+        displayerNames.put(DisplayerType.BARCHART, DisplayerTypeConstants.INSTANCE.displayer_type_selector_tab_bar());
+        displayerNames.put(DisplayerType.PIECHART, DisplayerTypeConstants.INSTANCE.displayer_type_selector_tab_pie());
+        displayerNames.put(DisplayerType.LINECHART, DisplayerTypeConstants.INSTANCE.displayer_type_selector_tab_line());
+        displayerNames.put(DisplayerType.AREACHART, DisplayerTypeConstants.INSTANCE.displayer_type_selector_tab_area());
+        displayerNames.put(DisplayerType.BUBBLECHART, DisplayerTypeConstants.INSTANCE.displayer_type_selector_tab_bubble());
+        displayerNames.put(DisplayerType.METERCHART, DisplayerTypeConstants.INSTANCE.displayer_type_selector_tab_meter());
+        displayerNames.put(DisplayerType.METRIC, DisplayerTypeConstants.INSTANCE.displayer_type_selector_tab_metric());
+        displayerNames.put(DisplayerType.MAP, DisplayerTypeConstants.INSTANCE.displayer_type_selector_tab_map());
+        displayerNames.put(DisplayerType.TABLE, DisplayerTypeConstants.INSTANCE.displayer_type_selector_tab_table());
 
         initWidget(uiBinder.createAndBindUi(this));
         displayerSubTypePane.add(presenter.getSubtypeSelector());

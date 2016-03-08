@@ -31,7 +31,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.Position;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
-import org.dashbuilder.displayer.client.resources.i18n.PositionLiterals;
+import org.dashbuilder.displayer.client.resources.i18n.PositionConstants;
 import org.gwtbootstrap3.client.ui.Label;
 import org.gwtbootstrap3.client.ui.constants.LabelType;
 import org.uberfire.ext.properties.editor.client.PropertyEditorWidget;
@@ -197,7 +197,7 @@ public class DisplayerSettingsEditorView extends Composite implements DisplayerS
 
     @Override
     public String getPositionLiteralI18n(Position position) {
-        return PositionLiterals.INSTANCE.getString("POSITION_" + position.toString());
+        return PositionConstants.INSTANCE.getString("POSITION_" + position.toString());
     }
 
     @Override

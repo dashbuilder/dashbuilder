@@ -18,9 +18,9 @@ package org.dashbuilder.displayer.client.resources.i18n;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
-public interface DisplayerTypeLiterals extends ConstantsWithLookup {
+public interface DisplayerTypeConstants extends ConstantsWithLookup {
 
-    public static final DisplayerTypeLiterals INSTANCE = GWT.create(DisplayerTypeLiterals.class);
+    public static final DisplayerTypeConstants INSTANCE = GWT.create(DisplayerTypeConstants.class);
 
     public static final String DST_PREFIX = "DISPLAYER_SUBTYPE_";
 

@@ -18,9 +18,9 @@ package org.dashbuilder.displayer.client.resources.i18n;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
-public interface PositionLiterals extends ConstantsWithLookup {
+public interface PositionConstants extends ConstantsWithLookup {
 
-    public static final PositionLiterals INSTANCE = GWT.create(PositionLiterals.class);
+    public static final PositionConstants INSTANCE = GWT.create(PositionConstants.class);
 
     // Position enum literals
 
