@@ -15,7 +15,6 @@
  */
 package org.dashbuilder.displayer.client.widgets;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
-import org.dashbuilder.displayer.client.resources.i18n.DisplayerTypeLiterals;
+import org.dashbuilder.displayer.client.resources.i18n.DisplayerTypeConstants;
 import org.dashbuilder.displayer.client.resources.images.DisplayerImagesResources;
 import org.gwtbootstrap3.client.ui.Image;
 import org.gwtbootstrap3.client.ui.constants.ImageType;
@@ -59,7 +58,7 @@ public class DisplayerSubtypeSelectorView extends Composite implements Displayer
         String resourcePrefix = type.toString() + "_" + subtype.toString();
         ImageResource selectedIR = (ImageResource) DisplayerImagesResources.INSTANCE.getResource(resourcePrefix + DisplayerImagesResources.SELECTED_SUFFIX);
         ImageResource unselectedIR = (ImageResource) DisplayerImagesResources.INSTANCE.getResource(resourcePrefix + DisplayerImagesResources.UNSELECTED_SUFFIX);
-        String tooltip = DisplayerTypeLiterals.INSTANCE.getString(resourcePrefix + "_tt");
+        String tooltip = DisplayerTypeConstants.INSTANCE.getString(resourcePrefix + "_tt");
 
         final DisplayerSubTypeImageWidget dstiw = new DisplayerSubTypeImageWidget(selectedIR, unselectedIR, tooltip, false);
         imageWidgets.put(subtype, dstiw);
@@ -89,7 +88,7 @@ public class DisplayerSubtypeSelectorView extends Composite implements Displayer
     public void showDefault(DisplayerType type) {
         // Show a default image for those chart types that don't have any subtypes
         ImageResource selectedIR = (ImageResource)DisplayerImagesResources.INSTANCE.getResource(type.toString() + DisplayerImagesResources.DEFAULT_SUFFIX );
-        String tooltip = DisplayerTypeLiterals.INSTANCE.getString(type.toString() + DisplayerImagesResources.DEFAULT_SUFFIX + "_tt");
+        String tooltip = DisplayerTypeConstants.INSTANCE.getString(type.toString() + DisplayerImagesResources.DEFAULT_SUFFIX + "_tt");
         DisplayerSubTypeImageWidget dstiw = new DisplayerSubTypeImageWidget(selectedIR, null, tooltip, true);
         subtypes.clear();
         subtypes.setWidget(0, 0, dstiw);
