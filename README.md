@@ -44,6 +44,9 @@ Change log
 * MonetDB support added to the SQL provider.
   (the provider has been tested under the MonetDB 11.21.5 release)
 
+* MariaDB support added to the SQL provider.
+  (the provider has been tested under the MariaDB 10.1.10 release)
+
 * New data set filtering functions "IN" and "NOT IN" 
 
 * Data Set Core API available as an embeddable java library

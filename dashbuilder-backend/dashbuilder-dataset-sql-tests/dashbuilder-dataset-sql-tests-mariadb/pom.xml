@@ -20,19 +20,19 @@
   <parent>
     <groupId>org.dashbuilder</groupId>
     <artifactId>dashbuilder-dataset-sql-tests</artifactId>
-    <version>0.4.0-SNAPSHOT</version>
+    <version>0.5.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>dashbuilder-dataset-sql-tests-mysql</artifactId>
+  <artifactId>dashbuilder-dataset-sql-tests-mariadb</artifactId>
   <packaging>jar</packaging>
 
-  <name>Dashbuilder SQL Tests Mysql</name>
+  <name>Dashbuilder SQL Tests MariaDB</name>
 
   <dependencies>
 
     <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
+      <groupId>org.mariadb.jdbc</groupId>
+      <artifactId>mariadb-java-client</artifactId>
       <scope>test</scope>
     </dependency>
 
