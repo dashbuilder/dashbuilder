@@ -230,7 +230,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         subTest.testNotInOperator();
 
         // Skip this test since MySQL,SQLServer & Sybase are non case sensitive by default
-        if (!testSettings.isMySQL() && !testSettings.isSqlServer()&& !testSettings.isSybase()) {
+        if (!testSettings.isMySQL() && !testSettings.isMariaDB() && !testSettings.isSqlServer()&& !testSettings.isSybase()) {
             subTest.testLikeOperatorCaseSensitive();
         }
     }

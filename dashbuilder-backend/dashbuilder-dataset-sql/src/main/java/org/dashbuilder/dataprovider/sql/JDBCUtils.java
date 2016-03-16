@@ -105,6 +105,9 @@ public class JDBCUtils {
         if (url.contains(":mysql:")) {
             return MYSQL;
         }
+        if (url.contains(":mariadb:")) {
+            return MYSQL;
+        }
         if (url.contains(":postgresql:")) {
             return POSTGRES;
         }

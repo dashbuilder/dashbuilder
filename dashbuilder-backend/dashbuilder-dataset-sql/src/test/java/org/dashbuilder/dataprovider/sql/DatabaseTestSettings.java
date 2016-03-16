@@ -31,6 +31,7 @@ public class DatabaseTestSettings {
     public static final String H2MEM = "h2mem";
     public static final String POSTGRES = "postgres";
     public static final String MYSQL = "mysql";
+    public static final String MARIADB = "mariadb";
     public static final String ORACLE = "oracle";
     public static final String DB2 = "db2";
     public static final String SQLSERVER = "sqlserver";
@@ -77,6 +78,10 @@ public class DatabaseTestSettings {
 
     public boolean isMySQL() {
         return MYSQL.equals(getDatabaseType());
+    }
+
+    public boolean isMariaDB() {
+        return MARIADB.equals(getDatabaseType());
     }
 
     public boolean isPostgres() {

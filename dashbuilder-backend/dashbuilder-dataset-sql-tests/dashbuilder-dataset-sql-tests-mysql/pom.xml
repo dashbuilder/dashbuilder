@@ -28,23 +28,6 @@
 
   <name>Dashbuilder SQL Tests Mysql</name>
 
-  <properties>
-    <version.org.mysql-driver>5.1.6</version.org.mysql-driver>
-  </properties>
-
-  <dependencyManagement>
-    <dependencies>
-
-      <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>${version.org.mysql-driver}</version>
-        <scope>test</scope>
-      </dependency>
-
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
 
     <dependency>
