@@ -20,6 +20,7 @@
   <!--modules>
     <module>dashbuilder-dataset-sql-tests-h2</module>
     <module>dashbuilder-dataset-sql-tests-mysql</module>
+    <module>dashbuilder-dataset-sql-tests-mariadb</module>
     <module>dashbuilder-dataset-sql-tests-postgres</module>
     <module>dashbuilder-dataset-sql-tests-oracle</module>
     <module>dashbuilder-dataset-sql-tests-sqlserver</module>

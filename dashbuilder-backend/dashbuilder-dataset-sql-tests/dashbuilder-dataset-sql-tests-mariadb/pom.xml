@@ -23,16 +23,16 @@
     <version>0.5.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>dashbuilder-dataset-sql-tests-postgres</artifactId>
+  <artifactId>dashbuilder-dataset-sql-tests-mariadb</artifactId>
   <packaging>jar</packaging>
 
-  <name>Dashbuilder SQL Tests Postgres</name>
+  <name>Dashbuilder SQL Tests MariaDB</name>
 
   <dependencies>
 
     <dependency>
-      <groupId>postgresql</groupId>
-      <artifactId>postgresql</artifactId>
+      <groupId>org.mariadb.jdbc</groupId>
+      <artifactId>mariadb-java-client</artifactId>
       <scope>test</scope>
     </dependency>
 
