@@ -28,21 +28,6 @@
 
   <name>Dashbuilder SQL Tests Postgres</name>
 
-  <properties>
-    <version.org.postgres-driver>9.1-901.jdbc4</version.org.postgres-driver>
-  </properties>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>postgresql</groupId>
-        <artifactId>postgresql</artifactId>
-        <version>${version.org.postgres-driver}</version>
-        <scope>test</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
 
     <dependency>
