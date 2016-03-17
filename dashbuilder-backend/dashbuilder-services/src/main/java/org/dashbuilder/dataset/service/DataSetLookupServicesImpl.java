@@ -42,7 +42,6 @@ public class DataSetLookupServicesImpl implements DataSetLookupServices {
     protected Logger log;
     protected DataSetManagerCDI dataSetManager;
     protected UUIDGenerator uuidGenerator;
-    protected DataSetDefDeployerCDI dataSetDefDeployer;
     protected ExceptionManager exceptionManager;
 
     public DataSetLookupServicesImpl() {
@@ -51,26 +50,11 @@ public class DataSetLookupServicesImpl implements DataSetLookupServices {
     @Inject
     public DataSetLookupServicesImpl(Logger log,
                                      DataSetManagerCDI dataSetManager,
-                                     DataSetDefDeployerCDI dataSetDefDeployer,
                                      ExceptionManager exceptionManager) {
         this.log = log;
         this.dataSetManager = dataSetManager;
         this.uuidGenerator = DataSetCore.get().getUuidGenerator();
-        this.dataSetDefDeployer = dataSetDefDeployer;
         this.exceptionManager = exceptionManager;
-    }
-
-    @PostConstruct
-    protected void init() {
-        // By default, enable the register of data set definitions stored into the deployment folder.
-        ServletContext servletContext = RpcContext.getHttpSession().getServletContext();
-        if (!dataSetDefDeployer.isRunning() && servletContext != null) {
-            String dir = servletContext.getRealPath("WEB-INF/datasets");
-            if (dir != null && new File(dir).exists()) {
-                dir = dir.replaceAll("\\\\", "/");
-                dataSetDefDeployer.deploy(dir);
-            }
-        }
     }
 
     public DataSet lookupDataSet(DataSetLookup lookup) throws Exception {
