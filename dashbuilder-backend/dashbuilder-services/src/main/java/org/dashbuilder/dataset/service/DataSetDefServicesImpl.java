@@ -43,7 +43,6 @@ public class DataSetDefServicesImpl implements DataSetDefServices {
     protected ExceptionManager exceptionManager;
     protected UUIDGenerator uuidGenerator;
     protected DataSetDefRegistryCDI dataSetDefRegistry;
-    protected DataSetDefDeployerCDI dataSetDefDeployer;
 
     public DataSetDefServicesImpl() {
     }
@@ -52,27 +51,12 @@ public class DataSetDefServicesImpl implements DataSetDefServices {
     public DataSetDefServicesImpl(Logger log,
                                   User identity,
                                   ExceptionManager exceptionManager,
-                                  DataSetDefRegistryCDI dataSetDefRegistry,
-                                  DataSetDefDeployerCDI dataSetDefDeployer) {
+                                  DataSetDefRegistryCDI dataSetDefRegistry) {
         this.log = log;
         this.identity = identity;
         this.uuidGenerator = DataSetCore.get().getUuidGenerator();
         this.dataSetDefRegistry = dataSetDefRegistry;
         this.exceptionManager = exceptionManager;
-        this.dataSetDefDeployer = dataSetDefDeployer;
-    }
-
-    @PostConstruct
-    protected void init() {
-        // By default, enable the register of data set definitions stored into the deployment folder.
-        ServletContext servletContext = RpcContext.getHttpSession().getServletContext();
-        if (!dataSetDefDeployer.isRunning() && servletContext != null) {
-            String dir = servletContext.getRealPath("WEB-INF/datasets");
-            if (dir != null && new File(dir).exists()) {
-                dir = dir.replaceAll("\\\\", "/");
-                dataSetDefDeployer.deploy(dir);
-            }
-        }
     }
 
     @Override
