@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2014 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,15 +15,11 @@
  */
 package org.dashbuilder.dataset.service;
 
-import java.io.File;
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 
 import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetDefDeployerCDI;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetManagerCDI;
 import org.dashbuilder.dataset.DataSetMetadata;
@@ -32,7 +28,6 @@ import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.dashbuilder.exception.ExceptionManager;
 import org.jboss.errai.bus.server.annotations.Service;
-import org.jboss.errai.bus.server.api.RpcContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +38,6 @@ public class DataSetLookupServicesImpl implements DataSetLookupServices {
     protected static Logger log = LoggerFactory.getLogger(DataSetLookupServicesImpl.class);
     protected DataSetManagerCDI dataSetManager;
     protected UUIDGenerator uuidGenerator;
-    protected DataSetDefDeployerCDI dataSetDefDeployer;
     protected ExceptionManager exceptionManager;
 
     public DataSetLookupServicesImpl() {
@@ -51,25 +45,10 @@ public class DataSetLookupServicesImpl implements DataSetLookupServices {
 
     @Inject
     public DataSetLookupServicesImpl(DataSetManagerCDI dataSetManager,
-                                     DataSetDefDeployerCDI dataSetDefDeployer,
                                      ExceptionManager exceptionManager) {
         this.dataSetManager = dataSetManager;
         this.uuidGenerator = DataSetCore.get().getUuidGenerator();
-        this.dataSetDefDeployer = dataSetDefDeployer;
         this.exceptionManager = exceptionManager;
-    }
-
-    @PostConstruct
-    protected void init() {
-        // By default, enable the register of data set definitions stored into the deployment folder.
-        ServletContext servletContext = RpcContext.getHttpSession().getServletContext();
-        if (!dataSetDefDeployer.isRunning() && servletContext != null) {
-            String dir = servletContext.getRealPath("WEB-INF/datasets");
-            if (dir != null && new File(dir).exists()) {
-                dir = dir.replaceAll("\\\\", "/");
-                dataSetDefDeployer.deploy(dir);
-            }
-        }
     }
 
     public DataSet lookupDataSet(DataSetLookup lookup) throws Exception {
