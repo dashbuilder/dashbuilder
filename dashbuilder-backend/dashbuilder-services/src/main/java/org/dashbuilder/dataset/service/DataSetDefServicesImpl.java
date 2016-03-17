@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2014 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,22 +15,17 @@
  */
 package org.dashbuilder.dataset.service;
 
-import java.io.File;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 
 import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataprovider.DataSetProviderType;
-import org.dashbuilder.dataset.DataSetDefDeployerCDI;
 import org.dashbuilder.dataset.DataSetDefRegistryCDI;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.dashbuilder.exception.ExceptionManager;
 import org.jboss.errai.bus.server.annotations.Service;
-import org.jboss.errai.bus.server.api.RpcContext;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +39,6 @@ public class DataSetDefServicesImpl implements DataSetDefServices {
     protected ExceptionManager exceptionManager;
     protected UUIDGenerator uuidGenerator;
     protected DataSetDefRegistryCDI dataSetDefRegistry;
-    protected DataSetDefDeployerCDI dataSetDefDeployer;
 
     public DataSetDefServicesImpl() {
     }
@@ -52,26 +46,11 @@ public class DataSetDefServicesImpl implements DataSetDefServices {
     @Inject
     public DataSetDefServicesImpl(User identity,
                                   ExceptionManager exceptionManager,
-                                  DataSetDefRegistryCDI dataSetDefRegistry,
-                                  DataSetDefDeployerCDI dataSetDefDeployer) {
+                                  DataSetDefRegistryCDI dataSetDefRegistry) {
         this.identity = identity;
         this.uuidGenerator = DataSetCore.get().getUuidGenerator();
         this.dataSetDefRegistry = dataSetDefRegistry;
         this.exceptionManager = exceptionManager;
-        this.dataSetDefDeployer = dataSetDefDeployer;
-    }
-
-    @PostConstruct
-    protected void init() {
-        // By default, enable the register of data set definitions stored into the deployment folder.
-        ServletContext servletContext = RpcContext.getHttpSession().getServletContext();
-        if (!dataSetDefDeployer.isRunning() && servletContext != null) {
-            String dir = servletContext.getRealPath("WEB-INF/datasets");
-            if (dir != null && new File(dir).exists()) {
-                dir = dir.replaceAll("\\\\", "/");
-                dataSetDefDeployer.deploy(dir);
-            }
-        }
     }
 
     @Override
