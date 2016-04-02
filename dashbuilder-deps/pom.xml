@@ -20,11 +20,12 @@
 
   <properties>
     <!-- Keep in sync with parent's <version> in dashbuilder-parent-metadata -->
-    <version.org.jboss.integration-platform>6.0.0.Final</version.org.jboss.integration-platform>
+    <version.org.jboss.integration-platform>7.0.0.CR1</version.org.jboss.integration-platform>
     <version.org.uberfire>0.9.0-SNAPSHOT</version.org.uberfire>
     <version.org.jboss.errai>4.0.0-SNAPSHOT</version.org.jboss.errai>
     <version.org.jboss.errai.cdi10-compatible>3.0.6.Final</version.org.jboss.errai.cdi10-compatible>
-
+    <!-- Version 1.1.0.Final which is coming from ip-bom is not compatible with GWT 2.8.0.Beta1 -->
+    <version.javax.validation>1.0.0.GA</version.javax.validation>
     <version.javax.xml.stream>1.0-2</version.javax.xml.stream>
     <version.com.ahomeit.lienzo.core>2.0.192-RC1</version.com.ahomeit.lienzo.core>
     <version.com.ahomeit.lienzo.charts>1.0.122-RC0</version.com.ahomeit.lienzo.charts>
@@ -91,6 +92,30 @@
         <scope>import</scope>
       </dependency>
 
+      <dependency>
+        <groupId>javax.enterprise</groupId>
+        <artifactId>cdi-api</artifactId>
+        <version>${version.javax.enterprise}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.annotation</groupId>
+            <artifactId>jsr250-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.interceptor</groupId>
+            <artifactId>javax.interceptor-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>${version.javax.validation}</version>
+      </dependency>
       <dependency>
         <groupId>javax.xml.stream</groupId>
         <artifactId>stax-api</artifactId>

@@ -16,6 +16,7 @@
 package org.dashbuilder.dataprovider.sql;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetColumnTest;
@@ -158,9 +159,9 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(DataSetGroupTest.EXPENSE_REPORTS)
-                        .filter(ID.getName(), FilterFactory.OR(
-                                FilterFactory.equalsTo(40),
-                                FilterFactory.equalsTo(41)))
+                        .filter(ID.getName(), FilterFactory.AND(
+                                FilterFactory.greaterOrEqualsTo(40),
+                                FilterFactory.lowerOrEqualsTo(41)))
                         .group(DATE.getName()).dynamic(9999, DateIntervalType.HOUR, true)
                         .column(DATE.getName())
                         .buildLookup());
