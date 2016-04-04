@@ -56,8 +56,8 @@ public class DataSetDefDeployerCDI extends DataSetDefDeployer {
         }
     }
 
-    protected File getWebInfDir() {
-        String[] paths = new String[] {"app.html.template"};
+    public File getWebInfDir() {
+        String[] paths = new String[] {"app.html.template", "security-management.properties"};
         for (String path : paths) {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             URL pathURL = classLoader.getResource(path);
