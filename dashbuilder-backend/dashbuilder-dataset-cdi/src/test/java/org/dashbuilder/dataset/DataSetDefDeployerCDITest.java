@@ -16,9 +16,9 @@
 package org.dashbuilder.dataset;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.net.URL;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
@@ -33,20 +33,49 @@ public class DataSetDefDeployerCDITest {
     @Spy
     DataSetDefDeployerCDI dataSetDefDeployer;
 
-    @Before
-    public void setUp() {
+    @Test
+    public void testDataSetDirNotDetected() throws Exception {
         dataSetDefDeployer.init();
+        verify(dataSetDefDeployer, never()).deploy(anyString());
     }
 
     @Test
     public void testDataSetDirDetected() throws Exception {
+        File f = createMarkerFile("app.html.template");
+        try {
+            dataSetDefDeployer.init();
+            verify(dataSetDefDeployer).deploy(getDataSetsDir().getPath());
+        } finally {
+            f.delete();
+        }
+    }
+
+    @Test
+    public void testDataSetDirDetected2() throws Exception {
+        File f = createMarkerFile("security-management.properties");
+        try {
+            dataSetDefDeployer.init();
+            verify(dataSetDefDeployer).deploy(getDataSetsDir().getPath());
+        } finally {
+            f.delete();
+        }
+    }
+
+    public File getDataSetsDir() throws Exception {
         URL testDsetUrl = Thread.currentThread().getContextClassLoader().getResource("WEB-INF/datasets/test.dset");
-        if (testDsetUrl != null) {
-            File dsetDir = new File(testDsetUrl.getPath()).getParentFile();
-            verify(dataSetDefDeployer).deploy(dsetDir.getPath());
+        return new File(testDsetUrl.getPath()).getParentFile();
+    }
+
+    public File createMarkerFile(String name) throws Exception {
+        File webInfDir = getDataSetsDir().getParentFile();
+        File classesDir = new File(webInfDir, "classes");
+        classesDir.mkdir();
+        File markerFile = new File(classesDir, name);
+        if (!markerFile.exists()) {
+            FileWriter out = new FileWriter(markerFile);
+            out.write("test");
+            out.close();
         }
-        else {
-            fail("test.dset not found");
-        }
+        return markerFile;
     }
 }
