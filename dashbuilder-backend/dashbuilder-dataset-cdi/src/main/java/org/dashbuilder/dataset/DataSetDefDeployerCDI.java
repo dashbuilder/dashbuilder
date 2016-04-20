@@ -15,8 +15,6 @@
  */
 package org.dashbuilder.dataset;
 
-import java.io.File;
-import java.net.URL;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
@@ -24,9 +22,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dashbuilder.config.Config;
-import org.uberfire.commons.services.cdi.Startup;
 
-@Startup
 @ApplicationScoped
 public class DataSetDefDeployerCDI extends DataSetDefDeployer {
 
@@ -47,28 +43,6 @@ public class DataSetDefDeployerCDI extends DataSetDefDeployer {
         if (!StringUtils.isBlank(directory)) {
             deploy(directory);
         }
-        else {
-            File webInf = getWebInfDir();
-            if (webInf != null) {
-                File datasets = new File(webInf, "datasets");
-                deploy(datasets.getPath());
-            }
-        }
-    }
-
-    public File getWebInfDir() {
-        String[] paths = new String[] {"app.html.template", "security-management.properties"};
-        for (String path : paths) {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            URL pathURL = classLoader.getResource(path);
-            if (pathURL == null) {
-                pathURL = classLoader.getResource("WEB-INF/classes/" + path);
-            }
-            if (pathURL != null) {
-                return new File(pathURL.getPath()).getParentFile().getParentFile();
-            }
-        }
-        return null;
     }
 
     @PreDestroy
