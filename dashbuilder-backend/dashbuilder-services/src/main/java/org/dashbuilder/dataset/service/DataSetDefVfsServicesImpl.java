@@ -131,6 +131,14 @@ public class DataSetDefVfsServicesImpl implements DataSetDefVfsServices {
     }
 
     @Override
+    public Path copy( final Path path,
+                      final String newName,
+                      final Path targetDirectory,
+                      final String comment ) {
+        throw new UnsupportedOperationException( "A data set definition cannot be copied to another directory." );
+    }
+
+    @Override
     public void delete(Path path, String commitMessage) {
         dataSetDefRegistry.removeDataSetDef(path,
                 identity != null ? identity.getIdentifier() : SYSTEM,
