@@ -66,7 +66,7 @@ public class ElasticSearchDataSetTestBase {
     public void setUp() throws Exception {
         dataSetManager = DataSetCore.get().getDataSetManager();
         dataSetDefRegistry = DataSetCore.get().getDataSetDefRegistry();
-        jsonMarshaller = DataSetDefJSONMarshaller.get();
+        jsonMarshaller = DataSetCore.get().getDataSetDefJSONMarshaller();
         dataSetFormatter = new DataSetFormatter();
 
         DataSetProviderRegistry dataSetProviderRegistry = DataSetCore.get().getDataSetProviderRegistry();

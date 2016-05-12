@@ -15,27 +15,36 @@
  */
 package org.dashbuilder.dataprovider;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class DataSetProviderRegistryImpl implements DataSetProviderRegistry {
 
-    private Map<DataSetProviderType,DataSetProvider> dataSetProviderMap = new HashMap<>();
-    private List<DataSetProviderType> availableTypes = new ArrayList<>();
+    private Map<String,DataSetProvider> dataSetProviderMap = new HashMap<>();
+    private Set<DataSetProviderType> availableTypes = new HashSet<>();
 
+    @Override
     public void registerDataProvider(DataSetProvider dataProvider) {
         DataSetProviderType type = dataProvider.getType();
-        dataSetProviderMap.put(type, dataProvider);
+        dataSetProviderMap.put(type.getName(), dataProvider);
         availableTypes.add(type);
     }
 
+    @Override
     public DataSetProvider getDataSetProvider(DataSetProviderType type) {
-        return dataSetProviderMap.get(type);
+        return dataSetProviderMap.get(type.getName());
     }
 
-    public List<DataSetProviderType> getAvailableTypes() {
+    @Override
+    public Set<DataSetProviderType> getAvailableTypes() {
         return availableTypes;
+    }
+
+    @Override
+    public DataSetProviderType getProviderTypeByName(String name) {
+        DataSetProvider provider = dataSetProviderMap.get(name);
+        return provider != null ? provider.getType() : null;
     }
 }

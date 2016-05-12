@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static org.dashbuilder.dataprovider.DataSetProviderType.*;
+
 /**
  * <p>Data Set provider type editor presenter.</p>
  * 
@@ -89,93 +91,71 @@ public class DataSetDefProviderTypeEditor implements IsWidget, org.dashbuilder.d
         return provider;
     }
 
+    /**
+     * The provider types supported by this editor
+     */
+    DataSetProviderType[] CORE_TYPES = new DataSetProviderType[] {BEAN, CSV, SQL, ELASTICSEARCH};
+
     protected Collection<ImageListEditor<DataSetProviderType>.Entry> getDefaultEntries() {
-        final DataSetProviderType[] providerTypes = DataSetProviderType.values();
-        final Collection<ImageListEditor<DataSetProviderType>.Entry> entries = new ArrayList<ImageListEditor<DataSetProviderType>.Entry>(providerTypes.length);
+        final DataSetProviderType[] providerTypes = CORE_TYPES;
+        final Collection<ImageListEditor<DataSetProviderType>.Entry> entries = new ArrayList<>(providerTypes.length);
         for (final DataSetProviderType type : providerTypes) {
-            if (isSupported(type)) {
-                final String title = getTypeSelectorTitle(type);
-                final String text = getTypeSelectorText(type);
-                final SafeUri uri = getTypeSelectorImageUri(type);
-                final ImageListEditor<DataSetProviderType>.Entry entry = provider.newEntry(type, uri,
-                        new SafeHtmlBuilder().appendEscaped(title). toSafeHtml(),
-                        new SafeHtmlBuilder().appendEscaped(text). toSafeHtml());
-                entries.add(entry);
-            }
+            final String title = getTypeSelectorTitle(type);
+            final String text = getTypeSelectorText(type);
+            final SafeUri uri = getTypeSelectorImageUri(type);
+            final ImageListEditor<DataSetProviderType>.Entry entry = provider.newEntry(type, uri,
+                    new SafeHtmlBuilder().appendEscaped(title). toSafeHtml(),
+                    new SafeHtmlBuilder().appendEscaped(text). toSafeHtml());
+            entries.add(entry);
         }
         return entries;
     }
-    
-    
-    private boolean isSupported(final DataSetProviderType type) {
-        switch (type) {
-            case BEAN:
-                return true;
-            case CSV:
-                return true;
-            case SQL:
-                return true;
-            case ELASTICSEARCH:
-                return true;
-            default:
-                return false;
-        }
-    }
 
     String getTypeSelectorTitle(final DataSetProviderType type) {
-        String description = null;
-        switch (type) {
-            case BEAN:
-                description = DataSetEditorConstants.INSTANCE.bean();
-                break;
-            case CSV:
-                description = DataSetEditorConstants.INSTANCE.csv();
-                break;
-            case SQL:
-                description = DataSetEditorConstants.INSTANCE.sql();
-                break;
-            case ELASTICSEARCH:
-                description = DataSetEditorConstants.INSTANCE.elasticSearch();
-                break;
+        if (BEAN.equals(type)) {
+            return DataSetEditorConstants.INSTANCE.bean();
         }
-        return description;
+        if (CSV.equals(type)) {
+            return DataSetEditorConstants.INSTANCE.csv();
+        }
+        if (SQL.equals(type)) {
+            return DataSetEditorConstants.INSTANCE.sql();
+        }
+        if (ELASTICSEARCH.equals(type)) {
+            return DataSetEditorConstants.INSTANCE.elasticSearch();
+        }
+        return null;
     }
 
     String getTypeSelectorText(final DataSetProviderType type) {
-        String description = null;
-        switch (type) {
-            case BEAN:
-                description = DataSetEditorConstants.INSTANCE.bean_description();
-                break;
-            case CSV:
-                description = DataSetEditorConstants.INSTANCE.csv_description();
-                break;
-            case SQL:
-                description = DataSetEditorConstants.INSTANCE.sql_description();
-                break;
-            case ELASTICSEARCH:
-                description = DataSetEditorConstants.INSTANCE.elasticSearch_description();
-                break;
+        if (BEAN.equals(type)) {
+            return DataSetEditorConstants.INSTANCE.bean_description();
         }
-        return description;
+        if (CSV.equals(type)) {
+            return DataSetEditorConstants.INSTANCE.csv_description();
+        }
+        if (SQL.equals(type)) {
+            return DataSetEditorConstants.INSTANCE.sql_description();
+        }
+        if (ELASTICSEARCH.equals(type)) {
+            return DataSetEditorConstants.INSTANCE.elasticSearch_description();
+        }
+        return null;
     }
 
     SafeUri getTypeSelectorImageUri(final DataSetProviderType type) {
-        SafeUri result = null;
-        switch (type) {
-            case BEAN:
-                result = DataSetClientResources.INSTANCE.images().javaIcon160().getSafeUri();
-                break;
-            case CSV:
-                result = DataSetClientResources.INSTANCE.images().csvIcon160().getSafeUri();
-                break;
-            case SQL:
-                result = DataSetClientResources.INSTANCE.images().sqlIcon160().getSafeUri();
-                break;
-            case ELASTICSEARCH:
-                result = DataSetClientResources.INSTANCE.images().elIcon160().getSafeUri();
-                break;
+        if (BEAN.equals(type)) {
+            return DataSetClientResources.INSTANCE.images().javaIcon160().getSafeUri();
         }
-        return result;
+        if (CSV.equals(type)) {
+            return DataSetClientResources.INSTANCE.images().csvIcon160().getSafeUri();
+        }
+        if (SQL.equals(type)) {
+            return DataSetClientResources.INSTANCE.images().sqlIcon160().getSafeUri();
+        }
+        if (ELASTICSEARCH.equals(type)) {
+            return DataSetClientResources.INSTANCE.images().elIcon160().getSafeUri();
+        }
+        return null;
     }
 }

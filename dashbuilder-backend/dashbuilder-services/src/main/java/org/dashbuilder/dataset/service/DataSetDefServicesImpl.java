@@ -81,8 +81,7 @@ public class DataSetDefServicesImpl implements DataSetDefServices {
 
     @Override
     public DataSetDef createDataSetDef(DataSetProviderType type) {
-        DataSetDef result = new DataSetDef();
-        if (type != null) result = DataSetProviderType.createDataSetDef(type);
+        DataSetDef result = type != null ? type.createDataSetDef() : new DataSetDef();
         result.setUUID(uuidGenerator.newUuid());
         return result;
     }

@@ -163,7 +163,7 @@ public abstract class ImageListEditorTest extends AbstractEditorTest {
     }
 
     protected static ImageListEditor<DataSetProviderType>.Entry mockEntry(DataSetProviderType type) {
-        final String name = type.name();
+        final String name = type.getName();
         final SafeUri uri = mock(SafeUri.class);
         final SafeHtml safeHtml = mock(SafeHtml.class);
         doReturn(name).when(safeHtml).asString();

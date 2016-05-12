@@ -21,6 +21,7 @@ import java.io.FilenameFilter;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
@@ -38,7 +39,7 @@ public class DataSetDefDeployer {
     protected Logger log = LoggerFactory.getLogger(DataSetDefDeployer.class);
     protected DataSetDefRegistry dataSetDefRegistry;
     protected Thread watcherThread;
-    protected DataSetDefJSONMarshaller jsonMarshaller = DataSetDefJSONMarshaller.get();
+    protected DataSetDefJSONMarshaller jsonMarshaller;
 
     FilenameFilter _deployFilter = new FilenameFilter() {
         public boolean accept(File dir, String name) {
@@ -55,7 +56,8 @@ public class DataSetDefDeployer {
     public DataSetDefDeployer() {
     }
 
-    public DataSetDefDeployer(DataSetDefRegistry dataSetDefRegistry) {
+    public DataSetDefDeployer(DataSetDefJSONMarshaller jsonMarshaller, DataSetDefRegistry dataSetDefRegistry) {
+        this.jsonMarshaller = jsonMarshaller;
         this.dataSetDefRegistry = dataSetDefRegistry;
     }
 

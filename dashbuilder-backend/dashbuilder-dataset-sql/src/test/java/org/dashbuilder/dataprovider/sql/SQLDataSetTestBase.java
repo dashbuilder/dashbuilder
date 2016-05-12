@@ -45,7 +45,7 @@ public class SQLDataSetTestBase {
     DataSetDefRegistry dataSetDefRegistry = DataSetCore.get().getDataSetDefRegistry();
     DataSetFormatter dataSetFormatter = new DataSetFormatter();
     SQLDataSetProvider sqlDataSetProvider = SQLDataSetProvider.get();
-    DataSetDefJSONMarshaller jsonMarshaller = DataSetDefJSONMarshaller.get();
+    DataSetDefJSONMarshaller jsonMarshaller = DataSetCore.get().getDataSetDefJSONMarshaller();
     DatabaseTestSettings testSettings = createTestSettings();
 
     Connection conn;

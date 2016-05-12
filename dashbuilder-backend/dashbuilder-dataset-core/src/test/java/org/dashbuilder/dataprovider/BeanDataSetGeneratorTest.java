@@ -42,7 +42,7 @@ public class BeanDataSetGeneratorTest {
         dataSetManager = DataSetCore.get().getDataSetManager();
         dataSetDefRegistry = DataSetCore.get().getDataSetDefRegistry();
         dataSetFormatter = new DataSetFormatter();
-        jsonMarshaller = DataSetDefJSONMarshaller.get();
+        jsonMarshaller = DataSetCore.get().getDataSetDefJSONMarshaller();
     }
 
     @Test

@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -77,8 +78,8 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
     protected Event<DataSetDefRegisteredEvent> dataSetDefRegisteredEvent;
     protected Event<DataSetDefRemovedEvent> dataSetDefRemovedEvent;
     protected Event<DataSetStaleEvent> dataSetStaleEvent;
+    protected DataSetDefJSONMarshaller jsonMarshaller;
 
-    protected DataSetDefJSONMarshaller jsonMarshaller = DataSetDefJSONMarshaller.get();
     protected FileSystem fileSystem;
     protected Path root;
 
@@ -106,7 +107,11 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
         this.dataSetDefRegisteredEvent = dataSetDefRegisteredEvent;
         this.dataSetDefRemovedEvent = dataSetDefRemovedEvent;
         this.dataSetStaleEvent = dataSetStaleEvent;
+        this.jsonMarshaller = DataSetCore.get().getDataSetDefJSONMarshaller();
+    }
 
+    @PostConstruct
+    void init() {
         initFileSystem();
         deleteTempFiles();
         registerDataSetDefs();

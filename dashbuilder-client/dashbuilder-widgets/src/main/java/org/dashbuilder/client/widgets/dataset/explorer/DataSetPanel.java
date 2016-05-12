@@ -31,6 +31,8 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import static org.dashbuilder.dataprovider.DataSetProviderType.*;
+
 /**
  * <p>Data Set Panel widget with a collapsed by default summary.</p>
  * <p>It displays a panel with a header and a collape panel body.</p>
@@ -128,33 +130,35 @@ public class DataSetPanel implements IsWidget {
         });;
     }
 
-
     SafeUri getTypeIconUri(final DataSetDef dataSetDef) {
-        switch (dataSetDef.getProvider()) {
-            case BEAN:
-                return DataSetClientResources.INSTANCE.images().javaIcon32().getSafeUri();
-            case CSV:
-                return DataSetClientResources.INSTANCE.images().csvIcon32().getSafeUri();
-            case SQL:
-                return DataSetClientResources.INSTANCE.images().sqlIcon32().getSafeUri();
-            case ELASTICSEARCH:
-                return DataSetClientResources.INSTANCE.images().elIcon32().getSafeUri();
+        if (BEAN.equals(dataSetDef.getProvider())) {
+            return DataSetClientResources.INSTANCE.images().javaIcon32().getSafeUri();
+        }
+        if (CSV.equals(dataSetDef.getProvider())) {
+            return DataSetClientResources.INSTANCE.images().csvIcon32().getSafeUri();
+        }
+        if (SQL.equals(dataSetDef.getProvider())) {
+            return DataSetClientResources.INSTANCE.images().sqlIcon32().getSafeUri();
+        }
+        if (ELASTICSEARCH.equals(dataSetDef.getProvider())) {
+            return DataSetClientResources.INSTANCE.images().elIcon32().getSafeUri();
         }
         return null;
     }
 
     String getTypeIconTitle(final DataSetDef dataSetDef) {
-        switch (dataSetDef.getProvider()) {
-            case BEAN:
-                return DataSetExplorerConstants.INSTANCE.bean();
-            case CSV:
-                return DataSetExplorerConstants.INSTANCE.csv();
-            case SQL:
-                return DataSetExplorerConstants.INSTANCE.sql();
-            case ELASTICSEARCH:
-                return DataSetExplorerConstants.INSTANCE.el();
+        if (BEAN.equals(dataSetDef.getProvider())) {
+            return DataSetExplorerConstants.INSTANCE.bean();
+        }
+        if (CSV.equals(dataSetDef.getProvider())) {
+            return DataSetExplorerConstants.INSTANCE.csv();
+        }
+        if (SQL.equals(dataSetDef.getProvider())) {
+            return DataSetExplorerConstants.INSTANCE.sql();
+        }
+        if (ELASTICSEARCH.equals(dataSetDef.getProvider())) {
+            return DataSetExplorerConstants.INSTANCE.el();
         }
         return null;
     }
-
 }

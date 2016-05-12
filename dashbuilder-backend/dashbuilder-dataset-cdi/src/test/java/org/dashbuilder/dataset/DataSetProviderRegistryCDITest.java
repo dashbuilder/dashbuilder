@@ -16,8 +16,10 @@
 package org.dashbuilder.dataset;
 
 import java.util.List;
+import java.util.Set;
 import javax.inject.Inject;
 
+import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderRegistryCDI;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.test.BaseCDITest;
@@ -35,7 +37,7 @@ public class DataSetProviderRegistryCDITest extends BaseCDITest {
 
     @Test
     public void testRegistryDataSetDef() throws Exception {
-        List<DataSetProviderType> typeList = dataSetProviderRegistry.getAvailableTypes();
+        Set<DataSetProviderType> typeList = dataSetProviderRegistry.getAvailableTypes();
         assertTrue(typeList.contains(DataSetProviderType.STATIC));
         assertTrue(typeList.contains(DataSetProviderType.BEAN));
         assertTrue(typeList.contains(DataSetProviderType.CSV));

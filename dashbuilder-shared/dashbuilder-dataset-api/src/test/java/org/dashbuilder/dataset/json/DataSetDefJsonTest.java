@@ -15,6 +15,8 @@
 package org.dashbuilder.dataset.json;
 
 import org.apache.commons.io.IOUtils;
+import org.dashbuilder.dataprovider.DataSetProvider;
+import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.def.BeanDataSetDef;
@@ -32,9 +34,12 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -46,7 +51,37 @@ public class DataSetDefJsonTest {
     private static final String EXPENSES_DEF_PATH = "expenseReports.dset";
     private static final String CSV_DEF_PATH = "csvDataSetDef.dset";
 
-    DataSetDefJSONMarshaller jsonMarshaller = DataSetDefJSONMarshaller.get();
+    DataSetDefJSONMarshaller jsonMarshaller = new DataSetDefJSONMarshaller(new DataSetProviderRegistry() {
+        @Override
+        public void registerDataProvider(DataSetProvider dataProvider) {
+
+        }
+        @Override
+        public DataSetProvider getDataSetProvider(DataSetProviderType type) {
+            return null;
+        }
+
+        @Override
+        public DataSetProviderType getProviderTypeByName(String name) {
+            switch (name) {
+                case "BEAN":
+                    return DataSetProviderType.BEAN;
+                case "CSV":
+                    return DataSetProviderType.CSV;
+                case "SQL":
+                    return DataSetProviderType.SQL;
+            }
+            return null;
+        }
+
+        @Override
+        public Set<DataSetProviderType> getAvailableTypes() {
+            return new HashSet<>(Arrays.asList(
+                    DataSetProviderType.BEAN,
+                    DataSetProviderType.CSV,
+                    DataSetProviderType.SQL));
+        }
+    });
 
     @Test
     public void testBean() throws Exception {
