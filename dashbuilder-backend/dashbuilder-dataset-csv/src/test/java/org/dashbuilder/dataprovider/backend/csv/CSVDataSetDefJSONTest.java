@@ -36,7 +36,7 @@ public class CSVDataSetDefJSONTest {
 
     @Before
     public void setUp() {
-        jsonMarshaller = DataSetDefJSONMarshaller.get();
+        jsonMarshaller = DataSetCore.get().getDataSetDefJSONMarshaller();
         dataSetManager = DataSetCore.get().getDataSetManager();
     }
     

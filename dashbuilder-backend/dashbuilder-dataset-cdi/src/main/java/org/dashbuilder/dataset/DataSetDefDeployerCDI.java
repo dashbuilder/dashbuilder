@@ -21,6 +21,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dashbuilder.DataSetCore;
 import org.dashbuilder.config.Config;
 
 @ApplicationScoped
@@ -34,7 +35,7 @@ public class DataSetDefDeployerCDI extends DataSetDefDeployer {
                                  @Config("3000") int scanIntervalInMillis,
                                  DataSetDefRegistryCDI dataSetDefRegistry) {
 
-        super(dataSetDefRegistry);
+        super(DataSetCore.get().getDataSetDefJSONMarshaller(), dataSetDefRegistry);
         super.setScanIntervalInMillis(scanIntervalInMillis);
     }
 

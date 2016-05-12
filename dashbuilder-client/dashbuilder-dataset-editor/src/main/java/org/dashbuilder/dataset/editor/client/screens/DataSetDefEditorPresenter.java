@@ -118,7 +118,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
         if (getDataSetDef() == null) {
             return DataSetAuthoringConstants.INSTANCE.editorTitleGeneric();
         } else {
-            String type = getDataSetDef().getProvider().name();
+            String type = getDataSetDef().getProvider().getName();
             return DataSetAuthoringConstants.INSTANCE.editorTitle(getDataSetDef().getName(), type);
         }
     }

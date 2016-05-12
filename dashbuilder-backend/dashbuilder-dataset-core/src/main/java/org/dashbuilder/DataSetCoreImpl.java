@@ -30,6 +30,7 @@ import org.dashbuilder.dataset.UUIDGeneratorImpl;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.engine.Chronometer;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
+import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.dashbuilder.scheduler.Scheduler;
 
@@ -50,6 +51,7 @@ public class DataSetCoreImpl extends DataSetCore {
     private IntervalBuilderDynamicDate intervalBuilderDynamicDate;
     private ChronometerImpl chronometerImpl;
     private UUIDGeneratorImpl uuidGeneratorImpl;
+    private DataSetDefJSONMarshaller dataSetDefJSONMarshaller;
 
     // Factory methods
 
@@ -116,6 +118,7 @@ public class DataSetCoreImpl extends DataSetCore {
     public DataSetDefDeployer getDataSetDefDeployer() {
         if (dataSetDefDeployer == null) {
             dataSetDefDeployer = new DataSetDefDeployer(
+                    checkNotNull(getDataSetDefJSONMarshaller(), "DataSetDefJSONMarshaller"),
                     checkNotNull(getDataSetDefRegistry(), DATA_SET_DEF_REGISTRY));
         }
         return dataSetDefDeployer;
@@ -176,6 +179,15 @@ public class DataSetCoreImpl extends DataSetCore {
         return uuidGeneratorImpl;
     }
 
+    @Override
+    public DataSetDefJSONMarshaller getDataSetDefJSONMarshaller() {
+        if (dataSetDefJSONMarshaller == null) {
+            dataSetDefJSONMarshaller = new DataSetDefJSONMarshaller(
+                    checkNotNull(getDataSetProviderRegistry(), "DataSetProviderRegistry"));
+        }
+        return dataSetDefJSONMarshaller;
+    }
+
     // Setters
 
     public void setDataSetPushEnabled(boolean dataSetPushEnabled) {
@@ -212,6 +224,11 @@ public class DataSetCoreImpl extends DataSetCore {
 
     public void setIntervalBuilderDynamicDate(IntervalBuilderDynamicDate intervalBuilderDynamicDate) {
         this.intervalBuilderDynamicDate = intervalBuilderDynamicDate;
+    }
+
+    @Override
+    public void setDataSetDefJSONMarshaller(DataSetDefJSONMarshaller dataSetDefJSONMarshaller) {
+        this.dataSetDefJSONMarshaller = dataSetDefJSONMarshaller;
     }
 }
 

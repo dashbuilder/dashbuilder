@@ -46,6 +46,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.util.List;
 
+import static org.dashbuilder.dataprovider.DataSetProviderType.*;
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 /**
@@ -362,22 +363,19 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
     }
 
     private String getTypeTitle(final DataSetProviderType type) {
-        String description = "";
-        switch (type) {
-            case BEAN:
-                description = DataSetEditorConstants.INSTANCE.bean();
-                break;
-            case CSV:
-                description = DataSetEditorConstants.INSTANCE.csv();
-                break;
-            case SQL:
-                description = DataSetEditorConstants.INSTANCE.sql();
-                break;
-            case ELASTICSEARCH:
-                description = DataSetEditorConstants.INSTANCE.elasticSearch();
-                break;
+        if (BEAN.equals(type)) {
+            return DataSetEditorConstants.INSTANCE.bean();
         }
-        return description;
+        if (CSV.equals(type)) {
+            return DataSetEditorConstants.INSTANCE.csv();
+        }
+        if (SQL.equals(type)) {
+            return DataSetEditorConstants.INSTANCE.sql();
+        }
+        if (ELASTICSEARCH.equals(type)) {
+            return DataSetEditorConstants.INSTANCE.elasticSearch();
+        }
+        return "";
     }
     
     protected final Command configurationTabItemClickHandler = new Command() {

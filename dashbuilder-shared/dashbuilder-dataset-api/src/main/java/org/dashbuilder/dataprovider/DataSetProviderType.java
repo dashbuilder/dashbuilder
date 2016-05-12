@@ -1,53 +1,54 @@
+/*
+ * Copyright 2014 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dashbuilder.dataprovider;
 
 import org.dashbuilder.dataset.def.*;
+import org.dashbuilder.dataset.json.DataSetDefJSONMarshallerExt;
 
 /**
  * An enumeration of the available data set provider types.
  */
-public enum DataSetProviderType {
+public interface DataSetProviderType<T extends DataSetDef> {
+
+    StaticProviderType STATIC = new StaticProviderType();
+
+    BeanProviderType BEAN = new BeanProviderType();
+
+    SQLProviderType SQL = new SQLProviderType();
+
+    CSVProviderType CSV = new CSVProviderType();
+
+    ELSProviderType ELASTICSEARCH = new ELSProviderType();
 
     /**
-     * For accessing statically registered data set which are created by calling directly to the data set API.
+     * The type's name. It must be unique and do not clash with other existing types.
      */
-    STATIC,
+    String getName();
 
     /**
-     * For accessing data sets generated directly from a bean class implementing the DataSetGenerator interface
+     * Create a brand new {@link DataSetDef} instance for this given provider type.
      */
-    BEAN,
-
-    /**
-     * For accessing data sets defined as an SQL query over an existing data source.
-     */
-    SQL,
-
-    /**
-     * For accessing data sets that are the result of loading all the rows of a CSV file.
-     */
-    CSV,
-
-    /**
-     * For accessing data sets that are the result of querying an elasticsearch server.
-     */
-    ELASTICSEARCH;
-
-    public static DataSetProviderType getByName(String name) {
-        try {
-            return valueOf(name.toUpperCase());
-        } catch (Exception e) {
-            return null;
-        }
+    default T createDataSetDef() {
+        return (T) new DataSetDef();
     }
 
-    public static DataSetDef createDataSetDef(DataSetProviderType type) {
-        switch (type) {
-            case STATIC: return new StaticDataSetDef();
-            case BEAN: return new BeanDataSetDef();
-            case CSV: return new CSVDataSetDef();
-            case SQL: return new SQLDataSetDef();
-            case ELASTICSEARCH: return new ElasticSearchDataSetDef();
-        }
-        throw new RuntimeException("Unknown type: " + type);
+    /**
+     * A marshaller interface used during the JSON read/write of {@link DataSetDef} instances.
+     */
+    default DataSetDefJSONMarshallerExt<T> getJsonMarshaller() {
+        return null;
     }
 }

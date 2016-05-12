@@ -15,7 +15,7 @@
  */
 package org.dashbuilder.dataprovider;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Data set provider registry
@@ -23,18 +23,24 @@ import java.util.List;
 public interface DataSetProviderRegistry {
 
     /**
+     * Register a data provider
+     */
+    void registerDataProvider(DataSetProvider dataProvider);
+
+    /**
      * Get the provider instance named as specified.
      */
     DataSetProvider getDataSetProvider(DataSetProviderType type);
 
     /**
-     * Get the list of available DataSetProvider types.
-     * @return A list of
+     * Get the set of {@link DataSetProviderType} instances available.
      */
-    List<DataSetProviderType> getAvailableTypes();
+    Set<DataSetProviderType> getAvailableTypes();
 
     /**
-     * Register a data provider
+     * Get a {@link DataSetProviderType} by its name
+     *
+     * @return null if not found
      */
-    void registerDataProvider(DataSetProvider dataProvider);
+    DataSetProviderType getProviderTypeByName(String name);
 }

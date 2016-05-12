@@ -84,6 +84,8 @@ public class DataSetDefRegistryCDITest extends BaseCDITest {
                 dataSetDefRemovedEvent,
                 dataSetStaleEvent));
 
+        dataSetDefRegistry.init();
+
         when(dataSetDefRegistry.convert(any(org.uberfire.java.nio.file.Path.class)))
                 .thenReturn(mock(org.uberfire.backend.vfs.Path.class));
         when(dataSetDefRegistry.convert(any(org.uberfire.backend.vfs.Path.class)))
