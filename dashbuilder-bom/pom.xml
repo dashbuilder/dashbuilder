@@ -4,12 +4,17 @@
 
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.dashbuilder</groupId>
-    <artifactId>dashbuilder-parent-metadata</artifactId>
-    <version>0.5.0-SNAPSHOT</version>
+    <!-- That parent extends the org.jboss:jboss-parent -->
+    <groupId>org.jboss.integration-platform</groupId>
+    <artifactId>jboss-integration-platform-parent</artifactId>
+    <!-- Keep in sync with the parent version of ../pom.xml (dashbuilder-parent) -->
+    <version>7.0.0.CR1</version>
+    <relativePath/>
   </parent>
 
+  <groupId>org.dashbuilder</groupId>
   <artifactId>dashbuilder-bom</artifactId>
+  <version>0.5.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Dashbuilder BOM (Bill Of Materials)</name>
@@ -17,8 +22,42 @@
     Import this BOM in your dependencyManagement if you want to depend on multiple Dashbuilder artifacts.
   </description>
 
-  <!-- IMPORTANT: Do not declare any build things here! Declare them in dashbuilder-parent-metadata pom -->
-  <build/>
+  <inceptionYear>2014</inceptionYear>
+  <organization>
+    <name>JBoss by Red Hat</name>
+    <url>http://www.jboss.org/</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git@github.com:dashbuilder/dashbuilder.git</connection>
+    <developerConnection>scm:git:git@github.com:dashbuilder/dashbuilder.git</developerConnection>
+    <url>https://github.com/dashbuilder/dashbuilder</url>
+  </scm>
+
+  <!-- Bootstrap repository to locate the parent pom when the parent pom has not been build locally. -->
+  <repositories>
+    <repository>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Public Repository Group</name>
+      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>daily</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
 
   <dependencyManagement>
     <dependencies>
