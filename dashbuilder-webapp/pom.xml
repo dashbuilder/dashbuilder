@@ -5,9 +5,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.dashbuilder</groupId>
-    <artifactId>dashbuilder-deps</artifactId>
+    <artifactId>dashbuilder-parent</artifactId>
     <version>0.5.0-SNAPSHOT</version>
-    <relativePath>../dashbuilder-deps/pom.xml</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>dashbuilder-webapp</artifactId>

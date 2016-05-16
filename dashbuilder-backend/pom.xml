@@ -4,9 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.dashbuilder</groupId>
-    <artifactId>dashbuilder-deps</artifactId>
+    <artifactId>dashbuilder-parent</artifactId>
     <version>0.5.0-SNAPSHOT</version>
-    <relativePath>../dashbuilder-deps/pom.xml</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>dashbuilder-backend</artifactId>
@@ -23,15 +23,5 @@
     <module>dashbuilder-dataset-cdi</module>
     <module>dashbuilder-services</module>
   </modules>
-
-  <dependencies>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-  </dependencies>
 
 </project>

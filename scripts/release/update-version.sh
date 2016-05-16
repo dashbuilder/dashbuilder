@@ -20,6 +20,11 @@ initializeWorkingDirAndScriptDir() {
     scriptDir=`pwd -P`
 }
 
+mvnVersionsSet() {
+    newVersion=$1
+    mvn -B -N -Dfull versions:set -DnewVersion=$newVersion -DallowSnapshots=true -DgenerateBackupPoms=false
+}
+
 initializeWorkingDirAndScriptDir
 dashbuilderTopLevelDir="$scriptDir/../.."
 
@@ -38,7 +43,11 @@ newVersion=$1
 startDateTime=`date +%s`
 
 cd $dashbuilderTopLevelDir
-mvn -B -N -Dfull versions:set -DnewVersion=$newVersion -DallowSnapshots=true -DgenerateBackupPoms=false
+mvnVersionsSet $newVersion
+
+# fix leftovers not covered by the first run
+cd $dashbuilderTopLevelDir/dashbuilder-bom
+mvnVersionsSet $newVersion
 
 endDateTime=`date +%s`
 spentSeconds=`expr $endDateTime - $startDateTime`
