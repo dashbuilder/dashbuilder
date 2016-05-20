@@ -143,21 +143,6 @@ public class DashboardPerspectiveActivity implements PerspectiveActivity {
         return null;
     }
 
-    @Override
-    public String getSignatureId() {
-        return id;
-    }
-
-    @Override
-    public Collection<String> getRoles() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public Collection<String> getTraits() {
-        return Collections.emptyList();
-    }
-
     // Internal stuff
 
     public boolean isPersistent() {
