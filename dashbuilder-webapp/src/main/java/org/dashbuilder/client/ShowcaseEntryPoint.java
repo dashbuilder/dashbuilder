@@ -24,6 +24,7 @@ import org.dashbuilder.client.dashboard.DashboardManager;
 import org.dashbuilder.client.dashboard.DashboardPerspectiveActivity;
 import org.dashbuilder.client.dashboard.widgets.NewDashboardForm;
 import org.dashbuilder.client.resources.i18n.AppConstants;
+import org.dashbuilder.client.security.PermissionTreeSetup;
 import org.dashbuilder.shared.dashboard.events.DashboardCreatedEvent;
 import org.dashbuilder.shared.dashboard.events.DashboardDeletedEvent;
 import org.jboss.errai.common.client.api.Caller;
@@ -37,8 +38,8 @@ import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.views.pfly.menu.UserMenu;
 import org.uberfire.client.workbench.widgets.menu.UtilityMenuBar;
 import org.uberfire.client.workbench.widgets.menu.WorkbenchMenuBar;
+import org.uberfire.ext.security.management.client.ClientUserSystemManager;
 import org.uberfire.mvp.Command;
-import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuFactory;
@@ -50,10 +51,10 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.INFO;
 import static org.uberfire.workbench.model.menu.MenuFactory.newTopLevelMenu;
+import static org.dashbuilder.client.perspectives.PerspectiveIds.*;
 
 /**
  * Entry-point for the Dashbuilder showcase
@@ -68,6 +69,9 @@ public class ShowcaseEntryPoint {
 
     @Inject
     private PlaceManager placeManager;
+
+    @Inject
+    private ClientUserSystemManager userSystemManager;
 
     @Inject
     public User identity;
@@ -90,14 +94,17 @@ public class ShowcaseEntryPoint {
     @Inject
     private Event<NotificationEvent> workbenchNotification;
 
+    @Inject
+    private PermissionTreeSetup permissionTreeSetup;
+
     @AfterInitialization
     public void startApp() {
-        dashboardManager.loadDashboards(new ParameterizedCommand<Set<DashboardPerspectiveActivity>>() {
-            public void execute(Set<DashboardPerspectiveActivity> parameter) {
+        userSystemManager.waitForInitialization(() ->
+            dashboardManager.loadDashboards((t) -> {
+                permissionTreeSetup.configureTree();
                 setupMenus();
                 hideLoadingPopup();
-            }
-        });
+            }));
     }
 
     private void setupMenus() {
@@ -121,18 +128,16 @@ public class ShowcaseEntryPoint {
 
     private Menus createMenuBar() {
         return newTopLevelMenu(constants.menu_home())
-                .place(new DefaultPlaceRequest("HomePerspective"))
+                .perspective(HOME)
                 .endMenu().
                 newTopLevelMenu(constants.menu_gallery())
-                .place(new DefaultPlaceRequest("DisplayerGalleryPerspective")).endMenu().
-                newTopLevelMenu(constants.menu_authoring())
-                .withItems(getAuthoringMenuItems())
+                .perspective(GALLERY)
+                .endMenu().
+                newTopLevelMenu(constants.menu_administration())
+                .withItems(getAdministrationMenuItems())
                 .endMenu().
                 newTopLevelMenu(constants.menu_dashboards())
                 .withItems(getDashboardMenuItems())
-                .endMenu().
-                newTopLevelMenu(constants.menu_extensions())
-                .withItems(getExtensionsMenuItems())
                 .endMenu().
                 build();
     }
@@ -148,9 +153,12 @@ public class ShowcaseEntryPoint {
         return result;
     }
 
-    private List<? extends MenuItem> getAuthoringMenuItems() {
-        final List<MenuItem> result = new ArrayList(2);
-        result.add(newMenuItem(constants.menu_dataset_authoring(), "DataSetAuthoringPerspective"));
+    private List<? extends MenuItem> getAdministrationMenuItems() {
+        final List<MenuItem> result = new ArrayList(4);
+        result.add(newMenuItem(constants.menu_security(), SECURITY));
+        result.add(newMenuItem(constants.menu_dataset_authoring(), DATA_SETS));
+        result.add(newMenuItem(constants.menu_extensions_plugins(), PLUGINS));
+        result.add(newMenuItem(constants.menu_extensions_apps(), APPS));
         return result;
     }
 
@@ -163,12 +171,12 @@ public class ShowcaseEntryPoint {
                 .endMenu().build().getItems().get(0));
 
         // Add hard-coded dashboard samples
-        result.add(newMenuItem(constants.menu_dashboards_salesdb(), "SalesDashboardPerspective"));
-        result.add(newMenuItem(constants.menu_dashboards_salesreports(), "SalesReportsPerspective"));
+        result.add(newMenuItem(constants.menu_dashboards_salesdb(), SALES_DASHBOARD));
+        result.add(newMenuItem(constants.menu_dashboards_salesreports(), SALES_REPORTS));
 
         // Add dashboards created in runtime
         for (DashboardPerspectiveActivity activity : dashboardManager.getDashboards()) {
-            result.add(newMenuItem(activity.getDisplayName(), activity.getIdentifier(), true, false));
+            result.add(newMenuItem(activity.getDisplayName(), activity.getIdentifier()));
         }
 
         return result;
@@ -202,20 +210,9 @@ public class ShowcaseEntryPoint {
         workbenchNotification.fire(new NotificationEvent(constants.notification_dashboard_deleted(event.getDashboardName()), INFO));
     }
 
-    private List<? extends MenuItem> getExtensionsMenuItems() {
-        final List<MenuItem> result = new ArrayList<>(2);
-        result.add(newMenuItem(constants.menu_extensions_plugins(), "PlugInAuthoringPerspective"));
-        result.add(newMenuItem(constants.menu_extensions_apps(), "AppsPerspective"));
-        return result;
-    }
-    
     private MenuItem newMenuItem(String caption, final String activityId) {
-        return newMenuItem(caption, activityId, false, false);
-    }
-
-    private MenuItem newMenuItem(String caption, final String activityId, final boolean showSubMenu, final boolean showLogo) {
         return MenuFactory.newSimpleItem(caption)
-                .place(new DefaultPlaceRequest(activityId))
+                .perspective(activityId)
                 .endMenu().build().getItems().get(0);
     }
 

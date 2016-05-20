@@ -32,13 +32,13 @@ public interface AppConstants extends Messages {
 
     String menu_gallery();
     
-    String menu_authoring();
+    String menu_administration();
+
+    String menu_security();
 
     String menu_dataset_authoring();
 
     String menu_dashboards();
-
-    String menu_extensions();
 
     String menu_dashboards_salesdb();
 

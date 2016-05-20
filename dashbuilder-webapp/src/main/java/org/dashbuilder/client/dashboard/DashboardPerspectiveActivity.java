@@ -38,6 +38,8 @@ import org.uberfire.ext.widgets.common.client.common.popups.YesNoCancelPopup;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
+import org.uberfire.security.ResourceType;
+import org.uberfire.workbench.model.ActivityResourceType;
 import org.uberfire.workbench.model.PerspectiveDefinition;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
 import org.uberfire.workbench.model.menu.MenuFactory;
@@ -115,6 +117,11 @@ public class DashboardPerspectiveActivity implements PerspectiveActivity {
     @Override
     public String getIdentifier() {
         return id;
+    }
+
+    @Override
+    public ResourceType getResourceType() {
+        return ActivityResourceType.PERSPECTIVE;
     }
 
     @Override
