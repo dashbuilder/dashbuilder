@@ -51,9 +51,9 @@
     <version.org.mariadb.jdbc>1.3.6</version.org.mariadb.jdbc>
     <version.org.mysql-driver>5.1.6</version.org.mysql-driver>
     <version.org.postgres-driver>9.1-901.jdbc4</version.org.postgres-driver>
+    <!-- WildFly version used together with the GWT's Super Dev Mode -->
+    <version.org.wildfly.gwt.sdm>10.0.0.Final</version.org.wildfly.gwt.sdm>
 
-    <!-- temporary, should be moved to jboss-ip-bom -->
-    <version.org.jboss.xnio>3.2.0.Final</version.org.jboss.xnio>
     <!-- Make OSGi happy -->
     <osgi.snapshot.qualifier>${maven.build.timestamp}</osgi.snapshot.qualifier>
     <!-- Using origin-repository.jboss.org as that is the canonical URL for deployment. repository.jboss.org is just a proxy
@@ -554,18 +554,6 @@
             <artifactId>commons-logging</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-
-      <!-- Override needed by Errai Embedded WildFly -->
-      <dependency>
-        <groupId>org.jboss.xnio</groupId>
-        <artifactId>xnio-api</artifactId>
-        <version>${version.org.jboss.xnio}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.xnio</groupId>
-        <artifactId>xnio-nio</artifactId>
-        <version>${version.org.jboss.xnio}</version>
       </dependency>
 
       <dependency>
