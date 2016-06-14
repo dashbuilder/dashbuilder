@@ -22,7 +22,7 @@ Usage
 
 In order to define an ElasticSearch data set you have to set these mandatory parameters:                
 * <code>provider</code>: Value MUST be <code>ELASTICSEARCH</code> (MANDATORY)         
-* <code>serverURL</code>: The URL for the ElasticSearch server remote API. For example: <code>http://localhost:9200</code> (MANDATORY)           
+* <code>serverURL</code>: The host and port for the ElasticSearch node transport client. For example: <code>localhost:9300</code> (MANDATORY)           
 * <code>clusterName</code>: The cluster name to query in the given ElasticSearch server (MANDATORY)           
 * <code>index</code>: The index name in the ElasticSearch server to be queried (MANDATORY)           
 
@@ -37,7 +37,7 @@ Here is an example of a DataSet definition JSON contents:
         "pushEnabled": true,
         "pushMaxSize": 1024,
         "isPublic": true,
-        "serverURL": "http://localhost:9200",
+        "serverURL": "localhost:9300",
         "clusterName": "elasticsearch",
         "index": "expensereports",
         "type": "expense",
@@ -233,16 +233,13 @@ In order to perform data set look-up operations, the Elastic Search Data Provide
 Elastic Search Client
 ---------------------
 
-The ElasticSearch data set provider implementation is decoupled from the REST API client used to query the server instance.        
+The ElasticSearch data set provider implementation is decoupled from the client used to consume the ElasticSearch server.           
 
 The client is responsible for:                 
 * Translating data set look-up group operations into ELS query *aggregations*.                   
 * Translating data set look-up sort operations into ELS query *sort* operations.                   
-* Marshall and unmarshall the JSON requests from/to the ELS instance.                                          
 
-By default, the provided client implementation is based on [ElasticSearch Jest client](https://github.com/searchbox-io/Jest), as this implementation works with Java 6+.                   
-
-You can build your own client implementation by implementing the interface <code>org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchClient</code> and use the CDI features to override it as the default one.         
+You can build your own client implementation by implementing the interface <code>org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchClient</code> and use CDI features to set it as the default.         
 
 Elastic Search Query builder
 ----------------------------
@@ -362,56 +359,33 @@ Summary:
 Running an EL server with examples
 ----------------------------------
 
-These are the steps for running an ElasticSearch server instance locally, if you want to use it as source for an ElasticSearch data provider:               
-
-1.- Download ElasticSearch version <code>1.7.X</code> from [downloads page](http://www.elasticsearch.org/download/) and follow the installation instructions                
-
-2.- Run the ElasticSearch server using the command:
-    
-    <EL_HOME>/bin/elasticsearch -f
-    
-Next step is to create the expense reports example index and bulk some data:           
-
-3.- Create the index mappings using the JSON definition found [here](./src/test/resources/org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/expensereports-mappings.json)                      
-    
-    curl -XPUT http://localhost:9200/expensereports -d '<JSON_MAPPINGS_DEFINITION>'
-    
-4.- Index using bulk operation some example data found [here](./src/test/resources/org/dashbuilder/dataprovider/backend/elasticsearch/server/example-data/expensereports-data.json)               
-    
-    curl -XPUT http://localhost:9200/_bulk --data-binary @expensereports-data.json
-
-Once index mappings and data are indexed, you can try to query the ElasticSearch server using:                     
-
-    curl -XGET http://localhost:9200/expensereports/_count
-    
-You should obtain a resulting value count of <code>50</code> documents.                  
-
-Here is an example of a DataSet definition for this example:                        
-
-    {
-        "uuid": "expense_reports",
-        "provider": "ELASTICSEARCH",
-        "pushEnabled": true,
-        "pushMaxSize": 1024,
-        "isPublic": true,
-        "serverURL": "http://localhost:9200",
-        "clusterName": "elasticsearch",
-        "index": "expensereports",
-        "type": "expense",
-        "cacheEnabled": false,
-        "cacheMaxRows": 1000,
-        "columns": [
-                    {"id": "EXPENSES_ID", "type": "number"},
-                    {"id": "AMOUNT", "type": "number"},
-                    {"id": "DEPARTMENT", "type": "label"},
-                    {"id": "EMPLOYEE", "type": "text"},
-                    {"id": "CREATION_DATE", "type": "date"},
-                    {"id": "CITY", "type": "label"},
-                ]
-    }
-
+See an example [here](./example/README.md).                                            
 
 Notes
 -----
-* This module has benn build and tested against an ElasticSearch server version  <code>1.7.1</code>. In other releases you may hit with some incompatibility issues.                     
-* In order to perform data set look-ups using FIXED date interval types, *groovy dynamic scripting* must be enabled in your ElasticSearch server. For more information go [here](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-scripting.html#_enabling_dynamic_scripting).           
+             
+* This module has benn build and tested against an ElasticSearch server version  <code>2.1.2</code>. In other releases you may hit with some incompatibility issues.                      
+        
+* In order to perform data set look-ups using FIXED date interval types, *groovy dynamic scripting* must be enabled in your ElasticSearch server. 
+For more information go [here](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-scripting.html#_enabling_dynamic_scripting). 
+In order to perform data set look-ups using FIXED date interval types, *groovy dynamic scripting* must be enabled in your ElasticSearch server. You can do it 
+ by editing the configuration file `<EL_HOME>/config/elasticsearch.yml` and adding those lines at the end:                           
+ 
+        script.inline: on
+        script.indexed: on
+
+* Wildfly versions support               
+
+If you're using Wildfly >= `8.2.X `, just skip this point.      
+
+Otherwise, note that Elastic Search 2.x requires `jackson-core` version >= `2.6`. So if you're 
+using Widfly at versions < `8.2.X ` you have to exclude the 
+jackson core and some related modules in the `jboss-deployment-structure.xml` as:                
+
+        <exclusions>
+          <module name="com.fasterxml.jackson.jaxrs.jackson-jaxrs-json-provider"/>
+          <module name="com.fasterxml.jackson.core.jackson-core"/>
+          <module name="com.fasterxml.jackson.core.jackson-databind"/>
+          <module name="org.jboss.resteasy.resteasy-jackson2-provider"/>
+        </exclusions>
+

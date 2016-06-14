@@ -53,10 +53,10 @@ public class ElasticSearchCommonTests extends ElasticSearchDataSetTestBase {
     public void testDataSetNestedGroup() throws Exception {
         DataSetNestedGroupTest subTest = new DataSetNestedGroupTest();
         subTest.testGroupSelectionFilter();
-        // TODO Not supported - subTest.testNestedGroupFromMultipleSelection();
-        // TODO Not supported - subTest.testNestedGroupRequiresSelection();
-        // TODO Not supported - subTest.testThreeNestedLevels();
-        // TODO Not supported - subTest.testNoResultsSelection();
+        // Not supported - subTest.testNestedGroupFromMultipleSelection();
+        // Not supported - subTest.testNestedGroupRequiresSelection();
+        // Not supported - subTest.testThreeNestedLevels();
+        // Not supported - subTest.testNoResultsSelection();
     }
 
     @Test
