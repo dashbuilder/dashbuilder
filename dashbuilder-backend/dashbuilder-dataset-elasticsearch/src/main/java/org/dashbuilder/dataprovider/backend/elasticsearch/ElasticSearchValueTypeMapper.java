@@ -87,7 +87,7 @@ public class ElasticSearchValueTypeMapper {
         String datePattern = definition.getPattern(columnId);
         boolean isDefaultDateFormat = isEmpty(datePattern) || datePattern.equalsIgnoreCase(DATE_DEFAULT_FORMAT_KEY);
         DateTimeFormatter formatter = isDefaultDateFormat ? DATE_DEFAULT_FORMAT_PARSER : DateTimeFormat.forPattern(datePattern);
-        DateTime dateTime = formatter.parseDateTime(date);
+        DateTime dateTime = formatter.parseDateTime( date );
         return dateTime.toDate();
     }
 

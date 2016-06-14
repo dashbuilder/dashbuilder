@@ -17,10 +17,11 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.model;
 
 public class TypeMappingResponse {
 
-    protected String typeName;
-    protected FieldMappingResponse[] fields;
+    private final String typeName;
+    private final FieldMappingResponse[] fields;
 
-    public TypeMappingResponse(String typeName, FieldMappingResponse[] fields) {
+    public TypeMappingResponse( String typeName, 
+                                FieldMappingResponse[] fields ) {
         this.typeName = typeName;
         this.fields = fields;
     }
@@ -34,7 +35,9 @@ public class TypeMappingResponse {
     }
     
     public FieldMappingResponse getField(String name) {
-        if (name == null || fields == null || fields.length == 0) return null;
+        if (name == null || fields == null || fields.length == 0) {
+            return null;
+        }
         
         for (FieldMappingResponse fieldMappingResponse : fields) {
             if (name.equalsIgnoreCase(fieldMappingResponse.getName())) return fieldMappingResponse;

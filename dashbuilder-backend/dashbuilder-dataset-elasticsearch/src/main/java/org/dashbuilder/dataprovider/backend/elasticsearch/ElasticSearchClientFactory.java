@@ -16,17 +16,22 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch;
 
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchClient;
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.jest.ElasticSearchJestClient;
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl.ElasticSearchNativeClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.util.ElasticSearchUtils;
+import org.dashbuilder.dataset.IntervalBuilderDynamicDate;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 
 public class ElasticSearchClientFactory {
 
-    protected ElasticSearchValueTypeMapper valueTypeMapper;
-    protected ElasticSearchUtils utils;
+    private final ElasticSearchValueTypeMapper valueTypeMapper;
+    private final IntervalBuilderDynamicDate intervalBuilderDynamicDate;
+    private final ElasticSearchUtils utils;
 
-    public ElasticSearchClientFactory(ElasticSearchValueTypeMapper valueTypeMapper, ElasticSearchUtils utils) {
+    public ElasticSearchClientFactory(ElasticSearchValueTypeMapper valueTypeMapper,
+                                      IntervalBuilderDynamicDate intervalBuilderDynamicDate, 
+                                      ElasticSearchUtils utils) {
         this.valueTypeMapper = valueTypeMapper;
+        this.intervalBuilderDynamicDate = intervalBuilderDynamicDate;
         this.utils = utils;
     }
 
@@ -36,19 +41,15 @@ public class ElasticSearchClientFactory {
     }
 
     private ElasticSearchClient newClient() {
-        /*return clients.get();*/
-        return newJestClient();
+        return newNativeClient();
     }
     
-    private ElasticSearchClient newJestClient() {
-        return new ElasticSearchJestClient(this, valueTypeMapper, utils);
+    private ElasticSearchClient newNativeClient() {
+        return new ElasticSearchNativeClient( this, valueTypeMapper, intervalBuilderDynamicDate, utils );
     }
-
-    /*private ElasticSearchClient newNativeClient() {
-        return new ElasticSearchNativeClient(this, jsonParser);
-    }*/
     
-    public static ElasticSearchClient configure(ElasticSearchClient client, ElasticSearchDataSetDef elasticSearchDataSetDef) {
+    private static ElasticSearchClient configure( ElasticSearchClient client, 
+                                                 ElasticSearchDataSetDef elasticSearchDataSetDef ) {
         String serverURL = elasticSearchDataSetDef.getServerURL();
         String clusterName = elasticSearchDataSetDef.getClusterName();
         if (serverURL == null || serverURL.trim().length() == 0) throw new IllegalArgumentException("Server URL is not set.");

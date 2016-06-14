@@ -21,14 +21,11 @@
     </resources>
 
     <plugins>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration combine.self="override">
-          <!-- NOTE: Java 1.7.0_40 suffers from critical bug that produces the Elastic Search server fail on startup.
-                     Using this JVM argument you can skip the error and force running the ELS instance. -->
-          <argLine>-XX:-UseSuperWord</argLine>
-
           <!-- Run the integration Test Suite. Skip the local for development.-->
           <includes>
             <include>**/*TestSuite.java</include>
@@ -38,6 +35,7 @@
           </excludes>
         </configuration>
       </plugin>
+      
     </plugins>
     
   </build>
@@ -80,60 +78,85 @@
       <artifactId>gson</artifactId>
     </dependency>
 
-    <!-- Jest ES client. -->
     <dependency>
-      <groupId>io.searchbox</groupId>
-      <artifactId>jest</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
     </dependency>
-    <!-- Replacement for the commons-logging removed from io.searchbox:jest -->
+
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>io.searchbox</groupId>
-      <artifactId>jest-common</artifactId>
+      <groupId>org.elasticsearch</groupId>
+      <artifactId>elasticsearch</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-cli</groupId>
+      <artifactId>commons-cli</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-smile</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-cbor</artifactId>
     </dependency>
 
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
+      <!-- Provided transitive by ElasticSearch but artifact must be here so to maven enforcer does not complains. -->
+      <scope>provided</scope>
     </dependency>
 
     <!-- Testing scope -->
     
     <dependency>
-      <groupId>org.elasticsearch</groupId>
-      <artifactId>elasticsearch</artifactId>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <classifier>indy</classifier>
       <scope>test</scope>
     </dependency>
-    
-    <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
+
     <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-queryparser</artifactId>
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-all</artifactId>
-      <type>jar</type>
-      <scope>test</scope>
-    </dependency>
-    
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-dataset-core</artifactId>
@@ -182,10 +205,6 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration combine.self="override">
-              <!-- NOTE: Java 1.7.0_40 suffers from critical bug that produces the Elastic Search server fail on startup.
-                         Using this JVM argument you can skip the error and force running the ELS instance. -->
-              <argLine>-XX:-UseSuperWord</argLine>
-
               <!-- Run the integration Test Suite. Skip the local for development.-->
               <includes>
                 <include>**/LocalTestSuite.java</include>

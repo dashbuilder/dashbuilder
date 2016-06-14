@@ -25,26 +25,38 @@ public class FieldMappingResponse {
         ANALYZED, NOT_ANALYZED, NO;
     }
 
-    protected String name;
-    protected FieldType dataType;
-    protected String format;
-    protected IndexType indexType;
-    protected MultiFieldMappingResponse[] multiFields;
+    private final  String name;
+    private final  FieldType dataType;
+    private final  String format;
+    private final  IndexType indexType;
+    private final  MultiFieldMappingResponse[] multiFields;
 
-    public FieldMappingResponse(String name, FieldType dataType, IndexType indexType) {
+    public FieldMappingResponse( String name, 
+                                 FieldType dataType, 
+                                 IndexType indexType ) {
         this.name = name;
         this.dataType = dataType;
         this.indexType = indexType;
+        this.format = null;
+        this.multiFields = null;
     }
     
-    public FieldMappingResponse(String name, FieldType dataType, IndexType indexType, String format) {
+    public FieldMappingResponse( String name, 
+                                 FieldType dataType, 
+                                 IndexType indexType, 
+                                 String format ) {
         this.name = name;
         this.dataType = dataType;
         this.indexType = indexType;
         this.format = format;
+        this.multiFields = null;
     }
 
-    public FieldMappingResponse(String name, FieldType dataType, IndexType indexType, String format, MultiFieldMappingResponse[] multiFields) {
+    public FieldMappingResponse( String name, 
+                                 FieldType dataType, 
+                                 IndexType indexType, 
+                                 String format, 
+                                 MultiFieldMappingResponse[] multiFields ) {
         this.name = name;
         this.dataType = dataType;
         this.indexType = indexType;

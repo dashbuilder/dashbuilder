@@ -17,10 +17,11 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.model;
 
 public class CountResponse {
 
-    protected Long count;
-    protected Integer shards;
+    private final Long count;
+    private final Integer shards;
 
-    public CountResponse(Long count, Integer shards) {
+    public CountResponse( Long count, 
+                          Integer shards ) {
         this.count = count;
         this.shards = shards;
     }
