@@ -15,7 +15,10 @@
  */
 package org.dashbuilder.dataprovider.backend.elasticsearch.rest.model;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>An ElasticSearch query representation.</p>
@@ -122,13 +125,14 @@ public class Query {
             return type;
         }
     }
-    
-    private Type type;
-    private String field;
-    private Map<String, Object> params;
+
+    private final  Type type;
+    private final  String field;
+    private final  Map<String, Object> params;
 
     public Query(Type type) {
         this.type = type;
+        this.field = null;
         params = new HashMap<String, Object>();
     }
 

@@ -4,7 +4,7 @@
     "pushEnabled": true,
     "pushMaxSize": 1024,
     "isPublic": true,
-    "serverURL": "http://localhost:9200",
+    "serverURL": "localhost:9300",
     "clusterName": "elasticsearch",
     "index": "expensereports-sensitive",
     "type": "expense",

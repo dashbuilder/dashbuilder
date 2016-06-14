@@ -17,10 +17,11 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.model;
 
 public class MappingsResponse {
 
-    protected int status;
-    protected IndexMappingResponse[] indexMappings;
+    private final  int status;
+    private final  IndexMappingResponse[] indexMappings;
 
-    public MappingsResponse(int status, IndexMappingResponse[] indexMappings) {
+    public MappingsResponse( int status, 
+                             IndexMappingResponse[] indexMappings ) {
         this.status = status;
         this.indexMappings = indexMappings;
     }

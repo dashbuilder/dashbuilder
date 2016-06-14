@@ -21,9 +21,9 @@ import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetFormatter;
 import org.dashbuilder.dataset.DataSetManager;
-import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
+import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,16 +32,17 @@ import java.net.URL;
 
 /**
  * <p>Base test for ElasticSearch providers and data sets.</p>
- * 
+ *
  * @since 0.3.0
  */
 public class ElasticSearchDataSetTestBase {
 
     static final Logger logger =
             LoggerFactory.getLogger(ElasticSearchDataSetTestBase.class);
-    
+
     // Config files & example data for running EL server.
     public static final String EL_EXAMPLE_INDEX = "expensereports";
+    public static final String EL_EXAMPLE_TYPE = "expense";
     public static final String EL_EXAMPLE_DEPT_ENGINEERING = "Engineering";
     public static final String EL_EXAMPLE_DEPT_SERVICES = "Services";
     public static final String EL_EXAMPLE_DEPT_MANAGEMENT = "Management";
@@ -75,7 +76,7 @@ public class ElasticSearchDataSetTestBase {
 
     /**
      * Registers a dataset given into the <code>resource</code> definition.
-     * 
+     *
      * @param resource The dataset definition resource.
      */
     protected ElasticSearchDataSetDef _registerDataSet(String resource) throws Exception {
@@ -88,12 +89,12 @@ public class ElasticSearchDataSetTestBase {
     }
 
     protected static void log(Object message) {
-        // System.out.print(message);
+        System.out.print(message);
         if (logger.isDebugEnabled()) {
             logger.debug(message.toString());
         }
     }
-    
+
     /**
      * Helper method to print to standard output the data set values.
      */

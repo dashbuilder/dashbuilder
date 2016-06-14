@@ -21,7 +21,7 @@ import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.MappingsRes
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.SearchRequest;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.SearchResponse;
 import org.dashbuilder.dataset.DataSetMetadata;
-import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
 
 import java.io.Closeable;
 
@@ -33,11 +33,11 @@ import java.io.Closeable;
  */
 public interface ElasticSearchClient<T extends ElasticSearchClient> extends Closeable {
 
-    /**
-     * Request Time Out defaults to 30sec.
-     */
-    static final int DEFAULT_TIMEOUT = 30000;
-    
+    String HEADER_RESPONSE_CODE = "Status-Code";
+    int RESPONSE_CODE_NOT_FOUND = 404;
+    int RESPONSE_CODE_OK = 200;
+
+
     /**
      * Builds the client for a given serer URL.
      * @param serverURL The ElasticSearch server URL.
@@ -70,7 +70,7 @@ public interface ElasticSearchClient<T extends ElasticSearchClient> extends Clos
      * Sets the timeout value for the HTTP rest client requests. 
      * @param timeout The timeout value in miliseconds.
      */
-    void setTimeout(int timeout);
+    T setTimeout(int timeout);
     
     /**
      * Obtain the mappings for a given index/es.
@@ -99,5 +99,5 @@ public interface ElasticSearchClient<T extends ElasticSearchClient> extends Clos
      * @param searchRequest The search request.
      * @return The number of documents for a given index/es and type/es
      */
-    SearchResponse search(DataSetDef definition, DataSetMetadata metadata, SearchRequest searchRequest) throws ElasticSearchClientGenericException;
+    SearchResponse search(ElasticSearchDataSetDef definition, DataSetMetadata metadata, SearchRequest searchRequest) throws ElasticSearchClientGenericException;
 }
