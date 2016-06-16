@@ -1,26 +1,27 @@
-Deployment onto JBoss EAP 6.4
-==============================
+Deployment into JBoss WidlFly 10.X
+==================================
 
 Please follow the next steps in order to deploy the application.           
 
 Deploy
 ------
 
-Run your JBoss EAP instance using the `full` server profile as:         
+Run your JBoss WildFly instance using the `full` server profile as:
 
     $JBOSS_HOME/bin/standalone.sh --server-config=standalone-full.xml
 
-Once server is up and running, get the proper WAR file (e.g. `dashbuilder-<version>-eap6_4.war`) and execute the following command to deploy the application into your JBoss EAP instance:              
+Once server is up and running, get the proper WAR file (e.g. `dashbuilder-<version>-wildfly10.war`) and execute the following command to deploy the application into your JBoss Wildfly instance:              
 
     $ cd $JBOSS_HOME/bin
     $ ./jboss-cli.sh --connect --command="deploy <path_to_war_file>"
     
     NOTES:
         - <path_to_war_file>: is the local path to the application war file.
-        - e.g. $ ./jboss-cli.sh --connect --command="deploy /home/myuser/myfiles/dashbuilder-0.5.0-SNAPSHOT-eap6_4.war" )
+        - e.g. $ ./jboss-cli.sh --connect --command="deploy /home/myuser/myfiles/dashbuilder-0.5.0-SNAPSHOT-wildfly10.war" )
+
 
 User Authentication
---------------------------
+--------------------
 
 Once started, open a browser and type the following URL:          
         
@@ -31,15 +32,15 @@ However, some extra configuration is needed before you can sign in:
 * The application is based on the J2EE container managed authentication  mechanism.
 This means that the login itself is delegated to the application server.
 
-* To create users and define the roles use the command line utility provided by JBoss EAP at `$JBOSS_HOME/bin/add-user.sh`.                  
+* To create users and define the roles use the command line utility provided by JBoss WildFly at `$JBOSS_HOME/bin/add-user.sh`.
 
 * The application roles are defined at [web.xml](./WEB-INF/web.xml) file.
 Roles can be used to create access profiles and define custom authorization policies.
 There exist a single application role named `admin`. In order to use the application, create a user with role `admin`.               
 
-* The application uses the JBoss' default security domain as you can see [here](./WEB-INF/jboss-web.xml).                
+* The application uses the JBoss' default security domain as you can see [here](./WEB-INF/jboss-web.xml).
 Alternatively, you can define your own security domain and use, for instance, an LDAP, a database, or whatever mechanism you want to use as your credential storage.            
-There are plenty of examples in the JBoss EAP documentation about.
+There are plenty of examples in the JBoss WildFly documentation about.
 
 Feel free to change any settings regarding the application security and, once finished, to generate a distribution war that fits your needs.          
 

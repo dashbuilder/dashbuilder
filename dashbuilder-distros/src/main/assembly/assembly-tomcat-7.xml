@@ -17,14 +17,9 @@
     </fileSet>
   </fileSets>
 
-  <componentDescriptors>
-    <componentDescriptor>src/main/assembly/component-cdi1.0-libs.xml</componentDescriptor>
-  </componentDescriptors>
-  
   <dependencySets>
     <dependencySet>
       <includes>
-        <include>org.jboss.errai:errai-weld-integration:jar</include>
         <include>javax.enterprise:cdi-api:jar</include>
         <include>org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec</include>
         <include>org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec:jar</include>
@@ -62,7 +57,6 @@
       <unpack>true</unpack>
       <unpackOptions>
         <excludes>
-
           <!-- JBoss specific files from development environment war artifact. -->
           <exclude>WEB-INF/web.xml</exclude>
           <exclude>WEB-INF/classes/application-roles.properties</exclude>
@@ -73,10 +67,6 @@
 
           <!-- JBoss specific files. -->
           <exclude>WEB-INF/lib/errai-jboss-as-support-*.jar</exclude>
-          
-          <!-- Errai 1.1+ CDI Compat -->
-          <exclude>WEB-INF/lib/errai-weld-integration-*.jar</exclude>
-          
         </excludes>
       </unpackOptions>
       <useStrictFiltering>true</useStrictFiltering>

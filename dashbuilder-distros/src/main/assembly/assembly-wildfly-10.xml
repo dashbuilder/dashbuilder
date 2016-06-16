@@ -3,7 +3,7 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
 
-  <id>wildfly8</id>
+  <id>wildfly10</id>
   <formats>
     <format>war</format>
     <format>dir</format>
@@ -19,7 +19,6 @@
       <unpack>true</unpack>
       <unpackOptions>
         <excludes>
-          
           <!-- JBoss specific files from development environment war artifact. -->
           <exclude>WEB-INF/classes/application-roles.properties</exclude>
           <exclude>WEB-INF/classes/application-users.properties</exclude>
@@ -28,7 +27,6 @@
           
           <!-- GWT DevMode related. -->
           <exclude>**/*devmode.js</exclude>
-          
         </excludes>
       </unpackOptions>
     </dependencySet>
@@ -36,7 +34,7 @@
 
   <fileSets>
     <fileSet>
-      <directory>${project.basedir}/src/main/wildfly8/</directory>
+      <directory>${project.basedir}/src/main/wildfly10/</directory>
       <outputDirectory>.</outputDirectory>
     </fileSet>
   </fileSets>
