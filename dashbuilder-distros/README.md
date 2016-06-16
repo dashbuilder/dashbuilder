@@ -5,9 +5,9 @@ This module generates the product distribution for different applications server
 
 Usage
 -----
-This module is not build by default. You can build it in two ways:                    
+This module is not build by default. You can build it in two ways:
 
-*Run the maven build on this module path `dashbuilder-distros`:       
+*Run the maven build on this module path `dashbuilder-distros`:
  
     $ cd dashbuilder/dashbuilder-distros/
     $ mvn clean install -DskipTests
@@ -22,14 +22,10 @@ Distributions
  
 Currently, the following artifacts are generated:                   
 
-* **dashbuilder-wildfly8.war:**  Product distribution for the JBoss Widlfly 8.x application server.             
+* **dashbuilder-wildfly10.war:**  Product distribution for the JBoss WildFly 10.x application server.
 
-  Detailed installation instructions [here](./src/main/wildfly8/README.md).          
+  Detailed installation instructions [here](./src/main/wildfly10/README.md).
 
-* **dashbuilder-eap6_4.war:**  Product distribution for the JBoss EAP 6.4 application server.           
+* **dashbuilder-tomcat7.war:**  Product distribution for Apache Tomcat 7 server.
 
-  Detailed installation instructions [here](./src/main/eap6_4/README.md).           
-
-* **dashbuilder-tomcat7.war:**  Product distribution for Apache Tomcat 7 server.           
-
-  Detailed installation instructions [here](./src/main/tomcat7/README.md).             
+  Detailed installation instructions [here](./src/main/tomcat7/README.md).
