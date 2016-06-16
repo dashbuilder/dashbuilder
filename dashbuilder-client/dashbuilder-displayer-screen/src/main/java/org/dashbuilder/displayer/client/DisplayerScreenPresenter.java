@@ -197,17 +197,6 @@ public class DisplayerScreenPresenter {
                             @Override
                             public void setEnabled( boolean enabled ) {
                             }
-
-                            @Override
-                            public Collection<String> getRoles() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getSignatureId() {
-                                return null;
-                            }
-
                         };
                     }
                 } ).endMenu()
