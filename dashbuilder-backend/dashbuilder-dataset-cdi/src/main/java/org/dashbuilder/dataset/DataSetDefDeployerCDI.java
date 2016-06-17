@@ -27,20 +27,20 @@ import org.dashbuilder.config.Config;
 @ApplicationScoped
 public class DataSetDefDeployerCDI extends DataSetDefDeployer {
 
-    public DataSetDefDeployerCDI() {
-    }
+    @Inject @Config("")
+    String directory;
+
+    @Inject @Config("3000")
+    int scanIntervalInMillis;
 
     @Inject
-    public DataSetDefDeployerCDI(@Config("") String directory,
-                                 @Config("3000") int scanIntervalInMillis,
-                                 DataSetDefRegistryCDI dataSetDefRegistry) {
+    DataSetDefRegistryCDI dataSetDefRegistry;
 
-        super(DataSetCore.get().getDataSetDefJSONMarshaller(), dataSetDefRegistry);
-        super.setScanIntervalInMillis(scanIntervalInMillis);
-    }
-
-    @PostConstruct
     public void init() {
+        super.setJsonMarshaller(DataSetCore.get().getDataSetDefJSONMarshaller());
+        super.setDataSetDefRegistry(dataSetDefRegistry);
+        super.setScanIntervalInMillis(scanIntervalInMillis);
+
         if (!StringUtils.isBlank(directory)) {
             deploy(directory);
         }

@@ -61,6 +61,22 @@ public class DataSetDefDeployer {
         this.dataSetDefRegistry = dataSetDefRegistry;
     }
 
+    public DataSetDefRegistry getDataSetDefRegistry() {
+        return dataSetDefRegistry;
+    }
+
+    public void setDataSetDefRegistry(DataSetDefRegistry dataSetDefRegistry) {
+        this.dataSetDefRegistry = dataSetDefRegistry;
+    }
+
+    public DataSetDefJSONMarshaller getJsonMarshaller() {
+        return jsonMarshaller;
+    }
+
+    public void setJsonMarshaller(DataSetDefJSONMarshaller jsonMarshaller) {
+        this.jsonMarshaller = jsonMarshaller;
+    }
+
     public String getDirectory() {
         return directory;
     }

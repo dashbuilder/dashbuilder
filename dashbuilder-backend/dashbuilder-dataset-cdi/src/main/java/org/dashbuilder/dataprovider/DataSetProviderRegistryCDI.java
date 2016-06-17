@@ -37,8 +37,7 @@ public class DataSetProviderRegistryCDI extends DataSetProviderRegistryImpl {
     @Inject
     private ElasticSearchDataSetProviderCDI elasticSearchDataSetProviderCDI;
 
-    @PostConstruct
-    private void init() {
+    public void init() {
         super.registerDataProvider(staticDataSetProviderCDI);
         super.registerDataProvider(beanDataSetProviderCDI);
         super.registerDataProvider(csvDataSetProviderCDI);

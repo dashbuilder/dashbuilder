@@ -18,7 +18,9 @@ package org.dashbuilder.dataprovider.backend.csv;
 import java.net.URL;
 import org.apache.commons.io.IOUtils;
 import org.dashbuilder.DataSetCore;
+import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataprovider.csv.CSVDataSetProvider;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetManager;
 import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
@@ -33,9 +35,12 @@ public class CSVDataSetDefJSONTest {
     
     DataSetDefJSONMarshaller jsonMarshaller;
     DataSetManager dataSetManager;
+    DataSetProviderRegistry dataSetProviderRegistry;
 
     @Before
     public void setUp() {
+        dataSetProviderRegistry = DataSetCore.get().getDataSetProviderRegistry();
+        dataSetProviderRegistry.registerDataProvider(CSVDataSetProvider.get());
         jsonMarshaller = DataSetCore.get().getDataSetDefJSONMarshaller();
         dataSetManager = DataSetCore.get().getDataSetManager();
     }
