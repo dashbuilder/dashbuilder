@@ -102,16 +102,15 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
         this.maxCsvLength = maxCsvLength;
         this.ioService = ioService;
         this.exceptionManager = exceptionManager;
-        this.uuidGenerator = DataSetCore.get().getUuidGenerator();
         this.dataSetDefModifiedEvent = dataSetDefModifiedEvent;
         this.dataSetDefRegisteredEvent = dataSetDefRegisteredEvent;
         this.dataSetDefRemovedEvent = dataSetDefRemovedEvent;
         this.dataSetStaleEvent = dataSetStaleEvent;
-        this.jsonMarshaller = DataSetCore.get().getDataSetDefJSONMarshaller();
     }
 
-    @PostConstruct
-    void init() {
+    public void init() {
+        this.uuidGenerator = DataSetCore.get().getUuidGenerator();
+        this.jsonMarshaller = DataSetCore.get().getDataSetDefJSONMarshaller();
         initFileSystem();
         deleteTempFiles();
         registerDataSetDefs();

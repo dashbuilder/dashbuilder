@@ -15,13 +15,15 @@
  */
 package org.dashbuilder.dataset;
 
-import java.util.List;
-import java.util.Set;
 import javax.inject.Inject;
 
+import org.dashbuilder.Bootstrap;
+import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderRegistryCDI;
-import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.DataSetDefRegistry;
+import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.dashbuilder.test.BaseCDITest;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Before;
@@ -31,23 +33,28 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
-public class DataSetProviderRegistryCDITest extends BaseCDITest {
+public class BootstrapTest extends BaseCDITest {
+
+    public static final String CSV_JSON = "{\n" +
+            "  \"uuid\": \"expenseReports\",\n" +
+            "  \"name\": \"Expense Reports\",\n" +
+            "  \"provider\": \"CSV\",\n" +
+            "}";
 
     @Inject
-    DataSetProviderRegistryCDI dataSetProviderRegistry;
+    Bootstrap bootstrap;
 
     @Before
     public void setUp() {
-        dataSetProviderRegistry.init();
+        bootstrap.init();
     }
 
     @Test
-    public void testRegistryDataSetDef() throws Exception {
-        Set<DataSetProviderType> typeList = dataSetProviderRegistry.getAvailableTypes();
-        assertTrue(typeList.contains(DataSetProviderType.STATIC));
-        assertTrue(typeList.contains(DataSetProviderType.BEAN));
-        assertTrue(typeList.contains(DataSetProviderType.CSV));
-        assertTrue(typeList.contains(DataSetProviderType.SQL));
-        assertTrue(typeList.contains(DataSetProviderType.ELASTICSEARCH));
+    public void testDoDeploy() throws Exception {
+        DataSetProviderRegistry dataSetProviderRegistry = DataSetCore.get().getDataSetProviderRegistry();
+        assertEquals(dataSetProviderRegistry.getAvailableTypes().size(), 5);
+
+        DataSetDefJSONMarshaller jsonMarshaller = DataSetCore.get().getDataSetDefJSONMarshaller();
+        jsonMarshaller.fromJson(CSV_JSON); // No exception
     }
 }

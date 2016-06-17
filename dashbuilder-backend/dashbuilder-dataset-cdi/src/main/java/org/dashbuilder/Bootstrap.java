@@ -25,7 +25,7 @@ import org.dashbuilder.dataprovider.StaticDataSetProviderCDI;
 import org.dashbuilder.dataset.DataSetDefDeployerCDI;
 import org.dashbuilder.dataset.DataSetDefRegistryCDI;
 import org.dashbuilder.dataset.DataSetManagerCDI;
-import org.dashbuilder.dataset.def.DataSetDefRegistry;
+import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.dashbuilder.scheduler.SchedulerCDI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,16 +62,21 @@ public class Bootstrap {
     protected DataSetManagerCDI dataSetManager;
 
     @PostConstruct
-    protected void init() {
+    public void init() {
+        // IMPORTANT: DO NOT alter the initialization order in order to not breaking the component inter dependencies
         DataSetCore dataSetCore = DataSetCore.get();
+        dataSetCore.setDataSetDefJSONMarshaller(new DataSetDefJSONMarshaller(providerRegistry));
+        dataSetCore.setDataSetProviderRegistry(providerRegistry);
+        dataSetCore.setDataSetDefRegistry(dataSetDefRegistry);
         dataSetCore.setScheduler(scheduler);
         dataSetCore.setStaticDataSetProvider(staticDataSetProvider);
         dataSetCore.setBeanDataSetProvider(beanDataSetProvider);
-        dataSetCore.setDataSetDefRegistry(dataSetDefRegistry);
         dataSetCore.setDataSetDefDeployer(dataSetDefDeployer);
-        dataSetCore.setDataSetProviderRegistry(providerRegistry);
         dataSetCore.setDataSetManager(dataSetManager);
 
+        providerRegistry.init();
+        dataSetDefRegistry.init();
+        dataSetDefDeployer.init();
         log.info("Core subsystems initialized");
     }
 }
