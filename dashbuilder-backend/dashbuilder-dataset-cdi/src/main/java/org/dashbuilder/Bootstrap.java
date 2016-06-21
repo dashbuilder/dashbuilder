@@ -30,12 +30,16 @@ import org.dashbuilder.scheduler.SchedulerCDI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.commons.services.cdi.Startup;
+import org.uberfire.commons.services.cdi.StartupType;
 
 /**
- * Class in charge of bootstrapping the core subsystems using CDI
+ * Class in charge of bootstrapping the core subsystems using CDI.
+ *
+ * <p>It boots right before any regular {@link Startup} beans in order to ensure that any reference to a dataset
+ * subsystem has been properly initialized.</p>
  */
 @ApplicationScoped
-@Startup
+@Startup(StartupType.BOOTSTRAP)
 public class Bootstrap {
 
     protected static Logger log = LoggerFactory.getLogger(Bootstrap.class);

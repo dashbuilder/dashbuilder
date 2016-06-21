@@ -20,15 +20,14 @@ import javax.inject.Inject;
 import org.dashbuilder.Bootstrap;
 import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
-import org.dashbuilder.dataprovider.DataSetProviderRegistryCDI;
-import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.dashbuilder.test.BaseCDITest;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.uberfire.commons.services.cdi.Startup;
+import org.uberfire.commons.services.cdi.StartupType;
 
 import static org.junit.Assert.*;
 
@@ -47,6 +46,13 @@ public class BootstrapTest extends BaseCDITest {
     @Before
     public void setUp() {
         bootstrap.init();
+    }
+
+    @Test
+    public void testStartup() throws Exception {
+        Startup startup = Bootstrap.class.getAnnotation(Startup.class);
+        assertNotNull(startup);
+        assertEquals(startup.value(), StartupType.BOOTSTRAP);
     }
 
     @Test
