@@ -37,6 +37,7 @@ public class SQLTestSuite extends SQLDataSetTestBase {
         sqlTestList.add(setUp(new SQLDataSetTrimTest()));
         sqlTestList.add(setUp(new SQLTableDataSetLookupTest()));
         sqlTestList.add(setUp(new SQLQueryDataSetLookupTest()));
+        sqlTestList.add(setUp(new SQLInjectionAttacksTest()));
     }
 
     public void testAll() throws Exception {
