@@ -22,7 +22,7 @@
     <!-- Keep in sync with parent's <version> in dashbuilder-parent-metadata -->
     <version.org.jboss.integration-platform>6.0.6.Final</version.org.jboss.integration-platform>
     <version.org.uberfire>0.8.1-SNAPSHOT</version.org.uberfire>
-    <version.org.jboss.errai>3.2.3.Final</version.org.jboss.errai>
+    <version.org.jboss.errai>3.2.4.Final</version.org.jboss.errai>
     <version.org.jboss.errai.cdi10-compatible>3.0.6.Final</version.org.jboss.errai.cdi10-compatible>
 
     <version.javax.xml.stream>1.0-2</version.javax.xml.stream>
