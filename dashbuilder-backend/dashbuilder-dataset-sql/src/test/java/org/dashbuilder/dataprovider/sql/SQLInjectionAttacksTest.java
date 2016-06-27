@@ -23,7 +23,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 
 import static org.dashbuilder.dataset.ExpenseReportsData.*;
@@ -42,10 +44,13 @@ public class SQLInjectionAttacksTest extends SQLDataSetTestBase {
 
         sqlDataSetProvider.log = logger;
 
-        doAnswer(invocationOnMock -> {
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
                 String sql = (String) invocationOnMock.getArguments()[0];
                 System.out.println(sql);
                 return null;
+            }
         }).when(logger).debug(anyString());
     }
 
