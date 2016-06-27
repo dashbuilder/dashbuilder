@@ -32,9 +32,9 @@ import org.gwtbootstrap3.client.ui.Modal;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.ext.layout.editor.client.components.HasModalConfiguration;
-import org.uberfire.ext.layout.editor.client.components.ModalConfigurationContext;
-import org.uberfire.ext.layout.editor.client.components.RenderingContext;
+import org.uberfire.ext.layout.editor.client.api.HasModalConfiguration;
+import org.uberfire.ext.layout.editor.client.api.ModalConfigurationContext;
+import org.uberfire.ext.layout.editor.client.api.RenderingContext;
 import org.uberfire.ext.plugin.client.perspective.editor.api.PerspectiveEditorDragComponent;
 import org.uberfire.mvp.Command;
 
