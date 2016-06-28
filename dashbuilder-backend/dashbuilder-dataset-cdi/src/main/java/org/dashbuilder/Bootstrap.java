@@ -69,7 +69,6 @@ public class Bootstrap {
     public void init() {
         // IMPORTANT: DO NOT alter the initialization order in order to not breaking the component inter dependencies
         DataSetCore dataSetCore = DataSetCore.get();
-        dataSetCore.setDataSetDefJSONMarshaller(new DataSetDefJSONMarshaller(providerRegistry));
         dataSetCore.setDataSetProviderRegistry(providerRegistry);
         dataSetCore.setDataSetDefRegistry(dataSetDefRegistry);
         dataSetCore.setScheduler(scheduler);
@@ -77,10 +76,6 @@ public class Bootstrap {
         dataSetCore.setBeanDataSetProvider(beanDataSetProvider);
         dataSetCore.setDataSetDefDeployer(dataSetDefDeployer);
         dataSetCore.setDataSetManager(dataSetManager);
-
-        providerRegistry.init();
-        dataSetDefRegistry.init();
-        dataSetDefDeployer.init();
         log.info("Core subsystems initialized");
     }
 }

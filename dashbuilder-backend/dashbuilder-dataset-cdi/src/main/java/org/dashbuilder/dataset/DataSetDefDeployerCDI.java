@@ -36,6 +36,7 @@ public class DataSetDefDeployerCDI extends DataSetDefDeployer {
     @Inject
     DataSetDefRegistryCDI dataSetDefRegistry;
 
+    @PostConstruct
     public void init() {
         super.setJsonMarshaller(DataSetCore.get().getDataSetDefJSONMarshaller());
         super.setDataSetDefRegistry(dataSetDefRegistry);

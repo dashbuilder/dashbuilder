@@ -13,13 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataset;
 
 import javax.inject.Inject;
 
 import org.dashbuilder.Bootstrap;
 import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
+import org.dashbuilder.dataprovider.DataSetProviderRegistryCDI;
+import org.dashbuilder.dataset.DataSetDefDeployer;
+import org.dashbuilder.dataset.DataSetDefDeployerCDI;
+import org.dashbuilder.dataset.DataSetDefRegistryCDI;
+import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.dashbuilder.test.BaseCDITest;
 import org.jboss.arquillian.junit.Arquillian;
@@ -43,24 +47,51 @@ public class BootstrapTest extends BaseCDITest {
     @Inject
     Bootstrap bootstrap;
 
+    @Inject
+    DataSetProviderRegistryCDI providerRegistryCDI;
+
+    @Inject
+    DataSetDefRegistryCDI dataSetDefRegistryCDI;
+
+    @Inject
+    DataSetDefDeployerCDI dataSetDefDeployerCDI;
+
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         bootstrap.init();
     }
 
     @Test
-    public void testStartup() throws Exception {
+    public void testStartupAnnotation() throws Exception {
         Startup startup = Bootstrap.class.getAnnotation(Startup.class);
         assertNotNull(startup);
         assertEquals(startup.value(), StartupType.BOOTSTRAP);
     }
 
     @Test
-    public void testDoDeploy() throws Exception {
+    public void testProviderRegistryInit() throws Exception {
         DataSetProviderRegistry dataSetProviderRegistry = DataSetCore.get().getDataSetProviderRegistry();
+        assertEquals(dataSetProviderRegistry, providerRegistryCDI);
         assertEquals(dataSetProviderRegistry.getAvailableTypes().size(), 5);
 
         DataSetDefJSONMarshaller jsonMarshaller = DataSetCore.get().getDataSetDefJSONMarshaller();
         jsonMarshaller.fromJson(CSV_JSON); // No exception
+    }
+
+    @Test
+    public void testDataSetDefRegistryInit() throws Exception {
+        DataSetProviderRegistry providerRegistry = dataSetDefRegistryCDI.getDataSetProviderRegistry();
+        DataSetDefJSONMarshaller jsonMarshaller = dataSetDefRegistryCDI.getDataSetDefJsonMarshaller();
+
+        assertNotNull(providerRegistry);
+        assertNotNull(jsonMarshaller);
+        assertEquals(jsonMarshaller, providerRegistryCDI.getDataSetDefJSONMarshaller());
+    }
+
+    @Test
+    public void testDataSetDeployerInit() throws Exception {
+        DataSetDefDeployer dataSetDefDeployer = DataSetCore.get().getDataSetDefDeployer();
+        assertNotNull(dataSetDefDeployer);
+        assertEquals(dataSetDefDeployer, dataSetDefDeployerCDI);
     }
 }
