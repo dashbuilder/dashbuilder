@@ -19,6 +19,9 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.dashbuilder.DataSetCore;
+import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
+
 @ApplicationScoped
 public class DataSetProviderRegistryCDI extends DataSetProviderRegistryImpl {
 
@@ -37,11 +40,40 @@ public class DataSetProviderRegistryCDI extends DataSetProviderRegistryImpl {
     @Inject
     private ElasticSearchDataSetProviderCDI elasticSearchDataSetProviderCDI;
 
+    protected DataSetDefJSONMarshaller dataSetDefJSONMarshaller = new DataSetDefJSONMarshaller(this);
+
+    @PostConstruct
     public void init() {
+        DataSetCore.get().setDataSetDefJSONMarshaller(dataSetDefJSONMarshaller);
+
         super.registerDataProvider(staticDataSetProviderCDI);
         super.registerDataProvider(beanDataSetProviderCDI);
         super.registerDataProvider(csvDataSetProviderCDI);
         super.registerDataProvider(sqlDataSetProviderCDI);
         super.registerDataProvider(elasticSearchDataSetProviderCDI);
+    }
+
+    public StaticDataSetProviderCDI getStaticDataSetProviderCDI() {
+        return staticDataSetProviderCDI;
+    }
+
+    public BeanDataSetProviderCDI getBeanDataSetProviderCDI() {
+        return beanDataSetProviderCDI;
+    }
+
+    public CSVDataSetProviderCDI getCsvDataSetProviderCDI() {
+        return csvDataSetProviderCDI;
+    }
+
+    public SQLDataSetProviderCDI getSqlDataSetProviderCDI() {
+        return sqlDataSetProviderCDI;
+    }
+
+    public ElasticSearchDataSetProviderCDI getElasticSearchDataSetProviderCDI() {
+        return elasticSearchDataSetProviderCDI;
+    }
+
+    public DataSetDefJSONMarshaller getDataSetDefJSONMarshaller() {
+        return dataSetDefJSONMarshaller;
     }
 }

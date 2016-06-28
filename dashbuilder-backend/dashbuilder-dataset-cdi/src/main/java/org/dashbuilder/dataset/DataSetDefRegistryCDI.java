@@ -78,7 +78,6 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
     protected Event<DataSetDefRegisteredEvent> dataSetDefRegisteredEvent;
     protected Event<DataSetDefRemovedEvent> dataSetDefRemovedEvent;
     protected Event<DataSetStaleEvent> dataSetStaleEvent;
-    protected DataSetDefJSONMarshaller jsonMarshaller;
 
     protected FileSystem fileSystem;
     protected Path root;
@@ -99,6 +98,7 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
                                  Event<DataSetStaleEvent> dataSetStaleEvent) {
 
         super(dataSetProviderRegistry, scheduler);
+        this.uuidGenerator = DataSetCore.get().getUuidGenerator();
         this.maxCsvLength = maxCsvLength;
         this.ioService = ioService;
         this.exceptionManager = exceptionManager;
@@ -108,12 +108,15 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
         this.dataSetStaleEvent = dataSetStaleEvent;
     }
 
+    @PostConstruct
     public void init() {
-        this.uuidGenerator = DataSetCore.get().getUuidGenerator();
-        this.jsonMarshaller = DataSetCore.get().getDataSetDefJSONMarshaller();
         initFileSystem();
         deleteTempFiles();
         registerDataSetDefs();
+    }
+
+    public DataSetDefJSONMarshaller getDataSetDefJsonMarshaller() {
+        return DataSetCore.get().getDataSetDefJSONMarshaller();
     }
 
     protected void onDataSetDefStale(DataSetDef def) {
@@ -174,7 +177,7 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
         }
 
         try {
-            String defJson = jsonMarshaller.toJsonString(def);
+            String defJson = getDataSetDefJsonMarshaller().toJsonString(def);
             Path defPath = resolveNioPath(def);
             ioService.write(defPath, defJson);
 
@@ -246,7 +249,7 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
 
                                 if (file.getFileName().toString().endsWith(DATASET_EXT) && attrs.isRegularFile()) {
                                     String json = ioService.readAllString(file);
-                                    DataSetDef def = jsonMarshaller.fromJson(json);
+                                    DataSetDef def = getDataSetDefJsonMarshaller().fromJson(json);
                                     result.add(def);
                                 }
                             } catch (final Exception e) {
@@ -265,7 +268,7 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
         if (ioService.exists(nioPath)) {
             try {
                 String json = ioService.readAllString(nioPath);
-                DataSetDef def = jsonMarshaller.fromJson(json);
+                DataSetDef def = getDataSetDefJsonMarshaller().fromJson(json);
                 return def;
             } catch (Exception e) {
                 String msg = "Error parsing data set JSON definition: " + path.getFileName();
@@ -295,7 +298,7 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
                 ioService.copy(csvPath, cloneCsvPath);
                 csvCloneDef.setFilePath(convert(cloneCsvPath).toURI());
             }
-            String defJson = jsonMarshaller.toJsonString(clone);
+            String defJson = getDataSetDefJsonMarshaller().toJsonString(clone);
             Path clonePath = resolveNioPath(clone);
             ioService.write(clonePath, defJson);
 
