@@ -172,6 +172,10 @@
                 <rules>
                   <banDuplicateClasses>
                     <ignoreClasses>
+                      <!-- Ban 'org.elasticsearch:elasticsearch' internal classes, as the artifact contains
+                        some duplicated classes for Joda time ones and it has the joda artifact
+                        as transitive dependency as well. -->
+                      <ignoreClass>org.joda.time.*</ignoreClass>
                       <!-- Classes bundled in errai-javax-enterprise which are GWT friendly.
                            See https://github.com/errai/errai/blob/master/errai-javax-enterprise/README -->
                       <ignoreClass>javax.interceptor.InvocationContext</ignoreClass>
@@ -447,20 +451,6 @@
     <plugins>
       <plugin>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <!-- TODO: 
-              Disabling enforce goal for this concrete module as it complains about duplicated classes as:
-                Found in:
-                  joda-time:joda-time:jar:2.7:compile
-                  org.elasticsearch:elasticsearch:jar:2.1.2:compile
-                Duplicate classes:
-                  org/joda/time/base/BaseDateTime.class
-              What does not makes much sense, as the joda-time:joda-time:jar:2.7:compile comes transitive from the 
-                     org.elasticsearch:elasticsearch:jar:2.1.2:compile artifact.
-              This is applied to dashbuilder-dataset-cdi module's pom as well, as it depends on thsi module.
-        . -->
-        <configuration>
-          <skip>true</skip>
-        </configuration>
       </plugin>
 
       <plugin>
@@ -673,6 +663,13 @@
         <groupId>com.googlecode.jtype</groupId>
         <artifactId>jtype</artifactId>
         <version>${version.com.googlecode.jtype}</version>
+      </dependency>
+
+      <!-- Guava. -->
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${version.com.google.guava}</version>
       </dependency>
 
       <!-- Lienzo. -->
