@@ -492,9 +492,11 @@ public class NativeClientAggregationsBuilder {
                 break;
             case DAY_OF_WEEK:
                 // Consider that scripts are executed in Groovy language, so the Date class uses SimpleDateFormat for formatting the value.
-                // As SimpleDateFormat considers first day of week on monday, and we need it to be sunday, let's do the trick by 
-                // parsing the date and increment it by one day (next function), then we can extract the day of week using "uu" pattern.
-                script = "new Date(doc[\"{0}\"].value).plus(Calendar.getInstance().getFirstDayOfWeek()).format(\"{1}\")";
+                // As SimpleDateFormat considers first day of week on monday, and we need it to be sunday, as Dashbuilder's date grouping has
+                // fixed values whatever the time zone or region is. So let's force the timezone to a fixed GMT value
+                // and increment the date by one day (#next function), so this way can be extracted the day of week using "uu" pattern, no matter
+                // the time zone / region is.
+                script = "new Date(doc[\"{0}\"].value).next().format(\"{1}\", TimeZone.getTimeZone(\"GMT\"))";
                 pattern = "uu";
                 break;
             case HOUR:
