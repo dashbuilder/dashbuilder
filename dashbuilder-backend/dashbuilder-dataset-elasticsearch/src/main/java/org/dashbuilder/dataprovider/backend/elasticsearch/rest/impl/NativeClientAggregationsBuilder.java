@@ -478,7 +478,9 @@ public class NativeClientAggregationsBuilder {
         DayOfWeek firstDayOfWeek = columnGroup.getFirstDayOfWeek();
 
         // Supported intervals for FIXED strategy - @see DateIntervalType.FIXED_INTERVALS_SUPPORTED
-        String script = "new Date(doc[\"{0}\"].value).format(\"{1}\")";
+        // As is a fixed strategy, the time zone is almost considered fixed for the scripts that will be run on the
+        // ELS server.
+        String script = "new Date(doc[\"{0}\"].value).format(\"{1}\", TimeZone.getTimeZone(\"GMT\"))";
         String pattern;
         switch (intervalType) {
             case QUARTER:
