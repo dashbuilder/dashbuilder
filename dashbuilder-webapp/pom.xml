@@ -672,10 +672,14 @@
             <fileset>
               <directory>${basedir}</directory>
               <includes>
-                <include>.errai/**</include>
+                <include>src/main/webapp/org.dashbuilder.DashbuilderShowcase/</include>
+                <include>src/main/webapp/WEB-INF/classes/</include>
+                <include>src/main/webapp/WEB-INF/deploy/</include>
+                <include>src/main/webapp/WEB-INF/lib/</include>
+                <include>**/gwt-unitCache/**</include>
+                <include>.errai/</include>
                 <include>.niogit/**</include>
-                <include>src/main/webapp/WEB-INF/classes/**</include>
-                <include>src/main/webapp/WEB-INF/lib/**</include>
+                <include>.index/**</include>
               </includes>
             </fileset>
           </filesets>
