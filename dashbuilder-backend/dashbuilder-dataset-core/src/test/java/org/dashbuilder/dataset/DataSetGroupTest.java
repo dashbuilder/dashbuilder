@@ -358,7 +358,7 @@ public class DataSetGroupTest {
                 .column(COLUMN_AMOUNT, SUM, "totalAmount")
                 .buildLookup().cloneInstance());
 
-        printDataSet(result);
+        // printDataSet(result);
 
         assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"2", "10.00", "3,904.17"},
