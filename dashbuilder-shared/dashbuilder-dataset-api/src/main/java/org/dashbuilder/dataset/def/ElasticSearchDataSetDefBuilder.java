@@ -21,7 +21,7 @@ package org.dashbuilder.dataset.def;
  * <pre>
  *    DataSetDef dataSetDef = DataSetDefFactory.newElasticSearchDataSetDef()
  *     .uuid("all_employees")
- *     .serverURL("http://localhost:9200")
+ *     .serverURL("localhost:9300")
  *     .index("index1")
  *     .type("type1")
  *     .query("DSL query here")

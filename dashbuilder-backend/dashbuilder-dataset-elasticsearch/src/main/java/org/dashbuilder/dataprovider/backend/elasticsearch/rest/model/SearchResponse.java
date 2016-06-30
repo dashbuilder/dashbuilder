@@ -20,17 +20,24 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.model;
  */
 public class SearchResponse {
 
-    protected long tookInMillis;
-    protected int responseStatus;
-    protected long totalHits;
-    protected float maxScore;
-    protected int totalShards;
-    protected int successfulShards;
-    protected int shardFailures;
-    protected SearchHitResponse[] hits;
+    private final  long tookInMillis;
+    private final  int responseStatus;
+    private final  long totalHits;
+    private final  float maxScore;
+    private final  int totalShards;
+    private final  int successfulShards;
+    private final  int shardFailures;
+    private final  SearchHitResponse[] hits;
 
 
-    public SearchResponse(long tookInMillis, int responseStatus, long totalHits, float maxScore, int totalShards, int successfulShards, int shardFailures, SearchHitResponse[] hits) {
+    public SearchResponse( long tookInMillis, 
+                           int responseStatus, 
+                           long totalHits, 
+                           float maxScore, 
+                           int totalShards, 
+                           int successfulShards, 
+                           int shardFailures, 
+                           SearchHitResponse[] hits ) {
         this.tookInMillis = tookInMillis;
         this.responseStatus = responseStatus;
         this.totalHits = totalHits;

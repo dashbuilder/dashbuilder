@@ -480,11 +480,13 @@ public class ElasticSearchQueryBuilderImpl implements ElasticSearchQueryBuilder<
 
             TimeFrame timeFrame = TimeFrame.parse(params.get(0).toString());
             if (timeFrame != null) {
-                java.sql.Date past = new java.sql.Date(timeFrame.getFrom().getTimeInstant().getTime());
-                java.sql.Date future = new java.sql.Date(timeFrame.getTo().getTimeInstant().getTime());
+                Date past = new Date( timeFrame.getFrom().getTimeInstant().getTime() );
+                Date future = new Date( timeFrame.getTo().getTimeInstant().getTime() );
+                String pastRaw = valueTypeMapper.formatDate( def, columnId, past );
+                String futureRaw = valueTypeMapper.formatDate( def, columnId, future );
                 result = new Query(columnId, Query.Type.RANGE);
-                result.setParam(Query.Parameter.GTE.name(), past);
-                result.setParam(Query.Parameter.LTE.name(), future);
+                result.setParam(Query.Parameter.GTE.name(), pastRaw );
+                result.setParam(Query.Parameter.LTE.name(), futureRaw );
             }
 
         } else {

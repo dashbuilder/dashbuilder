@@ -16,10 +16,11 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch.rest.model;
 
 public class IndexMappingResponse {
-    protected String indexName;
-    protected TypeMappingResponse[] typeMappings;
+    private final  String indexName;
+    private final  TypeMappingResponse[] typeMappings;
 
-    public IndexMappingResponse(String indexName, TypeMappingResponse[] mappings) {
+    public IndexMappingResponse( String indexName, 
+                                 TypeMappingResponse[] mappings ) {
         this.indexName = indexName;
         this.typeMappings = mappings;
     }
@@ -33,7 +34,9 @@ public class IndexMappingResponse {
     }
 
     public TypeMappingResponse getType(String name) {
-        if (name == null || typeMappings == null || typeMappings.length == 0) return null;
+        if (name == null || typeMappings == null || typeMappings.length == 0) {
+            return null;
+        }
 
         for (TypeMappingResponse typeMappingResponse : typeMappings) {
             if (name.equalsIgnoreCase(typeMappingResponse.getTypeName())) return typeMappingResponse;

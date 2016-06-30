@@ -17,11 +17,13 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.model;
 
 public class MultiFieldMappingResponse {
 
-    protected String name;
-    protected FieldMappingResponse.FieldType dataType;
-    protected FieldMappingResponse.IndexType indexType;
+    private final  String name;
+    private final  FieldMappingResponse.FieldType dataType;
+    private final  FieldMappingResponse.IndexType indexType;
 
-    public MultiFieldMappingResponse(String name, FieldMappingResponse.FieldType fieldType, FieldMappingResponse.IndexType indexType) {
+    public MultiFieldMappingResponse( String name, 
+                                      FieldMappingResponse.FieldType fieldType, 
+                                      FieldMappingResponse.IndexType indexType ) {
         this.name = name;
         this.dataType = fieldType;
         this.indexType = indexType;

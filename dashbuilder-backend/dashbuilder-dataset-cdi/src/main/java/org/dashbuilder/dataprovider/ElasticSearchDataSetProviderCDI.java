@@ -40,7 +40,8 @@ public class ElasticSearchDataSetProviderCDI extends ElasticSearchDataSetProvide
 
         super(staticDataSetProvider,
                 dataSetDefRegistry,
-                DataSetCore.get().getIntervalBuilderLocator());
+                DataSetCore.get().getIntervalBuilderLocator(),
+                DataSetCore.get().getIntervalBuilderDynamicDate());
     }
 
     @PreDestroy

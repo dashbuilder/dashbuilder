@@ -56,7 +56,7 @@ public class ElasticSearchEmptyIntervalsTest extends ElasticSearchDataSetTestBas
                         .column("NUMBER", SUM, "total")
                         .buildLookup());
 
-        printDataSet(result);
+        // printDataSet(result);
 
         assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"1", "1.00", "1.00"},
@@ -83,7 +83,7 @@ public class ElasticSearchEmptyIntervalsTest extends ElasticSearchDataSetTestBas
                         .column("NUMBER", SUM, "total")
                         .buildLookup());
 
-        printDataSet(result);
+        // printDataSet(result);
 
         assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"1", "1.00", "1.00"},
@@ -112,7 +112,7 @@ public class ElasticSearchEmptyIntervalsTest extends ElasticSearchDataSetTestBas
                         .column("NUMBER", SUM, "total")
                         .buildLookup());
 
-        printDataSet(result);
+        // printDataSet(result);
 
         assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"3", "2.00", "2.00"},

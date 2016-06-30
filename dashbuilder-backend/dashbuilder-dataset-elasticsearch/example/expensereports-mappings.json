@@ -1,0 +1,17 @@
+{
+    "mappings" : {
+        "_default_" : {
+            "properties" : {
+                "EXPENSES_ID" : {"type": "integer" },
+                "CITY" : {"type": "string", "index": "not_analyzed" },
+                "DEPARTMENT" : { "type" : "string", "index": "not_analyzed" },
+                "EMPLOYEE" : { "type" : "string", "index": "analyzed" },
+                "CREATION_DATE" : { 
+                    "type" : "date",
+                    "format": "MM-dd-YYYY"
+                },
+                "AMOUNT" : { "type" : "float" }
+            }
+        }
+    }
+}
