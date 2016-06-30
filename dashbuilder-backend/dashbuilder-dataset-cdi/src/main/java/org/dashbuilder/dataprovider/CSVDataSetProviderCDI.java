@@ -21,7 +21,6 @@ import javax.inject.Inject;
 
 import org.dashbuilder.dataprovider.csv.CSVDataSetProvider;
 import org.dashbuilder.dataprovider.csv.CSVFileStorage;
-import org.dashbuilder.dataset.DataSetDefRegistryCDI;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
@@ -35,11 +34,9 @@ public class CSVDataSetProviderCDI extends CSVDataSetProvider {
 
     @Inject
     public CSVDataSetProviderCDI(StaticDataSetProviderCDI staticDataSetProvider,
-                                 DataSetDefRegistryCDI dataSetDefRegistry,
                                  CSVFileStorage csvStorage) {
 
         super(staticDataSetProvider,
-                dataSetDefRegistry,
                 csvStorage);
     }
 

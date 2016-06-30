@@ -26,7 +26,6 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import org.dashbuilder.dataset.DataSetDefRegistryCDI;
 import org.dashbuilder.dataset.DataSetGenerator;
 import org.dashbuilder.dataset.def.BeanDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
@@ -38,7 +37,7 @@ import org.dashbuilder.dataset.events.DataSetStaleEvent;
 public class BeanDataSetProviderCDI extends BeanDataSetProvider {
 
     protected BeanManager beanManager;
-    protected Map<String,DataSetGenerator> generatorMap = new HashMap<String, DataSetGenerator>();
+    protected Map<String,DataSetGenerator> generatorMap = new HashMap<>();
 
     public BeanDataSetProviderCDI() {
         super();
@@ -46,10 +45,9 @@ public class BeanDataSetProviderCDI extends BeanDataSetProvider {
 
     @Inject
     public BeanDataSetProviderCDI(StaticDataSetProviderCDI staticDataSetProvider,
-                                  DataSetDefRegistryCDI dataSetDefRegistry,
                                   BeanManager beanManager) {
 
-        super(staticDataSetProvider, dataSetDefRegistry);
+        super(staticDataSetProvider);
         this.beanManager = beanManager;
     }
 

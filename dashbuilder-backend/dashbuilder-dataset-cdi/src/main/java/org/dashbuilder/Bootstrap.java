@@ -25,7 +25,6 @@ import org.dashbuilder.dataprovider.StaticDataSetProviderCDI;
 import org.dashbuilder.dataset.DataSetDefDeployerCDI;
 import org.dashbuilder.dataset.DataSetDefRegistryCDI;
 import org.dashbuilder.dataset.DataSetManagerCDI;
-import org.dashbuilder.dataset.json.DataSetDefJSONMarshaller;
 import org.dashbuilder.scheduler.SchedulerCDI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

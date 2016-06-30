@@ -112,8 +112,9 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                     new SQLDataSourceLocatorImpl(),
                     intervalBuilderLocator,
                     intervalBuilderDynamicDate,
-                    dataSetDefRegistry,
                     dataSetOpEngine);
+
+            dataSetDefRegistry.addListener(SINGLETON);
         }
         return SINGLETON;
     }
@@ -124,7 +125,6 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
     protected SQLDataSourceLocator dataSourceLocator;
     protected IntervalBuilderLocator intervalBuilderLocator;
     protected IntervalBuilderDynamicDate intervalBuilderDynamicDate;
-    protected DataSetDefRegistry dataSetDefRegistry;
     protected DataSetOpEngine opEngine;
 
     public SQLDataSetProvider() {
@@ -134,15 +134,12 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                               SQLDataSourceLocator dataSourceLocator,
                               IntervalBuilderLocator intervalBuilderLocator,
                               IntervalBuilderDynamicDate intervalBuilderDynamicDate,
-                              DataSetDefRegistry dataSetDefRegistry,
                               DataSetOpEngine opEngine) {
 
         this.staticDataSetProvider = staticDataSetProvider;
         this.dataSourceLocator = dataSourceLocator;
         this.intervalBuilderLocator = intervalBuilderLocator;
         this.intervalBuilderDynamicDate = intervalBuilderDynamicDate;
-        this.dataSetDefRegistry = dataSetDefRegistry;
-        this.dataSetDefRegistry.addListener(this);
         this.opEngine = opEngine;
     }
 
@@ -176,14 +173,6 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
 
     public void setIntervalBuilderDynamicDate(IntervalBuilderDynamicDate intervalBuilderDynamicDate) {
         this.intervalBuilderDynamicDate = intervalBuilderDynamicDate;
-    }
-
-    public DataSetDefRegistry getDataSetDefRegistry() {
-        return dataSetDefRegistry;
-    }
-
-    public void setDataSetDefRegistry(DataSetDefRegistry dataSetDefRegistry) {
-        this.dataSetDefRegistry = dataSetDefRegistry;
     }
 
     public DataSetOpEngine getOpEngine() {
@@ -399,10 +388,9 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
 
         // Store in the cache
         if (!skipCache) {
-            final boolean isDefRegistered = def.getUUID() != null && dataSetDefRegistry.getDataSetDef(def.getUUID()) != null;
-            if (isDefRegistered) {
-                _metadataMap.put(def.getUUID(), result);
-            }
+            _metadataMap.put(def.getUUID(), result);
+        } else if (log.isDebugEnabled()) {
+            log.debug("Using look-up in test mode. Skipping adding data set metadata for uuid [" + def.getUUID() + "] into cache.");
         }
         return result.metadata;
     }

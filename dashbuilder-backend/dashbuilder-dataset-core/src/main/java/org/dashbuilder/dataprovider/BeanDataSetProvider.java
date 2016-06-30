@@ -22,7 +22,6 @@ import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.def.BeanDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.DataSetDefRegistryListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,15 +30,12 @@ public class BeanDataSetProvider implements DataSetProvider, DataSetDefRegistryL
 
     protected Logger log = LoggerFactory.getLogger(BeanDataSetProvider.class);
     protected StaticDataSetProvider staticDataSetProvider;
-    protected DataSetDefRegistry dataSetDefRegistry;
 
     public BeanDataSetProvider() {
     }
 
-    public BeanDataSetProvider(StaticDataSetProvider staticDataSetProvider, DataSetDefRegistry dataSetDefRegistry) {
+    public BeanDataSetProvider(StaticDataSetProvider staticDataSetProvider) {
         this.staticDataSetProvider = staticDataSetProvider;
-        this.dataSetDefRegistry = dataSetDefRegistry;
-        this.dataSetDefRegistry.addListener(this);
     }
 
     public DataSetProviderType getType() {
