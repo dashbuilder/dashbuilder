@@ -279,14 +279,17 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
         DateIntervalType intervalType = DateIntervalType.getByName(columnGroup.getIntervalSize());
         Month firstMonth = columnGroup.getFirstMonthOfYear();
         DayOfWeek firstDayOfWeek = columnGroup.getFirstDayOfWeek();
-        
+
         // Supported intervals for FIXED strategy - @see DateIntervalType.FIXED_INTERVALS_SUPPORTED
-        String script = "new Date(doc[\"{0}\"].value).format(\"{1}\")";
+        // As is a fixed strategy, the time zone is almost considered fixed for the scripts that will be run on the
+        // ELS server.
+        String timeZone = " TimeZone.getTimeZone(\"GMT\") ";
+        String script = "new Date(doc[\"{0}\"].value).format(\"{1}\", {2})";
         String pattern = null;
         switch (intervalType) {
             case QUARTER:
                 // For quarters use this pseudocode script: <code>quarter = round-up(date.month / 3)</code>
-                script = "ceil(new Date(doc[\"{0}\"].value).format(\"{1}\").toInteger() / 3).toInteger()";
+                script = "ceil(new Date(doc[\"{0}\"].value).format(\"{1}\", {2}).toInteger() / 3).toInteger()";
                 pattern = "M";
                 break;
             case MONTH:
@@ -295,7 +298,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
             case DAY_OF_WEEK:
                 // Consider that scripts are executed in Groovy language, so the Date class uses SimpleDateFormat for formatting the value.
                 // As SimpleDateFormat considers first day of week on monday.
-                script = "new Date(doc[\"{0}\"].value).plus(Calendar.getInstance().getFirstDayOfWeek()).format(\"{1}\")";
+                script = "new Date(doc[\"{0}\"].value).next().format(\"{1}\", {2})";
                 pattern = "uu";
                 break;
             case HOUR:
@@ -311,7 +314,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
                 throw new UnsupportedOperationException("Fixed grouping strategy by interval type " + intervalType.name() + " is not supported.");
         }
         
-        String valueScript = MessageFormat.format(script, sourceId, pattern);
+        String valueScript = MessageFormat.format( script, sourceId, pattern, timeZone );
         
         String orderScript = null;
         
