@@ -480,12 +480,13 @@ public class NativeClientAggregationsBuilder {
         // Supported intervals for FIXED strategy - @see DateIntervalType.FIXED_INTERVALS_SUPPORTED
         // As is a fixed strategy, the time zone is almost considered fixed for the scripts that will be run on the
         // ELS server.
-        String script = "new Date(doc[\"{0}\"].value).format(\"{1}\", TimeZone.getTimeZone(\"GMT\"))";
+        String timeZone = " TimeZone.getTimeZone(\"GMT\") ";
+        String script = "new Date(doc[\"{0}\"].value).format(\"{1}\", {2})";
         String pattern;
         switch (intervalType) {
             case QUARTER:
                 // For quarters use this pseudocode script: <code>quarter = round-up(date.month / 3)</code>
-                script = "ceil(new Date(doc[\"{0}\"].value).format(\"{1}\").toInteger() / 3).toInteger()";
+                script = "ceil(new Date(doc[\"{0}\"].value).format(\"{1}\", {2}).toInteger() / 3).toInteger()";
                 pattern = "M";
                 break;
             case MONTH:
@@ -498,7 +499,7 @@ public class NativeClientAggregationsBuilder {
                 // fixed values whatever the time zone or region is. So let's force the timezone to a fixed GMT value
                 // and increment the date by one day (#next function), so this way can be extracted the day of week using "uu" pattern, no matter
                 // the time zone / region is.
-                script = "new Date(doc[\"{0}\"].value).next().format(\"{1}\", TimeZone.getTimeZone(\"GMT\"))";
+                script = "new Date(doc[\"{0}\"].value).next().format(\"{1}\", {2})";
                 pattern = "uu";
                 break;
             case HOUR:
@@ -514,7 +515,7 @@ public class NativeClientAggregationsBuilder {
                 throw new UnsupportedOperationException("Fixed grouping strategy by interval type " + intervalType.name() + " is not supported.");
         }
 
-        String valueScript = MessageFormat.format(script, sourceId, pattern);
+        String valueScript = MessageFormat.format( script, sourceId, pattern, timeZone );
 
         String orderScript = null;
 
