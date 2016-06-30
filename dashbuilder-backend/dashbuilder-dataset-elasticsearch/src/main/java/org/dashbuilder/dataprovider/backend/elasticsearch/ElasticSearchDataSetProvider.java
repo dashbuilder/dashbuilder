@@ -122,10 +122,12 @@ public class ElasticSearchDataSetProvider implements DataSetProvider, DataSetDef
             DataSetDefRegistry dataSetDefRegistry = DataSetCore.get().getDataSetDefRegistry();
             IntervalBuilderLocator intervalBuilderLocator = DataSetCore.get().getIntervalBuilderLocator();
             IntervalBuilderDynamicDate intervalBuilderDynamicDate = dataSetCore.getIntervalBuilderDynamicDate();
-            SINGLETON = new ElasticSearchDataSetProvider(staticDataSetProvider, 
-                    dataSetDefRegistry, 
+
+            SINGLETON = new ElasticSearchDataSetProvider(staticDataSetProvider,
                     intervalBuilderLocator,
                     intervalBuilderDynamicDate);
+
+            dataSetDefRegistry.addListener(SINGLETON);
         }
         return SINGLETON;
     }
@@ -133,7 +135,6 @@ public class ElasticSearchDataSetProvider implements DataSetProvider, DataSetDef
 
     protected Logger log = LoggerFactory.getLogger(ElasticSearchDataSetProvider.class);
     protected StaticDataSetProvider staticDataSetProvider;
-    protected DataSetDefRegistry dataSetDefRegistry;
     protected IntervalBuilderLocator intervalBuilderLocator;
     protected IntervalBuilderDynamicDate intervalBuilderDynamicDate;
     protected ElasticSearchClientFactory clientFactory;
@@ -150,12 +151,10 @@ public class ElasticSearchDataSetProvider implements DataSetProvider, DataSetDef
     }
 
     public ElasticSearchDataSetProvider(StaticDataSetProvider staticDataSetProvider,
-                                        DataSetDefRegistry dataSetDefRegistry,
                                         IntervalBuilderLocator intervalBuilderLocator,
                                         IntervalBuilderDynamicDate intervalBuilderDynamicDate) {
 
         this.staticDataSetProvider = staticDataSetProvider;
-        this.dataSetDefRegistry = dataSetDefRegistry;
         this.intervalBuilderLocator = intervalBuilderLocator;
         this.intervalBuilderDynamicDate = intervalBuilderDynamicDate;
 
@@ -631,10 +630,7 @@ public class ElasticSearchDataSetProvider implements DataSetProvider, DataSetDef
 
         // Put into cache.
         if (!isTestMode) {
-            final boolean isDefRegistered = def.getUUID() != null && dataSetDefRegistry.getDataSetDef(def.getUUID()) != null;
-            if (isDefRegistered) {
-                _metadataMap.put(def.getUUID(), result);
-            }
+            _metadataMap.put(def.getUUID(), result);
         } else if (log.isDebugEnabled()) {
             log.debug("Using look-up in test mode. Skipping adding data set metadata for uuid [" + def.getUUID() + "] into cache.");
         }

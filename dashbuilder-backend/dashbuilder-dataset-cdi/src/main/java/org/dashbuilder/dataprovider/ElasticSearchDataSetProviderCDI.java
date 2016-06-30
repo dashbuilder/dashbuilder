@@ -22,7 +22,6 @@ import javax.inject.Inject;
 
 import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchDataSetProvider;
-import org.dashbuilder.dataset.DataSetDefRegistryCDI;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
@@ -35,11 +34,9 @@ public class ElasticSearchDataSetProviderCDI extends ElasticSearchDataSetProvide
     }
 
     @Inject
-    public ElasticSearchDataSetProviderCDI(StaticDataSetProviderCDI staticDataSetProvider,
-                                           DataSetDefRegistryCDI dataSetDefRegistry) {
+    public ElasticSearchDataSetProviderCDI(StaticDataSetProviderCDI staticDataSetProvider) {
 
         super(staticDataSetProvider,
-                dataSetDefRegistry,
                 DataSetCore.get().getIntervalBuilderLocator(),
                 DataSetCore.get().getIntervalBuilderDynamicDate());
     }

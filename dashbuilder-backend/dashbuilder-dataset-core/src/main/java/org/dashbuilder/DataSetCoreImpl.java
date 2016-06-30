@@ -141,9 +141,8 @@ public class DataSetCoreImpl extends DataSetCore {
 
     public BeanDataSetProvider getBeanDataSetProvider() {
         if (beanDataSetProvider == null) {
-            beanDataSetProvider = new BeanDataSetProvider(
-                    checkNotNull(getStaticDataSetProvider(), STATIC_DATA_SET_PROVIDER),
-                    checkNotNull(getDataSetDefRegistry(), DATA_SET_DEF_REGISTRY));
+            beanDataSetProvider = new BeanDataSetProvider(checkNotNull(getStaticDataSetProvider(), STATIC_DATA_SET_PROVIDER));
+            getDataSetDefRegistry().addListener(beanDataSetProvider);
         }
         return beanDataSetProvider;
     }

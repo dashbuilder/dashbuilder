@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 public class CSVDataSetProvider implements DataSetProvider, DataSetDefRegistryListener {
 
     protected StaticDataSetProvider staticDataSetProvider;
-    protected DataSetDefRegistry dataSetDefRegistry;
     protected CSVFileStorage csvStorage;
     protected Logger log = LoggerFactory.getLogger(CSVDataSetProvider.class);
 
@@ -45,7 +44,8 @@ public class CSVDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
         if (SINGLETON == null) {
             StaticDataSetProvider staticDataSetProvider = DataSetCore.get().getStaticDataSetProvider();
             DataSetDefRegistry dataSetDefRegistry = DataSetCore.get().getDataSetDefRegistry();
-            SINGLETON = new CSVDataSetProvider(staticDataSetProvider, dataSetDefRegistry, null);
+            SINGLETON = new CSVDataSetProvider(staticDataSetProvider, null);
+            dataSetDefRegistry.addListener(SINGLETON);
         }
         return SINGLETON;
     }
@@ -54,13 +54,10 @@ public class CSVDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
     }
 
     public CSVDataSetProvider(StaticDataSetProvider staticDataSetProvider,
-                              DataSetDefRegistry dataSetDefRegistry,
                               CSVFileStorage csvStorage) {
 
         this.staticDataSetProvider = staticDataSetProvider;
         this.csvStorage = csvStorage;
-        this.dataSetDefRegistry = dataSetDefRegistry;
-        this.dataSetDefRegistry.addListener(this);
     }
 
     public DataSetProviderType getType() {

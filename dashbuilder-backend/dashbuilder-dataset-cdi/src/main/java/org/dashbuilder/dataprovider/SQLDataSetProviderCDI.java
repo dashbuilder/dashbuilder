@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataprovider.sql.SQLDataSetProvider;
 import org.dashbuilder.dataprovider.sql.SQLDataSourceLocatorImpl;
-import org.dashbuilder.dataset.DataSetDefRegistryCDI;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
@@ -35,14 +34,12 @@ public class SQLDataSetProviderCDI extends SQLDataSetProvider {
     }
 
     @Inject
-    public SQLDataSetProviderCDI(StaticDataSetProviderCDI staticDataSetProvider,
-                                 DataSetDefRegistryCDI dataSetDefRegistry) {
+    public SQLDataSetProviderCDI(StaticDataSetProviderCDI staticDataSetProvider) {
 
         super(staticDataSetProvider,
                 new SQLDataSourceLocatorImpl(),
                 DataSetCore.get().getIntervalBuilderLocator(),
                 DataSetCore.get().getIntervalBuilderDynamicDate(),
-                dataSetDefRegistry,
                 DataSetCore.get().getSharedDataSetOpEngine());
     }
 

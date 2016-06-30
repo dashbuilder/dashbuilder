@@ -34,6 +34,7 @@ import org.uberfire.commons.services.cdi.Startup;
 import org.uberfire.commons.services.cdi.StartupType;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(Arquillian.class)
 public class BootstrapTest extends BaseCDITest {
@@ -70,6 +71,8 @@ public class BootstrapTest extends BaseCDITest {
 
     @Test
     public void testProviderRegistryInit() throws Exception {
+        bootstrap.init();
+
         DataSetProviderRegistry dataSetProviderRegistry = DataSetCore.get().getDataSetProviderRegistry();
         assertEquals(dataSetProviderRegistry, providerRegistryCDI);
         assertEquals(dataSetProviderRegistry.getAvailableTypes().size(), 5);
@@ -94,4 +97,10 @@ public class BootstrapTest extends BaseCDITest {
         assertNotNull(dataSetDefDeployer);
         assertEquals(dataSetDefDeployer, dataSetDefDeployerCDI);
     }
+
+    @Test
+    public void testNoListenerRegistration() throws Exception {
+        assertEquals(dataSetDefRegistryCDI.getListeners().size(), 0);
+    }
 }
+

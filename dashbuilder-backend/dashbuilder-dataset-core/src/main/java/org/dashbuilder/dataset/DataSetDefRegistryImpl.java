@@ -243,6 +243,10 @@ public class DataSetDefRegistryImpl implements DataSetDefRegistry {
         listenerSet.add(listener);
     }
 
+    public Set<DataSetDefRegistryListener> getListeners() {
+        return listenerSet;
+    }
+
     protected void onDataSetDefStale(DataSetDef def) {
         for (DataSetDefRegistryListener listener : listenerSet) {
             listener.onDataSetDefStale(def);
