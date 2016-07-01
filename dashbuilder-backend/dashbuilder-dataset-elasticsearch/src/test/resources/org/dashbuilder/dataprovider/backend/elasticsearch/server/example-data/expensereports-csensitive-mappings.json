@@ -18,7 +18,7 @@
                 "employee" : { "type" : "string", "index": "analyzed", "analyzer" : "case_sensitive"  },
                 "date" : { 
                     "type" : "date",
-                    "format": "MM-dd-YYYY"
+                    "format": "MM-dd-yyyy"
                 },
                 "amount" : { "type" : "float" }
             }
