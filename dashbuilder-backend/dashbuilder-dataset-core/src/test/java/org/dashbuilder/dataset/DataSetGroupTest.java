@@ -359,6 +359,7 @@ public class DataSetGroupTest {
                 .buildLookup().cloneInstance());
 
         //printDataSet(result);
+
         assertDataSetValues(result, dataSetFormatter, new String[][]{
                 {"2", "10.00", "3,904.17"},
                 {"3", "8.00", "4,525.69"},
