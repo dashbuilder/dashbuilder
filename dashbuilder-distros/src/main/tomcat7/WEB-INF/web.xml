@@ -164,11 +164,16 @@
     <url-pattern>/org.dashbuilder.DashbuilderShowcase/defaulteditor/download/*</url-pattern>
   </servlet-mapping>
 
+  <!-- Security roles -->
 
-  <!-- security roles -->
   <security-role>
-    <description>Administrator - Administrates the Dashbuilder system.</description>
+    <description>Administrator - Manages application configuration and creates dashboards</description>
     <role-name>admin</role-name>
+  </security-role>
+
+  <security-role>
+    <description>User - Consumes existing dashboards</description>
+    <role-name>user</role-name>
   </security-role>
 
   <!-- Open resources for login page. -->
@@ -190,6 +195,7 @@
     </web-resource-collection>
     <auth-constraint>
       <role-name>admin</role-name>
+      <role-name>user</role-name>
     </auth-constraint>
   </security-constraint>
 
@@ -203,6 +209,7 @@
     </web-resource-collection>
     <auth-constraint>
       <role-name>admin</role-name>
+      <role-name>user</role-name>
     </auth-constraint>
   </security-constraint>
 
