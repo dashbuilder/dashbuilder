@@ -477,52 +477,39 @@ public class NativeClientAggregationsBuilder {
         Month firstMonth = columnGroup.getFirstMonthOfYear();
         DayOfWeek firstDayOfWeek = columnGroup.getFirstDayOfWeek();
 
-        // Supported intervals for FIXED strategy - @see DateIntervalType.FIXED_INTERVALS_SUPPORTED
-        // As is a fixed strategy, the time zone is almost considered fixed for the scripts that will be run on the
-        // ELS server.
-        String timeZone = " TimeZone.getTimeZone(\"GMT\") ";
-        String script = "new Date(doc[\"{0}\"].value).format(\"{1}\", {2})";
-        String pattern;
+        String script = "new Date(doc[\"{0}\"].value).toCalendar().";
         switch (intervalType) {
             case QUARTER:
                 // For quarters use this pseudocode script: <code>quarter = round-up(date.month / 3)</code>
-                script = "ceil(new Date(doc[\"{0}\"].value).format(\"{1}\", {2}).toInteger() / 3).toInteger()";
-                pattern = "M";
+                script = "ceil( ( " + script + "get(Calendar.MONTH) + 1 ) / 3 ).toInteger()";
                 break;
             case MONTH:
-                pattern = "MM";
-
+                script = script + "get(Calendar.MONTH) + 1";
                 break;
             case DAY_OF_WEEK:
-                // Consider that scripts are executed in Groovy language, so the Date class uses SimpleDateFormat for formatting the value.
-                // As SimpleDateFormat considers first day of week on monday, and we need it to be sunday, as Dashbuilder's date grouping has
-                // fixed values whatever the time zone or region is. So let's force the timezone to a fixed GMT value
-                // and increment the date by one day (#next function), so this way can be extracted the day of week using "uu" pattern, no matter
-                // the time zone / region is.
-                script = "new Date(doc[\"{0}\"].value).next().format(\"{1}\", {2})";
-                pattern = "uu";
+                script = script + "get(Calendar.DAY_OF_WEEK)";
                 break;
             case HOUR:
-                pattern = "HH";
+                script = script + "get(Calendar.HOUR_OF_DAY)";
                 break;
             case MINUTE:
-                pattern = "mm";
+                script = script + "get(Calendar.MINUTE)";
                 break;
             case SECOND:
-                pattern = "ss";
+                script = script + "get(Calendar.SECOND)";
                 break;
             default:
                 throw new UnsupportedOperationException("Fixed grouping strategy by interval type " + intervalType.name() + " is not supported.");
         }
 
-        String valueScript = MessageFormat.format( script, sourceId, pattern, timeZone );
+        String valueScript = MessageFormat.format( script, sourceId );
 
         String orderScript = null;
 
         if (firstMonth != null && intervalType.equals(DateIntervalType.MONTH)) {
             int firstMonthIndex = firstMonth.getIndex();
             int[] positions = buildPositionsArray(firstMonthIndex, 12, columnGroup.isAscendingOrder());
-            orderScript = "month="+valueScript+".toInteger(); list = "+ Arrays.toString(positions)+"; list.indexOf(month)";
+            orderScript = "month="+valueScript+".toInteger(); list = "+Arrays.toString(positions)+"; list.indexOf(month)";
         }
 
         if (firstDayOfWeek!= null && intervalType.equals(DateIntervalType.DAY_OF_WEEK)) {

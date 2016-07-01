@@ -46,6 +46,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
     protected static final String EL_EXAMPLE_CSENSITIVE_DATASET_DEF = "org/dashbuilder/dataprovider/backend/elasticsearch/expensereports-csensitive.dset";
     protected static final String EL_DATASET_UUID = "expense_reports";
     protected static final String EL_DATASET_CSENSITIVE_UUID = "expense_reports_csensitive";
+    private static final String DATE_FORMAT = "yyyy-MM-dd Z";
     
     /**
      * Register the data set used for this test case. 
@@ -151,7 +152,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         assertThat(result.getValueAt(0, 1)).isEqualTo(120.35);
         assertThat(result.getValueAt(0, 2)).isEqualTo(EL_EXAMPLE_DEPT_ENGINEERING);
         assertThat(result.getValueAt(0, 3)).isEqualTo(EL_EXAMPLE_EMP_ROXIE);
-        Date date = new SimpleDateFormat(DateIntervalPattern.DAY).parse("2015-12-11");
+        Date date = new SimpleDateFormat(DATE_FORMAT).parse("2015-12-11 -0900");
         assertThat(result.getValueAt(0, 4)).isEqualTo(date);
         assertThat(result.getValueAt(0, 5)).isEqualTo(EL_EXAMPLE_CITY_BARCELONA);
 
@@ -160,7 +161,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         assertThat(result.getValueAt(1, 1)).isEqualTo(1100.10);
         assertThat(result.getValueAt(1, 2)).isEqualTo(EL_EXAMPLE_DEPT_ENGINEERING);
         assertThat(result.getValueAt(1, 3)).isEqualTo(EL_EXAMPLE_EMP_ROXIE);
-        date = new SimpleDateFormat(DateIntervalPattern.DAY).parse("2015-12-01");
+        date = new SimpleDateFormat(DATE_FORMAT).parse("2015-12-01 -0900");
         assertThat(result.getValueAt(1, 4)).isEqualTo(date);
         assertThat(result.getValueAt(1, 5)).isEqualTo(EL_EXAMPLE_CITY_BARCELONA);
 
@@ -169,7 +170,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         assertThat(result.getValueAt(8, 1)).isEqualTo(75.75d);
         assertThat(result.getValueAt(8, 2)).isEqualTo(EL_EXAMPLE_DEPT_SALES);
         assertThat(result.getValueAt(8, 3)).isEqualTo(EL_EXAMPLE_EMP_NITA);
-        date = new SimpleDateFormat(DateIntervalPattern.DAY).parse("2015-05-11");
+        date = new SimpleDateFormat(DATE_FORMAT).parse("2015-05-11 -0900");
         assertThat(result.getValueAt(8, 4)).isEqualTo(date);
         assertThat(result.getValueAt(8, 5)).isEqualTo(EL_EXAMPLE_CITY_MADRID);
 
@@ -178,7 +179,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         assertThat(result.getValueAt(30, 1)).isEqualTo(234.34);
         assertThat(result.getValueAt(30, 2)).isEqualTo(EL_EXAMPLE_DEPT_MANAGEMENT);
         assertThat(result.getValueAt(30, 3)).isEqualTo(EL_EXAMPLE_EMP_HANNA);
-        date = new SimpleDateFormat(DateIntervalPattern.DAY).parse("2013-09-01");
+        date = new SimpleDateFormat(DATE_FORMAT).parse("2013-09-01 -0900");
         assertThat(result.getValueAt(30, 4)).isEqualTo(date);
         assertThat(result.getValueAt(30, 5)).isEqualTo(EL_EXAMPLE_CITY_RALEIGH);
 
@@ -187,7 +188,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         assertThat(result.getValueAt(46, 1)).isEqualTo(565.56);
         assertThat(result.getValueAt(46, 2)).isEqualTo(EL_EXAMPLE_DEPT_MANAGEMENT);
         assertThat(result.getValueAt(46, 3)).isEqualTo(EL_EXAMPLE_EMP_PATRICIA);
-        date = new SimpleDateFormat(DateIntervalPattern.DAY).parse("2012-04-14");
+        date = new SimpleDateFormat(DATE_FORMAT).parse("2012-04-14 -0900");
         assertThat(result.getValueAt(46, 4)).isEqualTo(date);
         assertThat(result.getValueAt(46, 5)).isEqualTo(EL_EXAMPLE_CITY_LONDON);
     }
@@ -240,7 +241,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         assertThat(result.getValueAt(6, 1)).isEqualTo(565.56);
         assertThat(result.getValueAt(6, 2)).isEqualTo(EL_EXAMPLE_DEPT_MANAGEMENT);
         assertThat(result.getValueAt(6, 3)).isEqualTo(EL_EXAMPLE_EMP_PATRICIA);
-        Date date = new SimpleDateFormat(DateIntervalPattern.DAY).parse("2012-04-14");
+        Date date = new SimpleDateFormat(DATE_FORMAT).parse("2012-04-14 -0900");
         assertThat(result.getValueAt(6, 4)).isEqualTo(date);
         assertThat(result.getValueAt(6, 5)).isEqualTo(EL_EXAMPLE_CITY_LONDON);
     }
