@@ -7,7 +7,7 @@
                 "NUMBER" : {"type": "integer" },
                 "DATE" : {
                     "type" : "date",
-                    "format": "MM-YYYY"
+                    "format": "MM-yyyy Z"
                 }
             }
         }
