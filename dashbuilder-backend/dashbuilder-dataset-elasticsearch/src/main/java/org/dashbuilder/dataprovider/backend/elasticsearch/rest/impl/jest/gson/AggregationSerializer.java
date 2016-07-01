@@ -274,50 +274,41 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
             throw new RuntimeException("No translation supported for column group with sourceId [" + sourceId + "] and group strategy [" + groupStrategy.name() + "].");
         }
     }
-    
+
     private String[] buildIntervalExtractorScript(String sourceId, ColumnGroup columnGroup) {
         DateIntervalType intervalType = DateIntervalType.getByName(columnGroup.getIntervalSize());
         Month firstMonth = columnGroup.getFirstMonthOfYear();
         DayOfWeek firstDayOfWeek = columnGroup.getFirstDayOfWeek();
 
-        // Supported intervals for FIXED strategy - @see DateIntervalType.FIXED_INTERVALS_SUPPORTED
-        // As is a fixed strategy, the time zone is almost considered fixed for the scripts that will be run on the
-        // ELS server.
-        String timeZone = " TimeZone.getTimeZone(\"GMT\") ";
-        String script = "new Date(doc[\"{0}\"].value).format(\"{1}\", {2})";
-        String pattern = null;
+        String script = "new Date(doc[\"{0}\"].value).toCalendar().";
         switch (intervalType) {
             case QUARTER:
                 // For quarters use this pseudocode script: <code>quarter = round-up(date.month / 3)</code>
-                script = "ceil(new Date(doc[\"{0}\"].value).format(\"{1}\", {2}).toInteger() / 3).toInteger()";
-                pattern = "M";
+                script = "ceil( ( " + script + "get(Calendar.MONTH) + 1 ) / 3 ).toInteger()";
                 break;
             case MONTH:
-                pattern = "MM";
+                script = script + "get(Calendar.MONTH) + 1";
                 break;
             case DAY_OF_WEEK:
-                // Consider that scripts are executed in Groovy language, so the Date class uses SimpleDateFormat for formatting the value.
-                // As SimpleDateFormat considers first day of week on monday.
-                script = "new Date(doc[\"{0}\"].value).next().format(\"{1}\", {2})";
-                pattern = "uu";
+                script = script + "get(Calendar.DAY_OF_WEEK)";
                 break;
             case HOUR:
-                pattern = "HH";
+                script = script + "get(Calendar.HOUR_OF_DAY)";
                 break;
             case MINUTE:
-                pattern = "mm";
+                script = script + "get(Calendar.MINUTE)";
                 break;
             case SECOND:
-                pattern = "ss";
+                script = script + "get(Calendar.SECOND)";
                 break;
             default:
                 throw new UnsupportedOperationException("Fixed grouping strategy by interval type " + intervalType.name() + " is not supported.");
         }
-        
-        String valueScript = MessageFormat.format( script, sourceId, pattern, timeZone );
-        
+
+        String valueScript = MessageFormat.format( script, sourceId );
+
         String orderScript = null;
-        
+
         if (firstMonth != null && intervalType.equals(DateIntervalType.MONTH)) {
             int firstMonthIndex = firstMonth.getIndex();
             int[] positions = buildPositionsArray(firstMonthIndex, 12, columnGroup.isAscendingOrder());
@@ -329,7 +320,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
             int[] positions = buildPositionsArray(firstDayIndex, 7, columnGroup.isAscendingOrder());
             orderScript = "day="+valueScript+".toInteger(); list = "+Arrays.toString(positions)+"; list.indexOf(day)";
         }
-        
+
         return new String[] { valueScript, orderScript};
     }
     
