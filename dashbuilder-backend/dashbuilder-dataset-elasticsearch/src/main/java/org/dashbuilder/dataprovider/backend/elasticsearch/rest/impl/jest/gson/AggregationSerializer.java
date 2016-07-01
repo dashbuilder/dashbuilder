@@ -290,7 +290,7 @@ public class AggregationSerializer extends AbstractAdapter<AggregationSerializer
                 script = script + "get(Calendar.MONTH) + 1";
                 break;
             case DAY_OF_WEEK:
-                script = script + "get(Calendar.DAY_OF_WEEK) + ( 1 - Calendar.getInstance().getFirstDayOfWeek() )";
+                script = script + "get(Calendar.DAY_OF_WEEK) - ( 1 - Calendar.getInstance().getFirstDayOfWeek() )";
                 break;
             case HOUR:
                 script = script + "get(Calendar.HOUR_OF_DAY)";
