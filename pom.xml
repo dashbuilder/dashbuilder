@@ -13,7 +13,7 @@
 
   <groupId>org.dashbuilder</groupId>
   <artifactId>dashbuilder-parent</artifactId>
-  <version>0.5.0-SNAPSHOT</version>
+  <version>0.6.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Dashbuilder Project</name>
@@ -31,7 +31,7 @@
   </licenses>
 
   <properties>
-    <version.org.uberfire>0.9.0-SNAPSHOT</version.org.uberfire>
+    <version.org.uberfire>1.0.0-SNAPSHOT</version.org.uberfire>
     <version.org.jboss.errai>4.0.0-SNAPSHOT</version.org.jboss.errai>
     <!-- Version 1.1.0.Final which is coming from ip-bom is not compatible with GWT 2.8.0.Beta1 -->
     <version.javax.validation>1.0.0.GA</version.javax.validation>
