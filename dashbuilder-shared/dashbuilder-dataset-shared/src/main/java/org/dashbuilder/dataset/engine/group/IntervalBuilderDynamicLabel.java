@@ -72,7 +72,14 @@ public class IntervalBuilderDynamicLabel implements IntervalBuilder {
 
         public Interval locateInterval(Object value) {
             for (Interval interval : this) {
-                if (interval.getName() == value || (interval.getName() != null && interval.getName().equals(value))) {
+                if (interval.getName() == value) {
+                    return interval;
+                }
+                if (interval.getName() == null) {
+                    continue;
+                }
+                String name = (value == null ? null : value.toString());
+                if (interval.getName().equals(name)) {
                     return interval;
                 }
             }
