@@ -195,6 +195,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         subTest.testGroupByDateOneRow();
         subTest.testGroupByDateOneDay();
         subTest.testGroupAndCountSameColumn();
+        subTest.testGroupNumberAsLabel();
     }
 
     @Test

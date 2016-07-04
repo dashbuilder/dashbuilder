@@ -57,7 +57,7 @@ public class ClientIntervalBuilderLocator implements IntervalBuilderLocator {
             return intervalBuilderDynamicDate;
         }
         if (ColumnType.NUMBER.equals(columnType)) {
-            // TODO
+            return intervalBuilderDynamicLabel;
         }
         if (ColumnType.TEXT.equals(columnType)) {
             throw new IllegalArgumentException( CommonConstants.INSTANCE.exc_text_columns_no_grouping());

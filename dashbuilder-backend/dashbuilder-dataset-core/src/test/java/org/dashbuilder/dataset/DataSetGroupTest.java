@@ -18,7 +18,10 @@ package org.dashbuilder.dataset;
 import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
+import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.DataSetDefFactory;
 import org.dashbuilder.dataset.filter.FilterFactory;
+import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.sort.SortOrder;
@@ -48,7 +51,7 @@ public class DataSetGroupTest {
     @Test
     public void testDataSetFunctions() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .column(COUNT, "#items")
                 .column(COLUMN_AMOUNT, MIN)
@@ -66,7 +69,7 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByLabelDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group(COLUMN_DEPARTMENT)
                 .column(COLUMN_DEPARTMENT, "Department")
@@ -91,7 +94,7 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByYearDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group(COLUMN_DATE).dynamic(YEAR, true)
                 .column(COLUMN_DATE, "Period")
@@ -107,7 +110,7 @@ public class DataSetGroupTest {
                 {"2015", "15.00", "7,336.69"}
         }, 0);
 
-        DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
+        DataSetLookup lookup = DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group(COLUMN_DATE).dynamic(YEAR, true)
                 .column(COLUMN_DATE)
@@ -150,7 +153,7 @@ public class DataSetGroupTest {
 
     public DataSet lookupGroupByMonthDynamic(boolean emptyIntervals) throws Exception {
         return dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .group(COLUMN_DATE).dynamic(99, MONTH, emptyIntervals)
                         .column(COLUMN_DATE, "Period")
@@ -164,7 +167,7 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByDayDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group(COLUMN_DATE).dynamic(9999, DAY_OF_WEEK, true)
                 .column(COLUMN_DATE, "Period")
@@ -180,7 +183,7 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByMonthFixed() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group(COLUMN_DATE).fixed(MONTH, true)
                 .column(COLUMN_DATE, "Period")
@@ -208,7 +211,7 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByMonthFirstMonth() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group(COLUMN_DATE).fixed(MONTH, true).firstMonth(Month.NOVEMBER)
                 .column(COLUMN_DATE, "Period")
@@ -236,7 +239,7 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByMonthReverse() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group(COLUMN_DATE).fixed(MONTH, true).desc()
                 .column(COLUMN_DATE, "Period")
@@ -264,7 +267,7 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByMonthFirstMonthReverse() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-            DataSetFactory.newDataSetLookupBuilder()
+            DataSetLookupFactory.newDataSetLookupBuilder()
             .dataset(EXPENSE_REPORTS)
             .group(COLUMN_DATE).fixed(MONTH, true).desc().firstMonth(Month.MARCH)
             .column(COLUMN_DATE, "Period")
@@ -293,7 +296,7 @@ public class DataSetGroupTest {
     public void testFixedIntervalsSupported() throws Exception {
         for (DateIntervalType type : DateIntervalType.values()) {
             try {
-                DataSetFactory.newDataSetLookupBuilder().group(COLUMN_DATE).fixed(type, true);
+                DataSetLookupFactory.newDataSetLookupBuilder().group(COLUMN_DATE).fixed(type, true);
                 if (!DateIntervalType.FIXED_INTERVALS_SUPPORTED.contains(type)) {
                     fail("Missing exception on a not supported fixed interval: " + type);
                 }
@@ -307,7 +310,7 @@ public class DataSetGroupTest {
 
     @Test
     public void testFirstDayOfWeekOk() throws Exception {
-        DataSetFactory.newDataSetLookupBuilder()
+        DataSetLookupFactory.newDataSetLookupBuilder()
             .group(COLUMN_DATE)
             .fixed(DAY_OF_WEEK, true)
             .firstDay(DayOfWeek.MONDAY);
@@ -316,7 +319,7 @@ public class DataSetGroupTest {
     @Test
     public void testFirstDayOfWeekNok() throws Exception {
         try {
-            DataSetFactory.newDataSetLookupBuilder()
+            DataSetLookupFactory.newDataSetLookupBuilder()
                 .group(COLUMN_DATE)
                 .fixed(QUARTER, true)
                 .firstDay(DayOfWeek.MONDAY);
@@ -328,7 +331,7 @@ public class DataSetGroupTest {
 
     @Test
     public void testFirstDayOfMonthOk() throws Exception {
-        DataSetFactory.newDataSetLookupBuilder()
+        DataSetLookupFactory.newDataSetLookupBuilder()
             .group(COLUMN_DATE)
             .fixed(MONTH, true)
             .firstMonth(Month.APRIL);
@@ -337,7 +340,7 @@ public class DataSetGroupTest {
     @Test
     public void testFirstDayOfMonthNok() throws Exception {
         try {
-            DataSetFactory.newDataSetLookupBuilder()
+            DataSetLookupFactory.newDataSetLookupBuilder()
                 .group(COLUMN_DATE)
                 .fixed(QUARTER, true)
                 .firstMonth(Month.APRIL);
@@ -350,13 +353,13 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByWeek() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group(COLUMN_DATE).fixed(DAY_OF_WEEK, true).firstDay(DayOfWeek.MONDAY)
                 .column(COLUMN_DATE, "Period")
                 .column(COUNT, "Occurrences")
                 .column(COLUMN_AMOUNT, SUM, "totalAmount")
-                .buildLookup().cloneInstance());
+                .buildLookup());
 
         // printDataSet(result);
 
@@ -374,13 +377,13 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByQuarter() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .group(COLUMN_DATE).fixed(QUARTER, true)
                 .column(COLUMN_DATE, "Period")
                 .column(COUNT, "Occurrences")
                 .column(COLUMN_AMOUNT, SUM, "totalAmount")
-                .buildLookup().cloneInstance());
+                .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -394,13 +397,13 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByDateOneRow() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(COLUMN_ID, FilterFactory.equalsTo(1d))
                         .group(COLUMN_DATE).dynamic(16, true)
                         .column(COLUMN_DATE)
                         .column(COLUMN_AMOUNT, SUM, "total")
-                        .buildLookup().cloneInstance());
+                        .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -411,13 +414,13 @@ public class DataSetGroupTest {
     @Test
     public void testGroupByDateOneDay() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .filter(COLUMN_ID, FilterFactory.equalsTo(1d))
                         .group(COLUMN_DATE).dynamic(16, DAY, true)
                         .column(COLUMN_DATE)
                         .column(COLUMN_AMOUNT, SUM, "total")
-                        .buildLookup().cloneInstance());
+                        .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -428,13 +431,13 @@ public class DataSetGroupTest {
     @Test
     public void testGroupAndCountSameColumn() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
                         .group(COLUMN_DEPARTMENT)
                         .column(COLUMN_DEPARTMENT, "Department")
                         .column(COLUMN_DEPARTMENT, COUNT, "Occurrences")
                         .sort(COLUMN_DEPARTMENT, SortOrder.ASCENDING)
-                        .buildLookup().cloneInstance());
+                        .buildLookup());
 
         //printDataSet(result);
         assertDataSetValues(result, dataSetFormatter, new String[][]{
@@ -444,6 +447,36 @@ public class DataSetGroupTest {
                 {"Services", "5.00"},
                 {"Support", "7.00"}
         }, 0);
+    }
+
+    @Test
+    public void testGroupNumberAsLabel() throws Exception {
+        DataSetDef dsetDef = DataSetDefFactory.newSQLDataSetDef()
+                .uuid("invoices")
+                .dbTable("INVOICES", true)
+                .dataSource("myDS")
+                .label("invoiceId")
+                .label("customerId")
+                .date("creationDate")
+                .number("amount")
+                .buildDef();
+
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .group(COLUMN_AMOUNT)
+                        .column(COLUMN_AMOUNT, AggregateFunctionType.AVERAGE, "Amount")
+                        .column(COLUMN_AMOUNT, COUNT, "Occurrences")
+                        .sort("Amount", SortOrder.ASCENDING)
+                        .buildLookup());
+
+        //printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(49);
+        assertThat(result.getValueAt(0, 0)).isEqualTo(1.1);
+        assertThat(result.getValueAt(1, 0)).isEqualTo(1.4);
+        assertThat(result.getValueAt(17, 0)).isEqualTo(300d);
+        assertThat(result.getValueAt(17, 1)).isEqualTo(2d);
+        assertThat(result.getValueAt(48, 0)).isEqualTo(1100.1);
     }
 
     private void printDataSet(DataSet dataSet) {
