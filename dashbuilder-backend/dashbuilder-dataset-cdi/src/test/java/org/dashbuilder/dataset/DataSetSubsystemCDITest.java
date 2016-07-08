@@ -15,23 +15,37 @@
  */
 package org.dashbuilder.dataset;
 
+import org.dashbuilder.Bootstrap;
 import org.dashbuilder.test.BaseCDITest;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
+
 @RunWith(Arquillian.class)
 public class DataSetSubsystemCDITest extends BaseCDITest {
 
-    DataSetFilterTest dataSetFilterTest = new DataSetFilterTest();
-    DataSetGroupTest dataSetGroupTest = new DataSetGroupTest();
-    DataSetNestedGroupTest nestedGroupTest = new DataSetNestedGroupTest();
-    DataSetSortTest dataSetSortTest = new DataSetSortTest();
-    DataSetTrimTest dataSetTrimTest = new DataSetTrimTest();
+    @Inject
+    Bootstrap bootstrap;
+
+    DataSetFilterTest dataSetFilterTest;
+    DataSetGroupTest dataSetGroupTest;
+    DataSetNestedGroupTest nestedGroupTest;
+    DataSetSortTest dataSetSortTest;
+    DataSetTrimTest dataSetTrimTest;
 
     @Before
     public void setUp() throws Exception {
+        bootstrap.init();
+
+        dataSetFilterTest = new DataSetFilterTest();
+        dataSetGroupTest = new DataSetGroupTest();
+        nestedGroupTest = new DataSetNestedGroupTest();
+        dataSetSortTest = new DataSetSortTest();
+        dataSetTrimTest = new DataSetTrimTest();
+
         dataSetFilterTest.setUp();
         dataSetGroupTest.setUp();
         nestedGroupTest.setUp();
