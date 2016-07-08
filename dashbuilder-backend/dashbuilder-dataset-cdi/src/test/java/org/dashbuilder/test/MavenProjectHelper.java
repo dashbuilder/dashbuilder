@@ -60,7 +60,9 @@ public class MavenProjectHelper {
 
             String javaPath = fullPath.substring(index + 6);
             String javaPackage = StringUtils.replace(javaPath, "/", ".");
-            result.add(javaPackage);
+            if (!javaPackage.contains(".client")) {
+                result.add(javaPackage);
+            }
         }
         return result;
     }
