@@ -24,7 +24,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 public class ShrinkWrapHelper {
 
     public static JavaArchive createJavaArchive() {
-        File rootDir = MavenProjectHelper.getRootDir();
+        File rootDir = MavenProjectHelper.getModuleDir("dashbuilder-backend");
         if (rootDir == null) throw new NullPointerException("Root directory not found");
         return createJavaArchive(rootDir);
     }
