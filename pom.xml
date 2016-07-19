@@ -40,6 +40,7 @@
     <version.com.ahomeit.lienzo.charts>1.0.122-RC0</version.com.ahomeit.lienzo.charts>
     <version.com.allen-sauer.gwt.dnd>3.3.3</version.com.allen-sauer.gwt.dnd>
     <version.com.google.gwt>2.8.0-beta1</version.com.google.gwt>
+    <version.org.gwtbootstrap3>0.9.3</version.org.gwtbootstrap3>
     <version.com.googlecode.jsonsimple>1.1.1</version.com.googlecode.jsonsimple>
     <version.com.googlecode.jtype>0.1.1</version.com.googlecode.jtype>
     <version.org.elasticsearch>2.1.2</version.org.elasticsearch>
