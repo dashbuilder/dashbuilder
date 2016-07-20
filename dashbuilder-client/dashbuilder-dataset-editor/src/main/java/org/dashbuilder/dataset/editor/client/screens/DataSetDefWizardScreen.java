@@ -43,7 +43,7 @@ import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
-import org.uberfire.ext.editor.commons.client.file.SavePopUp;
+import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
 import org.uberfire.ext.widgets.common.client.common.BusyPopup;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.Command;
@@ -76,16 +76,18 @@ public class DataSetDefWizardScreen {
     PlaceRequest placeRequest;
     Command nextCommand;
     DataSetEditorWorkflow currentWorkflow;
+    SavePopUpPresenter savePopUpPresenter;
 
     @Inject
-    public DataSetDefWizardScreen(final SyncBeanManager beanManager, 
-                                  final DataSetEditorWorkflowFactory workflowFactory,
-                                  final Caller<DataSetDefVfsServices> services,
-                                  final DataSetClientServices clientServices,
-                                  final Event<NotificationEvent> notification,
-                                  final PlaceManager placeManager,
-                                  final ErrorPopupPresenter errorPopupPresenter,
-                                  final DataSetDefScreenView view) {
+    public DataSetDefWizardScreen( final SyncBeanManager beanManager,
+                                   final DataSetEditorWorkflowFactory workflowFactory,
+                                   final Caller<DataSetDefVfsServices> services,
+                                   final DataSetClientServices clientServices,
+                                   final Event<NotificationEvent> notification,
+                                   final PlaceManager placeManager,
+                                   final ErrorPopupPresenter errorPopupPresenter,
+                                   final SavePopUpPresenter savePopUpPresenter,
+                                   final DataSetDefScreenView view ) {
         this.beanManager = beanManager;
         this.workflowFactory = workflowFactory;
         this.services = services;
@@ -93,6 +95,7 @@ public class DataSetDefWizardScreen {
         this.notification = notification;
         this.placeManager = placeManager;
         this.errorPopupPresenter = errorPopupPresenter;
+        this.savePopUpPresenter = savePopUpPresenter;
         this.view = view;
     }
 
@@ -207,11 +210,11 @@ public class DataSetDefWizardScreen {
     
     protected void save() {
         final DataSetDef dataSetDef = currentWorkflow.getDataSetDef();
-        new SavePopUp(new ParameterizedCommand<String>() {
+        savePopUpPresenter.show(new ParameterizedCommand<String>() {
             @Override public void execute(final String message) {
                 onSave(dataSetDef, message);
             }
-        }).show();
+        });
     }
     
     void onSave(final DataSetDef dataSetDef, final String message) {
