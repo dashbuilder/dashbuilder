@@ -47,7 +47,7 @@ import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.ext.editor.commons.client.BaseEditor;
-import org.uberfire.ext.editor.commons.client.file.SaveOperationService;
+import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
 import org.uberfire.ext.editor.commons.service.support.SupportsCopy;
 import org.uberfire.ext.editor.commons.service.support.SupportsDelete;
 import org.uberfire.lifecycle.OnMayClose;
@@ -85,6 +85,8 @@ public class DataSetDefEditorPresenter extends BaseEditor {
     DataSetDefType resourceType;
     @Inject
     ErrorPopupPresenter errorPopupPresenter;
+    @Inject
+    SavePopUpPresenter savePopUpPresenter;
 
     @Inject
     public DataSetDefScreenView view;
@@ -147,7 +149,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
             loadDefinition();
         }
     }
-    
+
     private void loadDefinition() {
         services.call(getDefinitionCallback, getDefinitionErrorCallback).get(versionRecordManager.getCurrentPath());
     }
@@ -155,7 +157,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
     public DataSetDef getDataSetDef() {
         return workflow != null ? workflow.getDataSetDef() : null;
     }
-    
+
     private void testDataSet() {
         assert workflow != null;
         workflow.testDataSet(new DataSetEditorWorkflow.TestDataSetCallback() {
@@ -177,7 +179,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
         view.setWidget(workflow);
         workflow.edit(dataSetDef, columnDefs).showPreviewTab();
     }
-    
+
     private void edit(final DataSet dataset) {
         if (dataset != null) {
             final DataSetDef dataSetDef = workflow.getDataSetDef();
@@ -200,7 +202,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
         }
 
     }
-    
+
     @Override
     protected Command onValidate() {
         return new Command() {
@@ -220,7 +222,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
     protected void save() {
         workflow.flush();
         if (!workflow.hasErrors()) {
-            new SaveOperationService().save(versionRecordManager.getCurrentPath(),
+            savePopUpPresenter.show(versionRecordManager.getCurrentPath(),
                     new ParameterizedCommand<String>() {
                         @Override public void execute(final String commitMessage) {
                             final DataSetDef def = getDataSetDef();
@@ -237,7 +239,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
                     }
             );
             concurrentUpdateSessionInfo = null;
-        } 
+        }
     }
 
     public int getCurrentModelHash() {
@@ -275,7 +277,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
             return false;
         }
     };
-    
+
     protected void load(final DataSetDef dataSetDef, List<DataColumnDef> columns) {
         if (dataSetDef == null) {
             view.hideBusyIndicator();
@@ -299,7 +301,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
     private void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {
         placeManager.closePlace(place);
     }
-    
+
     void showError(final ClientRuntimeError error) {
         final String message = error.getCause() != null ? error.getCause() : error.getMessage();
         showError(message);
@@ -348,5 +350,5 @@ public class DataSetDefEditorPresenter extends BaseEditor {
             }
         }
     }
-    
+
 }
