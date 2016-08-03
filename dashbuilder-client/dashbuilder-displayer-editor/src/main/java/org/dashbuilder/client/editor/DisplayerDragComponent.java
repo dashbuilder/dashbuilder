@@ -15,28 +15,28 @@
  */
 package org.dashbuilder.client.editor;
 
-import java.util.Map;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.PerspectiveCoordinator;
+import org.dashbuilder.displayer.client.widgets.DisplayerEditorPopup;
 import org.dashbuilder.displayer.client.widgets.DisplayerViewer;
 import org.dashbuilder.displayer.json.DisplayerSettingsJSONMarshaller;
-import org.dashbuilder.displayer.client.widgets.DisplayerEditorPopup;
 import org.gwtbootstrap3.client.ui.Modal;
-import org.gwtbootstrap3.client.ui.TextBox;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.ext.layout.editor.client.api.HasModalConfiguration;
 import org.uberfire.ext.layout.editor.client.api.ModalConfigurationContext;
 import org.uberfire.ext.layout.editor.client.api.RenderingContext;
+import org.uberfire.ext.layout.editor.client.infra.DomUtil;
 import org.uberfire.ext.plugin.client.perspective.editor.api.PerspectiveEditorDragComponent;
 import org.uberfire.mvp.Command;
+
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import java.util.Map;
 
 @Dependent
 public class DisplayerDragComponent implements PerspectiveEditorDragComponent, HasModalConfiguration {
@@ -48,10 +48,10 @@ public class DisplayerDragComponent implements PerspectiveEditorDragComponent, H
     DisplayerSettingsJSONMarshaller marshaller;
 
     @Inject
-    public DisplayerDragComponent(SyncBeanManager beanManager,
-                                  DisplayerViewer viewer,
-                                  PlaceManager placeManager,
-                                  PerspectiveCoordinator perspectiveCoordinator) {
+    public DisplayerDragComponent( SyncBeanManager beanManager,
+                                   DisplayerViewer viewer,
+                                   PlaceManager placeManager,
+                                   PerspectiveCoordinator perspectiveCoordinator ) {
 
         this.beanManager = beanManager;
         this.viewer = viewer;
@@ -61,83 +61,84 @@ public class DisplayerDragComponent implements PerspectiveEditorDragComponent, H
     }
 
     @Override
-    public IsWidget getDragWidget() {
-        TextBox textBox = GWT.create(TextBox.class);
-        textBox.setPlaceholder("Displayer Component");
-        textBox.setReadOnly(true);
-        return textBox;
+    public String getDragComponentTitle() {
+        return "Displayer Component";
     }
 
     @Override
-    public IsWidget getPreviewWidget(final RenderingContext ctx) {
-        return getShowWidget(ctx);
+    public IsWidget getPreviewWidget( final RenderingContext ctx ) {
+        return getShowWidget( ctx );
     }
 
     @Override
-    public IsWidget getShowWidget(final RenderingContext ctx) {
+    public IsWidget getShowWidget( final RenderingContext ctx ) {
         Map<String, String> properties = ctx.getComponent().getProperties();
-        String json = properties.get("json");
-        if (json == null) {
+        String json = properties.get( "json" );
+        if ( json == null ) {
             return null;
         }
 
-        final DisplayerSettings settings = marshaller.fromJsonString(json);
-        viewer.init(settings);
-        viewer.addAttachHandler(new AttachEvent.Handler() {
-            public void onAttachOrDetach(AttachEvent attachEvent) {
-                if (attachEvent.isAttached()) {
+        final DisplayerSettings settings = marshaller.fromJsonString( json );
+        viewer.init( settings );
+        viewer.addAttachHandler( new AttachEvent.Handler() {
+            public void onAttachOrDetach( AttachEvent attachEvent ) {
+                if ( attachEvent.isAttached() ) {
                     int containerWidth = ctx.getContainer().getOffsetWidth() - 40;
-                    adjustSize(settings, containerWidth);
+                    adjustSize( settings, containerWidth );
                     Displayer displayer = viewer.draw();
-                    perspectiveCoordinator.addDisplayer(displayer);
+                    perspectiveCoordinator.addDisplayer( displayer );
                 }
             }
-        });
+        } );
+        int containerWidth = ctx.getContainer().getOffsetWidth() - 40;
+        adjustSize( settings, containerWidth );
+        Displayer displayer = viewer.draw();
+        perspectiveCoordinator.addDisplayer( displayer );
         return viewer;
     }
 
     @Override
-    public Modal getConfigurationModal(final ModalConfigurationContext ctx) {
+    public Modal getConfigurationModal( final ModalConfigurationContext ctx ) {
         Map<String, String> properties = ctx.getComponentProperties();
-        String json = properties.get("json");
-        DisplayerSettings settings = json != null ? marshaller.fromJsonString(json) : null;
-        DisplayerEditorPopup editor = beanManager.lookupBean(DisplayerEditorPopup.class).newInstance();
-        editor.init(settings);
-        editor.setOnSaveCommand(getSaveCommand(editor, ctx));
-        editor.setOnCloseCommand(getCloseCommand(editor, ctx));
+        String json = properties.get( "json" );
+        DisplayerSettings settings = json != null ? marshaller.fromJsonString( json ) : null;
+        DisplayerEditorPopup editor = beanManager.lookupBean( DisplayerEditorPopup.class ).newInstance();
+        editor.init( settings );
+        editor.setOnSaveCommand( getSaveCommand( editor, ctx ) );
+        editor.setOnCloseCommand( getCloseCommand( editor, ctx ) );
         return editor;
     }
 
-    protected Command getSaveCommand(final DisplayerEditorPopup editor, final ModalConfigurationContext ctx) {
+    protected Command getSaveCommand( final DisplayerEditorPopup editor, final ModalConfigurationContext ctx ) {
         return new Command() {
             public void execute() {
-                String json = marshaller.toJsonString(editor.getDisplayerSettings());
-                ctx.setComponentProperty("json", json);
+                String json = marshaller.toJsonString( editor.getDisplayerSettings() );
+                ctx.setComponentProperty( "json", json );
                 ctx.configurationFinished();
-                beanManager.destroyBean(editor);
+                beanManager.destroyBean( editor );
             }
         };
     }
 
-    protected Command getCloseCommand(final DisplayerEditorPopup editor, final ModalConfigurationContext ctx) {
+    protected Command getCloseCommand( final DisplayerEditorPopup editor, final ModalConfigurationContext ctx ) {
         return new Command() {
             public void execute() {
                 ctx.configurationCancelled();
-                beanManager.destroyBean(editor);
+                beanManager.destroyBean( editor );
             }
         };
     }
 
-    protected void adjustSize(DisplayerSettings settings, int containerWidth) {
+    protected void adjustSize( DisplayerSettings settings, int containerWidth ) {
         int displayerWidth = settings.getChartWidth();
         int tableWidth = settings.getTableWidth();
-        if (containerWidth > 0 &&  displayerWidth > containerWidth) {
+        if ( containerWidth > 0 && displayerWidth > containerWidth ) {
             int ratio = containerWidth * 100 / displayerWidth;
-            settings.setChartWidth(containerWidth);
-            settings.setChartHeight(settings.getChartHeight() * ratio / 100);
+            settings.setChartWidth( containerWidth );
+            settings.setChartHeight( settings.getChartHeight() * ratio / 100 );
         }
-        if (tableWidth == 0 || tableWidth > containerWidth) {
-            settings.setTableWidth(containerWidth - 20);
+        if ( tableWidth == 0 || tableWidth > containerWidth ) {
+            settings.setTableWidth( containerWidth - 20 );
         }
     }
 }
