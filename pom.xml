@@ -38,6 +38,9 @@
          directly should help to avoid some of the issues with deploying artifacts. -->
     <jboss.releases.repo.url>https://origin-repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
     <jboss.snapshots.repo.url>https://origin-repository.jboss.org/nexus/content/repositories/snapshots/</jboss.snapshots.repo.url>
+    <!-- Used by maven-enforcer-plugin -->
+    <!-- IMPORTANT: JDK8 is needed to build the projects (to support also WildFly 10), but we still do support JDK6/JDK7 for all backend modules. -->
+    <jdk.min.version>1.8</jdk.min.version>
   </properties>
 
   <scm>
