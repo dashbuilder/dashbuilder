@@ -30,7 +30,6 @@ import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.ext.layout.editor.client.api.HasModalConfiguration;
 import org.uberfire.ext.layout.editor.client.api.ModalConfigurationContext;
 import org.uberfire.ext.layout.editor.client.api.RenderingContext;
-import org.uberfire.ext.layout.editor.client.infra.DomUtil;
 import org.uberfire.ext.plugin.client.perspective.editor.api.PerspectiveEditorDragComponent;
 import org.uberfire.mvp.Command;
 
@@ -83,7 +82,8 @@ public class DisplayerDragComponent implements PerspectiveEditorDragComponent, H
         viewer.addAttachHandler( new AttachEvent.Handler() {
             public void onAttachOrDetach( AttachEvent attachEvent ) {
                 if ( attachEvent.isAttached() ) {
-                    int containerWidth = ctx.getContainer().getOffsetWidth() - 40;
+                    final int offsetWidth = ctx.getContainer().getOffsetWidth();
+                    int containerWidth = offsetWidth > 40 ?  offsetWidth - 40 : 0;
                     adjustSize( settings, containerWidth );
                     Displayer displayer = viewer.draw();
                     perspectiveCoordinator.addDisplayer( displayer );
@@ -138,7 +138,7 @@ public class DisplayerDragComponent implements PerspectiveEditorDragComponent, H
             settings.setChartHeight( settings.getChartHeight() * ratio / 100 );
         }
         if ( tableWidth == 0 || tableWidth > containerWidth ) {
-            settings.setTableWidth( containerWidth - 20 );
+            settings.setTableWidth( containerWidth > 20 ? containerWidth - 20 : 0 );
         }
     }
 }
