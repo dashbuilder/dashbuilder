@@ -148,7 +148,7 @@ public class TableDisplayerTest extends AbstractDisplayerTest {
         TableDisplayer table = createTableDisplayer(allRows);
         TableDisplayer.View view = table.getView();
         table.addListener(displayerListener);
-        table.setOnCellSelectedCommand(selectCommand);
+        table.addOnCellSelectedCommand(selectCommand);
         table.draw();
 
         reset(view);
@@ -176,7 +176,7 @@ public class TableDisplayerTest extends AbstractDisplayerTest {
         TableDisplayer table = createTableDisplayer(allRows);
         TableDisplayer.View view = table.getView();
         table.addListener(displayerListener);
-        table.setOnCellSelectedCommand(selectCommand);
+        table.addOnCellSelectedCommand(selectCommand);
         table.draw();
 
         reset(view);
@@ -204,7 +204,7 @@ public class TableDisplayerTest extends AbstractDisplayerTest {
         TableDisplayer table = createTableDisplayer(allRows);
         TableDisplayer.View view = table.getView();
         table.addListener(displayerListener);
-        table.setOnCellSelectedCommand(selectCommand);
+        table.addOnCellSelectedCommand(selectCommand);
         table.draw();
 
         reset(view);
@@ -234,7 +234,7 @@ public class TableDisplayerTest extends AbstractDisplayerTest {
         TableDisplayer table = createTableDisplayer(allRows);
         TableDisplayer.View view = table.getView();
         table.addListener(displayerListener);
-        table.setOnCellSelectedCommand(selectCommand);
+        table.addOnCellSelectedCommand(selectCommand);
         table.draw();
         table.selectCell(COLUMN_DEPARTMENT, 3);
 
@@ -249,6 +249,28 @@ public class TableDisplayerTest extends AbstractDisplayerTest {
         verify(displayerListener, never()).onRedraw(table);
         assertNull(table.getSelectedCellColumn());
         assertNull(table.getSelectedCellRow());
+    }
+
+    @Test
+    public void testSelectCellCommands() {
+        DisplayerSettings allRows = DisplayerSettingsFactory.newTableSettings()
+                .dataset(EXPENSES)
+                .tablePageSize(5)
+                .tableOrderDefault(COLUMN_ID, SortOrder.DESCENDING)
+                .filterOn(false, true, true)
+                .buildSettings();
+
+        TableDisplayer table = createTableDisplayer(allRows);
+        TableDisplayer.View view = table.getView();
+        table.addListener(displayerListener);
+        table.addOnCellSelectedCommand(selectCommand);
+        final Command selectedCommand = mock(Command.class);
+        table.addOnCellSelectedCommand(selectedCommand);
+        table.draw();
+        table.selectCell(COLUMN_DEPARTMENT, 3);
+
+        verify(selectCommand).execute();
+        verify(selectedCommand).execute();
     }
 
     @Test

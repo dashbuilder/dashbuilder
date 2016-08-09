@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.renderer.client.table;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -82,7 +83,7 @@ public class TableDisplayer extends AbstractDisplayer<TableDisplayer.View> {
     protected int totalRows = 0;
     protected String lastOrderedColumn = null;
     protected SortOrder lastSortOrder = null;
-    protected Command onCellSelectedCommand = new Command() {public void execute() {}};
+    protected List<Command> onCellSelectedCommands = new ArrayList<>();
     protected String selectedCellColumn = null;
     protected Integer selectedCellRow = null;
 
@@ -121,8 +122,8 @@ public class TableDisplayer extends AbstractDisplayer<TableDisplayer.View> {
         return selectedCellRow;
     }
 
-    public void setOnCellSelectedCommand(Command onCellSelectedCommand) {
-        this.onCellSelectedCommand = onCellSelectedCommand;
+    public void addOnCellSelectedCommand(Command onCellSelectedCommand) {
+        this.onCellSelectedCommands.add(onCellSelectedCommand);
     }
 
     @Override
@@ -244,7 +245,9 @@ public class TableDisplayer extends AbstractDisplayer<TableDisplayer.View> {
         if (displayerSettings.isFilterEnabled()) {
             selectedCellColumn = columnId;
             selectedCellRow = rowIndex;
-            onCellSelectedCommand.execute();
+            for(Command cmd : onCellSelectedCommands){
+                cmd.execute();
+            }
             if (displayerSettings.isFilterSelfApplyEnabled()) {
                 view.gotoFirstPage();
             }
