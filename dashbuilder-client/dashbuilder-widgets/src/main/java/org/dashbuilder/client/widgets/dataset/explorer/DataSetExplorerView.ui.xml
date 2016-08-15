@@ -22,11 +22,15 @@
       font-weight: bold;
 
     }
+    .emptyLabel {
+      padding: 10px 20px;
+      text-align: center;
+    }
   </ui:style>
 
   <g:HTMLPanel addStyleNames="{style.mainPanel} ">
 
-    <g:Label visible="false" ui:field="emptyLabel" text="{i18n.noDataSets}"/>
+    <g:Label visible="false" ui:field="emptyLabel" text="{i18n.noDataSets}" addStyleNames="{style.emptyLabel}"/>
 
     <g:FlowPanel>
       <b:PanelGroup ui:field="dataSetsPanelGroup" b:id="dataSetsExplorerPanelGroup">
