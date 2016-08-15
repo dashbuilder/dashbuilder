@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.displayer.client;
 
+import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -63,6 +64,14 @@ public class PerspectiveCoordinator {
      */
     public boolean removeDisplayer(Displayer displayer) {
         return displayerCoordinator.removeDisplayer(displayer);
+    }
+
+    /**
+     *
+     * @return the current list of displayers
+     */
+    public List<Displayer> getDisplayerList(){
+        return displayerCoordinator.getDisplayerList();
     }
 
     /**
