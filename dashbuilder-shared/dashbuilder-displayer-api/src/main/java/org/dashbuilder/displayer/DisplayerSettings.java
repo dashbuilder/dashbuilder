@@ -585,4 +585,20 @@ public class DisplayerSettings {
     public void setChart3D( boolean barchartThreeDimension ) {
         settings.put( getSettingPath( DisplayerAttributeDef.CHART_3D ), Boolean.toString( barchartThreeDimension ) );
     }
+
+    public void setHtmlTemplate(String htmlTemplate) {
+        settings.put( getSettingPath( DisplayerAttributeDef.HTML_TEMPLATE ), htmlTemplate );
+    }
+
+    public void setJsTemplate(String jsTemplate) {
+        settings.put( getSettingPath( DisplayerAttributeDef.JS_TEMPLATE), jsTemplate );
+    }
+
+    public String getHtmlTemplate() {
+        return parseString(settings.get( getSettingPath( DisplayerAttributeDef.HTML_TEMPLATE ) ));
+    }
+
+    public String getJsTemplate() {
+        return parseString(settings.get( getSettingPath( DisplayerAttributeDef.JS_TEMPLATE) ));
+    }
 }

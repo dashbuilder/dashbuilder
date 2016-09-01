@@ -21,7 +21,7 @@ import com.google.gwt.i18n.client.Messages;
 
 public interface CommonConstants extends Messages {
 
-    public static final CommonConstants INSTANCE = GWT.create( CommonConstants.class );
+    CommonConstants INSTANCE = GWT.create( CommonConstants.class );
 
     String ok();
 

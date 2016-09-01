@@ -25,6 +25,7 @@ import org.dashbuilder.client.dashboard.DashboardPerspectiveActivity;
 import org.dashbuilder.client.dashboard.widgets.NewDashboardForm;
 import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.client.security.PermissionTreeSetup;
+import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.shared.dashboard.events.DashboardCreatedEvent;
 import org.dashbuilder.shared.dashboard.events.DashboardDeletedEvent;
 import org.jboss.errai.common.client.api.Caller;
@@ -99,6 +100,8 @@ public class ShowcaseEntryPoint {
 
     @AfterInitialization
     public void startApp() {
+        DisplayerAttributeDef def = DisplayerAttributeDef.TITLE;
+
         userSystemManager.waitForInitialization(() ->
             dashboardManager.loadDashboards((t) -> {
                 permissionTreeSetup.configureTree();

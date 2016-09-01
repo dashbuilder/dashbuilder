@@ -117,8 +117,7 @@ public class DisplayerSettingsEditorTest {
                 .number("amount")
                 .buildDataSet());
 
-        // Call to init implies calling to presenter.show() internally (see above)
-        presenter.init(DisplayerSettingsFactory.newBarChartSettings()
+        when(displayer.getDisplayerSettings()).thenReturn(DisplayerSettingsFactory.newBarChartSettings()
                 .dataset("dset")
                 .group("dept")
                 .column("dept").format("Department")
@@ -133,6 +132,9 @@ public class DisplayerSettingsEditorTest {
                 .filterOn(false, true, true)
                 .refreshOn(3, false)
                 .buildSettings());
+
+        // Call to init implies calling to presenter.show() internally (see above)
+        presenter.init(displayer);
 
         verify(view).clear();
         verify(view).addTextProperty(TITLE, "Sales by dept");
@@ -169,7 +171,9 @@ public class DisplayerSettingsEditorTest {
     @Test
     public void testChangeAttributes() {
         DisplayerSettings settings = DisplayerSettingsFactory.newBarChartSettings().buildSettings();
-        presenter.init(settings);
+        when(displayer.getDisplayerSettings()).thenReturn(settings);
+
+        presenter.init(displayer);
         presenter.onAttributeChanged(TITLE.getFullId(), "Test");
         presenter.onAttributeChanged(TITLE_VISIBLE.getFullId(), "true");
         presenter.onAttributeChanged(ALLOW_EXPORT_CSV.getFullId(), "false");
@@ -204,12 +208,14 @@ public class DisplayerSettingsEditorTest {
                 new DisplayerConstraints(null)
                         .supportsAttribute(TABLE_GROUP));
 
-        presenter.init(DisplayerSettingsFactory.newTableSettings()
+        when(displayer.getDisplayerSettings()).thenReturn(DisplayerSettingsFactory.newTableSettings()
                 .tablePageSize(10)
                 .tableWidth(500)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("date", SortOrder.ASCENDING)
                 .buildSettings());
+
+        presenter.init(displayer);
 
         verify(view).clear();
         verify(view).addTextProperty(eq(TABLE_WIDTH), eq("500"), any(DisplayerSettingsEditor.LongValidator.class));
@@ -226,9 +232,12 @@ public class DisplayerSettingsEditorTest {
                 new DisplayerConstraints(null)
                         .supportsAttribute(METER_GROUP));
 
-        presenter.init(DisplayerSettingsFactory.newMeterChartSettings()
-                .meter(0, 100, 500, 900)
-                .buildSettings());
+
+        when(displayer.getDisplayerSettings()).thenReturn(DisplayerSettingsFactory.newMeterChartSettings()
+                        .meter(0, 100, 500, 900)
+                        .buildSettings());
+
+        presenter.init(displayer);
 
         verify(view).clear();
         verify(view).addTextProperty(eq(METER_START), eq("0"), any(DisplayerSettingsEditor.LongValidator.class));
@@ -249,7 +258,9 @@ public class DisplayerSettingsEditorTest {
                 new DisplayerConstraints(null)
                         .supportsAttribute(RENDERER));
 
-        presenter.init(settings);
+        when(displayer.getDisplayerSettings()).thenReturn(settings);
+
+        presenter.init(displayer);
         verify(view).clear();
         verify(view).addListProperty(RENDERER, Arrays.asList("rendererA", "rendererB"), "rendererB");
         verify(view).show();
@@ -263,7 +274,9 @@ public class DisplayerSettingsEditorTest {
                 .supportsAttribute(TITLE)
                 .supportsAttribute(FILTER_GROUP));
 
-        presenter.init(DisplayerSettingsFactory.newBarChartSettings().buildSettings());
+        when(displayer.getDisplayerSettings()).thenReturn(DisplayerSettingsFactory.newBarChartSettings().buildSettings());
+
+        presenter.init(displayer);
         assertEquals(presenter.isSupported(TYPE), true);
         assertEquals(presenter.isSupported(SUBTYPE), true);
         assertEquals(presenter.isSupported(TITLE), true);
@@ -289,7 +302,8 @@ public class DisplayerSettingsEditorTest {
                 .meter(0, 100, 500, 900)
                 .buildSettings();
 
-        presenter.init(settings);
+        when(displayer.getDisplayerSettings()).thenReturn(settings);
+        presenter.init(displayer);
 
         PropertyFieldValidator validator = presenter.createMeterValidator(settings, 0);
         assertEquals(validator.validate("aaa"), false);

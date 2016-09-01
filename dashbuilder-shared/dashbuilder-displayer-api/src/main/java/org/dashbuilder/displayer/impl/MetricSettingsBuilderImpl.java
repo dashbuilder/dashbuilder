@@ -24,4 +24,12 @@ public class MetricSettingsBuilderImpl extends AbstractChartSettingsBuilder<Metr
     protected DisplayerSettings createDisplayerSettings() {
         return new DisplayerSettings( DisplayerType.METRIC );
     }
+
+    public MetricSettingsBuilderImpl metric(long start, long warning, long critical, long end) {
+        displayerSettings.setMeterStart(start);
+        displayerSettings.setMeterWarning(warning);
+        displayerSettings.setMeterCritical(critical);
+        displayerSettings.setMeterEnd(end);
+        return this;
+    }
 }

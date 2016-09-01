@@ -20,20 +20,57 @@ import com.google.gwt.i18n.client.Messages;
 
 public interface DisplayerConstants extends Messages {
 
-    public static final DisplayerConstants INSTANCE = GWT.create(DisplayerConstants.class);
+    DisplayerConstants INSTANCE = GWT.create(DisplayerConstants.class);
 
-    public String initializing();
+    String initializing();
 
-    public String error();
+    String error();
 
-    public String error_settings_unset();
+    String error_settings_unset();
 
-    public String error_handler_unset();
+    String error_handler_unset();
 
-    public String error_dataset_notfound();
+    String error_dataset_notfound();
 
     String displayer_keyword_not_allowed(String expr);
 
     String displayer_expr_invalid_syntax(String expr);
 
+    String userDefinedVariableDescription();
+
+    String valueRawVariableDescription();
+
+    String valueStartVariableDescription();
+
+    String valueWarningVariableDescription();
+
+    String valueCriticalVariableDescription();
+
+    String valueEndVariableDescription();
+
+    String valueVariableDescription();
+
+    String titleVariableDescription();
+
+    String widthVariableDescription();
+
+    String heightVariableDescription();
+
+    String marginTopVariableDescription();
+
+    String marginBottomVariableDescription();
+
+    String marginRightVariableDescription();
+
+    String marginLeftVariableDescription();
+
+    String bgColorVariableDescription();
+
+    String isFilterEnabledVariableDescription();
+
+    String isFilterOnVariableDescription();
+
+    String isEmptyVariableDescription();
+
+    String doFilterVariableDescription();
 }

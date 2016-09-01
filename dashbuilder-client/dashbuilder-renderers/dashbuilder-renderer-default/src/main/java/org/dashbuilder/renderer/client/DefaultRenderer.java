@@ -16,7 +16,10 @@
 package org.dashbuilder.renderer.client;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.dashbuilder.displayer.DisplayerSettings;
@@ -29,6 +32,7 @@ import org.dashbuilder.renderer.client.selector.SelectorDisplayer;
 import org.dashbuilder.renderer.client.table.TableDisplayer;
 
 import static org.dashbuilder.displayer.DisplayerType.*;
+import static org.dashbuilder.displayer.DisplayerSubType.*;
 
 /**
  * Default renderer
@@ -37,6 +41,11 @@ import static org.dashbuilder.displayer.DisplayerType.*;
 public class DefaultRenderer extends AbstractRendererLibrary {
 
     public static final String UUID = "default";
+
+    @PostConstruct
+    private void init() {
+        publishJsFunctions();
+    }
 
     @Override
     public String getUUID() {
@@ -65,8 +74,12 @@ public class DefaultRenderer extends AbstractRendererLibrary {
 
     @Override
     public List<DisplayerSubType> getSupportedSubtypes(DisplayerType displayerType) {
-        // No subtypes yet
-        return null;
+        switch (displayerType) {
+            case METRIC:
+                return Arrays.asList(METRIC_CARD, METRIC_CARD2, METRIC_QUOTA, METRIC_PLAIN_TEXT);
+            default:
+                return Arrays.asList();
+        }
     }
 
     @Override
@@ -79,9 +92,28 @@ public class DefaultRenderer extends AbstractRendererLibrary {
             return new SelectorDisplayer();
         }
         if (METRIC.equals(type)) {
-            return new MetricDisplayer();
+            MetricDisplayer displayer = new MetricDisplayer();
+            _metricDisplayerMap.put(displayer.getView().getUniqueId(), displayer);
+            return displayer;
         }
 
         return null;
+    }
+
+    private native void publishJsFunctions() /*-{
+        $wnd.metricDisplayerDoFilter = $entry(@org.dashbuilder.renderer.client.DefaultRenderer::metricDisplayerDoFilter(Ljava/lang/String;));
+    }-*/;
+
+    protected static Map<String,MetricDisplayer> _metricDisplayerMap = new HashMap();
+
+    public static void metricDisplayerDoFilter(String displayerId) {
+        MetricDisplayer displayer = _metricDisplayerMap.get(displayerId);
+        if (displayer != null) {
+            displayer.updateFilter();
+        }
+    }
+
+    public static void closeDisplayer(String displayerId) {
+        _metricDisplayerMap.remove(displayerId);
     }
 }

@@ -21,11 +21,11 @@ import com.google.gwt.resources.client.ImageResource;
 
 public interface DisplayerImagesResources extends ClientBundleWithLookup {
 
-    public static final DisplayerImagesResources INSTANCE = GWT.create(DisplayerImagesResources.class);
+    DisplayerImagesResources INSTANCE = GWT.create(DisplayerImagesResources.class);
 
-    public static final String DEFAULT_SUFFIX = "_default";
-    public static final String SELECTED_SUFFIX = "_selected";
-    public static final String UNSELECTED_SUFFIX = "_unselected";
+    String DEFAULT_SUFFIX = "_default";
+    String SELECTED_SUFFIX = "_selected";
+    String UNSELECTED_SUFFIX = "_unselected";
 
     // Convention for image resource method names: type_subtype_selected/unselected
 
@@ -115,8 +115,29 @@ public interface DisplayerImagesResources extends ClientBundleWithLookup {
     @Source("meter_default.png")
     ImageResource METERCHART_default();
 
-    @Source("metric_default.png")
-    ImageResource METRIC_default();
+    @Source("metric_card_selected.png")
+    ImageResource METRIC_METRIC_CARD_selected();
+
+    @Source("metric_card_unselected.png")
+    ImageResource METRIC_METRIC_CARD_unselected();
+
+    @Source("metric_card2_selected.png")
+    ImageResource METRIC_METRIC_CARD2_selected();
+
+    @Source("metric_card2_unselected.png")
+    ImageResource METRIC_METRIC_CARD2_unselected();
+
+    @Source("metric_quota_selected.png")
+    ImageResource METRIC_METRIC_QUOTA_selected();
+
+    @Source("metric_quota_unselected.png")
+    ImageResource METRIC_METRIC_QUOTA_unselected();
+
+    @Source("metric_plaintext_selected.png")
+    ImageResource METRIC_METRIC_PLAIN_TEXT_selected();
+
+    @Source("metric_plaintext_unselected.png")
+    ImageResource METRIC_METRIC_PLAIN_TEXT_unselected();
 
     @Source("table_default.png")
     ImageResource TABLE_default();

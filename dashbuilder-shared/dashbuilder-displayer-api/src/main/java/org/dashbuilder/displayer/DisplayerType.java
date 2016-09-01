@@ -73,13 +73,15 @@ public enum DisplayerType {
     /**
      * Metric
      */
-    METRIC();
+    METRIC(METRIC_CARD, METRIC_CARD2, METRIC_QUOTA, METRIC_PLAIN_TEXT);
 
-    private DisplayerType(DisplayerSubType ... subtypes) {
-        for (DisplayerSubType displayerSubType : subtypes) this.subtypes.add(displayerSubType);
+    DisplayerType(DisplayerSubType ... subtypes) {
+        for (DisplayerSubType displayerSubType : subtypes) {
+            this.subtypes.add(displayerSubType);
+        }
     }
 
-    private List<DisplayerSubType> subtypes = new ArrayList<DisplayerSubType>(5);
+    private List<DisplayerSubType> subtypes = new ArrayList<>();
 
     public static DisplayerType getByName(String str) {
         try {
