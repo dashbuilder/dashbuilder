@@ -78,6 +78,9 @@ public class DisplayerEditorTest {
     Displayer displayer;
 
     @Mock
+    DisplayerHtmlEditor displayerHtmlEditor;
+
+    @Mock
     Displayer tableDisplayer;
 
     @Mock
@@ -104,7 +107,7 @@ public class DisplayerEditorTest {
         when(displayerConstraints.getDataSetLookupConstraints()).thenReturn(lookupConstraints);
 
         presenter = new DisplayerEditor(view, clientServices, displayerLocator, displayerPrototypes,
-                typeSelector, lookupEditor, settingsEditor, editorStatus, saveEvent, closeEvent);
+                typeSelector, lookupEditor, settingsEditor, editorStatus, displayerHtmlEditor, saveEvent, closeEvent);
 
     }
 
@@ -121,7 +124,7 @@ public class DisplayerEditorTest {
 
         verify(typeSelector).init(any(DisplayerType.class), any(DisplayerSubType.class));
         verify(lookupEditor).init(lookupConstraints, null);
-        verify(settingsEditor).init(displayerSettings);
+        verify(settingsEditor).init(displayer);
 
         verify(view).showDisplayer(displayer);
     }

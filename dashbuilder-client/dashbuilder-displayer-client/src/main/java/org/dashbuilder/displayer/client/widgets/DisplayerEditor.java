@@ -67,7 +67,7 @@ public class DisplayerEditor implements IsWidget {
 
         void setTableDisplayModeEnabled(boolean enabled);
 
-        void showDisplayer(Displayer displayer);
+        void showDisplayer(IsWidget displayer);
 
         void setTypeSelectionEnabled(boolean enabled);
 
@@ -100,14 +100,15 @@ public class DisplayerEditor implements IsWidget {
     protected DisplayerSettingsEditor settingsEditor;
     protected DisplayerEditorStatus editorStatus;
     protected Displayer displayer = null;
+    protected DisplayerHtmlEditor displayerHtmlEditor = null;
     protected int activeSection = -1;
     protected boolean typeSelectionEnabled = true;
     protected boolean dataLookupConfEnabled = true;
     protected boolean displaySettingsEnabled = true;
     protected Event<DisplayerEditorSavedEvent> saveEvent;
     protected Event<DisplayerEditorClosedEvent> closeEvent;
-    protected Command onCloseCommand = new Command() { public void execute() {}};
-    protected Command onSaveCommand = new Command() { public void execute() {}};
+    protected Command onCloseCommand = () -> {};
+    protected Command onSaveCommand = () -> {};
 
     DisplayerListener displayerListener = new AbstractDisplayerListener() {
         public void onError(Displayer displayer, ClientRuntimeError error) {
@@ -124,6 +125,7 @@ public class DisplayerEditor implements IsWidget {
                            DataSetLookupEditor lookupEditor,
                            DisplayerSettingsEditor settingsEditor,
                            DisplayerEditorStatus editorStatus,
+                           DisplayerHtmlEditor displayerHtmlEditor,
                            Event<DisplayerEditorSavedEvent> savedEvent,
                            Event<DisplayerEditorClosedEvent> closedEvent) {
         this.view = view;
@@ -134,6 +136,7 @@ public class DisplayerEditor implements IsWidget {
         this.lookupEditor = lookupEditor;
         this.settingsEditor = settingsEditor;
         this.editorStatus = editorStatus;
+        this.displayerHtmlEditor = displayerHtmlEditor;
         this.saveEvent = savedEvent;
         this.closeEvent = closedEvent;
 
@@ -159,6 +162,10 @@ public class DisplayerEditor implements IsWidget {
         showDisplayer();
     }
 
+    protected boolean supportsHtmlTemplate() {
+        return displayer.getDisplayerConstraints().getSupportedAttributes().contains(DisplayerAttributeDef.HTML_TEMPLATE);
+    }
+
     protected void initDisplayer() {
         if (displayer != null) {
             displayer.close();
@@ -179,7 +186,7 @@ public class DisplayerEditor implements IsWidget {
     }
 
     protected void initSettingsEditor() {
-        settingsEditor.init(displayerSettings);
+        settingsEditor.init(displayer);
     }
 
     @Override
@@ -255,7 +262,12 @@ public class DisplayerEditor implements IsWidget {
             } catch (Exception e) {
                 view.error(new ClientRuntimeError(e));
             }
-        } else {
+        }
+        else if (supportsHtmlTemplate()) {
+            displayerHtmlEditor.setDisplayer(displayer);
+            view.showDisplayer(displayerHtmlEditor);
+        }
+        else {
             view.showDisplayer(displayer);
         }
     }
@@ -360,8 +372,7 @@ public class DisplayerEditor implements IsWidget {
     void displayerTypeChanged(DisplayerType type, DisplayerSubType displayerSubType) {
 
         // Create new settings for the selected type
-        selectedTypeSettings = displayerPrototypes.getProto(type);
-        selectedTypeSettings.setSubtype(displayerSubType);
+        selectedTypeSettings = displayerPrototypes.getProto(type, displayerSubType);
         DataSet oldDataSet = displayerSettings.getDataSet();
         DataSetLookup oldDataLookup = displayerSettings.getDataSetLookup();
 
@@ -381,17 +392,7 @@ public class DisplayerEditor implements IsWidget {
             }
             // If the data lookup is not compatible then ask the user what to do
             else {
-                view.showTypeChangedWarning(
-                        new Command() {
-                            public void execute() {
-                                applySelectedType();
-                            }
-                        },
-                        new Command() {
-                            public void execute() {
-                                abortSelectedType();
-                            }
-                        });
+                view.showTypeChangedWarning(this::applySelectedType, this::abortSelectedType);
             }
         }
         // If the displayer is static (no data lookup) then just display the selected displayer prototype
@@ -404,10 +405,12 @@ public class DisplayerEditor implements IsWidget {
         // Remove the non supported attributes
         displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.TYPE);
         displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.SUBTYPE);
+        displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.GENERAL_GROUP);
         displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_GROUP);
         displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP);
         displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_LEGEND_GROUP);
         displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.AXIS_GROUP);
+        displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.HTML_GROUP);
         selectedTypeSettings.getSettingsFlatMap().putAll(displayerSettings.getSettingsFlatMap());
 
         try {

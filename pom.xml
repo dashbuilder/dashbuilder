@@ -699,6 +699,13 @@
   </dependencyManagement>
 
   <dependencies>
+<!--
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>${version.com.google.code.gson}</version>
+    </dependency>
+-->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

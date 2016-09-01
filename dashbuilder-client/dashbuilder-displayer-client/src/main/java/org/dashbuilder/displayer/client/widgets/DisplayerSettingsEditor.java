@@ -133,10 +133,10 @@ public class DisplayerSettingsEditor implements IsWidget {
         return displayerSettings;
     }
 
-    public void init(DisplayerSettings displayerSettings) {
+    public void init(Displayer displayer) {
         try {
-            this.displayerSettings = displayerSettings;
-            this.displayer = displayerLocator.lookupDisplayer(displayerSettings);
+            this.displayer = displayer;
+            this.displayerSettings = displayer.getDisplayerSettings();
             this.displayerContraints = displayer.getDisplayerConstraints();
             this.supportedAttributes = displayerContraints.getSupportedAttributes();
 

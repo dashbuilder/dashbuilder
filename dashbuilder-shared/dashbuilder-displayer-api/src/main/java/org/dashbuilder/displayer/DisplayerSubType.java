@@ -29,7 +29,11 @@ public enum DisplayerSubType {
     PIE_3D,
     DONUT,
     MAP_REGIONS,
-    MAP_MARKERS;
+    MAP_MARKERS,
+    METRIC_CARD,
+    METRIC_CARD2,
+    METRIC_PLAIN_TEXT,
+    METRIC_QUOTA;
 
     public static DisplayerSubType getByName(String str) {
         if (str == null) return null;

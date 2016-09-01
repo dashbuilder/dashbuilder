@@ -18,7 +18,7 @@ package org.dashbuilder.displayer.client.widgets;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Composite;
@@ -64,13 +64,10 @@ public class DisplayerSubtypeSelectorView extends Composite implements Displayer
         imageWidgets.put(subtype, dstiw);
         subtypes.setWidget(subtypes.getRowCount(), 0, dstiw);
 
-        dstiw.setSelectClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (!dstiw.isSelected) {
-                    select(subtype);
-                    presenter.onSelect(subtype);
-                }
+        dstiw.setSelectClickHandler(e -> {
+            if (!dstiw.isSelected) {
+                select(subtype);
+                presenter.onSelect(subtype);
             }
         });
     }
@@ -125,6 +122,7 @@ public class DisplayerSubtypeSelectorView extends Composite implements Displayer
                 unselected.setType(ImageType.THUMBNAIL);
                 unselected.setTitle(tooltip);
                 unselected.setVisible(!isSelected);
+                unselected.getElement().getStyle().setCursor(Style.Cursor.POINTER);
                 container.setWidget(0, 1, unselected);
             }
         }

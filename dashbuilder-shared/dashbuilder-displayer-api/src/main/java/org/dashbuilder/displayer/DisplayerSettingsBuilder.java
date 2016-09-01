@@ -212,6 +212,67 @@ public interface DisplayerSettingsBuilder<T> extends DataSetLookupBuilder<T> {
     T expression(String columnId, String expression);
 
     /**
+     * <p>Support for user-provided HTML templates. For instance, a metric displayer could be configured as follows:</p>
+     *
+     *  <pre>
+     * {@code <div class="card-pf card-pf-accented card-pf-aggregate-status"
+     *      style="background-color:${bgColor}; width:${width}px; height:${height}px; margin-top:${marginTop}px; margin-right:${marginRight}px; margin-bottom:${marginBottom}px; margin-left:${marginLeft}px;">
+     *      <h3>${title}</span></h3>
+     *      <h2 id="${value.ref}">${value}</h2>
+     *  </div>
+     *  }</pre>
+     *
+     * Notice that, references (like "${value.ref}" in the example above) can be added to any of the HTML elements so that they can be referenced from the Javascript template.
+     * See {@link #jsTemplate(String)} for further details.
+     *
+     * @param html The HTML template used to render the displayer. The following enumeration contains all the available variables:
+     * <ul>
+     *     <li><b>id</b>: An identifier that it is unique among all the displayers</li>
+     *     <li><b>title</b>: The metric title</li>
+     *     <li><b>value</b>: The formatted value</li>
+     *     <li><b>value.raw</b>: The raw value</li>
+     *     <li><b>width</b>: The metric width</li>
+     *     <li><b>height</b>: The metric height</li>
+     *     <li><b>marginTop</b>: The top margin</li>
+     *     <li><b>marginBottom</b>: The bottom margin</li>
+     *     <li><b>marginLeft</b>: The left margin</li>
+     *     <li><b>marginRight</b>: The right margin</li>
+     *     <li><b>bgColor</b>: The background color</li>
+     *     <li><b>isFilterEnabled</b>: true or false depending whether the filter setting is enabled (see {@link #filterOn(boolean, boolean, boolean)})</li>
+     *     <li><b>isFilterOn</b>: true or false depending whether the filter function is currently on or of</li>
+     * </ul>
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T htmlTemplate(String html);
+
+    /**
+     * Specifies the JS template that is invoked every time the displayer is drawn.
+     *
+     * <p>Notice, HTML elements tagged as "${...}" can be referenced from the JS template. For instance, given the following
+     * HTML template:</p>
+     *
+     *  <pre>
+     * {@code <div class="card-pf card-pf-accented card-pf-aggregate-status"
+     *      style="background-color:${bgColor}; width:${width}px; height:${height}px; margin-top:${marginTop}px; margin-right:${marginRight}px; margin-bottom:${marginBottom}px; margin-left:${marginLeft}px;">
+     *      <h3>${title}</span></h3>
+     *      <h2 id="${valref}">${value}</h2>
+     *  </div>
+     *  }</pre>
+     *
+     * <p>It is possible to implement some conditional into the JS so that the color of the text displayed depends on its value:</p>
+     *
+     * <pre>
+     * {@code ${valref}.style.color= ${value.raw} > 1000 ? "red" : "black";
+     *  }</pre>
+     *
+     * where the "${valref}" is the identifier of the HTML element holding the value.
+     *
+     * @param js A JS template. Notice, the same variables supported in {@link #htmlTemplate(String)} can be used in the JS.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T jsTemplate(String js);
+
+    /**
      * @return The DisplayerSettings instance that has been configured.
      * @see DisplayerSettings
      */

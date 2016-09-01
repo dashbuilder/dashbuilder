@@ -14,6 +14,7 @@
  */
 package org.dashbuilder.renderer.client.metric;
 
+import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
@@ -21,25 +22,43 @@ import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.AbstractDisplayerTest;
 import org.dashbuilder.displayer.client.DisplayerListener;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.dashbuilder.dataset.ExpenseReportsData.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MetricDisplayerTest extends AbstractDisplayerTest {
 
+    public static final String HTML_TEMPLATE =
+            "<div id=\"${this}\" style=\"background-color:${bgColor}; width:${width}px; height:${height}px; " +
+            "margin-top:${marginTop}px; margin-right:${marginRight}px; margin-bottom:${marginBottom}px; margin-left:${marginLeft}px;\">\n" +
+            "  <span>${title}</span>\n" +
+            "  <span>${value}</span>\n" +
+            "</div>";
+
+
+    @Mock
+    MetricDisplayer.View view;
+
+    @Mock
+    DisplayerListener listener;
+
     public MetricDisplayer createMetricDisplayer(DisplayerSettings settings) {
-        MetricDisplayer displayer = initDisplayer(new MetricDisplayer(mock(MetricDisplayer.View.class)), settings);
+        MetricDisplayer displayer = initDisplayer(new MetricDisplayer(view), settings);
         displayer.addListener(listener);
         return displayer;
     }
 
-    @Mock
-    DisplayerListener listener;
+    @Before
+    public void setUp() {
+        when(view.getUniqueId()).thenReturn("test");
+    }
 
     @Test
     public void testDraw() {
@@ -52,21 +71,31 @@ public class MetricDisplayerTest extends AbstractDisplayerTest {
                 .margins(10, 20, 30, 40)
                 .backgroundColor("FDE8D4")
                 .filterOff(true)
+                .htmlTemplate(HTML_TEMPLATE)
+                .jsTemplate("alert('${value.raw}');")
                 .buildSettings();
 
         MetricDisplayer presenter = createMetricDisplayer(engExpenses);
-        MetricDisplayer.View view = presenter.getView();
         presenter.draw();
 
-        verify(view).setWidth(300);
-        verify(view).setHeight(200);
-        verify(view).setMarginTop(10);
-        verify(view).setMarginBottom(20);
-        verify(view).setMarginLeft(30);
-        verify(view).setMarginRight(40);
-        verify(view).showTitle("Title");
-        verify(view).setFilterEnabled(false);
-        verify(view).setValue("7,650.16");
+        verify(view).setHtml("<div id=\"test_this\" style=\"background-color:#FDE8D4; width:300px; height:200px; " +
+                "margin-top:10px; margin-right:40px; margin-bottom:20px; margin-left:30px;\">\n" +
+                "  <span>Title</span>\n" +
+                "  <span>7,650.16</span>\n" +
+                "</div>");
+
+        verify(view).eval("alert('7650.16');");
+    }
+
+    @Test
+    public void testDefaultTemplates() {
+        DisplayerSettings engExpenses = DisplayerSettingsFactory.newMetricSettings()
+                .dataset(EXPENSES)
+                .buildSettings();
+
+        MetricDisplayer presenter = createMetricDisplayer(engExpenses);
+        assertTrue(!StringUtils.isBlank(presenter.getHtmlTemplate()));
+        assertNotNull(presenter.getJsTemplate());
     }
 
     @Test
@@ -75,14 +104,24 @@ public class MetricDisplayerTest extends AbstractDisplayerTest {
                 .dataset(EXPENSES)
                 .filter(COLUMN_ID, FilterFactory.isNull())
                 .column(COLUMN_AMOUNT)
+                .title("Title").titleVisible(true)
+                .width(300).height(200)
+                .margins(10, 20, 30, 40)
+                .backgroundColor("FDE8D4")
+                .htmlTemplate(HTML_TEMPLATE)
                 .buildSettings();
 
+        when(view.getNoDataString()).thenReturn("0,0");
         MetricDisplayer presenter = createMetricDisplayer(empty);
         MetricDisplayer.View view = presenter.getView();
         presenter.draw();
 
-        verify(view).nodata();
-        verify(view, never()).setValue(anyString());
+        verify(view, atLeastOnce()).getNoDataString();
+        verify(view).setHtml("<div id=\"test_this\" style=\"background-color:#FDE8D4; width:300px; height:200px; " +
+                "margin-top:10px; margin-right:40px; margin-bottom:20px; margin-left:30px;\">\n" +
+                "  <span>Title</span>\n" +
+                "  <span>0,0</span>\n" +
+                "</div>");
     }
 
     @Test
@@ -101,7 +140,6 @@ public class MetricDisplayerTest extends AbstractDisplayerTest {
         reset(listener);
         presenter.filterApply();
 
-        verify(view, never()).setFilterActive(true);
         verify(listener, never()).onFilterEnabled(eq(presenter), any(DataSetFilter.class));
     }
 
@@ -120,9 +158,8 @@ public class MetricDisplayerTest extends AbstractDisplayerTest {
 
         reset(view);
         reset(listener);
-        presenter.filterApply();
+        presenter.updateFilter();
 
-        verify(view).setFilterActive(true);
         verify(listener).onFilterEnabled(eq(presenter), any(DataSetFilter.class));
     }
 
@@ -144,7 +181,6 @@ public class MetricDisplayerTest extends AbstractDisplayerTest {
         reset(listener);
         presenter.filterReset();
 
-        verify(view).setFilterActive(false);
         verify(listener).onFilterReset(eq(presenter), any(DataSetFilter.class));
     }
 }

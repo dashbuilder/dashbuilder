@@ -35,7 +35,6 @@
     }
     .centerColumn {
       height: 390px;
-      padding: 10px;
       font-size: 12pt;
       overflow: auto;
     }

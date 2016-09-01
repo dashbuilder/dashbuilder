@@ -160,6 +160,16 @@ public abstract class AbstractDisplayerSettingsBuilder<T> extends AbstractDataSe
         return (T) this;
     }
 
+    public T htmlTemplate(String html) {
+        displayerSettings.setHtmlTemplate(html);
+        return (T) this;
+    }
+
+    public T jsTemplate(String onDrawJs) {
+        displayerSettings.setJsTemplate(onDrawJs);
+        return (T) this;
+    }
+
     public DisplayerSettings buildSettings() {
         displayerSettings.setDataSetLookup(super.buildLookup());
         return displayerSettings;
