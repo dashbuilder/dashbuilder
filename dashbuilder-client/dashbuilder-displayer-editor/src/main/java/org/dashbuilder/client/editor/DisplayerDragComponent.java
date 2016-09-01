@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2015 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.IsWidget;
+import org.dashbuilder.client.editor.resources.i18n.Constants;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.PerspectiveCoordinator;
@@ -63,7 +64,7 @@ public class DisplayerDragComponent implements PerspectiveEditorDragComponent, H
     @Override
     public IsWidget getDragWidget() {
         TextBox textBox = GWT.create(TextBox.class);
-        textBox.setPlaceholder("Displayer Component");
+        textBox.setPlaceholder(Constants.INSTANCE.DisplayerComponent());
         textBox.setReadOnly(true);
         return textBox;
     }

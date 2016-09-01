@@ -23,4 +23,7 @@ public interface Constants extends Messages {
     public static final Constants INSTANCE = GWT.create( Constants.class );
 
     String displayer_perspective_editor_title();
+
+    String DisplayerComponent();
+
 }
