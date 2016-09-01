@@ -15,9 +15,9 @@
  */
 package org.dashbuilder.client.editor;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.IsWidget;
+import org.dashbuilder.client.editor.resources.i18n.Constants;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.PerspectiveCoordinator;
@@ -61,7 +61,7 @@ public class DisplayerDragComponent implements PerspectiveEditorDragComponent, H
 
     @Override
     public String getDragComponentTitle() {
-        return "Displayer Component";
+        return Constants.INSTANCE.DisplayerComponent();
     }
 
     @Override
