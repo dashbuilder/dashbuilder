@@ -39,10 +39,12 @@
     <version.com.ahomeit.lienzo.core>2.0.192-RC1</version.com.ahomeit.lienzo.core>
     <version.com.ahomeit.lienzo.charts>1.0.122-RC0</version.com.ahomeit.lienzo.charts>
     <version.com.allen-sauer.gwt.dnd>3.3.3</version.com.allen-sauer.gwt.dnd>
-    <version.com.google.gwt>2.8.0-rc1</version.com.google.gwt>
+    <version.com.google.gwt>2.8.0-rc2</version.com.google.gwt>
     <version.org.gwtbootstrap3>0.9.3</version.org.gwtbootstrap3>
     <version.com.googlecode.jsonsimple>1.1.1</version.com.googlecode.jsonsimple>
     <version.com.googlecode.jtype>0.1.1</version.com.googlecode.jtype>
+    <!-- TODO Remove this when gson version is updated in ip-bom -->
+    <version.com.google.code.gson>2.6.2</version.com.google.code.gson>
     <version.org.elasticsearch>2.1.2</version.org.elasticsearch>
 
     <!-- database testing -->
