@@ -17,6 +17,7 @@ package org.dashbuilder.dataprovider.sql;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetColumnTest;
@@ -33,12 +34,14 @@ import static org.dashbuilder.dataprovider.sql.SQLFactory.*;
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.*;
 import static org.fest.assertions.api.Assertions.*;
+import static org.junit.Assert.*;
 
 public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
 
     @Override
     public void testAll() throws Exception {
         testNullValues();
+        testCurrentDate();
         testAvoidDuplicatedGroupColumn();
         testDataSetTrim();
         testDataSetColumns();
@@ -49,18 +52,18 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         testEmptyArguments();
     }
 
-    public void insertNullRow() throws Exception {
+    public void insertExtraRow(String city, String dept, String employee, Date date, Double amount) throws Exception {
         insert(conn).into(EXPENSES)
                 .set(ID, 9999)
-                .set(CITY, null)
-                .set(DEPT, null)
-                .set(EMPLOYEE, null)
-                .set(DATE, null)
-                .set(AMOUNT, null)
+                .set(CITY, city)
+                .set(DEPT, dept)
+                .set(EMPLOYEE, employee)
+                .set(DATE, date)
+                .set(AMOUNT, amount)
                 .execute();
     }
 
-    public void deleteNullRow() throws Exception {
+    public void deleteExtraRow() throws Exception {
         delete(conn)
                 .from(EXPENSES)
                 .where((ID.equalsTo(9999)))
@@ -70,7 +73,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
     @Test
     public void testNullValues() throws Exception {
         try {
-            insertNullRow();
+            insertExtraRow(null, null, null, null, null);
             DataSet result = dataSetManager.lookupDataSet(
                     DataSetLookupFactory.newDataSetLookupBuilder()
                             .dataset(DataSetGroupTest.EXPENSE_REPORTS)
@@ -86,7 +89,30 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
             // assertThat(result.getValueAt(0, 5)).isNull();
         }
         finally {
-            deleteNullRow();
+            deleteExtraRow();
+        }
+    }
+
+    @Test
+    public void testCurrentDate() throws Exception {
+        try {
+            Date currentDate = new Date();
+            insertExtraRow(null, null, null, currentDate, null);
+
+            DataSet result = dataSetManager.lookupDataSet(
+                    DataSetLookupFactory.newDataSetLookupBuilder()
+                            .dataset(DataSetGroupTest.EXPENSE_REPORTS)
+                            .filter(equalsTo(ID.getName(), 9999))
+                            .buildLookup());
+
+            // Seconds comparison is enough as there are some DBs that either leave out nanos or round them adding an extra second.
+            Date fromDb = (Date) result.getValueAt(0, 5);
+            long seconds1 = currentDate.toInstant().getEpochSecond();
+            long seconds2 = fromDb.toInstant().getEpochSecond();
+            assertTrue(seconds1 == seconds2 || seconds1 == seconds2-1);
+        }
+        finally {
+            deleteExtraRow();
         }
     }
 
@@ -246,7 +272,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
     @Test
     public void testEmptyArguments() throws Exception {
         try {
-            insertNullRow();
+            insertExtraRow(null, null, null, null, null);
             assertThat(dataSetManager.lookupDataSet(
                     DataSetLookupFactory.newDataSetLookupBuilder()
                             .dataset(DataSetGroupTest.EXPENSE_REPORTS)
@@ -290,7 +316,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
                             .buildLookup()).getRowCount()).isEqualTo(51);
         }
         finally {
-            deleteNullRow();
+            deleteExtraRow();
         }
     }
 }
