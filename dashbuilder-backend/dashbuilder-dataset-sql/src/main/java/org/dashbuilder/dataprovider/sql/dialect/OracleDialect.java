@@ -71,8 +71,8 @@ public class OracleDialect extends DefaultDialect {
         if (value == null) {
             return null;
         }
-        // ((oracle.sql.TIMESTAMP) value).dateValue()
-        return (Date) invokeMethod(value, "dateValue", null);
+        // ((oracle.sql.TIMESTAMP) value).toJdbc()
+        return (Date) invokeMethod(value, "toJdbc", null);
     }
 
     @Override
