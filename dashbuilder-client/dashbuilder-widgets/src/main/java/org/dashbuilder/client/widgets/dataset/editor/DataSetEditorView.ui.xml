@@ -18,7 +18,6 @@
     }
     .editorPanel {
       width: 100%;
-      margin: 10px;
     }
     .filterAndColumnsPanel {
       float: left;

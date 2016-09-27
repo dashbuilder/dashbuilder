@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2016 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataprovider.sql;
+package org.dashbuilder.dataset;
 
+import java.util.ArrayList;
 import java.util.List;
-import javax.naming.InitialContext;
+import javax.enterprise.inject.Specializes;
 import javax.sql.DataSource;
 
+import org.dashbuilder.dataprovider.SQLDataSourceLocatorCDI;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
 import org.dashbuilder.dataset.def.SQLDataSourceDef;
 
-public class SQLDataSourceLocatorImpl implements SQLDataSourceLocator {
+@Specializes
+public class SQLDataSourceLocatorMock extends SQLDataSourceLocatorCDI {
 
+    public SQLDataSourceLocatorMock() {
+    }
+
+    @Override
     public DataSource lookup(SQLDataSetDef def) throws Exception {
-        InitialContext ctx = new InitialContext();
-        return (DataSource) ctx.lookup(def.getDataSource());
+        return null;
     }
 
     @Override
     public List<SQLDataSourceDef> list() {
-        return JDBCUtils.listDatasourceDefs();
+        List<SQLDataSourceDef> result = new ArrayList<>();
+        result.add(new SQLDataSourceDef("ds1", "ds1"));
+        result.add(new SQLDataSourceDef("ds2", "ds2"));
+        return result;
     }
 }

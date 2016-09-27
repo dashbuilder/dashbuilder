@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2015 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.dataprovider.sql;
+package org.dashbuilder.dataset.service;
 
 import java.util.List;
-import javax.naming.InitialContext;
-import javax.sql.DataSource;
 
-import org.dashbuilder.dataset.def.SQLDataSetDef;
 import org.dashbuilder.dataset.def.SQLDataSourceDef;
+import org.jboss.errai.bus.server.annotations.Remote;
 
-public class SQLDataSourceLocatorImpl implements SQLDataSourceLocator {
+/**
+ * Services around the SQL provider type.
+ */
+@Remote
+public interface SQLProviderServices {
 
-    public DataSource lookup(SQLDataSetDef def) throws Exception {
-        InitialContext ctx = new InitialContext();
-        return (DataSource) ctx.lookup(def.getDataSource());
-    }
-
-    @Override
-    public List<SQLDataSourceDef> list() {
-        return JDBCUtils.listDatasourceDefs();
-    }
+    /**
+     * Get the list of available data source references
+     */
+    List<SQLDataSourceDef> getDataSourceDefs();
 }

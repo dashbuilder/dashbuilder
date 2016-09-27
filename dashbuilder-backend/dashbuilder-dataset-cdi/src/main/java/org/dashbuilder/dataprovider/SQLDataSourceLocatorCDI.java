@@ -15,27 +15,13 @@
  */
 package org.dashbuilder.dataprovider;
 
-import org.dashbuilder.dataset.def.SQLDataSetDef;
-import org.dashbuilder.dataset.json.DataSetDefJSONMarshallerExt;
-import org.dashbuilder.dataset.json.SQLDefJSONMarshaller;
+import javax.enterprise.context.ApplicationScoped;
 
-/**
- * For accessing data sets defined as an SQL query over an existing data source.
- */
-public class SQLProviderType extends AbstractProviderType<SQLDataSetDef> {
+import org.dashbuilder.dataprovider.sql.SQLDataSourceLocatorImpl;
 
-    @Override
-    public String getName() {
-        return "SQL";
-    }
+@ApplicationScoped
+public class SQLDataSourceLocatorCDI extends SQLDataSourceLocatorImpl {
 
-    @Override
-    public SQLDataSetDef createDataSetDef() {
-        return new SQLDataSetDef();
-    }
-
-    @Override
-    public DataSetDefJSONMarshallerExt<SQLDataSetDef> getJsonMarshaller() {
-        return SQLDefJSONMarshaller.INSTANCE;
+    public SQLDataSourceLocatorCDI() {
     }
 }
