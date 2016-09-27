@@ -23,6 +23,7 @@ import java.util.List;
 import org.dashbuilder.dataprovider.sql.JDBCUtils;
 import org.dashbuilder.dataprovider.sql.model.Column;
 import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.def.SQLDataSourceDef;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +45,12 @@ public class JDBCUtilsTest {
     @Before
     public void setUp() throws Exception {
         when(resultSet.getMetaData()).thenReturn(metaData);
+    }
+
+    @Test
+    public void testListDataSourceDefs() throws Exception {
+        List<SQLDataSourceDef> defList = JDBCUtils.listDatasourceDefs();
+        assertEquals(defList.size(), 0);
     }
 
     @Test

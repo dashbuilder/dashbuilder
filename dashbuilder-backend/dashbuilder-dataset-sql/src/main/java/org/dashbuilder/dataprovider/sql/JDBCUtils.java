@@ -25,6 +25,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.dashbuilder.dataprovider.sql.dialect.DB2Dialect;
 import org.dashbuilder.dataprovider.sql.dialect.DefaultDialect;
@@ -39,6 +46,7 @@ import org.dashbuilder.dataprovider.sql.dialect.SQLServerDialect;
 import org.dashbuilder.dataprovider.sql.dialect.SybaseASEDialect;
 import org.dashbuilder.dataprovider.sql.model.Column;
 import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.def.SQLDataSourceDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +64,28 @@ public class JDBCUtils {
     public static final Dialect MONETDB = new MonetDBDialect();
 
     private static final Logger log = LoggerFactory.getLogger(JDBCUtils.class);
+
+    public static List<SQLDataSourceDef> listDatasourceDefs() {
+        List<SQLDataSourceDef> result = new ArrayList<>();
+        String[] namespaces = {"java:comp/env/jdbc/", "java:jboss/datasources/"};
+        for (String namespace : namespaces) {
+            try {
+                InitialContext ctx = new InitialContext();
+                NamingEnumeration<NameClassPair> list = ctx.list(namespace);
+                while (list.hasMoreElements()) {
+                    NameClassPair next = list.next();
+                    String name = next.getName();
+                    String jndiPath = namespace + name;
+                    SQLDataSourceDef dsDef = new SQLDataSourceDef(jndiPath, name);
+                    result.add(dsDef);
+                }
+            } catch (NamingException e) {
+                log.warn("JNDI namespace " + namespace + " error: " + e.getMessage());
+                continue;
+            }
+        }
+        return result;
+    }
 
     public static void execute(Connection connection, String sql) throws SQLException {
         try {

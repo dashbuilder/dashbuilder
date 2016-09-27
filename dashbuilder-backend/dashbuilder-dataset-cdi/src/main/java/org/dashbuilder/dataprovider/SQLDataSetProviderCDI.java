@@ -34,10 +34,11 @@ public class SQLDataSetProviderCDI extends SQLDataSetProvider {
     }
 
     @Inject
-    public SQLDataSetProviderCDI(StaticDataSetProviderCDI staticDataSetProvider) {
+    public SQLDataSetProviderCDI(StaticDataSetProviderCDI staticDataSetProvider,
+                                 SQLDataSourceLocatorCDI sqlDataSourceLocator) {
 
         super(staticDataSetProvider,
-                new SQLDataSourceLocatorImpl(),
+                sqlDataSourceLocator,
                 DataSetCore.get().getIntervalBuilderLocator(),
                 DataSetCore.get().getIntervalBuilderDynamicDate(),
                 DataSetCore.get().getSharedDataSetOpEngine());
