@@ -94,8 +94,11 @@ public class MetricDisplayerTest extends AbstractDisplayerTest {
                 .buildSettings();
 
         MetricDisplayer presenter = createMetricDisplayer(engExpenses);
-        assertTrue(!StringUtils.isBlank(presenter.getHtmlTemplate()));
-        assertNotNull(presenter.getJsTemplate());
+        String html = presenter.getHtmlTemplate();
+        String js = presenter.getJsTemplate();
+        assertFalse(StringUtils.isBlank(html));
+        assertFalse(StringUtils.isBlank(js));
+        assertFalse(html.equals(js));
     }
 
     @Test

@@ -282,7 +282,7 @@ public class MetricDisplayer extends AbstractDisplayer<MetricDisplayer.View>
     public String getJsTemplate() {
         String template = displayerSettings.getJsTemplate();
         if (StringUtils.isBlank(template)) {
-            return DEFAULT_HTML_TEMPLATE;
+            return DEFAULT_JS_TEMPLATE;
         }
         return template;
 
