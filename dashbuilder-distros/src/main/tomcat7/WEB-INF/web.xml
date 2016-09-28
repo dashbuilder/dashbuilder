@@ -213,6 +213,16 @@
     </auth-constraint>
   </security-constraint>
 
+  <!-- public resources -->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>public</web-resource-name>
+      <url-pattern>/org.dashbuilder.DashbuilderShowcase/css/*</url-pattern>
+      <url-pattern>/org.dashbuilder.DashbuilderShowcase/fonts/*</url-pattern>
+      <url-pattern>/org.dashbuilder.DashbuilderShowcase/img/*</url-pattern>
+    </web-resource-collection>
+  </security-constraint>
+
   <error-page>
     <error-code>403</error-code>
     <location>/not_authorized.jsp</location>
