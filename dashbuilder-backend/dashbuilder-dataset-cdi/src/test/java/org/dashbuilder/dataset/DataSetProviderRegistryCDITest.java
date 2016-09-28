@@ -19,9 +19,7 @@ import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
 
-import org.dashbuilder.dataprovider.DataSetProviderRegistry;
-import org.dashbuilder.dataprovider.DataSetProviderRegistryCDI;
-import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataprovider.*;
 import org.dashbuilder.test.BaseCDITest;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Before;
@@ -49,5 +47,10 @@ public class DataSetProviderRegistryCDITest extends BaseCDITest {
         assertTrue(typeList.contains(DataSetProviderType.CSV));
         assertTrue(typeList.contains(DataSetProviderType.SQL));
         assertTrue(typeList.contains(DataSetProviderType.ELASTICSEARCH));
+
+        // In CDI contexts, DataSetProvider implementations are automatically registered
+        assertTrue(typeList.contains(CustomDataSetProvider.TYPE));
+        DataSetProvider customProvider = dataSetProviderRegistry.getDataSetProvider(CustomDataSetProvider.TYPE);
+        assertNotNull(customProvider);
     }
 }

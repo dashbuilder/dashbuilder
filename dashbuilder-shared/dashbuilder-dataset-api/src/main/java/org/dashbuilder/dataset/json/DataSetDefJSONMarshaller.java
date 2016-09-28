@@ -25,7 +25,9 @@ import org.dashbuilder.json.JsonArray;
 import org.dashbuilder.json.JsonException;
 import org.dashbuilder.json.JsonObject;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * DataSetDef from/to JSON utilities
@@ -49,6 +51,22 @@ public class DataSetDefJSONMarshaller {
     public static final String REFRESH_TIME = "refreshTime";
     public static final String REFRESH_ALWAYS = "refreshAlways";
 
+    public static final List<String> ROOT_KEYS = Arrays.asList(
+            UUID,
+            NAME,
+            PROVIDER,
+            ISPUBLIC,
+            PUSH_ENABLED,
+            PUSH_MAXSIZE,
+            COLUMNS,
+            FILTERS,
+            ALL_COLUMNS,
+            CACHE_ENABLED,
+            CACHE_MAXROWS,
+            REFRESH_TIME,
+            REFRESH_ALWAYS
+    );
+
     protected DataSetProviderRegistry dataSetProviderRegistry;
     protected DataSetLookupJSONMarshaller dataSetLookupJSONMarshaller;
 
@@ -65,12 +83,21 @@ public class DataSetDefJSONMarshaller {
         JsonObject json = Json.parse(jsonString);
         DataSetProviderType type = readProviderType(json);
         DataSetDef dataSetDef = type.createDataSetDef();
+        dataSetDef.setProvider(type);
 
         readGeneralSettings(dataSetDef, json);
 
         DataSetDefJSONMarshallerExt marshaller = type.getJsonMarshaller();
         if (marshaller != null) {
             marshaller.fromJson(dataSetDef, json);
+        }
+        else {
+            for (String key : json.keys()) {
+                if (!ROOT_KEYS.contains(key)) {
+                    String value = json.getString(key);
+                    dataSetDef.setProperty(key, value);
+                }
+            }
         }
         return dataSetDef;
     }
@@ -232,7 +259,16 @@ public class DataSetDefJSONMarshaller {
                 throw new JsonException(e);
             }
         }
-        
+
+        // Extra properties (only when no marshaller is provided)
+        if (marshaller == null) {
+            for (String key : dataSetDef.getPropertyNames()) {
+                if (!ROOT_KEYS.contains(key)) {
+                    String value = dataSetDef.getProperty(key);
+                    json.put(key, value);
+                }
+            }
+        }
         return json;
     }
 

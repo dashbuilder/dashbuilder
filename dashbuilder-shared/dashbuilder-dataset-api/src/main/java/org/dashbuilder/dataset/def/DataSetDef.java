@@ -74,7 +74,8 @@ public class DataSetDef {
     protected boolean refreshAlways = false;
     protected boolean allColumnsEnabled = true;
 
-    protected Map<String,String> patternMap = new HashMap<String,String>();
+    protected Map<String,String> patternMap = new HashMap<>();
+    protected Map<String,String> propertyMap = new HashMap<>();
 
     public String getUUID() {
         return UUID;
@@ -212,6 +213,18 @@ public class DataSetDef {
             columns = new LinkedList<DataColumnDef>();
         }
         return columns.add(new DataColumnDef(id, type));
+    }
+
+    public Set<String> getPropertyNames() {
+        return propertyMap.keySet();
+    }
+
+    public String getProperty(String key) {
+        return propertyMap.get(key);
+    }
+
+    public void setProperty(String key, String value) {
+        propertyMap.put(key, value);
     }
 
     public DataSetDef clone() {
