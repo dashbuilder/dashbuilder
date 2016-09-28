@@ -18,6 +18,7 @@ import org.apache.commons.io.IOUtils;
 import org.dashbuilder.dataprovider.DataSetProvider;
 import org.dashbuilder.dataprovider.DataSetProviderRegistry;
 import org.dashbuilder.dataprovider.DataSetProviderType;
+import org.dashbuilder.dataprovider.DefaultProviderType;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.def.BeanDataSetDef;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
@@ -50,6 +51,9 @@ public class DataSetDefJsonTest {
     private static final String FILTER_DEF_PATH = "dataSetDefFilter.dset";
     private static final String EXPENSES_DEF_PATH = "expenseReports.dset";
     private static final String CSV_DEF_PATH = "csvDataSetDef.dset";
+    private static final String CUSTOM_DEF_PATH = "customDataSetDef.dset";
+
+    private static final DataSetProviderType CUSTOM_PROVIDER_TYPE = new DefaultProviderType("CUSTOM");
 
     DataSetDefJSONMarshaller jsonMarshaller = new DataSetDefJSONMarshaller(new DataSetProviderRegistry() {
         @Override
@@ -70,6 +74,8 @@ public class DataSetDefJsonTest {
                     return DataSetProviderType.CSV;
                 case "SQL":
                     return DataSetProviderType.SQL;
+                case "CUSTOM":
+                    return CUSTOM_PROVIDER_TYPE;
             }
             return null;
         }
@@ -97,6 +103,7 @@ public class DataSetDefJsonTest {
         dataSetDef.setRefreshAlways(false);
         dataSetDef.setRefreshTime("1second");
         dataSetDef.setGeneratorClass("org.dashbuilder.DataSetGenerator");
+        dataSetDef.setProperty("ignore", "this");
         final Map<String, String> parameterMap = new LinkedHashMap<String, String>();
         parameterMap.put("p1", "v1");
         parameterMap.put("p2", "v2");
@@ -143,6 +150,29 @@ public class DataSetDefJsonTest {
         catch (ClassCastException e) {
             fail("Not a CSV dataset def");
         }
+    }
+
+    @Test
+    public void testCustom() throws Exception {
+        final DataSetDef dataSetDef = new DataSetDef();
+        dataSetDef.setName("custom data set name");
+        dataSetDef.setUUID("custom-test-uuid");
+        dataSetDef.setProvider(CUSTOM_PROVIDER_TYPE);
+        dataSetDef.setCacheEnabled(false);
+        dataSetDef.setCacheMaxRows(100);
+        dataSetDef.setPublic(true);
+        dataSetDef.setPushEnabled(false);
+        dataSetDef.setPushMaxSize(10);
+        dataSetDef.setRefreshAlways(false);
+        dataSetDef.setRefreshTime("1second");
+        dataSetDef.setProperty("prop1", "Hello");
+
+        String json = jsonMarshaller.toJsonString(dataSetDef);
+        String customJSONContent = getFileAsString(CUSTOM_DEF_PATH);
+        assertDataSetDef(json, customJSONContent);
+
+        DataSetDef fromJson = jsonMarshaller.fromJson(customJSONContent);
+        assertEquals(dataSetDef, fromJson);
     }
 
     @Test

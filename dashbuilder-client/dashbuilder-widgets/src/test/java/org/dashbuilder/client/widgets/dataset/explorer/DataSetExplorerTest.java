@@ -32,6 +32,7 @@ public class DataSetExplorerTest {
     @Mock DataSetExplorer.View view;
     @Mock DataSetPanel dataSetPanel;
     @Mock DataSetDef dataSetDef;
+    @Mock DataSetDef dataSetDefCustom;
     @Mock DataSetClientServices dataSetClientServices;
     Instance<DataSetPanel> panelInstances;
     
@@ -45,12 +46,19 @@ public class DataSetExplorerTest {
         when(dataSetDef.isPublic()).thenReturn(true);
         when(dataSetDef.getProvider()).thenReturn(DataSetProviderType.BEAN);
         
+        when(dataSetDefCustom.getUUID()).thenReturn("uuid2");
+        when(dataSetDefCustom.getName()).thenReturn("name2");
+        when(dataSetDefCustom.isPublic()).thenReturn(true);
+        when(dataSetDefCustom.getProvider()).thenReturn(() -> "CUSTOM");
+
+        dataSetDefList.add(dataSetDef);
+        dataSetDefList.add(dataSetDefCustom);
+
         final Widget widget = mock(Widget.class);
         when(view.asWidget()).thenReturn(widget);
         panelInstances = new MockInstance();
         
         // Client services method mocks.
-        dataSetDefList.add(dataSetDef);
         when(dataSetPanel.getDataSetDef()).thenReturn(dataSetDef);
         doAnswer(new Answer<Void>() {
             @Override
@@ -141,7 +149,7 @@ public class DataSetExplorerTest {
         verify(view, times(1)).addPanel(any(DataSetPanel.View.class));
         verify(dataSetPanel, times(1)).show(dataSetDef, "dataSetsExplorerPanelGroup");
     }
-    
+
     // Mockito complains when mocking Instance<U>, so let's create an empty implementation for it. It returns a single mocked DataSetPanel instance.
     private class MockInstance implements Instance<DataSetPanel> {
 
@@ -154,7 +162,7 @@ public class DataSetExplorerTest {
         public <U extends DataSetPanel> Instance<U> select(Class<U> aClass, Annotation... annotations) {
             return (Instance<U>) dataSetPanel;
         }
-        
+
         @Override
         public boolean isUnsatisfied() {
             return false;

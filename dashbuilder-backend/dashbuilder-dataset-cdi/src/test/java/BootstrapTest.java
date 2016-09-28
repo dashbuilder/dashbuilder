@@ -75,7 +75,7 @@ public class BootstrapTest extends BaseCDITest {
 
         DataSetProviderRegistry dataSetProviderRegistry = DataSetCore.get().getDataSetProviderRegistry();
         assertEquals(dataSetProviderRegistry, providerRegistryCDI);
-        assertEquals(dataSetProviderRegistry.getAvailableTypes().size(), 5);
+        assertEquals(dataSetProviderRegistry.getAvailableTypes().size(), 6);
 
         DataSetDefJSONMarshaller jsonMarshaller = DataSetCore.get().getDataSetDefJSONMarshaller();
         jsonMarshaller.fromJson(CSV_JSON); // No exception
