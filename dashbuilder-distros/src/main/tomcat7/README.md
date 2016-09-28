@@ -21,10 +21,10 @@ In a default Tomcat installation, edit `$CATALINA_HOME/conf/tomcat-users.xml` an
 Deploy the application
 --------------------------
 Before deploying the WAR artifact for Dashbuilder please follow these steps:              
+
 * Copy the JACC jar into `$CATALINA_HOME/lib`. This JAR has the Maven coordinates `javax.security.jacc:javax.security.jacc-api:jar:1.5` and can be found at the JBoss Maven Repository.             
-* Copy the SL4J jar into `$CATALINA_HOME/lib`. This JAR has the Maven coordinates `org.slf4j:slf4j-api:jar:1.7.2` and can be found at the JBoss Maven Repository.             
         
-Once the jar files have been added into Tomcat's library, you can get the proper war file `dashbuilder-<version>-tomcat7.war` and copy it to `$CATALINA_HOME/webapps` or deploy it using the Tomcat Manager application.         
+Get the proper war file `dashbuilder-<version>-tomcat7.war` and copy it to `$CATALINA_HOME/webapps` or deploy it using the Tomcat Manager application.         
 
 User Authentication
 --------------------------
