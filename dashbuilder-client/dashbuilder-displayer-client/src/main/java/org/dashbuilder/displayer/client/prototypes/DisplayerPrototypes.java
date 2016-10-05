@@ -244,7 +244,7 @@ public class DisplayerPrototypes {
                         "  ${title}: <span id=\"${valref}\" style=\"font-weight: bold\">${value}</span>\n" +
                         "</div>\n")
                 .jsTemplate("if (${value.raw} > ${value.critical}) {  \n" +
-                        "    ${valref}.style.color = \"read\"; \n" +
+                        "    ${valref}.style.color = \"red\"; \n" +
                         "} else if (${value.raw} > ${value.warning}) {  \n" +
                         "    ${valref}.style.color = \"yellow\"; \n" +
                         "} else {\n" +
