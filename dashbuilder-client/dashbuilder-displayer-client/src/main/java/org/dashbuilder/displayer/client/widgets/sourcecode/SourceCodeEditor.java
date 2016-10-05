@@ -107,14 +107,15 @@ public class SourceCodeEditor implements IsWidget {
     }
 
     public String validateSourceCode(String newCode) {
-        switch (type) {
-            case JAVASCRIPT:
-                return jsValidator.validate(newCode, varMap.keySet());
-            case HTML:
-                return htmlValidator.validate(newCode);
-            default:
-                return null;
+        if (newCode != null && newCode.length() > 0) {
+            switch (type) {
+                case JAVASCRIPT:
+                    return jsValidator.validate(newCode, varMap.keySet());
+                case HTML:
+                    return htmlValidator.validate(newCode);
+            }
         }
+        return null;
     }
 
     public void onVariableSelected(String var) {

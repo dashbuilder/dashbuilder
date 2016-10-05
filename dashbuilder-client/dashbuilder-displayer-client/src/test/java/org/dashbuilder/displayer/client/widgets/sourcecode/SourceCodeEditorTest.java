@@ -55,6 +55,25 @@ public class SourceCodeEditorTest {
     }
 
     @Test
+    public void testEmpty() {
+        reset(htmlValidator);
+        presenter.init(SourceCodeType.HTML, null, new HashMap<>(), onChange);
+        verify(htmlValidator, never()).validate(any());
+
+        reset(htmlValidator);
+        presenter.init(SourceCodeType.HTML, "", new HashMap<>(), onChange);
+        verify(htmlValidator, never()).validate(any());
+
+        reset(jsValidator);
+        presenter.init(SourceCodeType.JAVASCRIPT, null, new HashMap<>(), onChange);
+        verify(jsValidator, never()).validate(any(), anyCollection());
+
+        reset(jsValidator);
+        presenter.init(SourceCodeType.JAVASCRIPT, "", new HashMap<>(), onChange);
+        verify(jsValidator, never()).validate(any(), anyCollection());
+    }
+
+    @Test
     public void testOnChange() {
         presenter.onSourceCodeChanged("howdy?");
 
