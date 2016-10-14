@@ -53,6 +53,18 @@ public class DataSetDefDeployer {
         }
     };
 
+    FilenameFilter _deployFilter = new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+            return name.endsWith(".deploy");
+        }
+    };
+
+    FilenameFilter _undeployFilter = new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+            return name.endsWith(".undeploy");
+        }
+    };
+
     public DataSetDefDeployer() {
     }
 
