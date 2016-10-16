@@ -73,7 +73,8 @@ The news about a new release are spread through the Dashbuilder's IRC channel, [
 <a href="http://www.apache.org/licenses/">
 <img src="./images/sponsors/apache.png" height="80"/>
 </a>
-License and supports the development of the project.
+
+Gives free license and supports the development of the project.
 
 
 #### Redhat
@@ -81,6 +82,7 @@ License and supports the development of the project.
 <a href="https://www.redhat.com/en">
 <img src="./images/sponsors/redhat.png" height="80"/>
 </a>
+
 The main company.
 
 
