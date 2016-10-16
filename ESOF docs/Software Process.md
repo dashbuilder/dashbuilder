@@ -70,6 +70,23 @@ The news about a new release are spread through the Dashbuilder's IRC channel, [
 ## Sponsors
 
 #### Apache
-![Image](https://www.google.pt/search?q=apache+software+foundation&biw=1366&bih=672&source=lnms&tbm=isch&sa=X&ved=0ahUKEwi-89S4-t_PAhWrA8AKHWSCDHQQ_AUICCgB#imgrc=3jzIhKBYIW-WjM%3A)
+<a href="http://www.apache.org/licenses/">
+<img src="./images/sponsors/apache.png" height="80"/>
+</a>
+License and supports the development of the project.
 
-Supports the development of the project.
+
+#### Redhat
+
+<a href="https://www.redhat.com/en">
+<img src="./images/sponsors/redhat.png" height="80"/>
+</a>
+The main company.
+
+
+## Critics
+
+Starting from the fact that this project is an open-source with 17 contributors, with only 10 of them being part of the official team, it's fairly easy to assume they took a very incremental development approach. A big voluntary team is not very easy to coordinate and therefore the incremental aproach provides the most benefits.
+Even the obvious drawbacks of this type of development, such as the constant need for code refactoring, should be overlooked. Of course it's one of the simplest methodologies but the simplicity is also a strength. It avoids the next step to be strict and brings many ideas and improvements and doesn't overwhelm and scare away potential contributors. The "skill ceiling" becomes lower.
+It also allows two or more distinct features to be implemented at the same time and this type of flexibility further improves the case in defense of the incremental development methodology because it does not pose a limit on the number of features being added, because even though it is incremental, it is not necessarily successive.
+
