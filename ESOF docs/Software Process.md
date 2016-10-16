@@ -10,14 +10,16 @@
 		* [Releases](#releases)
 		
 	* [Sponsors](#sponsors)
+	* [Critics](#critics)
 	
 <div id ='intro'/>
 ## What is Dashbuilder?
 
 Dashbuilder is an open source platform for building business dashboards and reports, such as:
-	* Interactive report tables ;
-	* Data export to Excel and CSV format ;
-	* Integration with the jBPM (Business Process Manager) platform.
+
+	* Interactive report tables 
+	* Data export to Excel and CSV format 
+	* Integration with the jBPM (Business Process Manager) platform
 
 
 ## Development Process
@@ -88,7 +90,7 @@ The main company.
 
 ## Critics
 
-Starting from the fact that this project is an open-source with 17 contributors, with only 10 of them being part of the official team, it's fairly easy to assume they took a very incremental development approach. A big voluntary team is not very easy to coordinate and therefore the incremental aproach provides the most benefits.
+Starting from the fact that this project is open-source with 17 contributors, with only 10 of them being part of the official team, it's fairly easy to assume they took a very incremental development approach. A big voluntary team is not very easy to coordinate and therefore the incremental aproach provides the most benefits.
 Even the obvious drawbacks of this type of development, such as the constant need for code refactoring, should be overlooked. Of course it's one of the simplest methodologies but the simplicity is also a strength. It avoids the next step to be strict and brings many ideas and improvements and doesn't overwhelm and scare away potential contributors. The "skill ceiling" becomes lower.
 It also allows two or more distinct features to be implemented at the same time and this type of flexibility further improves the case in defense of the incremental development methodology because it does not pose a limit on the number of features being added, because even though it is incremental, it is not necessarily successive.
 
