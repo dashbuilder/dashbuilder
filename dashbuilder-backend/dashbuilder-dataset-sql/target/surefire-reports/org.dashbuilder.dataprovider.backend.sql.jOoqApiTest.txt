@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.dashbuilder.dataprovider.backend.sql.jOoqApiTest
+-------------------------------------------------------------------------------
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.323 sec - in org.dashbuilder.dataprovider.backend.sql.jOoqApiTest

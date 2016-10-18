@@ -1,0 +1,4 @@
+org.dashbuilder.displayer.client.PerspectiveCoordinator
+org.dashbuilder.displayer.client.DisplayerScreenPresenterActivity
+org.dashbuilder.displayer.client.DisplayerScreenPresenter
+org.dashbuilder.displayer.client.resources.i18n.Constants

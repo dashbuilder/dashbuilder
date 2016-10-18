@@ -1,0 +1,7 @@
+{
+    "uuid": "expense_reports_sql",
+    "provider": "SQL",
+    "dataSource": "jdbc:h2:mem:test;DATABASE_TO_UPPER=FALSE",
+    "dbSQL": "select id, employee, amount from expense_reports where city = 'Barcelona'",
+    "allColumns": true
+}

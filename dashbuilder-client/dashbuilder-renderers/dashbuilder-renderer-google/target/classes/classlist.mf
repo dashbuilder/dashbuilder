@@ -1,0 +1,15 @@
+org.dashbuilder.renderer.google.client.GoogleMeterChartDisplayer
+org.dashbuilder.renderer.google.client.GooglePieChartDisplayer
+org.dashbuilder.renderer.google.client.GoogleRenderer
+org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants
+org.dashbuilder.renderer.google.client.GoogleMapDisplayer
+org.dashbuilder.renderer.google.client.GoogleCategoriesDisplayer
+org.dashbuilder.renderer.google.client.GoogleTableDisplayer
+org.dashbuilder.renderer.google.client.PieChartOptionsWrapper
+org.dashbuilder.renderer.google.client.GoogleBubbleChartDisplayer
+org.dashbuilder.renderer.google.client.GoogleBarChartDisplayer
+org.dashbuilder.renderer.google.client.GoogleLegendWrapper
+org.dashbuilder.renderer.google.client.GoogleAreaChartDisplayer
+org.dashbuilder.renderer.google.client.GoogleDisplayer
+org.dashbuilder.renderer.google.client.GoogleLineChartDisplayer
+org.dashbuilder.renderer.google.client.GoogleChartDisplayer

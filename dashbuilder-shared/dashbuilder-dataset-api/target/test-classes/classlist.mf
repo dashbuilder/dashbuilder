@@ -1,0 +1,2 @@
+org.dashbuilder.dataset.filter.CoreFunctionTypeTest
+org.dashbuilder.dataset.date.MonthDayQuarterEnumTest

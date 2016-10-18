@@ -1,0 +1,1 @@
+org.dashbuilder.client.widgets.dataset.editor.widgets.editors.sql.SQLDataSetDefAttributesEditorTest

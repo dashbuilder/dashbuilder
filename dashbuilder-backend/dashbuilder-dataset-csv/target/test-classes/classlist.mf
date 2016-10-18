@@ -1,0 +1,3 @@
+org.dashbuilder.dataprovider.backend.csv.CSVDataSetBasicTest
+org.dashbuilder.dataprovider.backend.csv.CSVDataSetDefJSONTest
+org.dashbuilder.dataprovider.backend.csv.CSVStorageMock

@@ -1,0 +1,11 @@
+org.dashbuilder.renderer.client.metric.MetricDisplayer
+org.dashbuilder.renderer.client.metric.AbstractMetricDisplayer
+org.dashbuilder.renderer.client.DefaultRenderer
+org.dashbuilder.renderer.client.selector.SelectorDisplayer
+org.dashbuilder.renderer.client.metric.MetricViewImpl
+org.dashbuilder.renderer.client.resources.i18n.TableConstants
+org.dashbuilder.renderer.client.table.TableDisplayer
+org.dashbuilder.renderer.client.metric.MetricView
+org.dashbuilder.renderer.client.resources.i18n.CommonConstants
+org.dashbuilder.renderer.client.resources.i18n.MetricConstants
+org.dashbuilder.renderer.client.resources.i18n.SelectorConstants

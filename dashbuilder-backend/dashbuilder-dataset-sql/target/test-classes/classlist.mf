@@ -1,0 +1,8 @@
+org.dashbuilder.dataprovider.backend.sql.SQLTableDataSetLookupTest
+org.dashbuilder.dataprovider.backend.sql.DataSourceLocatorMock
+org.dashbuilder.dataprovider.backend.sql.SQLDataSetDefTest
+org.dashbuilder.dataprovider.backend.sql.jOoqApiTest
+org.dashbuilder.dataprovider.backend.sql.SQLDataSetCacheTest
+org.dashbuilder.dataprovider.backend.sql.SQLQueryDataSetLookupTest
+org.dashbuilder.dataprovider.backend.sql.SQLDataSetTestBase
+org.dashbuilder.dataprovider.backend.sql.SQLDataSetTrimTest
