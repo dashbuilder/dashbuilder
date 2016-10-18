@@ -42,6 +42,9 @@ public class DisplayerPrototypes {
     public DisplayerPrototypes() {
     }
 
+    public DisplayerPrototypes() {
+    }
+
     @Inject
     public DisplayerPrototypes(DataSetPrototypes dataSetPrototypes, UUIDGenerator uuidGenerator) {
         this.dataSetPrototypes = dataSetPrototypes;
