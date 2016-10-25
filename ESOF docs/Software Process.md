@@ -11,7 +11,6 @@
 		
 	* [Sponsors](#sponsors)
 	* [Critics](#critics)
-	*[Members](#members)
 	
 <div id ='intro'/>
 ## What is Dashbuilder?

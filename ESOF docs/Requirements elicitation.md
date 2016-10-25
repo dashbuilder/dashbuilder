@@ -10,7 +10,7 @@
 		* [Validation](#validation)
 		* [Use cases](#use-cases)
 			* [Backends](#backends)
-			*[Frontends](#frontends)
+			* [Frontends](#frontends)
 		* [Domain model](#domain-model)
 		
 ## Introduction
