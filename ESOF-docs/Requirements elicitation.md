@@ -49,7 +49,10 @@ Besides there are planned upcoming features, the release schedule isn't very str
 
 ## Members and Contribution
 
-	* Gustavo Faria		
-	* Luis Spinola		
-	* João Duarte		
-	* Nuno Pinto		
+	Gustavo Faria		
+	
+	Luis Spinola		
+	
+	João Duarte		
+	
+	Nuno Pinto		
