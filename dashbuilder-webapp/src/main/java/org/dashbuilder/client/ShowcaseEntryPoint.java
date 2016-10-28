@@ -20,42 +20,33 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.dashbuilder.client.cms.resources.i18n.ContentManagerI18n;
 import org.dashbuilder.client.dashboard.DashboardManager;
 import org.dashbuilder.client.dashboard.DashboardPerspectiveActivity;
-import org.dashbuilder.client.dashboard.widgets.NewDashboardForm;
+import org.dashbuilder.client.navbar.TopMenuBar;
+import org.dashbuilder.client.navigation.NavTreeDefinitions;
+import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.client.security.PermissionTreeSetup;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
-import org.dashbuilder.shared.dashboard.events.DashboardCreatedEvent;
+import org.dashbuilder.navigation.NavItem;
+import org.dashbuilder.navigation.NavTree;
+import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
 import org.dashbuilder.shared.dashboard.events.DashboardDeletedEvent;
 import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.api.EntryPoint;
-import org.jboss.errai.security.shared.api.Role;
-import org.jboss.errai.security.shared.api.identity.User;
 import org.jboss.errai.security.shared.service.AuthenticationService;
 import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.client.views.pfly.menu.UserMenu;
-import org.uberfire.client.workbench.widgets.menu.UtilityMenuBar;
-import org.uberfire.client.workbench.widgets.menu.WorkbenchMenuBar;
 import org.uberfire.ext.security.management.client.ClientUserSystemManager;
 import org.uberfire.mvp.Command;
-import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
-import org.uberfire.workbench.model.menu.MenuFactory;
-import org.uberfire.workbench.model.menu.MenuItem;
-import org.uberfire.workbench.model.menu.Menus;
 
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.INFO;
-import static org.uberfire.workbench.model.menu.MenuFactory.newTopLevelMenu;
-import static org.dashbuilder.client.perspectives.PerspectiveIds.*;
 
 /**
  * Entry-point for the Dashbuilder showcase
@@ -66,31 +57,19 @@ public class ShowcaseEntryPoint {
     private AppConstants constants = AppConstants.INSTANCE;
 
     @Inject
-    private WorkbenchMenuBar menubar;
-
-    @Inject
     private PlaceManager placeManager;
 
     @Inject
     private ClientUserSystemManager userSystemManager;
 
     @Inject
-    public User identity;
-
-    @Inject
-    private UserMenu userMenu;
-
-    @Inject
-    private UtilityMenuBar utilityMenuBar;
-
-    @Inject
     private DashboardManager dashboardManager;
 
     @Inject
-    private NewDashboardForm newDashboardForm;
+    private Caller<AuthenticationService> authService;
 
     @Inject
-    private Caller<AuthenticationService> authService;
+    private NavigationManager navigationManager;
 
     @Inject
     private Event<NotificationEvent> workbenchNotification;
@@ -98,125 +77,62 @@ public class ShowcaseEntryPoint {
     @Inject
     private PermissionTreeSetup permissionTreeSetup;
 
+    @Inject
+    private TopMenuBar navBar;
+
+    @Inject
+    private ContentManagerI18n contentManagerI18n;
+
     @AfterInitialization
     public void startApp() {
+        // Sometimes, due to unknown reasons, the Displayer editor does not show all the attributes in the "Display" tab
+        // The fix is to force the DisplayerAttributeDef static fields to initialize on startup
         DisplayerAttributeDef def = DisplayerAttributeDef.TITLE;
 
+        // Rename perspectives to dashboards in CMS
+        //customizeCMSTexts();
+
         userSystemManager.waitForInitialization(() ->
-            dashboardManager.loadDashboards((t) -> {
-                permissionTreeSetup.configureTree();
-                setupMenus();
-                hideLoadingPopup();
-            }));
+            dashboardManager.loadDashboards(t ->
+                navigationManager.init(() -> {
+                    permissionTreeSetup.configureTree();
+                    initNavBar();
+                    hideLoadingPopup();
+                })
+            ));
     }
 
-    private void setupMenus() {
-        for (Menus roleMenus : getRoles()) {
-            userMenu.addMenus(roleMenus);
-        }
-        refreshMenus();
+    private void customizeCMSTexts() {
+        contentManagerI18n.setPerspectiveResourceName(constants.content_manager_dashboard());
+        contentManagerI18n.setPerspectivesResourceName(constants.content_manager_dashboards());
+        contentManagerI18n.setNoPerspectives(constants.content_manager_noDashboards());
     }
 
-    private void refreshMenus() {
-        menubar.clear();
-        menubar.addMenus(createMenuBar());
+    private void initNavBar() {
+        // Set the dashbuilder's default nav tree
+        navigationManager.setDefaultNavTree(NavTreeDefinitions.NAV_TREE_DEFAULT);
 
-        final Menus utilityMenus =
-                MenuFactory.newTopLevelCustomMenu(userMenu)
-                        .endMenu()
-                        .build();
-
-        utilityMenuBar.addMenus(utilityMenus);
-    }
-
-    private Menus createMenuBar() {
-        return newTopLevelMenu(constants.menu_home())
-                .perspective(HOME)
-                .endMenu().
-                newTopLevelMenu(constants.menu_gallery())
-                .perspective(GALLERY)
-                .endMenu().
-                newTopLevelMenu(constants.menu_administration())
-                .withItems(getAdministrationMenuItems())
-                .endMenu().
-                newTopLevelMenu(constants.menu_dashboards())
-                .withItems(getDashboardMenuItems())
-                .endMenu().
-                build();
-    }
-
-    private List<Menus> getRoles() {
-        final List<Menus> result = new ArrayList<Menus>(identity.getRoles().size());
-        result.add(MenuFactory.newSimpleItem(constants.logOut()).respondsWith(new LogoutCommand()).endMenu().build());
-        for (Role role : identity.getRoles()) {
-            if (!role.getName().equals( "IS_REMEMBER_ME")) {
-                result.add(MenuFactory.newSimpleItem(constants.role() + ": " + role.getName() ).endMenu().build());
-            }
-        }
-        return result;
-    }
-
-    private List<? extends MenuItem> getAdministrationMenuItems() {
-        final List<MenuItem> result = new ArrayList(4);
-        result.add(newMenuItem(constants.menu_security(), SECURITY));
-        result.add(newMenuItem(constants.menu_dataset_authoring(), DATA_SETS));
-        result.add(newMenuItem(constants.menu_extensions_plugins(), PLUGINS));
-        result.add(newMenuItem(constants.menu_extensions_apps(), APPS));
-        return result;
-    }
-
-    private List<? extends MenuItem> getDashboardMenuItems() {
-        final List<MenuItem> result = new ArrayList<>(2);
-
-        // Add the new dashboard creation link
-        result.add(MenuFactory.newSimpleItem(constants.menu_dashboards_new())
-                .respondsWith(getNewDashboardCommand())
-                .endMenu().build().getItems().get(0));
-
-        // Add hard-coded dashboard samples
-        result.add(newMenuItem(constants.menu_dashboards_salesdb(), SALES_DASHBOARD));
-        result.add(newMenuItem(constants.menu_dashboards_salesreports(), SALES_REPORTS));
-
-        // Add dashboards created in runtime
+        // Attach old existing dashboards (created with versions prior to 0.7) under the "dashboards" group
         for (DashboardPerspectiveActivity activity : dashboardManager.getDashboards()) {
-            result.add(newMenuItem(activity.getDisplayName(), activity.getIdentifier()));
+            String perspectiveId = activity.getIdentifier();
+            navigationManager.getNavTree().addItem(perspectiveId,
+                    activity.getDisplayName(),
+                    activity.getDisplayName(),
+                    NavTreeDefinitions.GROUP_DASHBOARDS, true,
+                    NavWorkbenchCtx.perspective(perspectiveId).toString());
         }
-
-        return result;
+        // Show the top menu bar
+        navBar.setOnItemSelectedCommand(onItemSelectedCommand);
+        navBar.setOnLogoutCommand(onLogoutCommand);
+        navBar.show(NavTreeDefinitions.GROUP_APP);
     }
 
-    private Command getNewDashboardCommand() {
-        return new Command() {
-            public void execute() {
-                newDashboardForm.init(new NewDashboardForm.Listener() {
-
-                    public void onOk(String name) {
-                        dashboardManager.newDashboard(name);
-                    }
-                    public void onCancel() {
-                    }
-                });
-            }
-        };
-    }
-
-    private void onDashboardCreatedEvent(@Observes DashboardCreatedEvent event) {
-        refreshMenus();
-
-        // Navigate to the activity after rebuilding the menu bar entries, if not, the activity perspective menus are override by uf and they do not appear.
-        placeManager.goTo(new DefaultPlaceRequest(event.getDashboardId()));
-        workbenchNotification.fire(new NotificationEvent(constants.notification_dashboard_created(event.getDashboardName()), INFO));
-    }
-
+    // Event coming from old dashboards (created with versions prior to 0.7)
     private void onDashboardDeletedEvent(@Observes DashboardDeletedEvent event) {
-        refreshMenus();
+        NavTree navTree = navigationManager.getNavTree();
+        navTree.deleteItem(event.getDashboardId());
+        navBar.show(NavTreeDefinitions.GROUP_APP);
         workbenchNotification.fire(new NotificationEvent(constants.notification_dashboard_deleted(event.getDashboardName()), INFO));
-    }
-
-    private MenuItem newMenuItem(String caption, final String activityId) {
-        return MenuFactory.newSimpleItem(caption)
-                .perspective(activityId)
-                .endMenu().build().getItems().get(0);
     }
 
     // Fade out the "Loading application" pop-up
@@ -237,19 +153,21 @@ public class ShowcaseEntryPoint {
         }.run( 500 );
     }
 
-    private class LogoutCommand implements Command {
+    private Command onItemSelectedCommand = () -> {
+        NavItem navItem = navBar.getItemSelected();
 
-        @Override
-        public void execute() {
-            authService.call(new RemoteCallback<Void>() {
-                @Override
-                public void callback(Void response) {
-                    final String location = GWT.getModuleBaseURL().replaceFirst( "/" + GWT.getModuleName() + "/", "/logout.jsp" );
-                    redirect( location );
-                }
-            }).logout();
+        String resourceId = NavWorkbenchCtx.get(navItem).getResourceId();
+        if (resourceId != null) {
+            placeManager.goTo(resourceId);
         }
-    }
+    };
+
+    private Command onLogoutCommand = () -> {
+        authService.call(r -> {
+            final String location = GWT.getModuleBaseURL().replaceFirst( "/" + GWT.getModuleName() + "/", "/logout.jsp" );
+            redirect( location );
+        }).logout();
+    };
 
     public static native void redirect( String url )/*-{
         $wnd.location = url;

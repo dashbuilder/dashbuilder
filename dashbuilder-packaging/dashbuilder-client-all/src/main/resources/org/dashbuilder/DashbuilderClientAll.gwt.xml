@@ -27,10 +27,13 @@
   <inherits name="org.dashbuilder.DatasetShared"/>
   <inherits name="org.dashbuilder.DatasetClient"/>
   <inherits name="org.dashbuilder.DataSetEditor"/>
+  <inherits name="org.dashbuilder.NavigationAPI"/>
 
   <inherits name="org.dashbuilder.DisplayerAPI"/>
   <inherits name="org.dashbuilder.DisplayerClient"/>
   <inherits name="org.dashbuilder.DisplayerScreen"/>
+  <inherits name="org.dashbuilder.NavigationClient"/>
+  <inherits name="org.dashbuilder.ContentManagerClient"/>
 
   <inherits name="org.dashbuilder.renderer.DefaultRenderer"/>
 

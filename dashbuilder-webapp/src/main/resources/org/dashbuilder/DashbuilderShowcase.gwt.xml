@@ -6,7 +6,6 @@
   <inherits name="org.uberfire.client.views.PatternFlyTheme"/>
 
   <inherits name="org.uberfire.ext.plugin.RuntimePluginClient"/>
-  <inherits name="org.uberfire.ext.apps.UberfireAppsClient"/>
   <inherits name="org.uberfire.ext.security.management.UberfireSecurityManagementWorkbench"/>
 
   <inherits name="org.dashbuilder.DashbuilderClientAll"/>
@@ -27,9 +26,6 @@
   <extend-property name="locale" values="ru"/>
 
   <collapse-property name="locale" values="*"/>
-
-  <!-- Application specific style sheet -->
-  <stylesheet src='css/uberfire-showcase.css'/>
 
   <!-- We don't need to support IE10 or older -->
   <!-- There is no "ie11" permutation. IE11 uses the Firefox one (gecko1_8) -->

@@ -19,6 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.dashbuilder.perspectives.PerspectiveIds;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -30,7 +31,7 @@ import org.uberfire.client.util.Layouts;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 @Templated
-@WorkbenchPerspective(identifier = "HomePerspective", isDefault = true)
+@WorkbenchPerspective(identifier = PerspectiveIds.HOME, isDefault = true)
 public class HomePerspective implements IsElement {
 
     @Inject

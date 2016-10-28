@@ -17,6 +17,10 @@ package org.dashbuilder.shared.dashboard.events;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 
+/**
+ * @deprecated Since version 0.7, dashboards are created from the Content Manager perspective. This class is
+ * still needed in order to deal with old dashboards created from existing installations.
+ */
 @Portable
 public class DashboardDeletedEvent {
 

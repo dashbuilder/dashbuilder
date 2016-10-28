@@ -27,7 +27,6 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.dashbuilder.displayer.client.PerspectiveCoordinator;
-import org.dashbuilder.shared.dashboard.events.DashboardCreatedEvent;
 import org.dashbuilder.shared.dashboard.events.DashboardDeletedEvent;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.SyncBeanDef;
@@ -39,12 +38,12 @@ import org.uberfire.client.mvp.ActivityBeansCache;
 import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.mvp.PerspectiveManager;
 import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.workbench.model.PerspectiveDefinition;
 
 /**
- * Dashboard manager
+ * @deprecated Since version 0.7, dashboards are created from the Content Manager perspective. This class is
+ * still needed in order to deal with old dashboards created from existing installations.
  */
 @ApplicationScoped
 public class DashboardManager {
@@ -54,7 +53,6 @@ public class DashboardManager {
     private PerspectiveManager perspectiveManager;
     private PerspectiveCoordinator perspectiveCoordinator;
     private ActivityBeansCache activityBeansCache;
-    private Event<DashboardCreatedEvent> dashboardCreatedEvent;
     private Event<DashboardDeletedEvent> dashboardDeletedEvent;
 
     @Inject
@@ -63,7 +61,6 @@ public class DashboardManager {
                             PerspectiveManager perspectiveManager,
                             PerspectiveCoordinator perspectiveCoordinator,
                             ActivityBeansCache activityBeansCache,
-                            Event<DashboardCreatedEvent> dashboardCreatedEvent,
                             Event<DashboardDeletedEvent> dashboardDeletedEvent) {
 
         this.beanManager = beanManager;
@@ -71,7 +68,6 @@ public class DashboardManager {
         this.perspectiveManager = perspectiveManager;
         this.perspectiveCoordinator = perspectiveCoordinator;
         this.activityBeansCache = activityBeansCache;
-        this.dashboardCreatedEvent = dashboardCreatedEvent;
         this.dashboardDeletedEvent = dashboardDeletedEvent;
     }
 
@@ -107,16 +103,6 @@ public class DashboardManager {
                                        true );
         beanManager.registerBean( beanDef );
         activityBeansCache.addNewPerspectiveActivity(beanManager.lookupBeans(id).iterator().next());
-        return activity;
-    }
-
-    public DashboardPerspectiveActivity newDashboard(final String name) {
-        final DashboardPerspectiveActivity activity = registerPerspective("dashboard-" + name);
-        perspectiveManager.savePerspectiveState(new Command() {
-            public void execute() {
-                dashboardCreatedEvent.fire(new DashboardCreatedEvent(activity.getIdentifier(), activity.getDisplayName()));
-            }
-        });
         return activity;
     }
 

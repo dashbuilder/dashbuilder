@@ -46,7 +46,7 @@ public interface AppConstants extends Messages {
 
     String menu_dashboards_new();
 
-    String menu_extensions_plugins();
+    String menu_content_manager();
 
     String menu_extensions_apps();
 
@@ -861,4 +861,9 @@ public interface AppConstants extends Messages {
 
     String salesopps_displayers_all_list_title();
 
+    String content_manager_dashboard();
+
+    String content_manager_dashboards();
+
+    String content_manager_noDashboards();
 }

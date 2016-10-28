@@ -19,10 +19,11 @@ package org.dashbuilder.client.security;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.dashbuilder.client.cms.resources.i18n.ContentManagerI18n;
 import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.uberfire.client.authz.PerspectiveTreeProvider;
 
-import static org.dashbuilder.client.perspectives.PerspectiveIds.*;
+import static org.dashbuilder.perspectives.PerspectiveIds.*;
 
 /**
  * This is an example of how to customize some of the permission tree nodes.
@@ -32,26 +33,32 @@ public class PermissionTreeSetup {
 
     private PerspectiveTreeProvider perspectiveTreeProvider;
     private AppConstants i18n = AppConstants.INSTANCE;
+    private ContentManagerI18n cmsI18n;
 
     public PermissionTreeSetup() {
     }
 
     @Inject
-    public PermissionTreeSetup(PerspectiveTreeProvider perspectiveTreeProvider) {
+    public PermissionTreeSetup(PerspectiveTreeProvider perspectiveTreeProvider, ContentManagerI18n cmsI18n) {
         this.perspectiveTreeProvider = perspectiveTreeProvider;
+        this.cmsI18n = cmsI18n;
     }
 
     public void configureTree() {
         perspectiveTreeProvider.setPerspectiveName(HOME, i18n.menu_home());
         perspectiveTreeProvider.setPerspectiveName(DATA_SETS, i18n.menu_dataset_authoring());
         perspectiveTreeProvider.setPerspectiveName(GALLERY, i18n.menu_gallery());
-        perspectiveTreeProvider.setPerspectiveName(PLUGINS, i18n.menu_extensions_plugins());
-        perspectiveTreeProvider.setPerspectiveName(APPS, i18n.menu_extensions_apps());
+        perspectiveTreeProvider.setPerspectiveName(CONTENT_MANAGER, i18n.menu_content_manager());
         perspectiveTreeProvider.setPerspectiveName(SECURITY, i18n.menu_security());
         perspectiveTreeProvider.setPerspectiveName(SALES_DASHBOARD, i18n.menu_dashboards_salesdb());
         perspectiveTreeProvider.setPerspectiveName(SALES_REPORTS, i18n.menu_dashboards_salesreports());
 
         // Exclude some perspectives
         perspectiveTreeProvider.excludePerspectiveId("StandaloneEditorPerspective"); /* uberfire */
+        perspectiveTreeProvider.excludePerspectiveId(APPS); /* uberfire */
+        perspectiveTreeProvider.excludePerspectiveId(PLUGINS); /* uberfire */
+
+        // Rename perspective to dashboard in CMS
+        //perspectiveTreeProvider.setResourceName(cmsI18n.capitalizeFirst(cmsI18n.getPerspectiveResourceName()));
     }
 }
