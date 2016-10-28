@@ -10,9 +10,8 @@
 		* [Validation](#validation)
 		* [Use cases](#use-cases)
 			* [Backends](#backends)
-			* [Frontends](#frontends)
-		* [Domain model](#domain-model)
-	* [Members and Contribution](#members-contribution)
+		* [Domain Model](#domain-model)
+	* [Members and Contribution](#members-and-contribution)
 		
 ## Introduction
 
@@ -45,6 +44,21 @@ Besides there are planned upcoming features, the release schedule isn't very str
 
 ### Use Cases
 
+Dashbuilder, in order to read data from other sources, needs to extended. This is done through the use of extensions, in this case **backend**.
+This type of extension is installed separately from Dashbuilder and it can extend the server's functionality in multiple ways.
+
+<img src="./images/usecases/uc1.png" width="600" />
+
+#### Backends
+
+The main purpose of a backend is to provide Dashbuilder more data, increasing its library size.
+
+You, first, must create a **data provider** in order to gather information from any system, either a database, a file or any other and transform it to the internal in-memory representation for building dashboards.
+
+<img src="./images/usecases/uc2.png" width="600" />
+
+
+### Domain Model
 
 
 ## Members and Contribution
