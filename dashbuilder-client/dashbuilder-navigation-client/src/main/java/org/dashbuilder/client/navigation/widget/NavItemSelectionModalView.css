@@ -1,0 +1,16 @@
+.navitem-selector-body {
+    margin: 15px;
+}
+.navitem-selector-button {
+    min-width: 200px;
+    text-align: left;
+}
+.navitem-selector-menu {
+    margin-left: 20px;
+    min-width: 200px;
+}
+.navitem-selector-caret {
+    float: right;
+    margin-top: 5px;
+}
+

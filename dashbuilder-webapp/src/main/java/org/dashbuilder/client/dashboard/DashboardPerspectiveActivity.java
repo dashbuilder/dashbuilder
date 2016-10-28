@@ -47,7 +47,8 @@ import org.uberfire.workbench.model.menu.Menus;
 import org.uberfire.workbench.model.toolbar.ToolBar;
 
 /**
- * The dashboard composer perspective.
+ * @deprecated Since version 0.7, dashboards are created from the Content Manager perspective. This class is
+ * still needed in order to deal with old dashboards created from existing installations.
  */
 public class DashboardPerspectiveActivity implements PerspectiveActivity {
 

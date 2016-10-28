@@ -71,6 +71,16 @@
       <artifactId>dashbuilder-renderer-default</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-navigation-client</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-cms-client</artifactId>
+    </dependency>
+
   </dependencies>
 
 </project>

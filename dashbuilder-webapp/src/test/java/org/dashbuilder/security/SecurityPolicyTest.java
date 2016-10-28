@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.enterprise.event.Event;
 
+import org.dashbuilder.perspectives.PerspectiveIds;
 import org.jboss.errai.security.shared.api.Role;
 import org.jboss.errai.security.shared.api.RoleImpl;
 import org.junit.Before;
@@ -48,7 +49,7 @@ import static org.uberfire.security.authz.AuthorizationResult.*;
 @RunWith(MockitoJUnitRunner.class)
 public class SecurityPolicyTest {
 
-    static final String HOME_PERSPECTIVE = "HomePerspective";
+    static final String HOME_PERSPECTIVE = PerspectiveIds.HOME;
 
     static final List<String> DEFAULT_DENIED = Arrays.asList(
             "perspective.read",

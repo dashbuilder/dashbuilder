@@ -37,6 +37,11 @@ Architecture
 Change log
 ==========
 
+0.6.0.Final
+
+* New perspective for the authoring of new application pages and configuring the navigation menus.
+ (Content Management Perspective => [https://issues.jboss.org/browse/DASHBUILDE-166](https://issues.jboss.org/browse/DASHBUILDE-166))
+
 0.4.0.Final
 
 * User interface upgraded to Bootstrap3/PatternFly
