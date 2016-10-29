@@ -15,8 +15,9 @@
 		
 ## Introduction
 
-Dashbuilder is a web app written in Java which allows non-technical users to visually create business dashboards. It was made to be customizable so that users can shape it the way they want it.
-
+The **requirements** is the first step in software development. The development team needs them to start working on the project since they are responsible for the description of the system. The requirements are based in system characteristics that satisfy the client.
+They start with the **elicitation** based on the customers needs. Then, that information goes through **analysis** and **specification** in which the documentation of the requirements is done. That documentation is verified by the team and the requirements are scheduled and distributed by the developers (**validation**). 
+When this process doesn't go as pretended(example: incomplete requirements) the system will not be able to satisfy the clients and, probably, the project development will be more expensive.
 
 ## Requirements
 
