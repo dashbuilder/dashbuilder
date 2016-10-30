@@ -51,6 +51,8 @@ This type of extension is installed separately from Dashbuilder and it can exten
 
 <img src="./images/usecases/uc1.png" width="600" />
 
+<img src="./images/usecases/uc4.png" width="600" />
+
 
 #### Backends
 
@@ -63,15 +65,15 @@ You, first, must create a **data provider** in order to gather information from 
 
 ### Domain Model
 
-
 <img src="./images/domain_model.png" width="638" height="526" />
+
 
 ## Members and Contribution
 
-Gustavo Faria		
+Gustavo Faria	30%
 	
-Luis Spinola		
+Luis Spinola	10%	
 	
-João Duarte		
+João Duarte		30%
 	
-Nuno Pinto		
+Nuno Pinto		30%
