@@ -64,6 +64,8 @@ You, first, must create a **data provider** in order to gather information from 
 ### Domain Model
 
 
+<img src="./images/domain_model.png" width="638" height="526" />
+
 ## Members and Contribution
 
 Gustavo Faria		
