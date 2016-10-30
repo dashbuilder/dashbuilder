@@ -15,8 +15,9 @@
 		
 ## Introduction
 
-The **requirements** is the first step in software development. They are based in the system characteristics in order to satisfy the client's needs, **elicitation**.
-Then that information goes through **analysis** and **specification** in which the requirements' documentation is done and verified, and the requirements are scheduled and distributed by the developers, **validation**.
+The **requirements** is the first step in the software development. They are based in system characteristics in order to satisfy the client's needs, **elicitation**.
+The second step is to process that information, and it goes through **analysis** and **specification** in which the requirements' documentation is done and verified. Finally, this stages are put all together and demonstrate that the requirements define what the customer really wants, **validation**.
+
 
 ## Requirements
 
