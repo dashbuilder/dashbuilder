@@ -15,8 +15,8 @@
 		
 ## Introduction
 
-Dashbuilder is a web app written in Java which allows non-technical users to visually create business dashboards. It was made to be customizable so that users can shape it the way they want it.
-
+The **requirements** is the first step in software development. They are based in the system characteristics in order to satisfy the client's needs, **elicitation**.
+Then that information goes through **analysis** and **specification** in which the requirements' documentation is done and verified, and the requirements are scheduled and distributed by the developers, **validation**.
 
 ## Requirements
 
@@ -39,7 +39,8 @@ Dashbuilder has a SRS (Software Requirements Specification) document and a user 
 
 ### Validation
 
-Besides there are planned upcoming features, the release schedule isn't very strict. Contributors can suggest new features which can prevail to the preview upcoming features, eventhough it is not easy to achieve. Those features are subject to a Beta version before the final release.
+Besides there are planned upcoming features, the release schedule isn't very strict. Contributors can suggest new features which can prevail to the preview upcoming features, eventhough it is not easy to achieve. 
+Those new features are subject to a Beta version before the final release.
 
 
 ### Use Cases
@@ -48,6 +49,7 @@ Dashbuilder, in order to read data from other sources, needs to extended. This i
 This type of extension is installed separately from Dashbuilder and it can extend the server's functionality in multiple ways.
 
 <img src="./images/usecases/uc1.png" width="600" />
+
 
 #### Backends
 
@@ -63,10 +65,10 @@ You, first, must create a **data provider** in order to gather information from 
 
 ## Members and Contribution
 
-	Gustavo Faria		
+Gustavo Faria		
 	
-	Luis Spinola		
+Luis Spinola		
 	
-	João Duarte		
+João Duarte		
 	
-	Nuno Pinto		
+Nuno Pinto		
