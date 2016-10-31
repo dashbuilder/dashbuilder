@@ -39,8 +39,11 @@
     <jboss.releases.repo.url>https://origin-repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
     <jboss.snapshots.repo.url>https://origin-repository.jboss.org/nexus/content/repositories/snapshots/</jboss.snapshots.repo.url>
     <!-- Used by maven-enforcer-plugin -->
-    <!-- IMPORTANT: JDK8 is needed to build the projects (to support also WildFly 10), but we still do support JDK6/JDK7 for all backend modules. -->
+    <!-- IMPORTANT: JDK8 is needed to build the projects (to support also WildFly 10), but we still do support JDK7 for all backend modules. -->
     <jdk.min.version>1.8</jdk.min.version>
+    <!-- Override Java source/target to be 1.7 -->
+    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.7</maven.compiler.source>
   </properties>
 
   <scm>
@@ -403,7 +406,7 @@
           <artifactId>maven-javadoc-plugin</artifactId>
           <configuration>
             <links>
-              <link>http://docs.oracle.com/javase/6/docs/api</link>
+              <link>http://docs.oracle.com/javase/7/docs/api</link>
             </links>
             <minmemory>128m</minmemory>
             <maxmemory>512m</maxmemory>
