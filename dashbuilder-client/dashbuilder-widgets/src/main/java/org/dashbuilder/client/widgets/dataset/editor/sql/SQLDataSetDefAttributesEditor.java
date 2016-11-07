@@ -95,7 +95,7 @@ public class SQLDataSetDefAttributesEditor implements IsWidget, org.dashbuilder.
 
         dataSource.addHelpContent(DataSetEditorConstants.INSTANCE.sql_datasource(),
                 DataSetEditorConstants.INSTANCE.sql_datasource_description(),
-                Placement.BOTTOM);
+                Placement.RIGHT); //bottom placement would interfere with the dropdown
         dbSchema.addHelpContent(DataSetEditorConstants.INSTANCE.sql_schema(),
                 DataSetEditorConstants.INSTANCE.sql_schema_description(),
                 Placement.BOTTOM);
