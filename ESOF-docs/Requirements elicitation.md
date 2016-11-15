@@ -51,7 +51,7 @@ This type of extension is installed separately from Dashbuilder and it can exten
 
 <img src="./images/usecases/uc1.png" width="600" />
 
-<img src="./images/usecases/uc4.png" width="600" />
+<img src="./images/usecases/uc4.png" width="750" />
 
 
 #### Backends
