@@ -25,8 +25,8 @@ import java.util.Map;
 
 public class BeanDataSetDef extends DataSetDef {
 
-    @NotNull(message = "{dataSetApi_beanDataSetDef_generatorClass_notNull}", groups = {BeanDataSetDefValidation.class})
-    @Size(min = 1, message = "{dataSetApi_beanDataSetDef_generatorClass_notNull}", groups = {BeanDataSetDefValidation.class})
+    @NotNull(groups = {BeanDataSetDefValidation.class})
+    @Size(min = 1, groups = {BeanDataSetDefValidation.class})
     protected String generatorClass;
     protected Map<String,String> paramaterMap = new HashMap<String,String>();
 
@@ -87,7 +87,7 @@ public class BeanDataSetDef extends DataSetDef {
         def.setParamaterMap(getParamaterMap());
         return def;
     }
-    
+
     public String toString() {
         StringBuilder out = new StringBuilder();
         out.append("UUID=").append(UUID).append("\n");

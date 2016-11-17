@@ -15,6 +15,12 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.workflow.create;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+
 import org.dashbuilder.client.widgets.dataset.editor.DataSetDefProviderTypeEditor;
 import org.dashbuilder.client.widgets.dataset.editor.driver.DataSetDefProviderTypeDriver;
 import org.dashbuilder.client.widgets.dataset.editor.workflow.DataSetEditorWorkflow;
@@ -24,21 +30,15 @@ import org.dashbuilder.client.widgets.dataset.event.TestDataSetRequestEvent;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.validations.dataset.DataSetDefValidator;
+import org.dashbuilder.validations.DataSetValidatorProvider;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.uberfire.mvp.Command;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
 
 
 /**
  * <p>Data Set Editor workflow presenter for creating a data set definition instance by selecting the provider type.</p>
- * 
- * @since 0.4.0 
+ *
+ * @since 0.4.0
  */
 @Dependent
 public class DataSetProviderTypeWorkflow extends DataSetEditorWorkflow<DataSetDef> {
@@ -48,17 +48,17 @@ public class DataSetProviderTypeWorkflow extends DataSetEditorWorkflow<DataSetDe
 
     @Inject
     public DataSetProviderTypeWorkflow(final DataSetClientServices clientServices,
-                                       final DataSetDefValidator dataSetDefValidator,
+                                       final DataSetValidatorProvider validatorProvider,
                                        final SyncBeanManager beanManager,
                                        final DataSetDefProviderTypeEditor providerTypeEditor,
                                        final Event<SaveRequestEvent> saveRequestEvent,
                                        final Event<CancelRequestEvent> cancelRequestEvent,
                                        final Event<TestDataSetRequestEvent> testDataSetEvent,
                                        final View view) {
-        
-        super(clientServices, dataSetDefValidator, beanManager,
+
+        super(clientServices, validatorProvider, beanManager,
                 saveRequestEvent, testDataSetEvent, cancelRequestEvent, view);
-        
+
         this.providerTypeEditor = providerTypeEditor;
     }
 
@@ -82,7 +82,7 @@ public class DataSetProviderTypeWorkflow extends DataSetEditorWorkflow<DataSetDe
     public DataSetProviderTypeWorkflow providerTypeEdition() {
         checkDataSetDefNotNull();
 
-        // Provider type editor driver edition. 
+        // Provider type editor driver edition.
         dataSetDefProviderTypeDriver = beanManager.lookupBean(DataSetDefProviderTypeDriver.class).newInstance();
         dataSetDefProviderTypeDriver.initialize(providerTypeEditor);
         dataSetDefProviderTypeDriver.edit(getDataSetDef());
@@ -97,7 +97,7 @@ public class DataSetProviderTypeWorkflow extends DataSetEditorWorkflow<DataSetDe
         this.stepValidator = new Command() {
             @Override
             public void execute() {
-                Iterable<ConstraintViolation<?>> violations = dataSetDefValidator.validateProviderType(getDataSetDef());
+                Iterable<ConstraintViolation<?>> violations = validatorProvider.validateProviderType( getDataSetDef());
                 dataSetDefProviderTypeDriver.setConstraintViolations(violations);
                 addViolations(violations);
             }
