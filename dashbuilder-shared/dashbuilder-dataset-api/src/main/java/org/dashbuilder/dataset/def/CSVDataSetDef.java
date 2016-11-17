@@ -26,23 +26,23 @@ import javax.validation.constraints.Size;
 
 public class CSVDataSetDef extends DataSetDef {
 
-    @NotNull(message = "{dataSetApi_csvDataSetDef_fileURL_notNull}", groups = {CSVDataSetDefFileURLValidation.class})
-    @Size(min = 1, message = "{dataSetApi_csvDataSetDef_fileURL_notNull}", groups = {CSVDataSetDefFileURLValidation.class})
+    @NotNull(groups = {CSVDataSetDefFileURLValidation.class})
+    @Size(min = 1, groups = {CSVDataSetDefFileURLValidation.class})
     protected String fileURL;
-    @NotNull(message = "{dataSetApi_csvDataSetDef_filePath_notNull}", groups = {CSVDataSetDefFilePathValidation.class})
-    @Size(min = 1, message = "{dataSetApi_csvDataSetDef_filePath_notNull}", groups = {CSVDataSetDefFilePathValidation.class})
+    @NotNull(groups = {CSVDataSetDefFilePathValidation.class})
+    @Size(min = 1, groups = {CSVDataSetDefFilePathValidation.class})
     protected String filePath;
-    @NotNull(message = "{dataSetApi_csvDataSetDef_sepChar_notNull}", groups = {CSVDataSetDefValidation.class})
+    @NotNull(groups = {CSVDataSetDefValidation.class})
     protected Character separatorChar;
-    @NotNull(message = "{dataSetApi_csvDataSetDef_quoteChar_notNull}", groups = {CSVDataSetDefValidation.class})
+    @NotNull(groups = {CSVDataSetDefValidation.class})
     protected Character quoteChar;
-    @NotNull(message = "{dataSetApi_csvDataSetDef_escapeChar_notNull}", groups = {CSVDataSetDefValidation.class})
+    @NotNull(groups = {CSVDataSetDefValidation.class})
     protected Character escapeChar;
-    @NotNull(message = "{dataSetApi_csvDataSetDef_datePattern_notNull}", groups = {CSVDataSetDefValidation.class})
-    @Size(min = 1, message = "{dataSetApi_csvDataSetDef_datePattern_notNull}", groups = {CSVDataSetDefValidation.class})
+    @NotNull(groups = {CSVDataSetDefValidation.class})
+    @Size(min = 1, groups = {CSVDataSetDefValidation.class})
     protected String datePattern = "MM-dd-yyyy HH:mm:ss";
-    @NotNull(message = "{dataSetApi_csvDataSetDef_numberPattern_notNull}", groups = {CSVDataSetDefValidation.class})
-    @Size(min = 1, message = "{dataSetApi_csvDataSetDef_numberPattern_notNull}", groups = {CSVDataSetDefValidation.class})
+    @NotNull(groups = {CSVDataSetDefValidation.class})
+    @Size(min = 1, groups = {CSVDataSetDefValidation.class})
     protected String numberPattern = "#,###.##";
 
     public CSVDataSetDef() {
@@ -188,7 +188,7 @@ public class CSVDataSetDef extends DataSetDef {
         def.setNumberPattern(getNumberPattern());
         return def;
     }
-    
+
     public String toString() {
         StringBuilder out = new StringBuilder();
         out.append("File=");
