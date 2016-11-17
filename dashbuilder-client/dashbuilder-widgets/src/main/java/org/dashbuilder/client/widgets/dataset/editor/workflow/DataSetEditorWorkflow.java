@@ -31,7 +31,7 @@ import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.displayer.client.DataSetEditHandler;
 import org.dashbuilder.displayer.client.DataSetHandler;
-import org.dashbuilder.validations.dataset.DataSetDefValidator;
+import org.dashbuilder.validations.DataSetValidatorProvider;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.Command;
@@ -46,8 +46,8 @@ import java.util.Iterator;
 
 /**
  * <p>Data Set Editor workflow presenter.</p>
- * 
- * @since 0.4.0 
+ *
+ * @since 0.4.0
  */
 public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsWidget {
 
@@ -58,7 +58,7 @@ public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsW
         View addButton(final String text, final String content, final boolean isPrimary, final Command clickCommand);
 
         View clearButtons();
-        
+
         View clearView();
 
     }
@@ -68,7 +68,7 @@ public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsW
      **/
     protected SyncBeanManager beanManager;
     protected DataSetClientServices clientServices;
-    protected DataSetDefValidator dataSetDefValidator;
+    protected DataSetValidatorProvider validatorProvider;
     protected Event<SaveRequestEvent> saveRequestEvent;
     protected Event<TestDataSetRequestEvent> testDataSetEvent;
     protected Event<CancelRequestEvent> cancelRequestEvent;
@@ -84,14 +84,14 @@ public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsW
 
     @Inject
     public DataSetEditorWorkflow(final DataSetClientServices clientServices,
-                                 final DataSetDefValidator dataSetDefValidator,
+                                 final DataSetValidatorProvider validatorProvider,
                                  final SyncBeanManager beanManager,
                                  final Event<SaveRequestEvent> saveRequestEvent,
                                  final Event<TestDataSetRequestEvent> testDataSetEvent,
                                  final Event<CancelRequestEvent> cancelRequestEvent,
                                  final View view) {
         this.clientServices = clientServices;
-        this.dataSetDefValidator = dataSetDefValidator;
+        this.validatorProvider = validatorProvider;
         this.beanManager = beanManager;
         this.saveRequestEvent = saveRequestEvent;
         this.cancelRequestEvent = cancelRequestEvent;
@@ -102,7 +102,7 @@ public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsW
     public void init() {
         view.init(this);
     }
-    
+
     public interface TestDataSetCallback {
         void onSuccess(DataSet dataSet);
         void onError(ClientRuntimeError error);
@@ -110,11 +110,11 @@ public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsW
 
     /**
      * <p>Test the data set connection and obtain the preview result.</p>
-     * 
+     *
      */
     public void testDataSet(final TestDataSetCallback testDataSetCallback) {
         checkDataSetDefNotNull();
-        
+
         // Reset columns and filter configuration.
         getDataSetDef().setAllColumnsEnabled(true);
         getDataSetDef().setColumns(null);
@@ -122,7 +122,7 @@ public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsW
 
         DataSetDef editCloneWithoutCacheSettings = getDataSetDef().clone();
         editCloneWithoutCacheSettings.setCacheEnabled(false);
-        
+
         final DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
                 .dataset(dataSetDef.getUUID())
                 .rowOffset(0)
@@ -151,8 +151,8 @@ public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsW
         } catch (final Exception e) {
             testDataSetCallback.onError(new ClientRuntimeError(e));
         }
-        
-        
+
+
     }
 
     public DataSetEditorWorkflow flush() {
@@ -161,7 +161,7 @@ public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsW
         }
         return this;
     }
-    
+
     public DataSetEditorWorkflow showNextButton() {
         view.addButton(DataSetEditorConstants.INSTANCE.next(), DataSetEditorConstants.INSTANCE.next_description(), true,
                 saveButtonCommand);
@@ -202,7 +202,7 @@ public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsW
         checkDataSetDefNotNull();
 
         this.violations.clear();
-        
+
         driver.flush();
         afterFlush();
 
@@ -211,7 +211,7 @@ public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsW
             stepValidator.execute();
         }
     }
-    
+
     protected void afterFlush() {
         // Override by typed sub-classes to perform specific data set definition flush constraints that depends on the editor state.
     }
@@ -225,7 +225,7 @@ public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsW
             }
         }
     }
-    
+
     public DataSetEditorWorkflow clear() {
         this.dataSetDef = null;
         this.flushCommand = null;
@@ -238,7 +238,7 @@ public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsW
     protected void checkDataSetDefNotNull() {
         checkDataSetDefNotNull(dataSetDef);
     }
-    
+
     protected void checkDataSetDefNotNull(final T def) {
         if (def == null) {
             throw new RuntimeException("Must call edit() before using the data set definition editor workflow methods.");

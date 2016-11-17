@@ -15,44 +15,49 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.workflow.create;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import org.dashbuilder.client.widgets.dataset.editor.attributes.DataSetDefBasicAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.driver.SQLDataSetDefAttributesDriver;
 import org.dashbuilder.client.widgets.dataset.event.CancelRequestEvent;
 import org.dashbuilder.client.widgets.dataset.event.SaveRequestEvent;
 import org.dashbuilder.client.widgets.dataset.event.TestDataSetRequestEvent;
-import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.editor.SQLDataSetDefAttributesEditor;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
-import org.dashbuilder.validations.dataset.DataSetDefValidator;
+import org.dashbuilder.validations.DataSetValidatorProvider;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
 
 
 /**
  * <p>SQL Data Set Editor workflow presenter for setting data set definition basic attributes.</p>
- * 
- * @since 0.4.0 
+ * @since 0.4.0
  */
 @Dependent
 public class SQLDataSetBasicAttributesWorkflow extends DataSetBasicAttributesWorkflow<SQLDataSetDef, SQLDataSetDefAttributesEditor> {
 
     @Inject
-    public SQLDataSetBasicAttributesWorkflow(final DataSetClientServices clientServices,
-                                             final DataSetDefValidator dataSetDefValidator,
-                                             final SyncBeanManager beanManager,
-                                             final DataSetDefBasicAttributesEditor basicAttributesEditor,
-                                             final Event<SaveRequestEvent> saveRequestEvent,
-                                             final Event<TestDataSetRequestEvent> testDataSetEvent,
-                                             final Event<CancelRequestEvent> cancelRequestEvent,
-                                             final View view) {
+    public SQLDataSetBasicAttributesWorkflow( final DataSetClientServices clientServices,
+                                              final DataSetValidatorProvider validatorProvider,
+                                              final SyncBeanManager beanManager,
+                                              final DataSetDefBasicAttributesEditor basicAttributesEditor,
+                                              final Event<SaveRequestEvent> saveRequestEvent,
+                                              final Event<TestDataSetRequestEvent> testDataSetEvent,
+                                              final Event<CancelRequestEvent> cancelRequestEvent,
+                                              final View view ) {
 
-        super(clientServices, dataSetDefValidator, beanManager, basicAttributesEditor, saveRequestEvent, testDataSetEvent, cancelRequestEvent, view);
+        super( clientServices,
+               validatorProvider,
+               beanManager,
+               basicAttributesEditor,
+               saveRequestEvent,
+               testDataSetEvent,
+               cancelRequestEvent,
+               view );
     }
 
 
@@ -68,16 +73,16 @@ public class SQLDataSetBasicAttributesWorkflow extends DataSetBasicAttributesWor
 
     @Override
     protected Iterable<ConstraintViolation<?>> validate() {
-        return dataSetDefValidator.validatorFor(DataSetProviderType.SQL).validateAttributes(getDataSetDef(), editor.isUsingQuery());
+        return validatorProvider.validateAttributes( getDataSetDef(), editor.isUsingQuery() );
     }
 
     @Override
     protected void afterFlush() {
         super.afterFlush();
-        if (editor.isUsingQuery()) {
-            dataSetDef.setDbTable(null);
+        if ( editor.isUsingQuery() ) {
+            dataSetDef.setDbTable( null );
         } else {
-            dataSetDef.setDbSQL(null);
+            dataSetDef.setDbSQL( null );
         }
     }
 }
