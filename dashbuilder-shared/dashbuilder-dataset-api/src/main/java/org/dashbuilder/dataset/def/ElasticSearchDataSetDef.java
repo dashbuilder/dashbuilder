@@ -70,8 +70,8 @@ public class ElasticSearchDataSetDef extends DataSetDef {
     }
 
     // Data Set user parameters.
-    @NotNull(groups = {ElasticSearchDataSetDefValidation.class})
-    @Size(min = 1, groups = {ElasticSearchDataSetDefValidation.class})
+    @NotNull(message = "{dataSetApi_elDataSetDef_serverURL_notNull}", groups = {ElasticSearchDataSetDefValidation.class})
+    @Size(min = 1, message = "{dataSetApi_elDataSetDef_serverURL_notNull}", groups = {ElasticSearchDataSetDefValidation.class})
     protected String serverURL;
 
     protected String clusterName;
@@ -79,8 +79,8 @@ public class ElasticSearchDataSetDef extends DataSetDef {
     /**
      * Index/es to query. Can handle multiple values, comma separated.
      */
-    @NotNull(groups = {ElasticSearchDataSetDefValidation.class})
-    @Size(min = 1, groups = {ElasticSearchDataSetDefValidation.class})
+    @NotNull(message = "{dataSetApi_elDataSetDef_index_notNull}", groups = {ElasticSearchDataSetDefValidation.class})
+    @Size(min = 1, message = "{dataSetApi_elDataSetDef_index_notNull}", groups = {ElasticSearchDataSetDefValidation.class})
     protected String index;
 
     /**

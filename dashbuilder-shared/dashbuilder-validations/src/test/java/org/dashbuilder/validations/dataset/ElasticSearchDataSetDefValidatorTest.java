@@ -2,12 +2,7 @@ package org.dashbuilder.validations.dataset;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
-import org.dashbuilder.dataset.validation.groups.DataSetDefBasicAttributesGroup;
-import org.dashbuilder.dataset.validation.groups.DataSetDefCacheRowsValidation;
-import org.dashbuilder.dataset.validation.groups.DataSetDefProviderTypeGroup;
-import org.dashbuilder.dataset.validation.groups.DataSetDefPushSizeValidation;
-import org.dashbuilder.dataset.validation.groups.DataSetDefRefreshIntervalValidation;
-import org.dashbuilder.dataset.validation.groups.ElasticSearchDataSetDefValidation;
+import org.dashbuilder.dataset.validation.groups.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,16 +17,17 @@ public class ElasticSearchDataSetDefValidatorTest extends AbstractValidationTest
     ElasticSearchDataSetDef elasticSearchDataSetDef;
     private ElasticSearchDataSetDefValidator tested;
 
-
+     
     @Before
     public void setup() {
         super.setup();
-        tested = spy(new ElasticSearchDataSetDefValidator( validator ));
+        tested = spy(new ElasticSearchDataSetDefValidator());
+        doReturn(validator).when(tested).getDashbuilderValidator();
     }
-
+    
     @Test
     public void testValidateAttributes() {
-        tested.validateCustomAttributes( elasticSearchDataSetDef);
+        tested.validateAttributes(elasticSearchDataSetDef);
         verify(validator, times(1)).validate(elasticSearchDataSetDef, ElasticSearchDataSetDefValidation.class);
     }
 
@@ -41,7 +37,7 @@ public class ElasticSearchDataSetDefValidatorTest extends AbstractValidationTest
         final boolean isPushEnabled = true;
         final boolean isRefreshEnabled = true;
         tested.validate(elasticSearchDataSetDef, isCacheEnabled, isPushEnabled, isRefreshEnabled);
-        verify(validator, times(1)).validate(elasticSearchDataSetDef,
+        verify(validator, times(1)).validate(elasticSearchDataSetDef, 
                 DataSetDefBasicAttributesGroup.class,
                 DataSetDefProviderTypeGroup.class,
                 DataSetDefCacheRowsValidation.class,
@@ -91,5 +87,5 @@ public class ElasticSearchDataSetDefValidatorTest extends AbstractValidationTest
                 DataSetDefPushSizeValidation.class,
                 ElasticSearchDataSetDefValidation.class);
     }
-
+    
 }

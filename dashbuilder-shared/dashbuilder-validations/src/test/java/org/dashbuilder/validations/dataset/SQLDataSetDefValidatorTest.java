@@ -2,14 +2,7 @@ package org.dashbuilder.validations.dataset;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
-import org.dashbuilder.dataset.validation.groups.DataSetDefBasicAttributesGroup;
-import org.dashbuilder.dataset.validation.groups.DataSetDefCacheRowsValidation;
-import org.dashbuilder.dataset.validation.groups.DataSetDefProviderTypeGroup;
-import org.dashbuilder.dataset.validation.groups.DataSetDefPushSizeValidation;
-import org.dashbuilder.dataset.validation.groups.DataSetDefRefreshIntervalValidation;
-import org.dashbuilder.dataset.validation.groups.SQLDataSetDefDbSQLValidation;
-import org.dashbuilder.dataset.validation.groups.SQLDataSetDefDbTableValidation;
-import org.dashbuilder.dataset.validation.groups.SQLDataSetDefValidation;
+import org.dashbuilder.dataset.validation.groups.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,24 +16,25 @@ public class SQLDataSetDefValidatorTest extends AbstractValidationTest {
     @Mock SQLDataSetDef sqlDataSetDef;
     private SQLDataSetDefValidator tested;
 
-
+     
     @Before
     public void setup() {
         super.setup();
-        tested = spy(new SQLDataSetDefValidator( validator ));
+        tested = spy(new SQLDataSetDefValidator());
+        doReturn(validator).when(tested).getDashbuilderValidator();
     }
-
+    
     @Test
     public void testValidateAttributesUsingQuery() {
         final boolean isUsingQuery = true;
-        tested.validateCustomAttributes( sqlDataSetDef, isUsingQuery);
+        tested.validateAttributes(sqlDataSetDef, isUsingQuery);
         verify(validator, times(1)).validate(sqlDataSetDef, SQLDataSetDefValidation.class, SQLDataSetDefDbSQLValidation.class);
     }
 
     @Test
     public void testValidateAttributesUsingTable() {
         final boolean isUsingQuery = false;
-        tested.validateCustomAttributes( sqlDataSetDef, isUsingQuery);
+        tested.validateAttributes(sqlDataSetDef, isUsingQuery);
         verify(validator, times(1)).validate(sqlDataSetDef, SQLDataSetDefValidation.class, SQLDataSetDefDbTableValidation.class);
     }
 
@@ -52,13 +46,13 @@ public class SQLDataSetDefValidatorTest extends AbstractValidationTest {
         final boolean isRefreshEnabled = true;
         final boolean isUsingQuery = true;
         tested.validate(sqlDataSetDef, isCacheEnabled, isPushEnabled, isRefreshEnabled, isUsingQuery);
-        verify(validator, times(1)).validate(sqlDataSetDef,
+        verify(validator, times(1)).validate(sqlDataSetDef, 
                 DataSetDefBasicAttributesGroup.class,
                 DataSetDefProviderTypeGroup.class,
                 DataSetDefCacheRowsValidation.class,
                 DataSetDefPushSizeValidation.class,
                 DataSetDefRefreshIntervalValidation.class,
-                SQLDataSetDefValidation.class,
+                SQLDataSetDefValidation.class, 
                 SQLDataSetDefDbSQLValidation.class);
     }
 
@@ -126,5 +120,5 @@ public class SQLDataSetDefValidatorTest extends AbstractValidationTest {
                 SQLDataSetDefValidation.class,
                 SQLDataSetDefDbTableValidation.class);
     }
-
+    
 }

@@ -2,14 +2,7 @@ package org.dashbuilder.validations.dataset;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
-import org.dashbuilder.dataset.validation.groups.CSVDataSetDefFilePathValidation;
-import org.dashbuilder.dataset.validation.groups.CSVDataSetDefFileURLValidation;
-import org.dashbuilder.dataset.validation.groups.CSVDataSetDefValidation;
-import org.dashbuilder.dataset.validation.groups.DataSetDefBasicAttributesGroup;
-import org.dashbuilder.dataset.validation.groups.DataSetDefCacheRowsValidation;
-import org.dashbuilder.dataset.validation.groups.DataSetDefProviderTypeGroup;
-import org.dashbuilder.dataset.validation.groups.DataSetDefPushSizeValidation;
-import org.dashbuilder.dataset.validation.groups.DataSetDefRefreshIntervalValidation;
+import org.dashbuilder.dataset.validation.groups.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,27 +17,28 @@ public class CSVDataSetDefValidatorTest extends AbstractValidationTest {
     CSVDataSetDef csvDataSetDef;
     private CSVDataSetDefValidator tested;
 
-
+     
     @Before
     public void setup() {
         super.setup();
-        tested = spy(new CSVDataSetDefValidator( validator));
+        tested = spy(new CSVDataSetDefValidator());
+        doReturn(validator).when(tested).getDashbuilderValidator();
     }
-
+    
     @Test
     public void testValidateAttributesUsingFilePath() {
         final boolean isUsingFilePath = true;
-        tested.validateCustomAttributes( csvDataSetDef, isUsingFilePath);
+        tested.validateAttributes(csvDataSetDef, isUsingFilePath);
         verify(validator, times(1)).validate(csvDataSetDef, CSVDataSetDefValidation.class, CSVDataSetDefFilePathValidation.class);
     }
 
     @Test
     public void testValidateAttributesUsingFileUrl() {
         final boolean isUsingFilePath = false;
-        tested.validateCustomAttributes( csvDataSetDef, isUsingFilePath);
+        tested.validateAttributes(csvDataSetDef, isUsingFilePath);
         verify(validator, times(1)).validate(csvDataSetDef, CSVDataSetDefValidation.class, CSVDataSetDefFileURLValidation.class);
     }
-
+    
     @Test
     public void testValidateUsingFilePath() {
         final boolean isCacheEnabled = true;
@@ -52,7 +46,7 @@ public class CSVDataSetDefValidatorTest extends AbstractValidationTest {
         final boolean isRefreshEnabled = true;
         final boolean isUsingFilePath = true;
         tested.validate(csvDataSetDef, isCacheEnabled, isPushEnabled, isRefreshEnabled, isUsingFilePath);
-        verify(validator, times(1)).validate(csvDataSetDef,
+        verify(validator, times(1)).validate(csvDataSetDef, 
                 DataSetDefBasicAttributesGroup.class,
                 DataSetDefProviderTypeGroup.class,
                 DataSetDefCacheRowsValidation.class,
@@ -126,5 +120,5 @@ public class CSVDataSetDefValidatorTest extends AbstractValidationTest {
                 CSVDataSetDefValidation.class,
                 CSVDataSetDefFileURLValidation.class);
     }
-
+    
 }

@@ -1,10 +1,5 @@
 package org.dashbuilder.client.widgets.dataset.editor.workflow;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import javax.validation.ConstraintViolation;
-
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.validation.client.impl.ConstraintViolationImpl;
@@ -19,6 +14,7 @@ import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.validations.dataset.DataSetDefValidator;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +25,11 @@ import org.mockito.stubbing.Answer;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 
+import javax.validation.ConstraintViolation;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -36,12 +37,13 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class DataSetEditorWorkflowTest extends AbstractDataSetWorkflowTest {
+public class DataSetEditorWorkflowTest {
 
     public static final String UUID = "uuid1";
     public static final String NAME = "name1";
-
+    
     @Mock SyncBeanManager beanManager;
+    @Mock DataSetDefValidator dataSetDefValidator;
     @Mock EventSourceMock<SaveRequestEvent> saveRequestEvent;
     @Mock EventSourceMock<TestDataSetRequestEvent> testDataSetEvent;
     @Mock EventSourceMock<CancelRequestEvent> cancelRequestEvent;
@@ -51,19 +53,18 @@ public class DataSetEditorWorkflowTest extends AbstractDataSetWorkflowTest {
     @Mock SimpleBeanEditorDriver driver;
 
     @Mock DataSetEditorWorkflow.View view;
-
+    
     private DataSetEditorWorkflow presenter;
-
+    
     @Before
     public void setup() throws Exception {
-        super.setup();
-
-        presenter = new DataSetEditorWorkflow(clientServices, validatorProvider, beanManager, saveRequestEvent,
+        
+        presenter = new DataSetEditorWorkflow(clientServices, dataSetDefValidator, beanManager, saveRequestEvent,
                 testDataSetEvent, cancelRequestEvent, view) {
-
+            
         };
         presenter.dataSetDef = this.dataSetDef;
-
+        
         when(dataSetDef.getUUID()).thenReturn(UUID);
         when(dataSetDef.getName()).thenReturn(NAME);
         when(dataSetDef.getProvider()).thenReturn(DataSetProviderType.BEAN);
@@ -79,7 +80,7 @@ public class DataSetEditorWorkflowTest extends AbstractDataSetWorkflowTest {
             }
         }).when(clientServices).lookupDataSet(any(dataSetDef.getClass()), any(DataSetLookup.class), any(DataSetReadyCallback.class));
     }
-
+    
     @Test
     public void testInit() {
         presenter.init();
@@ -107,7 +108,7 @@ public class DataSetEditorWorkflowTest extends AbstractDataSetWorkflowTest {
         verify(view, times(0)).addButton(anyString(), anyString(), anyBoolean(), any(Command.class));
         verify(view, times(0)).clearButtons();
     }
-
+    
     // Expect RuntimeException!!!
     @Test(expected = RuntimeException.class)
     public void testDoTestDataSetNotEdited() {
@@ -230,7 +231,7 @@ public class DataSetEditorWorkflowTest extends AbstractDataSetWorkflowTest {
         verify(view, times(0)).init(presenter);
         verify(view, times(0)).clearView();
     }
-
+    
     @Test
     public void testAddViolations() {
         presenter.violations.clear();
@@ -244,7 +245,7 @@ public class DataSetEditorWorkflowTest extends AbstractDataSetWorkflowTest {
         verify(view, times(0)).add(any(IsWidget.class));
         verify(view, times(0)).init(presenter);
         verify(view, times(0)).clearView();
-
+        
     }
 
     @Test
@@ -291,5 +292,5 @@ public class DataSetEditorWorkflowTest extends AbstractDataSetWorkflowTest {
         verify(view, times(0)).init(presenter);
         verify(view, times(0)).clearView();
     }
-
+    
 }

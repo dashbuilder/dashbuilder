@@ -15,11 +15,6 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.workflow.create;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -31,16 +26,21 @@ import org.dashbuilder.client.widgets.dataset.event.SaveRequestEvent;
 import org.dashbuilder.client.widgets.dataset.event.TestDataSetRequestEvent;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.validations.DataSetValidatorProvider;
+import org.dashbuilder.validations.dataset.DataSetDefValidator;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.uberfire.mvp.Command;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
 
 
 /**
  * <p>Data Set Editor workflow presenter for creating a data set definition instance.</p>
  * <p>GWT editors and drivers must be type safe as they're generated during the deferred binding at compile time, so this class must be extended using concretes types for each driver & editor.</p>
- *
- * @since 0.4.0
+ * 
+ * @since 0.4.0 
  */
 public abstract class DataSetBasicAttributesWorkflow<T extends DataSetDef, E extends Editor<? super T>> extends DataSetEditorWorkflow<T> {
 
@@ -49,18 +49,18 @@ public abstract class DataSetBasicAttributesWorkflow<T extends DataSetDef, E ext
 
     SimpleBeanEditorDriver<T, E> driver;
     E editor;
-
+    
     @Inject
     public DataSetBasicAttributesWorkflow(final DataSetClientServices clientServices,
-                                          final DataSetValidatorProvider validatorProvider,
+                                          final DataSetDefValidator dataSetDefValidator,
                                           final SyncBeanManager beanManager,
                                           final DataSetDefBasicAttributesEditor basicAttributesEditor,
                                           final Event<SaveRequestEvent> saveRequestEvent,
                                           final Event<TestDataSetRequestEvent> testDataSetEvent,
                                           final Event<CancelRequestEvent> cancelRequestEvent,
                                           final View view) {
-
-        super(clientServices, validatorProvider, beanManager,
+        
+        super(clientServices, dataSetDefValidator, beanManager,
                 saveRequestEvent, testDataSetEvent, cancelRequestEvent, view);
         this.basicAttributesEditor = basicAttributesEditor;
     }
@@ -74,10 +74,8 @@ public abstract class DataSetBasicAttributesWorkflow<T extends DataSetDef, E ext
 
     protected abstract Class<? extends E> getEditorClass();
 
-    protected Iterable<ConstraintViolation<?>> validate() {
-        return validatorProvider.validateAttributes( getDataSetDef() );
-    }
-
+    protected abstract Iterable<ConstraintViolation<?>> validate();
+    
     public DataSetBasicAttributesWorkflow edit(final T def) {
         checkDataSetDefNotNull(def);
 
@@ -97,7 +95,7 @@ public abstract class DataSetBasicAttributesWorkflow<T extends DataSetDef, E ext
         editor = beanManager.lookupBean( getEditorClass() ).newInstance();
         driver.initialize(editor);
         driver.edit(getDataSetDef());
-
+        
         this.flushCommand = new Command() {
             @Override
             public void execute() {
@@ -111,10 +109,10 @@ public abstract class DataSetBasicAttributesWorkflow<T extends DataSetDef, E ext
             public void execute() {
 
                 // Data set definition basic attributes validation.
-                Iterable<ConstraintViolation<?>> basicAttsViolations = validatorProvider.validateBasicAttributes(getDataSetDef());
+                Iterable<ConstraintViolation<?>> basicAttsViolations = dataSetDefValidator.validateBasicAttributes(getDataSetDef());
                 dataSetDefBasicAttributesDriver.setConstraintViolations(basicAttsViolations);
                 addViolations(basicAttsViolations);
-
+                
                 Iterable<ConstraintViolation<?>> violations = validate();
                 driver.setConstraintViolations(violations);
                 addViolations(violations);
@@ -130,10 +128,10 @@ public abstract class DataSetBasicAttributesWorkflow<T extends DataSetDef, E ext
     }
 
     /**
-     * For unit tests use cases.
+     * For unit tests use cases. 
      */
     void _setDataSetDef(final T def) {
         this.dataSetDef = def;
     }
-
+    
 }

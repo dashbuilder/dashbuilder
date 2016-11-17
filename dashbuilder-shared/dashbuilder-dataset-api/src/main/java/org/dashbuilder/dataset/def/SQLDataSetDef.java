@@ -25,20 +25,20 @@ import javax.validation.constraints.Size;
 
 public class SQLDataSetDef extends DataSetDef {
 
-    @NotNull(groups = {SQLDataSetDefValidation.class})
-    @Size(min = 1, groups = {SQLDataSetDefValidation.class})
+    @NotNull(message = "{dataSetApi_sqlDataSetDef_dataSource_notNull}", groups = {SQLDataSetDefValidation.class})
+    @Size(min = 1, message = "{dataSetApi_sqlDataSetDef_dataSource_notNull}", groups = {SQLDataSetDefValidation.class})
     protected String dataSource;
 
     protected String dbSchema;
 
-    @NotNull(groups = {SQLDataSetDefDbTableValidation.class})
-    @Size(min = 1, groups = {SQLDataSetDefDbTableValidation.class})
+    @NotNull(message = "{dataSetApi_sqlDataSetDef_dbTable_notNull}", groups = {SQLDataSetDefDbTableValidation.class})
+    @Size(min = 1, message = "{dataSetApi_sqlDataSetDef_dbTable_notNull}", groups = {SQLDataSetDefDbTableValidation.class})
     protected String dbTable;
 
-    @NotNull(groups = {SQLDataSetDefDbSQLValidation.class})
-    @Size(min = 1, groups = {SQLDataSetDefDbSQLValidation.class})
+    @NotNull(message = "{dataSetApi_sqlDataSetDef_dbSQL_notNull}", groups = {SQLDataSetDefDbSQLValidation.class})
+    @Size(min = 1, message = "{dataSetApi_sqlDataSetDef_dbSQL_notNull}", groups = {SQLDataSetDefDbSQLValidation.class})
     protected String dbSQL;
-
+    
     public SQLDataSetDef() {
         super.setProvider(DataSetProviderType.SQL);
     }

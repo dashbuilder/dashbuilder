@@ -32,34 +32,44 @@ import java.util.*;
  */
 public class DataSetDef {
 
-    @NotNull(groups = {DataSetDefBasicAttributesGroup.class})
-    @Size(min = 1, groups = {DataSetDefBasicAttributesGroup.class})
+    @NotNull(message = "{dataSetApi_dataSetDef_uuid_notNull}",
+            groups = {DataSetDefBasicAttributesGroup.class})
+    @Size(min = 1, message = "{dataSetApi_dataSetDef_uuid_notNull}",
+            groups = {DataSetDefBasicAttributesGroup.class})
     protected String UUID;
-
-    @NotNull(groups = {DataSetDefBasicAttributesGroup.class})
-    @Size(min = 1, groups = {DataSetDefBasicAttributesGroup.class})
+    
+    @NotNull(message = "{dataSetApi_dataSetDef_name_notNull}",
+            groups = {DataSetDefBasicAttributesGroup.class})
+    @Size(min = 1, message = "{dataSetApi_dataSetDef_name_notNull}",
+            groups = {DataSetDefBasicAttributesGroup.class})
     protected String name;
-
-    @NotNull(groups = { DataSetDefProviderTypeGroup.class})
+    
+    @NotNull(message = "{dataSetApi_dataSetDef_provider_notNull}",
+            groups = { DataSetDefProviderTypeGroup.class})
     protected DataSetProviderType provider;
-
+    
     // Cannot @Valid due to this GWT issue https://github.com/gwtproject/gwt/issues/8816.
     // Columns validation must be performed explicitly when validating a datasetdef or any of its sub-classes.
     protected List<DataColumnDef> columns = new ArrayList<DataColumnDef>();
-
+    
     protected DataSetFilter dataSetFilter = null;
     protected boolean isPublic = true;
     protected boolean pushEnabled = false;
-    @NotNull(groups = {DataSetDefPushSizeValidation.class})
+    @NotNull(message = "{dataSetApi_dataSetDef_pushMaxSize_notNull}", 
+            groups = {DataSetDefPushSizeValidation.class})
     @Max(value = 4096)
     protected Integer pushMaxSize = 1024;
     protected boolean cacheEnabled = false;
-    @NotNull(groups = {DataSetDefCacheRowsValidation.class})
+    @NotNull(message = "{dataSetApi_dataSetDef_cacheMaxRows_notNull}", 
+            groups = {DataSetDefCacheRowsValidation.class})
     @Max(value = 10000)
     protected Integer cacheMaxRows = 1000;
-    @NotNull(groups = {DataSetDefRefreshIntervalValidation.class})
-    @Size(min = 1, groups = {DataSetDefRefreshIntervalValidation.class})
-    @IsTimeInterval(groups = {DataSetDefRefreshIntervalValidation.class})
+    @NotNull(message = "{dataSetApi_dataSetDef_refreshTime_notNull}", 
+            groups = {DataSetDefRefreshIntervalValidation.class})
+    @Size(min = 1, message = "{dataSetApi_dataSetDef_refreshTime_notNull}",
+            groups = {DataSetDefRefreshIntervalValidation.class})
+    @IsTimeInterval(message = "{dataSetApi_dataSetDef_refreshTime_intervalInvalid}", 
+            groups = {DataSetDefRefreshIntervalValidation.class})
     protected String refreshTime = null;
     protected boolean refreshAlways = false;
     protected boolean allColumnsEnabled = true;
@@ -186,7 +196,7 @@ public class DataSetDef {
     public void setColumns(List<DataColumnDef> columns) {
         this.columns = columns;
     }
-
+    
     public DataColumnDef getColumnById(final String id) {
         if (id != null && columns != null && !columns.isEmpty()) {
             for (final DataColumnDef columnDef : columns) {
@@ -222,7 +232,7 @@ public class DataSetDef {
         clone(def);
         return def;
     }
-
+    
     protected void clone(final DataSetDef def) {
         def.setUUID(getUUID());
         def.setName(getName());

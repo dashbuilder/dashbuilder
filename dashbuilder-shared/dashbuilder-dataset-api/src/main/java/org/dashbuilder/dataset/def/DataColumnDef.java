@@ -7,10 +7,10 @@ import javax.validation.constraints.NotNull;
  * <p>This class is used to define the structure and runtime behaviour of a data set definition's column instance.</p>
  */
 public class DataColumnDef {
-
-    @NotNull()
+    
+    @NotNull(message = "{dataSetApi_dataColumnImpl_id_notNull}")
     private String id;
-    @NotNull()
+    @NotNull(message = "{dataSetApi_dataColumnImpl_columnType_notNull}")
     private ColumnType columnType;
 
     public DataColumnDef() {
@@ -49,7 +49,7 @@ public class DataColumnDef {
             return false;
         }
     }
-
+    
     public DataColumnDef clone() {
         return  new DataColumnDef(id, ColumnType.getByName(columnType.name()));
     }
