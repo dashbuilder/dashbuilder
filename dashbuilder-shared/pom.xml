@@ -19,7 +19,6 @@
     <module>dashbuilder-dataset-api</module>
     <module>dashbuilder-dataset-shared</module>
     <module>dashbuilder-displayer-api</module>
-    <module>dashbuilder-hibernate-validator</module>
     <module>dashbuilder-validations</module>
     <module>dashbuilder-services-api</module>
   </modules>
