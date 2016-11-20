@@ -69,8 +69,5 @@ All of Dashbuilder's source code and extensions are managed in a [central reposi
 	
 - João Duarte		
 	
-<<<<<<< HEAD
-	Nuno Pinto		
-=======
 - Nuno Pinto		
->>>>>>> e7441b6d833871e38dd423a2b9b2899c43fd98c4
+
