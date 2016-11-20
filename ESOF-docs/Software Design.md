@@ -39,7 +39,7 @@ The [**4 + 1 view model**](https://en.wikipedia.org/wiki/4%2B1_architectural_vie
 
 
 ### Deployment View
-<img src="./images/views/deployment.jpg"/>
+<img src="./images/views/deployment.png"/>
 
 Since Dashbuilder in itself is just a server, it doesn't have many requirements in order to run - Unix based system or a [Linux Bash Shell](http://www.howtogeek.com/249966/how-to-install-and-use-the-linux-bash-shell-on-windows-10/) in case of Windows, JRE 1.6 or higher, [Apache Maven](https://maven.apache.org/download.cgi) and [SuperDevMode](http://www.gwtproject.org/articles/superdevmode.html).
 
