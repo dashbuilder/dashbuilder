@@ -33,6 +33,11 @@ The [**4 + 1 view model**](https://en.wikipedia.org/wiki/4%2B1_architectural_vie
 
 
 ### Logical View
+<img src="./images/views/logic.png"/>
+<br>
+The dependencies here presented were deduced solely through analysis of the code's organization and from the different packages' summoning of each other.<br>
+A couple of details stand out to the eye, one of which being the diferent disposition of child packages in the two packages that do possess such a characteristic.<br>
+It is also possible to easily identify the "heart" of Dashbuilder's logic, by sheer amount of dependencies both the client and the dataset package earn that title.
 
 
 ### Implementation View
@@ -45,7 +50,7 @@ Since Dashbuilder in itself is just a server, it doesn't have many requirements 
 
 
 ### Process View
-
+<img src="./images/views/process.png"/>
 
 ## Architectural Patterns
 
