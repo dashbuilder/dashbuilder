@@ -60,8 +60,8 @@ All of Dashbuilder's source code and extensions are managed in a [central reposi
 
 ## Members and Contribution
 
-	Gustavo Faria				
+- Gustavo Faria				
 	
-	João Duarte		
+- João Duarte		
 	
-	Nuno Pinto		
+- Nuno Pinto		
