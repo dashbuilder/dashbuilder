@@ -47,7 +47,9 @@ This view, also known as Development View, shows the program from the prespectiv
 <img src="./images/views/implementation.png" />
 
 The frontend use the core interface and the core component.
-The core is the component that the frontend send its requests to. For every request from the frontend it calls out to the backend and/or the widgets. When the core get an answer, processes it and send a response to the frontend.
+
+The Dashbuilder is the core of the application. This component is responsible for the overall process. For every request from the frontend it calls out to the backend and/or the widgets. When the core get an answer, processes it and send a response to the frontend.
+
 The backend is a set of data needed for the dashboard.
 
 ### Deployment View
