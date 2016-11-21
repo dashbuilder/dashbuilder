@@ -59,8 +59,6 @@ Since Dashbuilder in itself is just a server, it doesn't have many requirements 
 ### Process View
 <img src="./images/views/process.png"/>
 
-### Process View
-
 
 ## Architectural Patterns
 
