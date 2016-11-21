@@ -44,7 +44,7 @@ It is also possible to easily identify the "heart" of Dashbuilder's logic, by sh
 
 This view, also known as Development View, shows the program from the prespective of the programmer.
 
-<img src="./images/views/implementation.png />
+<img src="./images/views/implementation.png" />
 
 The frontend use the core interface and the core component.
 The core is the component that the frontend send its requests to. For every request from the frontend it calls out to the backend and/or the widgets. When the core get an answer, processes it and send a response to the frontend.
