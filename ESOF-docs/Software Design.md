@@ -59,10 +59,17 @@ Since Dashbuilder in itself is just a server, it doesn't have many requirements 
 ### Process View
 <img src="./images/views/process.png"/>
 
+### Process View
+
+
 ## Architectural Patterns
 
 
 ### Layered Architecture
+
+Dashbuilder has a layered architecture because its system is organized into layers, where each layer provides services to the layer above. Each layer can only interact with the layer directly below, that's why Dashbuilder has a **strict layered architecture**.
+
+<img src="./images/views/layered.png" />
 
 
 ### Repository Architecture
@@ -72,9 +79,9 @@ All of Dashbuilder's source code and extensions are managed in a [central reposi
 
 ## Members and Contribution
 
-- Gustavo Faria				
+- Gustavo Faria		33,3%		
 	
-- João Duarte		
+- João Duarte		33,3%
 	
-- Nuno Pinto		
+- Nuno Pinto		33,3%
 
