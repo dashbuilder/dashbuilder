@@ -46,21 +46,15 @@
     </dependency>
 
     <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-hibernate-validator</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-hibernate-validator</artifactId>
-      <classifier>sources</classifier>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-common</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-ioc</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-validation</artifactId>
@@ -69,6 +63,12 @@
     <dependency>
       <groupId>javax.validation</groupId>
       <artifactId>validation-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -84,9 +84,9 @@
         </exclusion>
       </exclusions>
     </dependency>
-    
+
   </dependencies>
-  
+
   <build>
 
     <resources>
@@ -99,7 +99,7 @@
         <directory>src/main/resources</directory>
       </resource>
     </resources>
-    
+
   </build>
 
 </project>
