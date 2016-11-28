@@ -15,6 +15,12 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.workflow.edit;
 
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import org.dashbuilder.client.widgets.dataset.editor.workflow.DataSetEditorWorkflow;
 import org.dashbuilder.client.widgets.dataset.event.CancelRequestEvent;
@@ -24,22 +30,15 @@ import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.editor.DataSetDefEditor;
 import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
-import org.dashbuilder.validations.dataset.DataSetDefValidator;
+import org.dashbuilder.validations.DataSetValidatorProvider;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.uberfire.mvp.Command;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import java.util.List;
 
 
 /**
  * <p>Data Set Editor workflow presenter for editing a data set definition instance.</p>
  * <p>GWT editors and drivers must be type safe as they're generated during the deferred binding at compile time, so this class must be extended using concretes types for each driver & editor.</p>
- * 
- * @since 0.4.0 
+ * @since 0.4.0
  */
 public abstract class DataSetEditWorkflow<T extends DataSetDef, E extends DataSetDefEditor<? super T>> extends DataSetEditorWorkflow<T> {
 
@@ -47,15 +46,15 @@ public abstract class DataSetEditWorkflow<T extends DataSetDef, E extends DataSe
     protected E editor;
 
     @Inject
-    public DataSetEditWorkflow(final DataSetClientServices clientServices,
-                               final DataSetDefValidator dataSetDefValidator,
-                               final SyncBeanManager beanManager,
-                               final Event<SaveRequestEvent> saveRequestEvent,
-                               final Event<TestDataSetRequestEvent> testDataSetEvent,
-                               final Event<CancelRequestEvent> cancelRequestEvent,
-                               final View view) {
-        super(clientServices, dataSetDefValidator, beanManager, 
-                saveRequestEvent, testDataSetEvent, cancelRequestEvent, view);
+    public DataSetEditWorkflow( final DataSetClientServices clientServices,
+                                final DataSetValidatorProvider validatorProvider,
+                                final SyncBeanManager beanManager,
+                                final Event<SaveRequestEvent> saveRequestEvent,
+                                final Event<TestDataSetRequestEvent> testDataSetEvent,
+                                final Event<CancelRequestEvent> cancelRequestEvent,
+                                final View view ) {
+        super( clientServices, validatorProvider, beanManager,
+               saveRequestEvent, testDataSetEvent, cancelRequestEvent, view );
     }
 
     @PostConstruct
@@ -66,43 +65,53 @@ public abstract class DataSetEditWorkflow<T extends DataSetDef, E extends DataSe
     protected abstract Class<? extends SimpleBeanEditorDriver<T, E>> getDriverClass();
 
     protected abstract Class<? extends E> getEditorClass();
-    
-    protected abstract Iterable<ConstraintViolation<?>> validate(boolean isCacheEnabled, boolean isPushEnabled, boolean isRefreshEnabled);
-    
-    public DataSetEditWorkflow edit(final T definition, List<DataColumnDef> allColumns) {
+
+    protected Iterable<ConstraintViolation<?>> validate( boolean isCacheEnabled,
+                                                         boolean isPushEnabled,
+                                                         boolean isRefreshEnabled ) {
+
+        return validatorProvider.validate( dataSetDef,
+                                           isCacheEnabled,
+                                           isPushEnabled,
+                                           isRefreshEnabled );
+    }
+
+    public DataSetEditWorkflow edit( final T definition, List<DataColumnDef> allColumns ) {
         clear();
         this.dataSetDef = definition;
         checkDataSetDefNotNull();
 
         this.driver = beanManager.lookupBean( getDriverClass() ).newInstance();
         this.editor = beanManager.lookupBean( getEditorClass() ).newInstance();
-        driver.initialize(editor);
-        editor.setAcceptableValues(allColumns);
-        driver.edit(definition);
-        
+        driver.initialize( editor );
+        editor.setAcceptableValues( allColumns );
+        driver.edit( definition );
+
         this.flushCommand = new Command() {
             @Override
             public void execute() {
-                flush(DataSetEditWorkflow.this.driver);
+                flush( DataSetEditWorkflow.this.driver );
             }
         };
-        
+
         this.stepValidator = new Command() {
             @Override
             public void execute() {
                 final boolean isCacheEnabled = definition.isCacheEnabled();
                 final boolean isPushEnabled = definition.isPushEnabled();
                 final boolean isRefreshEnabled = definition.getRefreshTime() != null;
-                Iterable<ConstraintViolation<?>> violations = validate(isCacheEnabled, isPushEnabled, isRefreshEnabled);
-                driver.setConstraintViolations(violations);
-                addViolations(violations);
+                Iterable<ConstraintViolation<?>> violations = validate( isCacheEnabled,
+                                                                        isPushEnabled,
+                                                                        isRefreshEnabled );
+                driver.setConstraintViolations( violations );
+                addViolations( violations );
             }
         };
 
         // Show data set editor view.
         view.clearView();
-        view.add(getWidget());
-        
+        view.add( getWidget() );
+
         return this;
     }
 
@@ -113,13 +122,13 @@ public abstract class DataSetEditWorkflow<T extends DataSetDef, E extends DataSe
     @Override
     protected void afterFlush() {
         super.afterFlush();
-        if (!getEditor().refreshEditor().isRefreshEnabled()) {
-            dataSetDef.setRefreshTime(null);
+        if ( !getEditor().refreshEditor().isRefreshEnabled() ) {
+            dataSetDef.setRefreshTime( null );
         }
     }
-    
+
     protected org.dashbuilder.client.widgets.dataset.editor.DataSetEditor getWidget() {
-        return ((org.dashbuilder.client.widgets.dataset.editor.DataSetEditor)editor);
+        return ( (org.dashbuilder.client.widgets.dataset.editor.DataSetEditor) editor );
     }
 
     public DataSetEditorWorkflow showConfigurationTab() {
@@ -138,9 +147,9 @@ public abstract class DataSetEditWorkflow<T extends DataSetDef, E extends DataSe
     }
 
     /**
-     * For unit tests use cases. 
+     * For unit tests use cases.
      */
-    void _setDataSetDef(final T def) {
+    void _setDataSetDef( final T def ) {
         this.dataSetDef = def;
     }
 
