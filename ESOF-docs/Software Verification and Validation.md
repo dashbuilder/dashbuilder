@@ -48,6 +48,18 @@ It also can be ran when doing a pull request, making use of [Jenkins CI](https:/
 
 Dashbuilder has unit tests for most modules, mostly because each contribution must include tests in order to be accepted, which means that the isolateability is achieved because everything is confined in its module.
 
+### Separation of concerns
+
+Dashbuilder's source code is very well organized. Each module is separated into different folders, which makes it easy to understand what each module is responsible for. It also provides reliable documentation that specifies about its struture and makes it easier to contribute to the project.
+
+### Understandability
+
+Dashbuilder's test names alone are enough to accurately identify what component is being tested. Even though the test code is very well documented making it easy to understand the reach of the tests that are currently done and creating new ones for the said components.
+
+### Heterogeneity
+
+Dashbuilder tests can be ran locally making use of [Apache Maven](https://maven.apache.org/) and it also can be ran when doing a pull request, making use of [Jenkins CI](https://jenkins.io/) and its [Pipeline](https://jenkins.io/projects/blueocean/).
+
 
 
 ## Test Statistics
