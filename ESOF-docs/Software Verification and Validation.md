@@ -12,7 +12,7 @@
         * [Heterogeneity](#heterogeneity)
     * [Test Statistics](#test-statistics)
     * [Bug Report](#bug-report)
-	* [Members and Contribution](#members-and-contribution)
+    * [Members and Contribution](#members-and-contribution)
 
 	
 ## Introduction
@@ -54,10 +54,10 @@ Dashbuilder has unit tests for most modules, mostly because each contribution mu
 
 Running `mvn clean install` on the project's root directory results in an error halfway through, therefore indivudual packages had to be built independently. Luckily, intelliJ's Maven integration allows us to create a custom configuration so that unit testing and code coverage can be done on all successful packages at once. And these are the end results:
 
-<img src="./images/tests/coverage.png"/>
+<img src="./images/tests/coverage.png" width="800"/>
 
 Test Results:<br><br>
-<img src="./images/tests/testResults.png"/ width="400">
+<img src="./images/tests/testResults.png" width="400"/>
 <br><br>
 Most of these are unit tests, however, and solely located in package `org.dashbuilder.dashbuilder-backend.dashbuilder-dataset-sql-tests` are this project's [Integration Tests](https://en.wikipedia.org/wiki/Integration_testing)
 <br>
@@ -68,11 +68,17 @@ For a full report visit:
 <br>
 [Code Coverage Report](./tests/CodeCoverage/index.html)
 
-<a href="./tests/CodeCoverage/index.html">
-
 
 ## Bug Report
 
+After careful study of the application's behaviour we discovered a series of steps that leads to an unwanted result. Therefore an issue was opened on this project's repository with its description so that the contribuitors are aware of its existence.
+<br><br>
+Here is an example of the bug:<br><br>
+<img src="./images/reallybadhome.png" width="600"/>
+<br>
+[Here](https://github.com/dashbuilder/dashbuilder/issues/263) is the issue report.
+<br>
+We were not able to fix it.
 
 ## Members and Contribution
 
