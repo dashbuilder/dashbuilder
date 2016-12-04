@@ -30,3 +30,32 @@ Contributions to the project are strict, as it is required to include tests for 
 
 
 ## Degree of Testability
+
+### Controllability
+
+As described below in [Isolateability](#isolateability) the packages are very well organized and isolated which makes it very easy to control the state of a component as required for testing.
+Dashbuilder also makes use of some Dummy objects, like the widgets and backend, to make keep complexity low.
+
+
+### Observability
+
+Dashbuilder tests can be ran locally making use of [Apacha Maven](https://maven.apache.org/) which gives us a complete view of the results as well as code coverage.
+It also can be ran when doing a pull request, making use of [Jenkins CI](https://jenkins.io/) and its [Pipeline](https://jenkins.io/projects/blueocean/) to analyze test results and code coverage, which provides a graphical interface to analyze data.
+
+
+### Isolateability
+
+Dashbuilder has unit tests for most modules, mostly because each contribution must include tests in order to be accepted, which means that the isolateability is achieved because everything is confined in its module.
+
+
+
+## Test Statistics
+
+
+## Members and Contribution
+
+- Gustavo Faria		33,3%		
+	
+- João Duarte		33,3%
+	
+- Nuno Pinto		33,3%
