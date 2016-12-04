@@ -59,7 +59,7 @@ Running `mvn clean install` on the project's root directory results in an error 
 Test Results:<br><br>
 <img src="./images/tests/testResults.png" width="400"/>
 <br><br>
-Most of these are unit tests, however, and solely located in package `org.dashbuilder.dashbuilder-backend.dashbuilder-dataset-sql-tests` are this project's [Integration Tests](https://en.wikipedia.org/wiki/Integration_testing)
+Most of these are unit tests, however, and solely located in package `org.dashbuilder.dashbuilder-backend.dashbuilder-dataset-sql-tests` are this project's [Integration Tests](https://en.wikipedia.org/wiki/Integration_testing).
 <br>
 
 For a full report visit:
@@ -68,7 +68,7 @@ For a full report visit:
 <br>
 [Code Coverage Report](http://htmlpreview.github.io/?https://github.com/fariagu/dashbuilder/blob/master/ESOF-docs/tests/CodeCoverage/index.html)
 <br>
-Note: Seeing as these aren't hosted webpages, in order to be properly viewed they can only be properly viewed locally.
+**Note:** Seeing as these aren't hosted webpages, in order to be properly viewed they can only be properly viewed locally.
 
 
 ## Bug Report
