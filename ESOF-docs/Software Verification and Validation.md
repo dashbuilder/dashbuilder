@@ -64,9 +64,9 @@ Most of these are unit tests, however, and solely located in package `org.dashbu
 
 For a full report visit:
 <br>
-[Unit Test Report](./tests/testResults.html)
+[Unit Test Report](http://htmlpreview.github.io/?https://github.com/fariagu/dashbuilder/blob/master/ESOF-docs/tests/testResults.html)
 <br>
-[Code Coverage Report](./tests/CodeCoverage/index.html)
+[Code Coverage Report](http://htmlpreview.github.io/?https://github.com/fariagu/dashbuilder/blob/master/ESOF-docs/tests/CodeCoverage/index.html)
 <br>
 Note: Seeing as these aren't hosted webpages, in order to be properly viewed they can only be properly viewed locally.
 
