@@ -35,8 +35,7 @@ Contributions to the project are strict, as it is required to include tests for 
 ### Controllability
 
 As described below in [Isolateability](#isolateability) the packages are very well organized and isolated which makes it very easy to control the state of a component as required for testing.
-Dashbuilder also makes use of some Dummy objects, like the widgets and backend, to make keep complexity low.
-
+Those tests are mainly located in `backend` and `webapp` folders, which can be ran using intelliJ's Maven integration.
 
 ### Observability
 
