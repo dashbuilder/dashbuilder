@@ -46,9 +46,9 @@ All code changes were performed within the class `ShowcaseEntryPoint`:
  
  Below you can check before and after the changes images.
  
- <img src="./images/evolution/usermenubefore.png" height="80"/>
+ <img src="./images/evolution/usermenubefore.png" height="200"/>
  
- <img src="./images/evolution/usermenuafter.png" height="80"/>
+ <img src="./images/evolution/usermenuafter.png" height="200"/>
 
 	
 ### Pull requesting
