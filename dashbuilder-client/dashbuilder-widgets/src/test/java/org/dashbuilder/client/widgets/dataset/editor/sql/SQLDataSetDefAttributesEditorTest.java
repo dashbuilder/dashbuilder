@@ -1,14 +1,21 @@
 package org.dashbuilder.client.widgets.dataset.editor.sql;
 
+import java.util.Arrays;
+
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.dashbuilder.common.client.editor.ValueBoxEditor;
+import org.dashbuilder.common.client.editor.list.DropDownEditor;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.dashbuilder.dataset.def.SQLDataSourceDef;
+import org.dashbuilder.dataset.service.SQLProviderServices;
 import org.gwtbootstrap3.client.ui.constants.Placement;
+import org.jboss.errai.common.client.api.Caller;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.uberfire.mocks.CallerMock;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -18,25 +25,29 @@ import static org.mockito.Mockito.*;
 @RunWith(GwtMockitoTestRunner.class)
 public class SQLDataSetDefAttributesEditorTest {
 
-    @Mock ValueBoxEditor<String> dataSource;
+    @Mock DropDownEditor dataSource;
     @Mock ValueBoxEditor<String> dbSchema;
     @Mock ValueBoxEditor<String> dbTable;
     @Mock ValueBoxEditor<String> dbSQL;
+    @Mock SQLProviderServices sqlProviderServices;
     @Mock SQLDataSetDefAttributesEditor.View view;
-    
-    private SQLDataSetDefAttributesEditor presenter;
-    
-    
+
+    Caller<SQLProviderServices> sqlProviderServicesCaller;
+    SQLDataSetDefAttributesEditor presenter;
+    SQLDataSourceDef dataSourceDef = new SQLDataSourceDef("test", "test");
+
     @Before
     public void setup() {
-        presenter = new SQLDataSetDefAttributesEditor(dataSource, dbSchema, dbTable, dbSQL, view);
+        when(sqlProviderServices.getDataSourceDefs()).thenReturn(Arrays.asList(dataSourceDef));
+        sqlProviderServicesCaller = new CallerMock<>(sqlProviderServices);
+        presenter = new SQLDataSetDefAttributesEditor(dataSource, dbSchema, dbTable, dbSQL, sqlProviderServicesCaller, view);
     }
 
     @Test
     public void testInit() {
         presenter.init();
         verify(view, times(1)).init(presenter);
-        verify(view, times(1)).initWidgets(any(ValueBoxEditor.View.class), any(ValueBoxEditor.View.class), 
+        verify(view, times(1)).initWidgets(any(DropDownEditor.View.class), any(ValueBoxEditor.View.class),
                 any(ValueBoxEditor.View.class) ,any(ValueBoxEditor.View.class));
         verify(dataSource, times(1)).addHelpContent(anyString(), anyString(), any(Placement.class));
         verify(dbSchema, times(1)).addHelpContent(anyString(), anyString(), any(Placement.class));
@@ -44,6 +55,10 @@ public class SQLDataSetDefAttributesEditorTest {
         verify(dbSQL, times(1)).addHelpContent(anyString(), anyString(), any(Placement.class));
         verify(view, times(1)).query();
         verify(view, times(0)).table();
+
+        verify(sqlProviderServices).getDataSourceDefs();
+        verify(dataSource).setEntries(any());
+        verify(dataSource).setSelectHint(anyString());
     }
     
     @Test
@@ -78,7 +93,7 @@ public class SQLDataSetDefAttributesEditorTest {
         assertEquals(false, presenter.isUsingQuery());
         verify(view, times(1)).table();
         verify(view, times(0)).init(presenter);
-        verify(view, times(0)).initWidgets(any(ValueBoxEditor.View.class), any(ValueBoxEditor.View.class),
+        verify(view, times(0)).initWidgets(any(DropDownEditor.View.class), any(ValueBoxEditor.View.class),
                 any(ValueBoxEditor.View.class) ,any(ValueBoxEditor.View.class));
         verify(dataSource, times(0)).addHelpContent(anyString(), anyString(), any(Placement.class));
         verify(dbSchema, times(0)).addHelpContent(anyString(), anyString(), any(Placement.class));
@@ -99,7 +114,7 @@ public class SQLDataSetDefAttributesEditorTest {
         assertEquals(true, presenter.isUsingQuery());
         verify(view, times(1)).query();
         verify(view, times(0)).init(presenter);
-        verify(view, times(0)).initWidgets(any(ValueBoxEditor.View.class), any(ValueBoxEditor.View.class),
+        verify(view, times(0)).initWidgets(any(DropDownEditor.View.class), any(ValueBoxEditor.View.class),
                 any(ValueBoxEditor.View.class) ,any(ValueBoxEditor.View.class));
         verify(dataSource, times(0)).addHelpContent(anyString(), anyString(), any(Placement.class));
         verify(dbSchema, times(0)).addHelpContent(anyString(), anyString(), any(Placement.class));

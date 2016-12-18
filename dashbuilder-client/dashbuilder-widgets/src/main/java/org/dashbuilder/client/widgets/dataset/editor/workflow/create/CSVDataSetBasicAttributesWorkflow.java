@@ -15,46 +15,51 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.workflow.create;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import org.dashbuilder.client.widgets.dataset.editor.attributes.DataSetDefBasicAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.driver.CSVDataSetDefAttributesDriver;
 import org.dashbuilder.client.widgets.dataset.event.CancelRequestEvent;
 import org.dashbuilder.client.widgets.dataset.event.SaveRequestEvent;
 import org.dashbuilder.client.widgets.dataset.event.TestDataSetRequestEvent;
-import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.editor.CSVDataSetDefAttributesEditor;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
-import org.dashbuilder.validations.dataset.DataSetDefValidator;
+import org.dashbuilder.validations.DataSetValidatorProvider;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
 
 
 /**
  * <p>CSV Data Set Editor workflow presenter for setting data set definition basic attributes.</p>
- * 
- * @since 0.4.0 
+ * @since 0.4.0
  */
 @Dependent
 public class CSVDataSetBasicAttributesWorkflow extends DataSetBasicAttributesWorkflow<CSVDataSetDef, CSVDataSetDefAttributesEditor> {
 
     @Inject
-    public CSVDataSetBasicAttributesWorkflow(final DataSetClientServices clientServices,
-                                              final DataSetDefValidator dataSetDefValidator,
+    public CSVDataSetBasicAttributesWorkflow( final DataSetClientServices clientServices,
+                                              final DataSetValidatorProvider validatorProvider,
                                               final SyncBeanManager beanManager,
                                               final DataSetDefBasicAttributesEditor basicAttributesEditor,
                                               final Event<SaveRequestEvent> saveRequestEvent,
                                               final Event<TestDataSetRequestEvent> testDataSetEvent,
                                               final Event<CancelRequestEvent> cancelRequestEvent,
-                                              final View view) {
-        
-        super(clientServices, dataSetDefValidator, beanManager, basicAttributesEditor, saveRequestEvent, testDataSetEvent, cancelRequestEvent, view);
+                                              final View view ) {
+
+        super( clientServices,
+               validatorProvider,
+               beanManager,
+               basicAttributesEditor,
+               saveRequestEvent,
+               testDataSetEvent,
+               cancelRequestEvent,
+               view );
     }
-    
+
     @Override
     protected Class<? extends SimpleBeanEditorDriver<CSVDataSetDef, CSVDataSetDefAttributesEditor>> getDriverClass() {
         return CSVDataSetDefAttributesDriver.class;
@@ -67,16 +72,16 @@ public class CSVDataSetBasicAttributesWorkflow extends DataSetBasicAttributesWor
 
     @Override
     protected Iterable<ConstraintViolation<?>> validate() {
-        return dataSetDefValidator.validatorFor(DataSetProviderType.CSV).validateAttributes(getDataSetDef(), editor.isUsingFilePath());
+        return validatorProvider.validateAttributes( getDataSetDef(), editor.isUsingFilePath() );
     }
 
     @Override
     protected void afterFlush() {
         super.afterFlush();
-        if (!editor.isUsingFilePath()) {
-            dataSetDef.setFilePath(null);
+        if ( !editor.isUsingFilePath() ) {
+            dataSetDef.setFilePath( null );
         } else {
-            dataSetDef.setFileURL(null);
+            dataSetDef.setFileURL( null );
         }
     }
 }

@@ -23,19 +23,11 @@
   <inherits name="org.jboss.errai.bus.ErraiBus"/>
   <inherits name="org.dashbuilder.DatasetClient" />
 
-  <!-- GWT & Errai Bean Validation (JSR303) -->
-  <inherits name="org.jboss.errai.validation.Validation" />
-  <inherits name="org.hibernate.validator.HibernateValidator" />
-  <replace-with
-      class="org.dashbuilder.validations.factory.DashbuilderValidationFactory">
-    <when-type-is class="javax.validation.ValidatorFactory" />
-  </replace-with>
-  <replace-with
-      class="org.dashbuilder.validations.messages.DashbuilderValidationMessagesResolver">
-    <when-type-is
-        class="com.google.gwt.validation.client.UserValidationMessagesResolver" />
-  </replace-with>
+  <inherits name="org.jboss.errai.common.ErraiCommon"/>
 
+  <inherits name="org.hibernate.validator.HibernateValidator" />
+
+  <inherits name="org.jboss.errai.validation.Validation" />
 
   <source path='validations'/>
 </module>

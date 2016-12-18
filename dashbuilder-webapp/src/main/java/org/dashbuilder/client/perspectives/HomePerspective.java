@@ -17,23 +17,25 @@ package org.dashbuilder.client.perspectives;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
+import org.jboss.errai.common.client.dom.Div;
+import org.jboss.errai.ui.client.local.api.IsElement;
+import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.uberfire.client.annotations.WorkbenchPanel;
 import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.client.util.Layouts;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 
-@Dependent
+@Templated
 @WorkbenchPerspective(identifier = "HomePerspective", isDefault = true)
-public class HomePerspective extends FlowPanel {
+public class HomePerspective implements IsElement {
 
+    @Inject
+    @DataField
     @WorkbenchPanel(parts = "HomeScreen")
-    FlowPanel homeScreen = new FlowPanel();
+    Div homeScreen;
 
-    @PostConstruct
-    void doLayout() {
-        Layouts.setToFillParent(homeScreen);
-        add(homeScreen);
-    }
 }

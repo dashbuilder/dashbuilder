@@ -26,12 +26,12 @@
       <groupId>org.gwtbootstrap3</groupId>
       <artifactId>gwtbootstrap3</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.gwtbootstrap3</groupId>
       <artifactId>gwtbootstrap3-extras</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-common</artifactId>
@@ -51,7 +51,7 @@
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-client-api</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-api</artifactId>
@@ -76,7 +76,7 @@
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-validations</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-dataset-api</artifactId>
@@ -85,6 +85,11 @@
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-displayer-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-services-api</artifactId>
     </dependency>
 
     <dependency>
@@ -106,7 +111,7 @@
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-renderer-default</artifactId>
     </dependency>
-    
+
     <!-- Test dependencies -->
     <dependency>
       <groupId>com.google.gwt.gwtmockito</groupId>

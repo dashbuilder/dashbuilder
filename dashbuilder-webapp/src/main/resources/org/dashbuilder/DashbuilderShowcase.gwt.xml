@@ -26,6 +26,8 @@
   <extend-property name="locale" values="de"/>
   <extend-property name="locale" values="ru"/>
 
+  <collapse-property name="locale" values="*"/>
+
   <!-- Application specific style sheet -->
   <stylesheet src='css/uberfire-showcase.css'/>
 

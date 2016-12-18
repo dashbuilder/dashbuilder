@@ -20,6 +20,10 @@ public class ValueChangeEvent<T> extends ContextualEvent {
         return value;
     }
 
+    public T getOldValue() {
+        return oldValue;
+    }
+
     @Override
     public String toString() {
         return "ValueChangeEvent [value=" + value.toString() + "]";

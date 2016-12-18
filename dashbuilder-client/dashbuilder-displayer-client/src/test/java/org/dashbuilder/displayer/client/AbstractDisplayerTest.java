@@ -52,7 +52,7 @@ public abstract class AbstractDisplayerTest extends AbstractDataSetTest {
 
         doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return new DisplayerMock(mock(AbstractDisplayer.View.class), null);
+                return createNewDisplayer((DisplayerSettings) invocationOnMock.getArguments()[0]);
             }
         }).when(rendererLibrary).lookupDisplayer(any(DisplayerSettings.class));
 

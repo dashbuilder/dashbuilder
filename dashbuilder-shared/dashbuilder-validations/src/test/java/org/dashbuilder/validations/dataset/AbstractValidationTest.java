@@ -1,14 +1,15 @@
 package org.dashbuilder.validations.dataset;
 
+import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import javax.validation.metadata.BeanDescriptor;
-import java.util.Set;
 
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 public class AbstractValidationTest {
-    Validator validator;
+
+    protected Validator validator;
 
     public void setup() {
         validator = spy(new ValidatorMock());

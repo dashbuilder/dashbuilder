@@ -35,8 +35,7 @@ Contributions to the project are strict, as it is required to include tests for 
 ### Controllability
 
 As described below in [Isolateability](#isolateability) the packages are very well organized and isolated which makes it very easy to control the state of a component as required for testing.
-Dashbuilder also makes use of some Dummy objects, like the widgets and backend, to make keep complexity low.
-
+Those tests are mainly located in `backend` and `webapp` folders, which can be ran using intelliJ's Maven integration.
 
 ### Observability
 
@@ -49,6 +48,20 @@ It also can be ran when doing a pull request, making use of [Jenkins CI](https:/
 Dashbuilder has unit tests for most modules, mostly because each contribution must include tests in order to be accepted, which means that the isolateability is achieved because everything is confined in its module.
 
 
+### Separation of concerns
+
+Dashbuilder's source code is very well organized. Each module is separated into different folders, which makes it easy to understand what each module is responsible for. It also provides reliable documentation that specifies about its struture and makes it easier to contribute to the project.
+
+
+### Understandability
+
+Dashbuilder's test names alone are enough to accurately identify what component is being tested. Even though the test code is very well documented making it easy to understand the reach of the tests that are currently done and creating new ones for the said components.
+
+
+### Heterogeneity
+
+Dashbuilder tests can be ran locally making use of [Apache Maven](https://maven.apache.org/) and it also can be ran when doing a pull request, making use of [Jenkins CI](https://jenkins.io/) and its [Pipeline](https://jenkins.io/projects/blueocean/).
+
 
 ## Test Statistics
 
@@ -56,31 +69,35 @@ Running `mvn clean install` on the project's root directory results in an error 
 
 <img src="./images/tests/coverage.png" width="800"/>
 
-Test Results:<br><br>
+Test Results:
+
 <img src="./images/tests/testResults.png" width="400"/>
-<br><br>
-Most of these are unit tests, however, and solely located in package `org.dashbuilder.dashbuilder-backend.dashbuilder-dataset-sql-tests` are this project's [Integration Tests](https://en.wikipedia.org/wiki/Integration_testing)
-<br>
+
+
+Most of these are unit tests, however, and solely located in package `org.dashbuilder.dashbuilder-backend.dashbuilder-dataset-sql-tests` are this project's [Integration Tests](https://en.wikipedia.org/wiki/Integration_testing).
+
 
 For a full report visit:
-<br>
-[Unit Test Report](http://htmlpreview.github.io/?https://github.com/fariagu/dashbuilder/blob/master/ESOF-docs/tests/testResults.html)
-<br>
-[Code Coverage Report](http://htmlpreview.github.io/?https://github.com/fariagu/dashbuilder/blob/master/ESOF-docs/tests/CodeCoverage/index.html)
-<br>
-Note: Seeing as these aren't hosted webpages, in order to be properly viewed they can only be properly viewed locally.
+- [Unit Test Report](http://htmlpreview.github.io/?https://github.com/fariagu/dashbuilder/blob/master/ESOF-docs/tests/testResults.html)
+- [Code Coverage Report](http://htmlpreview.github.io/?https://github.com/fariagu/dashbuilder/blob/master/ESOF-docs/tests/CodeCoverage/index.html)
+
+
+
+**Note:** Seeing as these aren't hosted webpages, in order to be properly viewed they can only be properly viewed locally.
 
 
 ## Bug Report
 
 After careful study of the application's behaviour we discovered a series of steps that leads to an unwanted result. Therefore an issue was opened on this project's repository with its description so that the contribuitors are aware of its existence.
-<br><br>
-Here is an example of the bug:<br><br>
+
+Here is an example of the bug:
+
 <img src="./images/reallybadhome.png" width="600"/>
-<br>
+
+
 [Here](https://github.com/dashbuilder/dashbuilder/issues/263) is the issue report.
-<br>
-We were not able to fix it.
+
+Unfortunately we were not able to fix it.
 
 ## Members and Contribution
 

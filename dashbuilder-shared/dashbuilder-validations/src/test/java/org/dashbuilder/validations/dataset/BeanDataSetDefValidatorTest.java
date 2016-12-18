@@ -2,7 +2,12 @@ package org.dashbuilder.validations.dataset;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.dashbuilder.dataset.def.BeanDataSetDef;
-import org.dashbuilder.dataset.validation.groups.*;
+import org.dashbuilder.dataset.validation.groups.BeanDataSetDefValidation;
+import org.dashbuilder.dataset.validation.groups.DataSetDefBasicAttributesGroup;
+import org.dashbuilder.dataset.validation.groups.DataSetDefCacheRowsValidation;
+import org.dashbuilder.dataset.validation.groups.DataSetDefProviderTypeGroup;
+import org.dashbuilder.dataset.validation.groups.DataSetDefPushSizeValidation;
+import org.dashbuilder.dataset.validation.groups.DataSetDefRefreshIntervalValidation;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,17 +22,16 @@ public class BeanDataSetDefValidatorTest extends AbstractValidationTest {
     BeanDataSetDef beanDataSetDef;
     private BeanDataSetDefValidator tested;
 
-     
+
     @Before
     public void setup() {
         super.setup();
-        tested = spy(new BeanDataSetDefValidator());
-        doReturn(validator).when(tested).getDashbuilderValidator();
+        tested = spy(new BeanDataSetDefValidator( validator ));
     }
-    
+
     @Test
     public void testValidateAttributes() {
-        tested.validateAttributes(beanDataSetDef);
+        tested.validateCustomAttributes( beanDataSetDef);
         verify(validator, times(1)).validate(beanDataSetDef, BeanDataSetDefValidation.class);
     }
 
@@ -37,7 +41,7 @@ public class BeanDataSetDefValidatorTest extends AbstractValidationTest {
         final boolean isPushEnabled = true;
         final boolean isRefreshEnabled = true;
         tested.validate(beanDataSetDef, isCacheEnabled, isPushEnabled, isRefreshEnabled);
-        verify(validator, times(1)).validate(beanDataSetDef, 
+        verify(validator, times(1)).validate(beanDataSetDef,
                 DataSetDefBasicAttributesGroup.class,
                 DataSetDefProviderTypeGroup.class,
                 DataSetDefCacheRowsValidation.class,
@@ -45,7 +49,7 @@ public class BeanDataSetDefValidatorTest extends AbstractValidationTest {
                 DataSetDefRefreshIntervalValidation.class,
                 BeanDataSetDefValidation.class);
     }
-    
+
     @Test
     public void testValidateNoCache() {
         final boolean isCacheEnabled = false;
@@ -73,7 +77,7 @@ public class BeanDataSetDefValidatorTest extends AbstractValidationTest {
                 DataSetDefRefreshIntervalValidation.class,
                 BeanDataSetDefValidation.class);
     }
-    
+
     @Test
     public void testValidateNoRefresh() {
         final boolean isCacheEnabled = true;
@@ -87,5 +91,5 @@ public class BeanDataSetDefValidatorTest extends AbstractValidationTest {
                 DataSetDefPushSizeValidation.class,
                 BeanDataSetDefValidation.class);
     }
-    
+
 }
