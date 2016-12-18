@@ -14,6 +14,9 @@
 
 As new requirements are laid upon the existing software there is the need for the product to evolve and respond to remain useful . As software products can be extensively complex , this evolution can be extremely expensive and very difficult, so there are specific processes to make it happen with ease. As a closure to our semester research our group was assigned to identify a part of this open-source project and develop/create it.
 
+It's important to say that it was extremely difficult to implement new features or fix any bugs - after working on this project more than 2 months we only found one bug. The dimension of this project and the fact that has been growing up for almost 4 years makes it even harder to find any gaps.
+
+
 ## Feature
 
 ### Feature Identification
@@ -21,6 +24,7 @@ As new requirements are laid upon the existing software there is the need for th
 After becoming more familiar with this web application and its interface we felt that some options weren't located very intuitively and so we decided to relocate one of them.
 <br>
 The search and its focus were aimed at the menu bar because of our familiarity with it, seeing as it was also there that we found the bug we reported.
+
 
 ### Feature Implementation
 
@@ -40,7 +44,6 @@ All code changes were performed within the class `ShowcaseEntryPoint`:
  - Associate Security Menu Item to `SECURITY` perspective in order to make it clickable.
 
 	
-
 ### Pull requesting
 
 
