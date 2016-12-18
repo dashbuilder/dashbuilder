@@ -37,7 +37,7 @@ There isn't a lot of 'creative' freedom because Dashbuilder relies heavily on th
 All code changes were performed within the class `ShowcaseEntryPoint`:
 
 * In function `getAdministrationMenuItems()` :
- - Initialized and empty `ArrayList result` with 3 elements instead of 4;
+ - Initialized an empty `ArrayList result` with 3 elements instead of 4;
  - Deleted/commented the entry for the Security Menu Item.
 
 * In function `getRoles` :
