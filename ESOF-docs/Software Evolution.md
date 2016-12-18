@@ -44,9 +44,11 @@ All code changes were performed within the class `ShowcaseEntryPoint`:
  - Add Security Menu Item to the Roles Menu;
  - Associate Security Menu Item to `SECURITY` perspective in order to make it clickable.
  
- Below you can check the before and after the changes.
+ Below you can check before and after the changes images.
  
+ <img src="./images/evolution/usermenubefore.png" height="80"/>
  
+ <img src="./images/evolution/usermenuafter.png" height="80"/>
 
 	
 ### Pull requesting
