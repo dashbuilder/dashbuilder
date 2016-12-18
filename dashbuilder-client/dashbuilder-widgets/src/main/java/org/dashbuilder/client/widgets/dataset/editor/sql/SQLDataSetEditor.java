@@ -26,6 +26,7 @@ import org.dashbuilder.client.widgets.dataset.editor.attributes.DataSetDefRefres
 import org.dashbuilder.client.widgets.dataset.event.ErrorEvent;
 import org.dashbuilder.client.widgets.dataset.event.TabChangedEvent;
 import org.dashbuilder.common.client.editor.ValueBoxEditor;
+import org.dashbuilder.common.client.editor.list.DropDownEditor;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
 
@@ -78,7 +79,7 @@ public class SQLDataSetEditor extends DataSetEditor<SQLDataSetDef> implements or
      *************************************************************/
 
     @Override
-    public ValueBoxEditor<String> dataSource() {
+    public DropDownEditor dataSource() {
         return attributesEditor.dataSource();
     }
 

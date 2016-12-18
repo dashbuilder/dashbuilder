@@ -15,9 +15,7 @@
  */
 package org.dashbuilder.dataprovider;
 
-import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
-import org.dashbuilder.dataset.def.StaticDataSetDef;
 import org.dashbuilder.dataset.json.DataSetDefJSONMarshallerExt;
 import org.dashbuilder.dataset.json.SQLDefJSONMarshaller;
 

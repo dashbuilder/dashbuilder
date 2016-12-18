@@ -78,6 +78,7 @@ public interface DataSetEditorConstants extends Messages {
     String sql_datasource();
     String sql_datasource_description();
     String sql_datasource_placeHolder();
+    String sql_datasource_selectHint();
     String sql_schema();
     String sql_schema_description();
     String sql_schema_placeHolder();

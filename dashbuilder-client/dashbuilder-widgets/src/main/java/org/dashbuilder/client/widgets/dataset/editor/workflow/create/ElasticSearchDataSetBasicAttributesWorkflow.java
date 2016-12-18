@@ -15,36 +15,34 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.workflow.create;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import org.dashbuilder.client.widgets.dataset.editor.attributes.DataSetDefBasicAttributesEditor;
 import org.dashbuilder.client.widgets.dataset.editor.driver.ElasticSearchDataSetDefAttributesDriver;
 import org.dashbuilder.client.widgets.dataset.event.CancelRequestEvent;
 import org.dashbuilder.client.widgets.dataset.event.SaveRequestEvent;
 import org.dashbuilder.client.widgets.dataset.event.TestDataSetRequestEvent;
-import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.editor.ElasticSearchDataSetDefAttributesEditor;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
-import org.dashbuilder.validations.dataset.DataSetDefValidator;
+import org.dashbuilder.validations.DataSetValidatorProvider;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
 
 
 /**
  * <p>Elastic Search Data Set Editor workflow presenter for setting data set definition basic attributes.</p>
- * 
- * @since 0.4.0 
+ *
+ * @since 0.4.0
  */
 @Dependent
 public class ElasticSearchDataSetBasicAttributesWorkflow extends DataSetBasicAttributesWorkflow<ElasticSearchDataSetDef, ElasticSearchDataSetDefAttributesEditor> {
 
     @Inject
     public ElasticSearchDataSetBasicAttributesWorkflow(final DataSetClientServices clientServices,
-                                             final DataSetDefValidator dataSetDefValidator,
+                                             final DataSetValidatorProvider validatorProvider,
                                              final SyncBeanManager beanManager,
                                              final DataSetDefBasicAttributesEditor basicAttributesEditor,
                                              final Event<SaveRequestEvent> saveRequestEvent,
@@ -52,7 +50,7 @@ public class ElasticSearchDataSetBasicAttributesWorkflow extends DataSetBasicAtt
                                              final Event<CancelRequestEvent> cancelRequestEvent,
                                              final View view) {
 
-        super(clientServices, dataSetDefValidator, beanManager, basicAttributesEditor, saveRequestEvent, testDataSetEvent, cancelRequestEvent, view);
+        super(clientServices, validatorProvider, beanManager, basicAttributesEditor, saveRequestEvent, testDataSetEvent, cancelRequestEvent, view);
     }
 
 
@@ -64,10 +62,5 @@ public class ElasticSearchDataSetBasicAttributesWorkflow extends DataSetBasicAtt
     @Override
     protected Class<? extends ElasticSearchDataSetDefAttributesEditor> getEditorClass() {
         return org.dashbuilder.client.widgets.dataset.editor.elasticsearch.ElasticSearchDataSetDefAttributesEditor.class;
-    }
-
-    @Override
-    protected Iterable<ConstraintViolation<?>> validate() {
-        return dataSetDefValidator.validatorFor(DataSetProviderType.ELASTICSEARCH).validateAttributes(getDataSetDef());
     }
 }

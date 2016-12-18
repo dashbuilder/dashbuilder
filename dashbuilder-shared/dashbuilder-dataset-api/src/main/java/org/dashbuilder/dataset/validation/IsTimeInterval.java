@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD,ElementType.FIELD,ElementType.CONSTRUCTOR,ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @Constraint(validatedBy= IsTimeIntervalImpl.class)
 public @interface IsTimeInterval {
-    String message();
+    String message() default "";
 
     Class[] groups() default {};
 

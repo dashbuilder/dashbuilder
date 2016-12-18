@@ -15,9 +15,12 @@
  */
 package org.dashbuilder.dataprovider.sql;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.sql.DataSource;
 
 import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.dashbuilder.dataset.def.SQLDataSourceDef;
 
 /**
  * Data source locator interface for SQL providers
@@ -28,4 +31,13 @@ public interface SQLDataSourceLocator {
      * Get the data source referenced in the SQL data set definition
      */
     DataSource lookup(SQLDataSetDef def) throws Exception;
+
+    /**
+     * Get the list of available data source definitions for connecting to SQL databases
+     *
+     * @return A list of data source definitions
+     */
+    default List<SQLDataSourceDef> list() {
+        return new ArrayList<>();
+    }
 }

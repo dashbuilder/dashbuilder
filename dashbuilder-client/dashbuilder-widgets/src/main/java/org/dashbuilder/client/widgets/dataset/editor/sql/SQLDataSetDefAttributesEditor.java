@@ -15,13 +15,20 @@
  */
 package org.dashbuilder.client.widgets.dataset.editor.sql;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.google.gwt.editor.client.EditorDelegate;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.common.client.editor.ValueBoxEditor;
+import org.dashbuilder.common.client.editor.list.DropDownEditor;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.dashbuilder.dataset.def.SQLDataSourceDef;
+import org.dashbuilder.dataset.service.SQLProviderServices;
 import org.gwtbootstrap3.client.ui.constants.Placement;
+import org.jboss.errai.common.client.api.Caller;
 import org.uberfire.client.mvp.UberView;
 
 import javax.annotation.PostConstruct;
@@ -40,7 +47,7 @@ public class SQLDataSetDefAttributesEditor implements IsWidget, org.dashbuilder.
         /**
          * <p>Specify the views to use for each sub-editor before calling <code>initWidget</code>.</p>
          */
-        void initWidgets(ValueBoxEditor.View dataSource, ValueBoxEditor.View dbSchema,
+        void initWidgets(DropDownEditor.View dataSource, ValueBoxEditor.View dbSchema,
                          ValueBoxEditor.View dbTable, ValueBoxEditor.View dbSQL);
 
         /**
@@ -54,7 +61,8 @@ public class SQLDataSetDefAttributesEditor implements IsWidget, org.dashbuilder.
         void query();
     }
 
-    ValueBoxEditor<String> dataSource;
+    Caller<SQLProviderServices> sqlProviderServices;
+    DropDownEditor dataSource;
     ValueBoxEditor<String> dbSchema;
     ValueBoxEditor<String> dbTable;
     ValueBoxEditor<String> dbSQL;
@@ -62,15 +70,17 @@ public class SQLDataSetDefAttributesEditor implements IsWidget, org.dashbuilder.
     private boolean isQuery;
 
     @Inject
-    public SQLDataSetDefAttributesEditor(final ValueBoxEditor<String> dataSource, 
+    public SQLDataSetDefAttributesEditor(final DropDownEditor dataSource,
                                          final ValueBoxEditor<String> dbSchema,
                                          final ValueBoxEditor<String> dbTable,
                                          final ValueBoxEditor<String> dbSQL,
+                                         final Caller<SQLProviderServices> sqlProviderServices,
                                          final View view) {
         this.dataSource = dataSource;
         this.dbSchema = dbSchema;
         this.dbTable = dbTable;
         this.dbSQL = dbSQL;
+        this.sqlProviderServices = sqlProviderServices;
         this.view = view;
     }
 
@@ -79,9 +89,13 @@ public class SQLDataSetDefAttributesEditor implements IsWidget, org.dashbuilder.
         // Initialize the SQL specific attributes editor view.
         view.init(this);
         view.initWidgets(dataSource.view, dbSchema.view, dbTable.view, dbSQL.view);
+
+        dataSource.setSelectHint(DataSetEditorConstants.INSTANCE.sql_datasource_selectHint());
+        sqlProviderServices.call((List<SQLDataSourceDef> list) -> onSqlDataSourcesLoad(list)).getDataSourceDefs();
+
         dataSource.addHelpContent(DataSetEditorConstants.INSTANCE.sql_datasource(),
                 DataSetEditorConstants.INSTANCE.sql_datasource_description(),
-                Placement.BOTTOM);
+                Placement.RIGHT); //bottom placement would interfere with the dropdown
         dbSchema.addHelpContent(DataSetEditorConstants.INSTANCE.sql_schema(),
                 DataSetEditorConstants.INSTANCE.sql_schema_description(),
                 Placement.BOTTOM);
@@ -96,6 +110,15 @@ public class SQLDataSetDefAttributesEditor implements IsWidget, org.dashbuilder.
         onSelectQuery();
     }
 
+    private DropDownEditor.Entry toDropDownEntry(SQLDataSourceDef d) {
+        return dataSource.newEntry(d.getName(), d.getDescription());
+    }
+
+    private void onSqlDataSourcesLoad(List<SQLDataSourceDef> list) {
+        List<DropDownEditor.Entry> entries = list.stream().map(this::toDropDownEntry).collect(Collectors.toList());
+        dataSource.setEntries(entries);
+    }
+
     /*************************************************************
      ** GWT EDITOR CONTRACT METHODS **
      *************************************************************/
@@ -106,7 +129,7 @@ public class SQLDataSetDefAttributesEditor implements IsWidget, org.dashbuilder.
     }
     
     @Override
-    public ValueBoxEditor<String> dataSource() {
+    public DropDownEditor dataSource() {
         return dataSource;
     }
 

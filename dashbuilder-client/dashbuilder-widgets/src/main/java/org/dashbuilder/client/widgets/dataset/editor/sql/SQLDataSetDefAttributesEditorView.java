@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.editor.ValueBoxEditor;
+import org.dashbuilder.common.client.editor.list.DropDownEditor;
 import org.gwtbootstrap3.client.ui.RadioButton;
 
 import javax.enterprise.context.Dependent;
@@ -29,7 +30,7 @@ public class SQLDataSetDefAttributesEditorView extends Composite implements SQLD
     SQLDataSetDefAttributesEditor presenter;
 
     @UiField(provided = true)
-    ValueBoxEditor.View dataSource;
+    DropDownEditor.View dataSource;
 
     @UiField(provided = true)
     ValueBoxEditor.View dbSchema;
@@ -60,7 +61,7 @@ public class SQLDataSetDefAttributesEditorView extends Composite implements SQLD
     }
     
     @Override
-    public void initWidgets(final ValueBoxEditor.View dataSource, final ValueBoxEditor.View dbSchema,
+    public void initWidgets(final DropDownEditor.View dataSource, final ValueBoxEditor.View dbSchema,
                             final ValueBoxEditor.View dbTable, final ValueBoxEditor.View dbSQL) {
         this.dataSource = dataSource;
         this.dbSchema = dbSchema;
