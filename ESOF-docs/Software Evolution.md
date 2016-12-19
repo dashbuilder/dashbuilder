@@ -49,6 +49,9 @@ All code changes were performed within the class `ShowcaseEntryPoint`:
  <img src="./images/evolution/usermenubefore.png" height="285"/>
  
  <img src="./images/evolution/usermenuafter.png" height="285"/>
+ 
+ 
+ The **security** section allows the user to change the role of the user and create groups.
 
 	
 ### Pull requesting
