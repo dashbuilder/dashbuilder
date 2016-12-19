@@ -7,7 +7,7 @@
         * [Feature Identification](#feature-identification)
         * [Feature Implementation](#implementaton)
 		* [Pull requesting](#pull-requesting)
-		* [Better Code Hub][#better-code-hub]
+		* [Better Code Hub](#better-code-hub)
 	* [Conclusion](#conclusion)
     * [Members and Contribution](#members-and-contribution)
 	
@@ -60,9 +60,7 @@ All code changes were performed within the class `ShowcaseEntryPoint`:
 
 ### Better Code Hub
 
-[![BCH compliance](https://bettercodehub.com/edge/badge/Nunommpinto/dashbuilder)](https://bettercodehub.com)
-
-
+![BCH compliance](https://bettercodehub.com/edge/badge/Nunommpinto/dashbuilder)
 
 
 ##	Conclusion
