@@ -7,7 +7,7 @@
         * [Feature Identification](#feature-identification)
         * [Feature Implementation](#implementaton)
 		* [Pull requesting](#pull-requesting)
-		* [Better Code Hub][#better-code-hub]
+		* [Better Code Hub](#better-code-hub)
 	* [Conclusion](#conclusion)
     * [Members and Contribution](#members-and-contribution)
 	
