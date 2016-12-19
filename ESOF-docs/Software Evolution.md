@@ -7,6 +7,7 @@
         * [Feature Identification](#feature-identification)
         * [Feature Implementation](#implementaton)
 		* [Pull requesting](#pull-requesting)
+		* [Better Code Hub][#better-code-hub]
 	* [Conclusion](#conclusion)
     * [Members and Contribution](#members-and-contribution)
 	
@@ -56,6 +57,10 @@ All code changes were performed within the class `ShowcaseEntryPoint`:
 	
 ### Pull requesting
 
+
+### Better Code Hub
+
+<img src='https://bettercodehub.com/edge/badge/Nunommpinto/dashbuilder'>
 
 ##	Conclusion
 
