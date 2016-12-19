@@ -60,9 +60,11 @@ All code changes were performed within the class `ShowcaseEntryPoint`:
 
 ### Better Code Hub
 
+**Status Badge**
+
 [![BCH compliance](https://bettercodehub.com/edge/badge/Nunommpinto/dashbuilder)](https://bettercodehub.com)
 
-
+<img src='https://bettercodehub.com/edge/badge/Nunommpinto/dashbuilder'>
 
 
 ##	Conclusion
