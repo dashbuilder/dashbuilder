@@ -153,13 +153,13 @@ public class ShowcaseEntryPoint {
                 result.add(MenuFactory.newSimpleItem(constants.role() + ": " + role.getName() ).endMenu().build());
             }
         }
-        //result.add(MenuFactory.newSimpleItem(constants.menu_security()).perspective(SECURITY).endMenu().build());
+        result.add(MenuFactory.newSimpleItem(constants.menu_security()).perspective(SECURITY).endMenu().build());
         return result;
     }
 
     private List<? extends MenuItem> getAdministrationMenuItems() {
-        final List<MenuItem> result = new ArrayList(4);
-        result.add(newMenuItem(constants.menu_security(), SECURITY));
+        final List<MenuItem> result = new ArrayList(3);
+        //result.add(newMenuItem(constants.menu_security(), SECURITY));
         result.add(newMenuItem(constants.menu_dataset_authoring(), DATA_SETS));
         result.add(newMenuItem(constants.menu_extensions_plugins(), PLUGINS));
         result.add(newMenuItem(constants.menu_extensions_apps(), APPS));
