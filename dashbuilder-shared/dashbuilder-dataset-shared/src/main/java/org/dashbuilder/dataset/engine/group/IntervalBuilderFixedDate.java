@@ -43,15 +43,6 @@ public class IntervalBuilderFixedDate implements IntervalBuilder {
         return intervalList;
     }
 
-    public Interval locate(DataColumn column, Integer intervalIndex) {
-        ColumnGroup columnGroup = column.getColumnGroup();
-        if (columnGroup == null) return null;
-        if (intervalIndex == null) return null;
-
-        IntervalList intervalList = _build(columnGroup);
-        return intervalList.get(intervalIndex);
-    }
-
     public IntervalList build(DataColumn dataColumn) {
         ColumnGroup columnGroup = dataColumn.getColumnGroup();
         return _build(columnGroup);

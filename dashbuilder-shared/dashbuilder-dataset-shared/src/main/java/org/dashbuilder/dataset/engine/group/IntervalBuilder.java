@@ -42,14 +42,4 @@ public interface IntervalBuilder {
      * @return A list of intervals containing a split of all the values for the given column.
      */
     IntervalList build(DataColumn groupedColumn);
-
-    /**
-     * Given a grouped column, locate the interval at the position specified.
-     *
-     * @param column The grouped column.
-     * @param intervalIndex The target interval index we want to select.
-     *
-     * @return The target interval
-     */
-    Interval locate(DataColumn column, Integer intervalIndex);
 }
