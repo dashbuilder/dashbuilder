@@ -14,8 +14,12 @@
  */
 package org.dashbuilder.displayer.client;
 
+import java.util.Date;
+
 import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.filter.FilterFactory;
+import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
@@ -51,6 +55,16 @@ public class DisplayerCoordinatorTest extends AbstractDisplayerTest {
             .sort(COLUMN_DATE, SortOrder.ASCENDING)
             .buildSettings();
 
+    DisplayerSettings byQuarter = DisplayerSettingsFactory.newBarChartSettings()
+            .dataset(EXPENSES)
+            .filter(COLUMN_ID, FilterFactory.equalsTo(1))
+            .group(COLUMN_DATE).fixed(DateIntervalType.QUARTER, false)
+            .column(COLUMN_DATE)
+            .column(COLUMN_AMOUNT, SUM)
+            .filterOn(false, true, true)
+            .sort(COLUMN_DATE, SortOrder.ASCENDING)
+            .buildSettings();
+
     DisplayerSettings allRows = DisplayerSettingsFactory.newTableSettings()
             .dataset(EXPENSES)
             .column(COLUMN_DEPARTMENT)
@@ -65,6 +79,7 @@ public class DisplayerCoordinatorTest extends AbstractDisplayerTest {
     AbstractDisplayer allRowsTable;
     AbstractDisplayer deptPieChart;
     AbstractDisplayer yearBarChart;
+    AbstractDisplayer quarterPieChart;
 
     @Mock
     DisplayerListener listener;
@@ -76,9 +91,10 @@ public class DisplayerCoordinatorTest extends AbstractDisplayerTest {
         allRowsTable = createNewDisplayer(allRows);
         deptPieChart = createNewDisplayer(byDepartment);
         yearBarChart = createNewDisplayer(byYear);
+        quarterPieChart = createNewDisplayer(byQuarter);
 
         displayerCoordinator = new DisplayerCoordinator(rendererManager);
-        displayerCoordinator.addDisplayers(allRowsTable, deptPieChart, yearBarChart);
+        displayerCoordinator.addDisplayers(allRowsTable, deptPieChart, yearBarChart, quarterPieChart);
         displayerCoordinator.addListener(listener);
     }
 
@@ -86,8 +102,8 @@ public class DisplayerCoordinatorTest extends AbstractDisplayerTest {
     public void testDrawAll() {
         displayerCoordinator.drawAll();
 
-        verify(listener, times(3)).onDataLookup(any(Displayer.class));
-        verify(listener, times(3)).onDraw(any(Displayer.class));
+        verify(listener, times(4)).onDataLookup(any(Displayer.class));
+        verify(listener, times(4)).onDraw(any(Displayer.class));
     }
 
     @Test
@@ -101,6 +117,44 @@ public class DisplayerCoordinatorTest extends AbstractDisplayerTest {
         // Check the allRowsTable receives the filter request
         DataSet dataSet = allRowsTable.getDataSetHandler().getLastDataSet();
         assertEquals(dataSet.getRowCount(), 19);
+        verify(listener).onDataLookup(allRowsTable);
+        verify(listener).onRedraw(allRowsTable);
+    }
+
+    @Test
+    public void testQuarterFilter() {
+        displayerCoordinator.drawAll();
+
+        // Click on the "Q4" slice
+        reset(listener);
+        quarterPieChart.filterUpdate(COLUMN_DATE, 0);
+
+        // Check the allRowsTable receives the filter request
+        DataSet dataSet = allRowsTable.getDataSetHandler().getLastDataSet();
+        assertEquals(dataSet.getRowCount(), 10);
+        for (int i = 0; i < dataSet.getRowCount(); i++) {
+            Date d = (Date) dataSet.getValueAt(i, COLUMN_DATE);
+            assertTrue(d.getMonth() > 8);
+        }
+        verify(listener).onDataLookup(allRowsTable);
+        verify(listener).onRedraw(allRowsTable);
+    }
+
+    @Test
+    public void testYearFilter() {
+        displayerCoordinator.drawAll();
+
+        // Click on the "2014" slice
+        reset(listener);
+        yearBarChart.filterUpdate(COLUMN_DATE, 2);
+
+        // Check the allRowsTable receives the filter request
+        DataSet dataSet = allRowsTable.getDataSetHandler().getLastDataSet();
+        assertEquals(dataSet.getRowCount(), 11);
+        for (int i = 0; i < dataSet.getRowCount(); i++) {
+            Date d = (Date) dataSet.getValueAt(i, COLUMN_DATE);
+            assertEquals(d.getYear(), 114);
+        }
         verify(listener).onDataLookup(allRowsTable);
         verify(listener).onRedraw(allRowsTable);
     }

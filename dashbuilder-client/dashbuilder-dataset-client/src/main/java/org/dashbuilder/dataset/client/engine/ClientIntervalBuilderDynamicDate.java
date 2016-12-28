@@ -177,27 +177,6 @@ public class ClientIntervalBuilderDynamicDate implements IntervalBuilder {
         return results;
     }
 
-    public Interval locate(DataColumn column, Integer intervalIndex) {
-        ColumnGroup columnGroup = column.getColumnGroup();
-        Date columnMinDate = (Date) column.getMinValue();
-        String type = column.getIntervalType();
-
-        if (columnGroup == null) return null;
-        if (columnMinDate == null) return null;
-        if (type == null) return null;
-
-        // Calculate the interval min. date.
-        DateIntervalType intervalType = DateIntervalType.getByName(type);
-        Date startDate = firstIntervalDate(intervalType, columnMinDate, columnGroup);
-        Date intervalMinDate = nextIntervalDate(startDate, intervalType, intervalIndex);
-
-        // Calculate the interval max. date.
-        Date intervalMaxDate = nextIntervalDate(intervalMinDate, intervalType, 1);
-
-        // Build & return the selected interval
-        return new IntervalDateRange(intervalIndex, intervalType, intervalMinDate, intervalMaxDate);
-    }
-
     public DateIntervalType calculateIntervalSize(Date minDate, Date maxDate, ColumnGroup columnGroup) {
 
         DateIntervalType intervalType = DateIntervalType.getByName(columnGroup.getIntervalSize());
