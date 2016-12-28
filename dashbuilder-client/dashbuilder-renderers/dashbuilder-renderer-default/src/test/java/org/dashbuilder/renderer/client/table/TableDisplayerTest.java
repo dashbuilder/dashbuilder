@@ -16,12 +16,14 @@ package org.dashbuilder.renderer.client.table;
 
 import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.client.AbstractDisplayerTest;
 import org.dashbuilder.displayer.client.DisplayerListener;
+import org.dashbuilder.displayer.client.formatter.ValueFormatter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -271,6 +273,25 @@ public class TableDisplayerTest extends AbstractDisplayerTest {
 
         verify(selectCommand).execute();
         verify(selectedCommand).execute();
+    }
+
+    @Test
+    public void testFormatEmpty() {
+        TableDisplayer table = createTableDisplayer(DisplayerSettingsFactory.newTableSettings()
+                .dataset(EXPENSES)
+                .buildSettings());
+
+        table.addFormatter(COLUMN_EMPLOYEE, new ValueFormatter() {
+            public String formatValue(DataSet dataSet, int row, int column) {
+                return "test";
+            }
+            public String formatValue(Object value) {
+                return "test";
+            }
+        });
+        table.draw();
+        String value = table.formatValue(100, 3);
+        assertEquals(value, "test");
     }
 
     @Test

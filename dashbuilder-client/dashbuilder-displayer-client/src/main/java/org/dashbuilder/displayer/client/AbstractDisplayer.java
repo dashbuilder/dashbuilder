@@ -771,9 +771,8 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
     }
 
     public String formatValue(int row, int column) {
-        Object value = dataSet.getValueAt(row, column);
+        Object value = row < dataSet.getRowCount() ? dataSet.getValueAt(row, column) : null;
         DataColumn columnObj = dataSet.getColumnByIndex(column);
-
         ValueFormatter formatter = getFormatter(columnObj.getId());
         if (formatter != null) {
             return formatter.formatValue(dataSet, row, column);
