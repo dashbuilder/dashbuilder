@@ -230,37 +230,18 @@ public class DataSetHandlerImpl implements DataSetHandler {
             return null;
         }
 
-        // For grouped by date data sets, locate the interval corresponding to the row specified
-        ColumnGroup cg = column.getColumnGroup();
-        DataSetMetadata metadata = clientServices.getMetadata(lookupBase.getDataSetUUID());
-        if (cg != null && metadata != null) {
-            IntervalBuilderLocator intervalBuilderLocator = clientServices.getIntervalBuilderLocator();
-            ColumnType columnType = metadata.getColumnType(cg.getSourceId());
-            if (columnType == null) {
-                throw new RuntimeException("Column type not found in data set metadata: " + cg.getSourceId());
-            }
-            IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(columnType, cg.getStrategy());
-            Interval target = intervalBuilder.locate(column, row);
-
-            // The resulting interval must be portable.
-            Interval result = new Interval(target.getName(), target.getIndex());
-            result.setType(target.getType());
-            result.setMinValue(target.getMinValue());
-            result.setMaxValue(target.getMaxValue());
-            return result;
-        }
-
-        // Return the interval by name.
+        // Get the target value
         List values = column.getValues();
-        if (row >= values.size()) {
-            return null;
-        }
-        Object value = values.get(row);
+        Object value = row < values.size() ? values.get(row) : null;
         if (value == null) {
             return null;
         }
 
-        return new Interval(value.toString());
+        Interval result = new Interval(value.toString(), row);
+        result.setType(column.getIntervalType());
+        result.setMinValue(column.getMinValue());
+        result.setMaxValue(column.getMaxValue());
+        return result;
     }
 
     // Internal filter/drillDown implementation logic
