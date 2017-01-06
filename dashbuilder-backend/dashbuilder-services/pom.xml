@@ -127,14 +127,12 @@
     </dependency>
     
     <!-- CSV Export. -->
-
     <dependency>
       <groupId>net.sf.opencsv</groupId>
       <artifactId>opencsv</artifactId>
     </dependency>
 
     <!-- Excel Export. -->
-
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
@@ -149,11 +147,6 @@
           <artifactId>stax-api</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <!-- Replacement for stax:stax-api excluded from org.apache.poi:poi-ooxml -->
-    <dependency>
-      <groupId>javax.xml.stream</groupId>
-      <artifactId>stax-api</artifactId>
     </dependency>
 
   </dependencies>
