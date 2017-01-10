@@ -359,7 +359,7 @@ public class DisplayerSettingsEditor implements IsWidget {
                 String expression = cs.getValueExpression();
                 String pattern = cs.getValuePattern();
 
-                view.addTextProperty(fieldSuffix + "name", "\u25fe " + view.getColumnNameI18n() + (i + 1), cs.getColumnName());
+                view.addTextProperty(fieldSuffix + "name", view.getColumnNameI18n() + (i + 1), cs.getColumnName());
 
                 if (expression != null) {
                     view.addTextProperty(fieldSuffix + "expression", "     " + view.getColumnExpressionI18n(), expression);

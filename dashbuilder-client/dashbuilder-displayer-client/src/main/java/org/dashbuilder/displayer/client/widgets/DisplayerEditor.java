@@ -352,6 +352,7 @@ public class DisplayerEditor implements IsWidget {
         displayerSettings.setDataSetLookup(dataSetLookup);
         removeStaleSettings();
         initDisplayer();
+        initSettingsEditor();
         showDisplayer();
     }
 
