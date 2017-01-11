@@ -73,7 +73,12 @@ public class CSVParser {
             if (header == null) throw new IOException("CSV has no header: " + dataSetDef);
 
             String[] firstRow = csvReader.readNext();
-            if (firstRow == null || firstRow.length < header.length) firstRow = null;
+            if (firstRow != null && firstRow.length < header.length) {
+                String exceptionMessage = String.format("CSV parse error : The first row has fewer columns (%d) than the header (%d)"
+                        , firstRow.length, header.length);
+                // Fail fast - see DASHBUILDE-172
+                throw new IllegalArgumentException(exceptionMessage);
+            }
 
             // Build the data set structure
             List<Integer> _columnIdxs = new ArrayList<Integer>();
