@@ -16,6 +16,7 @@
 package org.dashbuilder.dataset;
 
 import org.dashbuilder.DataSetCore;
+import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class DataSetTrimTest {
     @Test
     public void testTrim() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .rowNumber(10)
                 .buildLookup());
@@ -49,9 +50,26 @@ public class DataSetTrimTest {
     }
 
     @Test
+    public void testTrimGroup() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .group(COLUMN_DEPARTMENT)
+                        .column(COLUMN_CITY)
+                        .column(COLUMN_DEPARTMENT)
+                        .column(COLUMN_AMOUNT, AggregateFunctionType.SUM)
+                        .rowNumber(10)
+                        .buildLookup());
+
+        assertThat(result.getColumns().size()).isEqualTo(3);
+        assertThat(result.getRowCount()).isEqualTo(5);
+        assertThat(result.getRowCountNonTrimmed()).isEqualTo(5);
+    }
+
+    @Test
     public void testDuplicatedColumns() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
                 .column(COLUMN_CITY, "city1")
                 .column(COLUMN_CITY, "city2")

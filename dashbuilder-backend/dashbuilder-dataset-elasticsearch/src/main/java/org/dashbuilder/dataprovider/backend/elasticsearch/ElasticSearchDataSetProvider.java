@@ -359,7 +359,9 @@ public class ElasticSearchDataSetProvider implements DataSetProvider, DataSetDef
         postProcess(metadata, dataSet);
 
         if (trim) {
-            dataSet.setRowCountNonTrimmed((int)searchResponse.getTotalHits());
+            int totalRows = (int) searchResponse.getTotalHits();
+            totalRows = lookup.getNumberOfRows() > dataSet.getRowCount() ? dataSet.getRowCount() : totalRows;
+            dataSet.setRowCountNonTrimmed(totalRows);
         }
         return dataSet;
     }

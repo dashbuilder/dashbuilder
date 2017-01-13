@@ -68,7 +68,7 @@ public class DataSetLookupEditor implements IsWidget {
 
         void clearDataSetSelector();
 
-        void setDataSetSelectorHintEnabled(boolean enabled);
+        void enableDataSetSelectorHint();
 
         void addDataSetItem(String name, String id);
 
@@ -92,7 +92,7 @@ public class DataSetLookupEditor implements IsWidget {
 
         void setGroupColumnSelectorTitle(String title);
 
-        void setGroupColumnSelectorHintEnabled(boolean enabled);
+        void enableGroupColumnSelectorHint();
 
         void addGroupColumnItem(String column);
 
@@ -304,7 +304,9 @@ public class DataSetLookupEditor implements IsWidget {
         _dataSetDefList.clear();
         view.clearDataSetSelector();
         String selectedUUID = getDataSetUUID();
-        view.setDataSetSelectorHintEnabled(StringUtils.isBlank(selectedUUID));
+        if (StringUtils.isBlank(selectedUUID)) {
+            view.enableDataSetSelectorHint();
+        }
 
         boolean found = false;
         for (int i=0; i<ds.size(); i++) {
@@ -393,7 +395,9 @@ public class DataSetLookupEditor implements IsWidget {
             }
 
             view.clearGroupColumnSelector();
-            view.setGroupColumnSelectorHintEnabled(!lookupConstraints.isGroupRequired());
+            if (!lookupConstraints.isGroupRequired()) {
+                view.enableGroupColumnSelectorHint();
+            }
             for (int i = 0; i < groupColumnIdxs.size(); i++) {
                 int idx = groupColumnIdxs.get(i);
                 String columnId = getColumnId(idx);

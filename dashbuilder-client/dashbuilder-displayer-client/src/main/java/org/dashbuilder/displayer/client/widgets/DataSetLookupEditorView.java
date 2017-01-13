@@ -100,11 +100,7 @@ public class DataSetLookupEditorView extends Composite
         initWidget(uiBinder.createAndBindUi(this));
 
         groupDetailsIcon.setType(IconType.ARROW_DOWN);
-        groupDetailsIcon.addDomHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                expandCollapseGroupDetails();
-            }
-        }, ClickEvent.getType());
+        groupDetailsIcon.addDomHandler(this::expandCollapseGroupDetails, ClickEvent.getType());
     }
 
     @Override
@@ -123,7 +119,7 @@ public class DataSetLookupEditorView extends Composite
     }
 
     @Override
-    public void setDataSetSelectorHintEnabled(boolean enabled) {
+    public void enableDataSetSelectorHint() {
         dataSetListBox.addItem(CommonConstants.INSTANCE.common_dropdown_select());
         dataSetSelectorHintEnabled = true;
     }
@@ -196,7 +192,7 @@ public class DataSetLookupEditorView extends Composite
     }
 
     @Override
-    public void setGroupColumnSelectorHintEnabled(boolean enabled) {
+    public void enableGroupColumnSelectorHint() {
         groupColumnListBox.insertItem(CommonConstants.INSTANCE.dataset_lookup_group_columns_all(), 0);
         groupColumnSelectorHintEnabled = true;
     }
@@ -267,7 +263,7 @@ public class DataSetLookupEditorView extends Composite
         presenter.onGroupColumnSelected();
     }
 
-    public void expandCollapseGroupDetails() {
+    public void expandCollapseGroupDetails(ClickEvent event) {
         if (groupDatePanel.isVisible()) {
             groupDatePanel.setVisible(false);
             groupDetailsIcon.setType(IconType.ARROW_DOWN);

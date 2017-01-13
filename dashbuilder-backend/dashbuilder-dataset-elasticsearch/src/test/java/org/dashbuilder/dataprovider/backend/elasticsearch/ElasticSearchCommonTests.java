@@ -26,6 +26,7 @@ public class ElasticSearchCommonTests extends ElasticSearchDataSetTestBase {
     public void testTrim() throws Exception {
         DataSetTrimTest subTest = new DataSetTrimTest();
         subTest.testTrim();
+        subTest.testTrimGroup();
         subTest.testDuplicatedColumns();
     }
 

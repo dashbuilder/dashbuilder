@@ -451,16 +451,6 @@ public class DataSetGroupTest {
 
     @Test
     public void testGroupNumberAsLabel() throws Exception {
-        DataSetDef dsetDef = DataSetDefFactory.newSQLDataSetDef()
-                .uuid("invoices")
-                .dbTable("INVOICES", true)
-                .dataSource("myDS")
-                .label("invoiceId")
-                .label("customerId")
-                .date("creationDate")
-                .number("amount")
-                .buildDef();
-
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset(EXPENSE_REPORTS)
