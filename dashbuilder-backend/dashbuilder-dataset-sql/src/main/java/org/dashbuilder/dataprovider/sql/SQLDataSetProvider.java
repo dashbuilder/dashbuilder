@@ -700,7 +700,10 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                     ResultSet _results = logSQL(_query).fetch();
                     List<DataColumn> columns = calculateColumns(groupOp);
                     DataSet dataSet = _buildDataSet(columns, _results);
-                    if (trim) dataSet.setRowCountNonTrimmed(totalRows);
+                    if (trim) {
+                        totalRows = lookup.getNumberOfRows() > dataSet.getRowCount() ? dataSet.getRowCount() : totalRows;
+                        dataSet.setRowCountNonTrimmed(totalRows);
+                    }
                     return dataSet;
                 }
             } finally {

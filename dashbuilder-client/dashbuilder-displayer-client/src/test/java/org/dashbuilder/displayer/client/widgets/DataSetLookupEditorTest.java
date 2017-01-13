@@ -205,7 +205,7 @@ public class DataSetLookupEditorTest {
         presenter.init(DATA_2D_FIXED, null);
 
         verify(view).clearDataSetSelector();
-        verify(view).setDataSetSelectorHintEnabled(true);
+        verify(view).enableDataSetSelectorHint();
         verify(view).addDataSetItem("Population", POPULATION_UUID);
         verify(view).addDataSetItem("Revenue", REVENUE_UUID);
         verify(view, never()).setSelectedDataSetIndex(anyInt());
@@ -227,7 +227,7 @@ public class DataSetLookupEditorTest {
                 .buildLookup());
 
         verify(view).clearDataSetSelector();
-        verify(view, never()).setDataSetSelectorHintEnabled(true);
+        verify(view, never()).enableDataSetSelectorHint();
         verify(view).addDataSetItem("Population", POPULATION_UUID);
         verify(view).addDataSetItem("Revenue", REVENUE_UUID);
         verify(view, times(1)).setSelectedDataSetIndex(anyInt());
@@ -238,7 +238,7 @@ public class DataSetLookupEditorTest {
         verify(view).setGroupEnabled(true);
         verify(view, never()).setGroupByDateEnabled(true);
         verify(view).setGroupColumnSelectorTitle("Categories");
-        verify(view, never()).setGroupColumnSelectorHintEnabled(true);
+        verify(view, never()).enableGroupColumnSelectorHint();
         verify(groupDateEditor, never()).init(any(ColumnGroup.class));
 
         verify(view).clearGroupColumnSelector();
@@ -268,11 +268,11 @@ public class DataSetLookupEditorTest {
                 .column("population", AggregateFunctionType.SUM, "Total")
                 .buildLookup());
 
-        verify(view, never()).setDataSetSelectorHintEnabled(true);
+        verify(view, never()).enableDataSetSelectorHint();
 
         reset(view);
         presenter.init(DATA_2D_FIXED, null);
-        verify(view).setDataSetSelectorHintEnabled(true);
+        verify(view).enableDataSetSelectorHint();
     }
 
     @Test
@@ -303,7 +303,7 @@ public class DataSetLookupEditorTest {
 
         verify(view).setGroupEnabled(true);
         verify(view).setGroupByDateEnabled(true);
-        verify(view, never()).setGroupColumnSelectorHintEnabled(true);
+        verify(view, never()).enableGroupColumnSelectorHint();
         verify(groupDateEditor).init(any(ColumnGroup.class));
     }
 
@@ -316,7 +316,7 @@ public class DataSetLookupEditorTest {
                 .buildLookup());
 
         verify(view).setGroupEnabled(true);
-        verify(view).setGroupColumnSelectorHintEnabled(true);
+        verify(view).enableGroupColumnSelectorHint();
         verify(view).setAddColumnOptionEnabled(true);
         verify(event, never()).fire(any(DataSetLookupChangedEvent.class));
     }
@@ -349,7 +349,7 @@ public class DataSetLookupEditorTest {
                 .buildLookup());
 
         verify(view, never()).setGroupEnabled(true);
-        verify(view, never()).setGroupColumnSelectorHintEnabled(true);
+        verify(view, never()).enableGroupColumnSelectorHint();
         verify(event, never()).fire(any(DataSetLookupChangedEvent.class));
     }
 

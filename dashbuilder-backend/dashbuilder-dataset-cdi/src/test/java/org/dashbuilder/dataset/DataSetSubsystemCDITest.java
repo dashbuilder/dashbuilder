@@ -115,6 +115,7 @@ public class DataSetSubsystemCDITest extends BaseCDITest {
     @Test
     public void testTrim() throws Exception {
         dataSetTrimTest.testTrim();
+        dataSetTrimTest.testTrimGroup();
         dataSetTrimTest.testDuplicatedColumns();
     }
 }

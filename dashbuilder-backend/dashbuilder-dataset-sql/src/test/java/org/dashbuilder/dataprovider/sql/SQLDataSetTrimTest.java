@@ -29,6 +29,7 @@ public class SQLDataSetTrimTest extends SQLDataSetTestBase {
     public void testTrim() throws Exception {
         DataSetTrimTest subTest = new DataSetTrimTest();
         subTest.testTrim();
+        subTest.testTrimGroup();
         subTest.testDuplicatedColumns();
     }
 }
