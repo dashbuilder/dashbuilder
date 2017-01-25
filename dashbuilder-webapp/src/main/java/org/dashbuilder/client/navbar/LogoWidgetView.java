@@ -32,8 +32,7 @@ import org.gwtbootstrap3.client.ui.Label;
  * The Logo banner for the application
  */
 public class LogoWidgetView
-        extends Composite
-        implements LogoWidgetPresenter.View {
+        extends Composite {
 
     private SimplePanel container = new SimplePanel();
 
