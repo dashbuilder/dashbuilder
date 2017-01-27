@@ -26,6 +26,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -141,14 +142,21 @@ public class CSVParser {
             dateFormat.parse(value);
             return ColumnType.DATE;
         } catch (Exception e) {
-            try {
-                DecimalFormat numberFormat = getNumberFormat(columnId);
-                numberFormat.parse(value);
+            DecimalFormat numberParser = getNumberFormat(columnId);
+            if (canBeParsedAsNumber(numberParser, value)) {
                 return ColumnType.NUMBER;
-            } catch (Exception ee) {
+            } else {
                 return ColumnType.LABEL;
             }
         }
+    }
+
+    /* Given value can be parsed as number if the parser successfully consumes the entire input String */
+    protected boolean canBeParsedAsNumber(DecimalFormat parser, String value) {
+        value = value.trim();
+        ParsePosition position = new ParsePosition(0);
+        parser.parse(value, position);
+        return position.getIndex() == value.length();
     }
 
     protected void _processLine(DataSet dataSet, Object[] row, String[] line, List<Integer> columnIdxs) throws Exception {
