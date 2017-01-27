@@ -6,7 +6,6 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefFactory;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -23,9 +22,8 @@ public class CSVParserTest {
             .quoteChar('\'')
             .escapeChar('\\')
             .datePattern("YYYY-MM-dd")
-            .numberPattern("###.##")
+            .numberPattern("##.##")
             .buildDef();
-
 
     /* Reproducer of DASHBUILDE-172 */
     @Test
@@ -58,6 +56,20 @@ public class CSVParserTest {
         assertEquals(ColumnType.DATE, dset.getColumnById("Date of birth").getColumnType());
     }
 
+    @Test
+    public void stringFieldStartingWithNumber_shouldBeParsedAsLabel() throws Exception {
+        final String CSV_DATA = "Age,Address\n" +
+                "25,12 Downing street\n" +
+                "75,White House 52";
+
+        CSVFileStorage mockStorage = new MockCSVFileStorage(CSV_DATA);
+        CSVParser testedParser = new CSVParser(csvDataSet, mockStorage);
+        DataSet dset = testedParser.load();
+
+        assertEquals(2, dset.getRowCount());
+        assertEquals(ColumnType.NUMBER, dset.getColumnById("Age").getColumnType());
+        assertEquals(ColumnType.LABEL, dset.getColumnById("Address").getColumnType());
+    }
 
     static class MockCSVFileStorage implements CSVFileStorage {
 
