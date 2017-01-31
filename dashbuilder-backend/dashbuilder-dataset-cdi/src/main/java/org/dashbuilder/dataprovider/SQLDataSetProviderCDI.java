@@ -21,7 +21,6 @@ import javax.inject.Inject;
 
 import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataprovider.sql.SQLDataSetProvider;
-import org.dashbuilder.dataprovider.sql.SQLDataSourceLocatorImpl;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.events.DataSetDefModifiedEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
@@ -38,10 +37,11 @@ public class SQLDataSetProviderCDI extends SQLDataSetProvider {
                                  SQLDataSourceLocatorCDI sqlDataSourceLocator) {
 
         super(staticDataSetProvider,
-                sqlDataSourceLocator,
                 DataSetCore.get().getIntervalBuilderLocator(),
                 DataSetCore.get().getIntervalBuilderDynamicDate(),
                 DataSetCore.get().getSharedDataSetOpEngine());
+
+        super.setDataSourceLocator(sqlDataSourceLocator);
     }
 
     // Listen to changes on the data set definition registry

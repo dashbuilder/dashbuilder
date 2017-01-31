@@ -15,13 +15,29 @@
  */
 package org.dashbuilder.dataprovider;
 
+import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
 
-import org.dashbuilder.dataprovider.sql.SQLDataSourceLocatorImpl;
+import org.dashbuilder.dataprovider.sql.JDBCUtils;
+import org.dashbuilder.dataprovider.sql.SQLDataSourceLocator;
+import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.dashbuilder.dataset.def.SQLDataSourceDef;
 
 @ApplicationScoped
-public class SQLDataSourceLocatorCDI extends SQLDataSourceLocatorImpl {
+public class SQLDataSourceLocatorCDI implements SQLDataSourceLocator {
 
     public SQLDataSourceLocatorCDI() {
+    }
+
+    public DataSource lookup(SQLDataSetDef def) throws Exception {
+        InitialContext ctx = new InitialContext();
+        return (DataSource) ctx.lookup(def.getDataSource());
+    }
+
+    @Override
+    public List<SQLDataSourceDef> list() {
+        return JDBCUtils.listDatasourceDefs();
     }
 }

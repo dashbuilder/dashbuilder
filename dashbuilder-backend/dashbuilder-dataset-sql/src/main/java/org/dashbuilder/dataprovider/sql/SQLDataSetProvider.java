@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
@@ -53,6 +54,7 @@ import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.def.DataSetDefRegistryListener;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
+import org.dashbuilder.dataset.def.SQLDataSourceDef;
 import org.dashbuilder.dataset.engine.group.IntervalBuilder;
 import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.dataset.engine.group.IntervalList;
@@ -109,11 +111,21 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
 
             SINGLETON = new SQLDataSetProvider(
                     staticDataSetProvider,
-                    new SQLDataSourceLocatorImpl(),
                     intervalBuilderLocator,
                     intervalBuilderDynamicDate,
                     dataSetOpEngine);
 
+            SINGLETON.setDataSourceLocator(new SQLDataSourceLocator() {
+                @Override
+                public DataSource lookup(SQLDataSetDef def) throws Exception {
+                    InitialContext ctx = new InitialContext();
+                    return (DataSource) ctx.lookup(def.getDataSource());
+                }
+                @Override
+                public List<SQLDataSourceDef> list() {
+                    return JDBCUtils.listDatasourceDefs();
+                }
+            });
             dataSetDefRegistry.addListener(SINGLETON);
         }
         return SINGLETON;
@@ -131,13 +143,11 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
     }
 
     public SQLDataSetProvider(StaticDataSetProvider staticDataSetProvider,
-                              SQLDataSourceLocator dataSourceLocator,
                               IntervalBuilderLocator intervalBuilderLocator,
                               IntervalBuilderDynamicDate intervalBuilderDynamicDate,
                               DataSetOpEngine opEngine) {
 
         this.staticDataSetProvider = staticDataSetProvider;
-        this.dataSourceLocator = dataSourceLocator;
         this.intervalBuilderLocator = intervalBuilderLocator;
         this.intervalBuilderDynamicDate = intervalBuilderDynamicDate;
         this.opEngine = opEngine;
