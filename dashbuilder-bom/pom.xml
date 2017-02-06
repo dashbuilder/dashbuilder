@@ -18,7 +18,6 @@
   </description>
 
   <!-- IMPORTANT: Do not declare any build things here! Declare them in dashbuilder-parent-metadata pom -->
-  <build/>
 
   <dependencyManagement>
     <dependencies>
