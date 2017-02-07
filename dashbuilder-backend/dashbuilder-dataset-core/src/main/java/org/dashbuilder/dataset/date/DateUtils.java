@@ -88,6 +88,9 @@ public class DateUtils {
         if (type.getIndex() <= DateIntervalType.DAY.getIndex()) {
             return FORMATTER_DAY.parse(date.toString());
         }
+        if (type.getIndex() <= DateIntervalType.WEEK.getIndex()) {
+            return FORMATTER_DAY.parse(date.toString());
+        }
         if (type.getIndex() <= DateIntervalType.QUARTER.getIndex()) {
             return FORMATTER_MONTH.parse(date.toString());
         }
