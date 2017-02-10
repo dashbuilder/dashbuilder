@@ -22,18 +22,18 @@ import org.dashbuilder.dataset.impl.MemSizeEstimator;
  */
 public class DataSetFunctionIndex extends DataSetIndexElement {
 
-    Double value = null;
+    Object value = null;
 
-    public DataSetFunctionIndex(Double value, long buildTime) {
+    public DataSetFunctionIndex(Object value, long buildTime) {
         super(buildTime);
         this.value = value;
     }
 
-    public Double getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 

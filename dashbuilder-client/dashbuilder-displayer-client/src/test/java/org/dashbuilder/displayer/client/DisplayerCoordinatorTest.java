@@ -18,6 +18,9 @@ import java.util.Date;
 
 import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.filter.CoreFunctionFilter;
+import org.dashbuilder.dataset.filter.CoreFunctionType;
+import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.sort.SortOrder;
@@ -48,7 +51,7 @@ public class DisplayerCoordinatorTest extends AbstractDisplayerTest {
 
     DisplayerSettings byYear = DisplayerSettingsFactory.newBarChartSettings()
             .dataset(EXPENSES)
-            .group(COLUMN_DATE)
+            .group(COLUMN_DATE).dynamic(DateIntervalType.YEAR, true)
             .column(COLUMN_DATE)
             .column(COLUMN_AMOUNT, SUM)
             .filterOn(false, true, true)
@@ -157,6 +160,45 @@ public class DisplayerCoordinatorTest extends AbstractDisplayerTest {
         }
         verify(listener).onDataLookup(allRowsTable);
         verify(listener).onRedraw(allRowsTable);
+    }
+
+    @Test
+    public void testMultipleFilter() {
+        displayerCoordinator.drawAll();
+
+        // Click on the "2014" slice
+        yearBarChart.filterUpdate(COLUMN_DATE, 2);
+
+        // Click on the "Sales" slice
+        deptPieChart.filterUpdate(COLUMN_DEPARTMENT, 1);
+
+        // Check the allRowsTable receives all the filter requests
+        DataSet dataSet = allRowsTable.getDataSetHandler().getLastDataSet();
+        assertEquals(dataSet.getRowCount(), 2);
+    }
+
+    @Test
+    public void testFilterUpdates() {
+        displayerCoordinator.drawAll();
+
+        // Filter by amount
+        DataSetFilter filterOp = new DataSetFilter();
+        CoreFunctionFilter columnFilter = new CoreFunctionFilter(COLUMN_AMOUNT, CoreFunctionType.BETWEEN, 1d, 1.2d);
+        filterOp.addFilterColumn(columnFilter);
+        yearBarChart.filterUpdate(filterOp);
+        DataSet dataSet = allRowsTable.getDataSetHandler().getLastDataSet();
+        assertEquals(dataSet.getRowCount(), 1);
+
+        // Filter by a different range
+        filterOp = new DataSetFilter();
+        columnFilter = new CoreFunctionFilter(COLUMN_AMOUNT, CoreFunctionType.BETWEEN, 1000d, 2000d);
+        filterOp.addFilterColumn(columnFilter);
+        DisplayerListener listener = mock(DisplayerListener.class);
+        allRowsTable.addListener(listener);
+        yearBarChart.filterUpdate(filterOp);
+        verify(listener).onRedraw(allRowsTable);
+        dataSet = allRowsTable.getDataSetHandler().getLastDataSet();
+        assertEquals(dataSet.getRowCount(), 2);
     }
 
     @Test

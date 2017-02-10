@@ -49,12 +49,22 @@ public enum AggregateFunctionType {
         return true;
     }
 
+    public ColumnType getResultType(ColumnType columnType) {
+        if (columnType != null &&  (MIN.equals(this) || MAX.equals(this))) {
+            return columnType;
+        }
+        return ColumnType.NUMBER;
+    }
+
     public static AggregateFunctionType getByIndex(int index) {
         return _typeArray[index];
     }
 
     public static AggregateFunctionType getByName(String str) {
         try {
+            if (str == null) {
+                return null;
+            }
             return valueOf(str.toUpperCase());
         } catch (Exception e) {
             return null;

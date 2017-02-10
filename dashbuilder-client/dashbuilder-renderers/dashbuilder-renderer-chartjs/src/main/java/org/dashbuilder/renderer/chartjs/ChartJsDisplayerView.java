@@ -30,7 +30,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.displayer.client.AbstractDisplayerView;
+import org.dashbuilder.displayer.client.AbstractGwtDisplayerView;
 import org.dashbuilder.renderer.chartjs.lib.Chart;
 import org.dashbuilder.renderer.chartjs.lib.data.AreaChartData;
 import org.dashbuilder.renderer.chartjs.lib.data.AreaChartDataProvider;
@@ -42,7 +42,7 @@ import org.dashbuilder.renderer.chartjs.resources.i18n.ChartJsDisplayerConstants
 import org.gwtbootstrap3.client.ui.Label;
 
 public abstract class ChartJsDisplayerView<P extends ChartJsDisplayer>
-        extends AbstractDisplayerView<P>
+        extends AbstractGwtDisplayerView<P>
         implements ChartJsDisplayer.View<P> {
 
     private Panel container = new FlowPanel();

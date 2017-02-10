@@ -61,6 +61,7 @@ public class DisplayerTypeSelectorView extends Composite implements DisplayerTyp
         displayerNames.put(DisplayerType.METRIC, DisplayerTypeConstants.INSTANCE.displayer_type_selector_tab_metric());
         displayerNames.put(DisplayerType.MAP, DisplayerTypeConstants.INSTANCE.displayer_type_selector_tab_map());
         displayerNames.put(DisplayerType.TABLE, DisplayerTypeConstants.INSTANCE.displayer_type_selector_tab_table());
+        displayerNames.put(DisplayerType.SELECTOR, DisplayerTypeConstants.INSTANCE.displayer_type_selector_tab_selector());
 
         initWidget(uiBinder.createAndBindUi(this));
         displayerSubTypePane.add(presenter.getSubtypeSelector());

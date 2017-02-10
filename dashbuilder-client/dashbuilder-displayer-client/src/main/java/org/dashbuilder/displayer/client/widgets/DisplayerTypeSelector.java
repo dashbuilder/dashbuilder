@@ -61,6 +61,7 @@ public class DisplayerTypeSelector implements IsWidget {
         view.show(DisplayerType.METRIC);
         view.show(DisplayerType.MAP);
         view.show(DisplayerType.TABLE);
+        view.show(DisplayerType.SELECTOR);
         view.select(selectedType);
     }
 

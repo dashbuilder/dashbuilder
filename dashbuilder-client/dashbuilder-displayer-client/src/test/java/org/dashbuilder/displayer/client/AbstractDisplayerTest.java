@@ -16,13 +16,12 @@ package org.dashbuilder.displayer.client;
 
 import java.util.List;
 
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.client.AbstractDataSetTest;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.formatter.ValueFormatterRegistry;
 import org.junit.Before;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import static org.mockito.Mockito.*;
 
@@ -50,20 +49,18 @@ public abstract class AbstractDisplayerTest extends AbstractDataSetTest {
 
         when(rendererManager.getRendererForDisplayer(any(DisplayerSettings.class))).thenReturn(rendererLibrary);
 
-        doAnswer(new Answer() {
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return createNewDisplayer((DisplayerSettings) invocationOnMock.getArguments()[0]);
-            }
-        }).when(rendererLibrary).lookupDisplayer(any(DisplayerSettings.class));
+        doAnswer(mock ->  createNewDisplayer((DisplayerSettings) mock.getArguments()[0]))
+                .when(rendererLibrary).lookupDisplayer(any(DisplayerSettings.class));
 
-        doAnswer(new Answer() {
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                List<Displayer> displayerList = (List<Displayer>) invocationOnMock.getArguments()[0];
-                for (Displayer displayer : displayerList) {
-                    displayer.draw();
-                }
-                return null;
+        doAnswer(mock -> createNewDisplayer((DisplayerSettings) mock.getArguments()[0]))
+                .when(rendererLibrary).lookupDisplayer(any(DisplayerSettings.class));
+
+        doAnswer(mock -> {
+            List<Displayer> displayerList = (List<Displayer>) mock.getArguments()[0];
+            for (Displayer displayer : displayerList) {
+                displayer.draw();
             }
+            return null;
         }).when(rendererLibrary).draw(anyListOf(Displayer.class));
     }
 
@@ -74,6 +71,11 @@ public abstract class AbstractDisplayerTest extends AbstractDataSetTest {
     public <D extends AbstractDisplayer> D initDisplayer(D displayer, DisplayerSettings settings) {
         displayer.setEvaluator(new DisplayerEvaluatorMock());
         displayer.setFormatter(new DisplayerFormatterMock());
+        displayer.addListener(new AbstractDisplayerListener() {
+            public void onError(Displayer displayer, ClientRuntimeError error) {
+                throw new RuntimeException(error.getRootCause());
+            }
+        });
         if (settings != null) {
             displayer.setDisplayerSettings(settings);
             displayer.setDataSetHandler(new DataSetHandlerImpl(clientServices, settings.getDataSetLookup()));

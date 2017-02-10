@@ -25,6 +25,6 @@ import java.util.List;
 public interface AggregateFunction {
 
     AggregateFunctionType getType();
-    double aggregate(List values);
-    double aggregate(List values, List<Integer> rows);
+    Object aggregate(List values);
+    Object aggregate(List values, List<Integer> rows);
 }

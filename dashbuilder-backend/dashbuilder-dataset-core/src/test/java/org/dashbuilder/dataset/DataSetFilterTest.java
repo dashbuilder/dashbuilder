@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataset.filter.ColumnFilter;
+import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.dataset.def.DataSetPreprocessor;
 import org.junit.Before;
@@ -104,6 +105,21 @@ public class DataSetFilterTest {
         assertThat(result.getRowCount()).isEqualTo(18);
     }
 
+    @Test
+    public void testFilterAfterSelect() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .group(COLUMN_DEPARTMENT).select("Support")
+                        .group(COLUMN_DATE).dynamic(DateIntervalType.YEAR, true).select("2012")
+                        .column(COLUMN_ID)
+                        .column(COLUMN_DEPARTMENT)
+                        .column(COLUMN_DATE)
+                        .buildLookup());
+
+        //printDataSet(result);
+        assertThat(result.getRowCount()).isEqualTo(4);
+    }
 
     @Test
     public void testFilterByString() throws Exception {

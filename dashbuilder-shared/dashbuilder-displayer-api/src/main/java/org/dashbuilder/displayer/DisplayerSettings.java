@@ -178,7 +178,11 @@ public class DisplayerSettings {
     }
 
     private boolean parseBoolean(String value) {
-        if (value == null || value.trim().length() == 0) return false;
+        return parseBoolean(value, false);
+    }
+
+    private boolean parseBoolean(String value, boolean defaultValue) {
+        if (value == null || value.trim().length() == 0) return defaultValue;
         return Boolean.parseBoolean(value);
     }
 
@@ -358,6 +362,30 @@ public class DisplayerSettings {
         settings.put( getSettingPath( DisplayerAttributeDef.FILTER_LISTENING_ENABLED ), Boolean.toString( filterListeningEnabled ) );
     }
 
+    public int getSelectorWidth() {
+        return parseInt(settings.get(getSettingPath(DisplayerAttributeDef.SELECTOR_WIDTH)), -1);
+    }
+
+    public void setSelectorWidth(int filterWidth) {
+        settings.put(getSettingPath(DisplayerAttributeDef.SELECTOR_WIDTH), Integer.toString(filterWidth));
+    }
+
+    public boolean isSelectorMultiple() {
+        return parseBoolean(settings.get(getSettingPath(DisplayerAttributeDef.SELECTOR_MULTIPLE)));
+    }
+
+    public void setSelectorMultiple(boolean filterMultiple) {
+        settings.put(getSettingPath( DisplayerAttributeDef.SELECTOR_MULTIPLE), Boolean.toString(filterMultiple));
+    }
+
+    public boolean isSelectorInputsEnabled() {
+        return parseBoolean(settings.get(getSettingPath(DisplayerAttributeDef.SELECTOR_SHOW_INPUTS)), true);
+    }
+
+    public void setSelectorInputsEnabled(boolean enabled) {
+        settings.put(getSettingPath( DisplayerAttributeDef.SELECTOR_SHOW_INPUTS), Boolean.toString(enabled));
+    }
+
     public int getChartWidth() {
         return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_WIDTH ) ), 500 );
     }
@@ -383,7 +411,7 @@ public class DisplayerSettings {
     }
 
     public int getChartMarginTop() {
-        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_TOP ) ), 10 );
+        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_TOP ) ), 0 );
     }
 
     public void setChartMarginTop( int chartMarginTop ) {
@@ -391,7 +419,7 @@ public class DisplayerSettings {
     }
 
     public int getChartMarginBottom() {
-        return parseInt(settings.get(getSettingPath(DisplayerAttributeDef.CHART_MARGIN_BOTTOM)), 10);
+        return parseInt(settings.get(getSettingPath(DisplayerAttributeDef.CHART_MARGIN_BOTTOM)), 0);
     }
 
     public void setChartMarginBottom( int chartMarginBottom ) {
@@ -399,7 +427,7 @@ public class DisplayerSettings {
     }
 
     public int getChartMarginLeft() {
-        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_LEFT ) ), 10 );
+        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_LEFT ) ), 0 );
     }
 
     public void setChartMarginLeft( int chartMarginLeft ) {
@@ -407,7 +435,7 @@ public class DisplayerSettings {
     }
 
     public int getChartMarginRight() {
-        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_RIGHT ) ), 10 );
+        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.CHART_MARGIN_RIGHT ) ), 0 );
     }
 
     public void setChartMarginRight( int chartMarginRight ) {

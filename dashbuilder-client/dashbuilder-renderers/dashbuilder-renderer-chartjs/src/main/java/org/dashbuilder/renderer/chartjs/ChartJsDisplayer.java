@@ -21,11 +21,11 @@ import java.util.Set;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.displayer.ColumnSettings;
-import org.dashbuilder.displayer.client.AbstractDisplayer;
+import org.dashbuilder.displayer.client.AbstractGwtDisplayer;
 
-public abstract class ChartJsDisplayer<V extends ChartJsDisplayer.View> extends AbstractDisplayer<V> {
+public abstract class ChartJsDisplayer<V extends ChartJsDisplayer.View> extends AbstractGwtDisplayer<V> {
 
-    public interface View<P extends ChartJsDisplayer> extends AbstractDisplayer.View<P> {
+    public interface View<P extends ChartJsDisplayer> extends AbstractGwtDisplayer.View<P> {
 
         void setWidth(int width);
 

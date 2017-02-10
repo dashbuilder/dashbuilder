@@ -19,12 +19,12 @@ import java.util.Date;
 import javax.enterprise.context.Dependent;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import org.gwtbootstrap3.client.ui.Button;
 import org.uberfire.ext.widgets.common.client.common.DatePicker;
 
 @Dependent
@@ -38,6 +38,11 @@ public class DateParameterEditorView extends Composite implements DateParameterE
     @UiField
     DatePicker input;
 
+    @UiField
+    Button icon;
+
+    protected boolean show = false;
+
     public DateParameterEditorView() {
         initWidget(uiBinder.createAndBindUi(this));
     }
@@ -45,20 +50,39 @@ public class DateParameterEditorView extends Composite implements DateParameterE
     @Override
     public void init(final DateParameterEditor presenter) {
         this.presenter = presenter;
-        input.addValueChangeHandler(new ValueChangeHandler<Date>() {
-            public void onValueChange(ValueChangeEvent<Date> event) {
-                presenter.valueChanged();
+        input.addValueChangeHandler(e -> {
+            presenter.onChange();
+        });
+        input.addBlurHandler(e -> {
+            presenter.onBlur();
+        });
+        input.addShowHandler(e -> {
+            presenter.onFocus();
+            show = true;
+        });
+        input.addHideHandler(e -> {
+            presenter.onFocus();
+            show = false;
+        });
+        icon.addClickHandler(e -> {
+            if (!show) {
+                input.onShow(null);
             }
         });
     }
 
     @Override
-    public Date getCurrentValue() {
+    public Date getValue() {
         return input.getValue();
     }
 
     @Override
-    public void setCurrentValue(Date value) {
+    public void setValue(Date value) {
         input.setValue(value);
+    }
+
+    @Override
+    public void setWidth(int width) {
+        input.asWidget().getElement().getStyle().setWidth(width, Style.Unit.PX);
     }
 }

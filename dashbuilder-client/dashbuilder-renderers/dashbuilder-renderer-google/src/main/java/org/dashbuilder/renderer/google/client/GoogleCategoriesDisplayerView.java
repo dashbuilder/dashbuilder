@@ -17,6 +17,7 @@ package org.dashbuilder.renderer.google.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.googlecode.gwt.charts.client.Selection;
 import com.googlecode.gwt.charts.client.corechart.CoreChartWidget;
 import com.googlecode.gwt.charts.client.event.SelectEvent;
@@ -105,7 +106,12 @@ public abstract class GoogleCategoriesDisplayerView<P extends GoogleCategoriesDi
 
     @Override
     public void nodata() {
-        super.showDisplayer(new Label(GoogleDisplayerConstants.INSTANCE.common_noData()));
+        FlowPanel noDataPanel = new FlowPanel();
+        noDataPanel.setWidth(width + "px");
+        noDataPanel.setHeight(height + "px");
+        noDataPanel.add(new Label(GoogleDisplayerConstants.INSTANCE.common_noData()));
+
+        super.showDisplayer(noDataPanel);
     }
 
     // Common methods used in subclasses

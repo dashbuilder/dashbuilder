@@ -108,6 +108,10 @@ public class DisplayerSettingsEditorView extends Composite implements DisplayerS
         attrMapI18n.put(FILTER_SELFAPPLY_ENABLED, CommonConstants.INSTANCE.filter_self());
         attrMapI18n.put(FILTER_LISTENING_ENABLED, CommonConstants.INSTANCE.filter_listening());
         attrMapI18n.put(FILTER_NOTIFICATION_ENABLED, CommonConstants.INSTANCE.filter_notifications());
+        attrMapI18n.put(SELECTOR_GROUP, CommonConstants.INSTANCE.selector_group());
+        attrMapI18n.put(SELECTOR_WIDTH, CommonConstants.INSTANCE.selector_width());
+        attrMapI18n.put(SELECTOR_MULTIPLE, CommonConstants.INSTANCE.selector_multiple());
+        attrMapI18n.put(SELECTOR_SHOW_INPUTS, CommonConstants.INSTANCE.selector_show_inputs());
         attrMapI18n.put(REFRESH_GROUP, CommonConstants.INSTANCE.refresh_group());
         attrMapI18n.put(REFRESH_INTERVAL, CommonConstants.INSTANCE.refresh_interval());
         attrMapI18n.put(REFRESH_STALE_DATA, CommonConstants.INSTANCE.refresh_stale_data());

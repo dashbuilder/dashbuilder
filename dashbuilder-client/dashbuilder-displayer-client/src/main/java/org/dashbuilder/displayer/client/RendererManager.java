@@ -41,10 +41,10 @@ import org.jboss.errai.ioc.client.container.SyncBeanManager;
 public class RendererManager {
 
     private SyncBeanManager beanManager;
-    private List<RendererLibrary> renderersList = new ArrayList<RendererLibrary>();
-    private Map<DisplayerType, RendererLibrary> renderersDefault = new EnumMap<DisplayerType, RendererLibrary>(DisplayerType.class);
-    private Map<DisplayerType, List<RendererLibrary>> renderersByType = new EnumMap<DisplayerType, List<RendererLibrary>>(DisplayerType.class);
-    private Map<DisplayerSubType, List<RendererLibrary>> renderersBySubType = new EnumMap<DisplayerSubType, List<RendererLibrary>>(DisplayerSubType.class);
+    private List<RendererLibrary> renderersList = new ArrayList<>();
+    private Map<DisplayerType, RendererLibrary> renderersDefault = new EnumMap<>(DisplayerType.class);
+    private Map<DisplayerType, List<RendererLibrary>> renderersByType = new EnumMap<>(DisplayerType.class);
+    private Map<DisplayerSubType, List<RendererLibrary>> renderersBySubType = new EnumMap<>(DisplayerSubType.class);
 
     public RendererManager() {
     }
@@ -73,7 +73,7 @@ public class RendererManager {
                 for (DisplayerType type : types) {
                     List<RendererLibrary> set = renderersByType.get(type);
                     if (set == null) {
-                        set = new ArrayList<RendererLibrary>();
+                        set = new ArrayList<>();
                         renderersByType.put(type, set);
                     }
                     set.add(lib);
@@ -83,7 +83,7 @@ public class RendererManager {
                         for (DisplayerSubType subType : subTypes) {
                             List<RendererLibrary> subset = renderersBySubType.get(subType);
                             if (subset == null) {
-                                subset = new ArrayList<RendererLibrary>();
+                                subset = new ArrayList<>();
                                 renderersBySubType.put(subType, subset);
                             }
                             subset.add(lib);

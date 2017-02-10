@@ -29,12 +29,12 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.displayer.DisplayerSubType;
-import org.dashbuilder.displayer.client.AbstractDisplayerView;
+import org.dashbuilder.displayer.client.AbstractGwtDisplayerView;
 import org.dashbuilder.renderer.lienzo.client.resources.i18n.LienzoDisplayerConstants;
 import org.gwtbootstrap3.client.ui.Label;
 
 public abstract class LienzoDisplayerView<P extends LienzoDisplayer>
-        extends AbstractDisplayerView<P>
+        extends AbstractGwtDisplayerView<P>
         implements LienzoDisplayer.View<P> {
 
     private Panel container = new FlowPanel();

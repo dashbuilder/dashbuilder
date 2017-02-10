@@ -21,7 +21,7 @@ import com.google.gwt.i18n.client.Messages;
 
 public interface SelectorConstants extends Messages {
 
-    public static final SelectorConstants INSTANCE = GWT.create( SelectorConstants.class );
+    SelectorConstants INSTANCE = GWT.create( SelectorConstants.class );
 
     String selectorDisplayer_noDataAvailable();
 
@@ -32,5 +32,7 @@ public interface SelectorConstants extends Messages {
     String selectorDisplayer_select();
 
     String selectorDisplayer_reset();
+
+    String selectorDisplayer_clearAll();
 
 }

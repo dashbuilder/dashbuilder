@@ -157,6 +157,14 @@ public interface CommonConstants extends Messages {
 
     String filter_notifications();
 
+    String selector_group();
+
+    String selector_width();
+
+    String selector_multiple();
+
+    String selector_show_inputs();
+
     String filter_editor_selectcolumn();
 
     String timeframe_from();

@@ -43,7 +43,7 @@ public class ColumnDetailsEditorView extends Composite implements ColumnDetailsE
 
     @Override
     public void init(ColumnDetailsEditor columnDetailsEditor) {
-        this.presenter = presenter;
+        this.presenter = columnDetailsEditor;
         initWidget(uiBinder.createAndBindUi(this));
     }
 

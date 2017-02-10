@@ -71,6 +71,15 @@ public interface DisplayerListener {
     void onFilterEnabled(Displayer displayer, DataSetFilter filter);
 
     /**
+     * Invoked when an update filter request is executed on an already filtered Displayer instance.
+     *
+     * @param displayer The Displayer instance where the filter request event comes from.
+     * @param oldFilter The old filter operation.
+     * @param newFilter The new filter operation.
+     */
+    void onFilterUpdate(Displayer displayer, DataSetFilter oldFilter, DataSetFilter newFilter);
+
+    /**
      * Invoked when a group interval reset request is executed on a given Displayer instance.
      *
      * @param displayer The Displayer instance where the interval selection event comes from.

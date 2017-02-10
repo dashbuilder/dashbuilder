@@ -19,8 +19,6 @@ import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.*;
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
-import org.dashbuilder.dataset.engine.group.IntervalBuilder;
-import org.dashbuilder.dataset.engine.group.IntervalBuilderLocator;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.sort.ColumnSort;
@@ -273,13 +271,11 @@ public class DataSetHandlerImpl implements DataSetHandler {
 
     protected void _select(DataSetGroup op, List<Interval> intervalList) {
         GroupOpFilter groupOpFilter = new GroupOpFilter(op, true);
-
         op.setSelectedIntervalList(intervalList);
-        //op.getGroupFunctions().clear();
 
         String columnId = op.getColumnGroup().getColumnId();
         if (!_groupOpsSelected.containsKey(columnId)) {
-            _groupOpsSelected.put(columnId, new ArrayList<GroupOpFilter>());
+            _groupOpsSelected.put(columnId, new ArrayList<>());
         }
         _groupOpsSelected.get(columnId).add(groupOpFilter);
     }

@@ -67,6 +67,34 @@ public class DataSetGroupTest {
     }
 
     @Test
+    public void testDateMinMaxFunctions() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                .dataset(EXPENSE_REPORTS)
+                .column(COLUMN_DATE, AggregateFunctionType.MIN)
+                .column(COLUMN_DATE, AggregateFunctionType.MAX)
+                .buildLookup());
+
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"01/04/12 12:00", "12/11/15 12:00"}
+        }, 0);
+    }
+
+    @Test
+    public void testNumberMinMaxFunctions() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                .dataset(EXPENSE_REPORTS)
+                .column(COLUMN_AMOUNT, AggregateFunctionType.MIN)
+                .column(COLUMN_AMOUNT, AggregateFunctionType.MAX)
+                .buildLookup());
+
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"1.10", "1,100.10"}
+        }, 0);
+    }
+
+    @Test
     public void testGroupByLabelDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetLookupFactory.newDataSetLookupBuilder()

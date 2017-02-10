@@ -68,7 +68,7 @@ public enum DisplayerType {
     /**
      * Selector
      */
-    SELECTOR(),
+    SELECTOR(SELECTOR_DROPDOWN, SELECTOR_LABELS, SELECTOR_SLIDER),
 
     /**
      * Metric

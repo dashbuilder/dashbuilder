@@ -16,7 +16,6 @@
 package org.dashbuilder.dataprovider.sql;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 import org.dashbuilder.dataset.DataSet;
@@ -207,6 +206,8 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
     public void testDataSetGroup() throws Exception {
         DataSetGroupTest subTest = new DataSetGroupTest();
         subTest.testDataSetFunctions();
+        subTest.testDateMinMaxFunctions();
+        subTest.testNumberMinMaxFunctions();
         subTest.testGroupByLabelDynamic();
         subTest.testGroupByYearDynamic();
         subTest.testGroupByMonthDynamic();
