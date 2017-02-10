@@ -160,8 +160,8 @@ public class CoreFunctionFilter extends ColumnFilter {
             if (parameters.size() != other.parameters.size()) {
                 return false;
             }
-            for (Object param : parameters) {
-                if (!other.parameters.contains(param)) {
+            for (int i=0; i<parameters.size(); i++) {
+                if (!parameters.get(i).equals(other.parameters.get(i))) {
                     return false;
                 }
             }

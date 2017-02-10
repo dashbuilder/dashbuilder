@@ -30,4 +30,27 @@ package org.dashbuilder.displayer;
  */
 public interface SelectorDisplayerSettingsBuilder<T extends SelectorDisplayerSettingsBuilder> extends DisplayerSettingsBuilder<T> {
 
+    /**
+     * Sets the width of the selector.
+     * @param width The width of selector.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a selector.
+     */
+    T width(int width);
+
+    /**
+     * Set the margins for this selector.
+     * @param top The top margin.
+     * @param bottom The bottom margin.
+     * @param left The left margin.
+     * @param right The right margin.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure the selector.
+     */
+    T margins(int top, int bottom, int left, int right);
+
+    /**
+     * Enables or disables the selection of multiple entries
+     * @param multiple The multiple selection flag.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a selector.
+     */
+    T multiple(boolean multiple);
 }

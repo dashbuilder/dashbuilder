@@ -19,23 +19,23 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 import org.dashbuilder.displayer.client.resources.i18n.DisplayerConstants;
 
-public abstract class AbstractDisplayerView<P extends AbstractDisplayer>
+public abstract class AbstractGwtDisplayerView<P extends AbstractGwtDisplayer>
         extends Composite
-        implements AbstractDisplayer.View<P> {
+        implements AbstractGwtDisplayer.View<P> {
 
     private FlowPanel panel = new FlowPanel();
     private Label label = new Label();
-    private Widget visualization = null;
+    private IsWidget visualization = null;
     private Timer refreshTimer = null;
-    private P presenter = null;
+    protected P presenter = null;
 
-    public AbstractDisplayerView() {
+    public AbstractGwtDisplayerView() {
         initWidget(panel);
     }
 
@@ -47,7 +47,7 @@ public abstract class AbstractDisplayerView<P extends AbstractDisplayer>
         return presenter;
     }
 
-    public void setVisualization(Widget widget) {
+    public void setVisualization(IsWidget widget) {
         visualization = widget;
     }
 

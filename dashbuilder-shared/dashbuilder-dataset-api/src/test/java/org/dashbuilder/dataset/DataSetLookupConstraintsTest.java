@@ -114,9 +114,9 @@ public class DataSetLookupConstraintsTest {
 
         ColumnGroup cg = groupOp.getColumnGroup();
         assertNull(cg);
-        assertEquals(groupOp.getGroupFunctions().size(), METADATA.getNumberOfColumns());
+        assertEquals(groupOp.getGroupFunctions().size(), MULTIPLE_COLUMNS.getMinColumns());
 
-        for (int i = 0; i < METADATA.getNumberOfColumns(); i++) {
+        for (int i = 0; i < MULTIPLE_COLUMNS.getMinColumns(); i++) {
             GroupFunction gf = groupOp.getGroupFunction(METADATA.getColumnId(i));
             assertNotNull(gf);
             assertEquals(gf.getSourceId(), METADATA.getColumnId(i));
@@ -127,7 +127,7 @@ public class DataSetLookupConstraintsTest {
 
     @Test
     public void testValidationOk() {
-        DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
+        DataSetLookup lookup = DataSetLookupFactory.newDataSetLookupBuilder()
                 .group(DATE).fixed(DateIntervalType.MONTH, true)
                 .column(DATE)
                 .column(AMOUNT, AggregateFunctionType.SUM)
@@ -139,7 +139,7 @@ public class DataSetLookupConstraintsTest {
 
     @Test
     public void testColumnExcess() {
-        DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
+        DataSetLookup lookup = DataSetLookupFactory.newDataSetLookupBuilder()
                 .group(DATE).fixed(DateIntervalType.MONTH, true)
                 .column(DATE)
                 .column(AMOUNT, AggregateFunctionType.SUM)
@@ -153,7 +153,7 @@ public class DataSetLookupConstraintsTest {
 
     @Test
     public void testColumnMissing() {
-        DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
+        DataSetLookup lookup = DataSetLookupFactory.newDataSetLookupBuilder()
                 .group(DEPARTMENT)
                 .column(AMOUNT, AggregateFunctionType.SUM)
                 .buildLookup();
@@ -165,7 +165,7 @@ public class DataSetLookupConstraintsTest {
 
     @Test
     public void testMissingGroup() {
-        DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
+        DataSetLookup lookup = DataSetLookupFactory.newDataSetLookupBuilder()
                 .column(DATE)
                 .column(AMOUNT, AggregateFunctionType.SUM)
                 .buildLookup();
@@ -177,7 +177,7 @@ public class DataSetLookupConstraintsTest {
 
     @Test
     public void testWrongColumnType() {
-        DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
+        DataSetLookup lookup = DataSetLookupFactory.newDataSetLookupBuilder()
                 .group(DEPARTMENT)
                 .column(DEPARTMENT)
                 .column(EMPLOYEE)
@@ -187,7 +187,7 @@ public class DataSetLookupConstraintsTest {
         assertNotNull(error);
         assertEquals(error.getCode(), DataSetLookupConstraints.ERROR_COLUMN_TYPE);
 
-        lookup = DataSetFactory.newDataSetLookupBuilder()
+        lookup = DataSetLookupFactory.newDataSetLookupBuilder()
                 .group(DATE)
                 .column(DATE)
                 .column(EMPLOYEE)
@@ -203,7 +203,7 @@ public class DataSetLookupConstraintsTest {
         DataSetLookupConstraints UNIQUE_COLUMNS = new DataSetLookupConstraints()
                 .setUniqueColumnIds(true);
 
-        DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
+        DataSetLookup lookup = DataSetLookupFactory.newDataSetLookupBuilder()
                 .group(DEPARTMENT)
                 .column(DEPARTMENT, "dept")
                 .column(AMOUNT, AggregateFunctionType.AVERAGE, "amount")

@@ -20,7 +20,6 @@ import java.util.Date;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.Command;
@@ -30,13 +29,18 @@ public class DateParameterEditor implements FunctionParameterEditor {
 
     public interface View extends UberView<DateParameterEditor> {
 
-        Date getCurrentValue();
+        Date getValue();
 
-        void setCurrentValue(Date value);
+        void setValue(Date value);
+
+        void setWidth(int width);
     }
 
-    Command onChangeCommand = new Command() { public void execute() {} };
+    Command onChangeCommand = () -> {};
+    Command onFocusCommand = () -> {};
+    Command onBlurCommand = () -> {};
     View view;
+    Date currentValue = null;
 
     @Inject
     public DateParameterEditor(View view) {
@@ -53,19 +57,55 @@ public class DateParameterEditor implements FunctionParameterEditor {
         this.onChangeCommand = onChangeCommand;
     }
 
-    public Date getCurrentValue() {
-        return view.getCurrentValue();
+    public void setOnFocusCommand(Command onFocusCommand) {
+        this.onFocusCommand = onFocusCommand;
     }
 
-    public void setCurrentValue(Date value) {
-        view.setCurrentValue(value);
+    public void setOnBlurCommand(Command onBlurCommand) {
+        this.onBlurCommand = onBlurCommand;
+    }
+
+    public Date getValue() {
+        return view.getValue();
+    }
+
+    public void setValue(Date value) {
+        Command backup = onChangeCommand;
+        this.currentValue = value;
+        try {
+            onChangeCommand = null;
+            view.setValue(value);
+        } finally {
+            onChangeCommand = backup;
+        }
+    }
+
+    public void setWidth(int width) {
+        if (width > 0) {
+            view.setWidth(width);
+        }
     }
 
     @Override
     public void setFocus(boolean focus) {
     }
 
-    void valueChanged() {
-        onChangeCommand.execute();
+    void onChange() {
+        if (onChangeCommand != null && !currentValue.equals(getValue())) {
+            currentValue = getValue();
+            onChangeCommand.execute();
+        }
+    }
+
+    void onBlur() {
+        if (onBlurCommand != null) {
+            onBlurCommand.execute();
+        }
+    }
+
+    void onFocus() {
+        if (onFocusCommand!= null) {
+            onFocusCommand.execute();
+        }
     }
 }

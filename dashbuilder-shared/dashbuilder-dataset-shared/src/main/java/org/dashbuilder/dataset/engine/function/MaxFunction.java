@@ -15,14 +15,12 @@
  */
 package org.dashbuilder.dataset.engine.function;
 
-import java.util.Iterator;
 import java.util.List;
 
-import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 
 /**
- * It calculates the max. number of a set of numbers.
+ * It calculates the max. number of a set of values.
  */
 public class MaxFunction extends AbstractFunction {
 
@@ -34,34 +32,47 @@ public class MaxFunction extends AbstractFunction {
         return AggregateFunctionType.MAX;
     }
 
-    public double aggregate(List values) {
-        if (values == null || values.isEmpty()) return 0;
-
-        // Get the max. value from the collection.
-        Number max = null;
-        Iterator it = values.iterator();
-        while (it.hasNext()) {
-            Number n = (Number) it.next();
-            if (n == null) continue;
-            if (max == null || n.doubleValue() > max.doubleValue()) max = n;
+    public Object aggregate(List values) {
+        if (values == null || values.isEmpty()) {
+            return null;
         }
-        if (max == null) return 0;
-        return round(max.doubleValue(), precission);
+
+        // Get the min. value from the collection.
+        Comparable result = null;
+        for (Object obj : values) {
+            Comparable val = (Comparable) obj;
+            if (val == null) {
+                continue;
+            }
+            if (result == null || val.compareTo(result) > 0) {
+                result = val;
+            }
+        }
+
+        // Adjust to the specified precision.
+        return result instanceof Number ? round((Number) result, precission) : result;
     }
 
-    public double aggregate(List values, List<Integer> rows) {
-        if (rows == null) return aggregate(values);
-        if (rows.isEmpty()) return 0;
-        if (values == null || values.isEmpty()) return 0;
-
-        // Get the max. value from the collection.
-        Number max = null;
-        for (Integer row : rows) {
-            Number n = (Number) values.get(row);
-            if (n == null) continue;
-            if (max == null || n.doubleValue() > max.doubleValue()) max = n;
+    public Object aggregate(List values, List<Integer> rows) {
+        if (rows == null) {
+            return aggregate(values);
         }
-        if (max == null) return 0;
-        return round(max.doubleValue(), precission);
+        if (rows.isEmpty() || values == null || values.isEmpty()) {
+            return null;
+        }
+
+        // Get the min. value within the target rows.
+        Comparable result = null;
+        for (Integer row : rows) {
+            Comparable val = (Comparable) values.get(row);
+            if (val == null) {
+                continue;
+            }
+            if (result == null || val.compareTo(result) > 0) {
+                result = val;
+            }
+        }
+        // Adjust to the specified precision.
+        return result instanceof Number ? round((Number) result, precission) : result;
     }
 }

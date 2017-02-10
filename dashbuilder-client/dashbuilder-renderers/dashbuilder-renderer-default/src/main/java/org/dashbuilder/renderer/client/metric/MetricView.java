@@ -23,12 +23,12 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import org.dashbuilder.displayer.client.AbstractDisplayerView;
+import org.dashbuilder.displayer.client.AbstractGwtDisplayerView;
 import org.dashbuilder.renderer.client.DefaultRenderer;
 import org.dashbuilder.renderer.client.resources.i18n.MetricConstants;
 
 @Dependent
-public class MetricView extends AbstractDisplayerView<MetricDisplayer> implements MetricDisplayer.View {
+public class MetricView extends AbstractGwtDisplayerView<MetricDisplayer> implements MetricDisplayer.View {
 
     FlowPanel container = new FlowPanel();
     HTMLPanel htmlPanel = null;

@@ -34,13 +34,13 @@ import com.googlecode.gwt.charts.client.format.NumberFormat;
 import com.googlecode.gwt.charts.client.format.NumberFormatOptions;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.ColumnType;
-import org.dashbuilder.displayer.client.AbstractDisplayerView;
+import org.dashbuilder.displayer.client.AbstractGwtDisplayerView;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 import org.gwtbootstrap3.client.ui.Label;
 
 public abstract class GoogleDisplayerView<P extends GoogleDisplayer>
-        extends AbstractDisplayerView<P>
+        extends AbstractGwtDisplayerView<P>
         implements GoogleDisplayer.View<P> {
 
     private Panel container = new FlowPanel();

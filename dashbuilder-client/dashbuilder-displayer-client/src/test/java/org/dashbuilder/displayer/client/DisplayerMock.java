@@ -14,6 +14,7 @@
  */
 package org.dashbuilder.displayer.client;
 
+import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.displayer.DisplayerConstraints;
 
 public class DisplayerMock extends AbstractDisplayer<AbstractDisplayer.View> {
@@ -44,5 +45,12 @@ public class DisplayerMock extends AbstractDisplayer<AbstractDisplayer.View> {
     @Override
     protected void updateVisualization() {
         // Mock
+    }
+
+    @Override
+    public void handleError(ClientRuntimeError error) {
+        super.handleError(error);
+
+        throw new RuntimeException(error.getRootCause());
     }
 }

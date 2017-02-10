@@ -50,6 +50,10 @@ public abstract class AbstractDisplayerListener implements DisplayerListener {
 
     }
 
+    @Override public void onFilterUpdate(Displayer displayer, DataSetFilter oldFilter, DataSetFilter newFilter) {
+
+    }
+
     @Override public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
 
     }

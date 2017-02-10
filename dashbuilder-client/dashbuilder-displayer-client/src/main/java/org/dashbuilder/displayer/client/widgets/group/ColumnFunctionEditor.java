@@ -64,6 +64,7 @@ public class ColumnFunctionEditor implements IsWidget {
     View view = null;
     GroupFunction groupFunction = null;
     ColumnType targetType = null;
+    boolean functionsEnabled = false;
     DataSetMetadata metadata = null;
     ColumnDetailsEditor columnDetailsEditor = null;
     Event<GroupFunctionChangedEvent> changeEvent = null;
@@ -108,6 +109,7 @@ public class ColumnFunctionEditor implements IsWidget {
         this.groupFunction = groupFunction;
         this.targetType = targetType;
         this.metadata = metadata;
+        this.functionsEnabled = functionsEnabled;
 
         columnDetailsEditor.init(metadata, this.groupFunction);
         view.setColumnSelectorTitle(columnTitle);
@@ -149,7 +151,7 @@ public class ColumnFunctionEditor implements IsWidget {
     }
 
     protected boolean isColumnNumeric() {
-        return targetType != null && targetType.equals(ColumnType.NUMBER);
+        return targetType != null && targetType.equals(ColumnType.NUMBER) && functionsEnabled;
     }
 
     protected void initColumnListBox() {

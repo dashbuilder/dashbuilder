@@ -82,6 +82,14 @@ public interface DisplayerSettingsBuilder<T> extends DataSetLookupBuilder<T> {
     T renderer(String renderer);
 
     /**
+     * Set the DisplayerSettings' subtype.
+     *
+     * @param displayerSubType The displayer's subtype.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T subtype(DisplayerSubType displayerSubType);
+
+    /**
      * Enable the ability to select/filter values (or range of values) within the data displayer.
      *
      * <p> Usually, in a dashboard there exists a unique coordinator which takes cares of propagate all the data

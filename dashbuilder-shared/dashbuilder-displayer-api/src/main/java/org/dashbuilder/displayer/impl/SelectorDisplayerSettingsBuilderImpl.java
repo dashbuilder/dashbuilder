@@ -19,7 +19,7 @@ import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.SelectorDisplayerSettingsBuilder;
 
-public class SelectorDisplayerSettingsBuilderImpl extends AbstractDisplayerSettingsBuilder<SelectorDisplayerSettingsBuilderImpl> implements SelectorDisplayerSettingsBuilder<SelectorDisplayerSettingsBuilderImpl> {
+public class SelectorDisplayerSettingsBuilderImpl extends AbstractSelectorSettingsBuilder<SelectorDisplayerSettingsBuilderImpl> implements SelectorDisplayerSettingsBuilder<SelectorDisplayerSettingsBuilderImpl> {
 
     protected DisplayerSettings createDisplayerSettings() {
         return new DisplayerSettings( DisplayerType.SELECTOR );

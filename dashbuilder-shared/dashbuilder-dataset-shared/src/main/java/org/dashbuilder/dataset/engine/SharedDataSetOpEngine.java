@@ -531,7 +531,7 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
 
                         // Columns based on aggregation functions
                         if (columnFunction != null) {
-                            Double aggValue = _calculateFunction(dataColumn, groupFunction.getFunction(), intervalIdx);
+                            Object aggValue = _calculateFunction(dataColumn, groupFunction.getFunction(), intervalIdx);
                             result.setValueAt(row, j, aggValue);
                         }
                         // Pick up the first column value for the interval
@@ -562,15 +562,18 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
                     GroupFunction gf = groupFunctions.get(i);
                     String sourceId = gf.getSourceId();
                     String columnId = gf.getColumnId() == null ? sourceId : gf.getColumnId();
+                    DataColumn sourceColumn = context.dataSet.getColumnById(sourceId);
+                    ColumnType sourceColumnType = sourceColumn != null ? sourceColumn.getColumnType() : null;
+                    ColumnType aggColumnType = gf.getFunction().getResultType(sourceColumnType);
 
-                    DataColumnImpl column = new DataColumnImpl(columnId, ColumnType.NUMBER);
+                    DataColumnImpl column = new DataColumnImpl(columnId, aggColumnType);
                     column.setGroupFunction(gf);
                     result.addColumn(column);
 
                     DataColumn dataColumn = dataSet.getColumnById(sourceId);
                     if (dataColumn == null) dataColumn = dataSet.getColumnByIndex(0);
 
-                    Double aggValue = _calculateFunction(dataColumn, gf.getFunction(), index);
+                    Object aggValue = _calculateFunction(dataColumn, gf.getFunction(), index);
                     result.setValueAt(0, i, aggValue);
                 }
             } else {
@@ -590,20 +593,22 @@ public class SharedDataSetOpEngine implements DataSetOpEngine {
             return result;
         }
 
-        private Double _calculateFunction(DataColumn column, AggregateFunctionType type, DataSetIndexNode index) {
+        private Object _calculateFunction(DataColumn column, AggregateFunctionType type, DataSetIndexNode index) {
             // Preconditions
             if (type == null) {
                 throw new IllegalArgumentException("No aggregation function specified for the column: " + column.getId());
             }
             // Look into the index first
             if (index != null) {
-                Double sv = index.getAggValue(column.getId(), type);
-                if (sv != null) return sv;
+                Object sv = index.getAggValue(column.getId(), type);
+                if (sv != null) {
+                    return sv;
+                }
             }
             // Do the aggregate calculations.
             chronometer.start();
             AggregateFunction function = aggregateFunctionManager.getFunctionByType(type);
-            double aggValue = function.aggregate(column.getValues(), index.getRows());
+            Object aggValue = function.aggregate(column.getValues(), index.getRows());
             chronometer.stop();
 
             // Index the result

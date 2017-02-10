@@ -21,13 +21,7 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:uf='urn:import:org.uberfire.ext.properties.editor.client'>
 
-  <ui:style>
-    .smallFont {
-      font-size: 12px;
-    }
-  </ui:style>
-
-  <g:FlowPanel ui:field="mainPanel" styleName="{style.smallFont}">
+  <g:FlowPanel ui:field="mainPanel">
     <uf:PropertyEditorWidget ui:field="propertyEditor"/>
   </g:FlowPanel>
 

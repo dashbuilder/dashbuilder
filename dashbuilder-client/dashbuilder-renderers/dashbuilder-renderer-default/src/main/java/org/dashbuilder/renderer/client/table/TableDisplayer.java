@@ -34,19 +34,19 @@ import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
-import org.dashbuilder.displayer.client.AbstractDisplayer;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
 
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.client.AbstractGwtDisplayer;
 import org.dashbuilder.displayer.client.Displayer;
 import org.uberfire.client.callbacks.Callback;
 import org.uberfire.mvp.Command;
 
 @Dependent
-public class TableDisplayer extends AbstractDisplayer<TableDisplayer.View> {
+public class TableDisplayer extends AbstractGwtDisplayer<TableDisplayer.View> {
 
-    public interface View extends AbstractDisplayer.View<TableDisplayer> {
+    public interface View extends AbstractGwtDisplayer.View<TableDisplayer> {
 
         String getGroupsTitle();
 
@@ -86,10 +86,6 @@ public class TableDisplayer extends AbstractDisplayer<TableDisplayer.View> {
     protected List<Command> onCellSelectedCommands = new ArrayList<>();
     protected String selectedCellColumn = null;
     protected Integer selectedCellRow = null;
-
-    public TableDisplayer() {
-        this(new TableDisplayerView());
-    }
 
     @Inject
     public TableDisplayer(View view) {
@@ -132,8 +128,6 @@ public class TableDisplayer extends AbstractDisplayer<TableDisplayer.View> {
         DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
                 .setGroupAllowed(true)
                 .setGroupRequired(false)
-                .setMaxColumns(-1)
-                .setMinColumns(1)
                 .setExtraColumnsAllowed(true)
                 .setGroupsTitle(view.getGroupsTitle())
                 .setColumnsTitle(view.getColumnsTitle());

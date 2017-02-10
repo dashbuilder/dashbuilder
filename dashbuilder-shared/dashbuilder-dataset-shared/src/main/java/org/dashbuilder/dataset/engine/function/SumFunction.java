@@ -34,11 +34,13 @@ public class SumFunction extends AbstractFunction {
         return AggregateFunctionType.SUM;
     }
 
-    public double aggregate(List values) {
-        if (values == null || values.isEmpty()) return 0;
+    public Object aggregate(List values) {
+        if (values == null || values.isEmpty()) {
+            return 0d;
+        }
 
         // Sum the collection.
-        double sum = 0;
+        double sum = 0d;
         Iterator it = values.iterator();
         while (it.hasNext()) {
             Number n = (Number) it.next();
@@ -48,13 +50,19 @@ public class SumFunction extends AbstractFunction {
         return round(sum, precission);
     }
 
-    public double aggregate(List values, List<Integer> rows) {
-        if (rows == null) return aggregate(values);
-        if (rows.isEmpty()) return 0;
-        if (values == null || values.isEmpty()) return 0;
+    public Object aggregate(List values, List<Integer> rows) {
+        if (rows == null) {
+            return aggregate(values);
+        }
+        if (rows.isEmpty()) {
+            return 0d;
+        }
+        if (values == null || values.isEmpty()) {
+            return 0d;
+        }
 
         // Sum the collection.
-        double sum = 0;
+        double sum = 0d;
         for (Integer row : rows) {
             Number n = (Number) values.get(row);
             if (n == null) continue;

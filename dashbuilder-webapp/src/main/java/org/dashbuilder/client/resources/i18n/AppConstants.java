@@ -441,6 +441,14 @@ public interface AppConstants extends Messages {
 
     String gallerytree_table_default_dd_column10();
 
+    String gallerytree_selector();
+
+    String gallerytree_selector_dropdown();
+
+    String gallerytree_selector_labels();
+
+    String gallerytree_selector_slider();
+
     String gallerytree_db();
 
     String gallerytree_db_salesgoals();

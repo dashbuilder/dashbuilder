@@ -40,6 +40,7 @@ public interface DisplayerTypeConstants extends ConstantsWithLookup {
 
     String displayer_type_selector_tab_table();
 
+    String displayer_type_selector_tab_selector();
 
     // Subtype enum literals
 
@@ -80,6 +81,12 @@ public interface DisplayerTypeConstants extends ConstantsWithLookup {
     String DISPLAYER_SUBTYPE_METRIC_QUOTA();
 
     String DISPLAYER_SUBTYPE_METRIC_PLAIN_TEXT();
+
+    String DISPLAYER_SUBTYPE_SELECTOR_DROPDOWN();
+
+    String DISPLAYER_SUBTYPE_SELECTOR_LABELS();
+
+    String DISPLAYER_SUBTYPE_SELECTOR_SLIDER();
 
     // Subtype selector tooltips
 
@@ -122,5 +129,11 @@ public interface DisplayerTypeConstants extends ConstantsWithLookup {
     String METRIC_METRIC_PLAIN_TEXT_tt();
 
     String TABLE_default_tt();
+
+    String SELECTOR_SELECTOR_DROPDOWN_tt();
+
+    String SELECTOR_SELECTOR_LABELS_tt();
+
+    String SELECTOR_SELECTOR_SLIDER_tt();
 
 }

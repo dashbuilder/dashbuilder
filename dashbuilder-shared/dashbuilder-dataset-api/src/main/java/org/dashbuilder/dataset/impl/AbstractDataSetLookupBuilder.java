@@ -229,7 +229,7 @@ public abstract class AbstractDataSetLookupBuilder<T> implements DataSetLookupBu
 
     public T column(String columnId, AggregateFunctionType function, String newColumnId) {
         DataSetOp op = getCurrentOp();
-        if (op == null || !(op instanceof DataSetGroup)) {
+        if (op == null || !(op instanceof DataSetGroup) || ((DataSetGroup) op).isSelect()) {
             dataSetLookup.addOperation(new DataSetGroup());
         }
         DataSetGroup gOp = (DataSetGroup) getCurrentOp();

@@ -16,17 +16,9 @@
 package org.dashbuilder.displayer.impl;
 
 import org.dashbuilder.displayer.ChartSettingsBuilder;
-import org.dashbuilder.displayer.DisplayerSubType;
-import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.Position;
 
 public abstract class AbstractChartSettingsBuilder<T extends ChartSettingsBuilder> extends AbstractDisplayerSettingsBuilder<T> implements ChartSettingsBuilder<T> {
-
-    @Override
-    public T subtype(DisplayerSubType displayerSubType) {
-        displayerSettings.setSubtype(displayerSubType);
-        return (T) this;
-    }
 
     public T width(int width) {
         displayerSettings.setChartWidth( width );

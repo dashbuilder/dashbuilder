@@ -411,6 +411,8 @@ public class DisplayerEditor implements IsWidget {
         displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_MARGIN_GROUP);
         displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.CHART_LEGEND_GROUP);
         displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.AXIS_GROUP);
+        displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.SELECTOR_GROUP);
+        displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.FILTER_GROUP);
         displayerSettings.removeDisplayerSetting(DisplayerAttributeGroupDef.HTML_GROUP);
         selectedTypeSettings.getSettingsFlatMap().putAll(displayerSettings.getSettingsFlatMap());
 
@@ -420,6 +422,7 @@ public class DisplayerEditor implements IsWidget {
         } catch(Exception e) {
             // The new type might not support the selected renderer.
             selectedTypeSettings.removeDisplayerSetting(DisplayerAttributeDef.RENDERER);
+            view.error(new ClientRuntimeError(e));
         }
 
         // Re-initialize the editor with the new settings

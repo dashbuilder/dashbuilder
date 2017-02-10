@@ -26,7 +26,6 @@
   <ui:style>
     .mainContainer {
       margin-top: 15px;
-      font-size: 12pt;
     }
     .leftColumn {
       overflow-x: hidden;
@@ -35,7 +34,6 @@
     }
     .centerColumn {
       height: 390px;
-      font-size: 12pt;
       overflow: auto;
     }
     .viewAsTableButtonRow {

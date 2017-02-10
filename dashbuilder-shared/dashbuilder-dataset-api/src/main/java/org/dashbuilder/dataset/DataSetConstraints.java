@@ -38,9 +38,13 @@ public class DataSetConstraints<T> {
     }
 
     public ColumnType[] getColumnTypes(int numberOfColumns) {
-        if (columnTypeList.isEmpty()) return null;
+        if (columnTypeList.isEmpty()) {
+            return null;
+        }
         for (ColumnType[] types : columnTypeList) {
-            if (types.length == numberOfColumns) return types;
+            if (types.length == numberOfColumns) {
+                return types;
+            }
         }
         return columnTypeList.get(0);
     }

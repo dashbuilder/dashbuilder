@@ -79,7 +79,7 @@ public class DisplayerCoordinator {
     }
 
     public void addDisplayer(Displayer displayer) {
-        if (displayer != null) {
+        if (displayer != null && !displayerList.contains(displayer)) {
             displayerList.add(displayer);
 
             displayer.addListener(coordinatorListener);
@@ -90,7 +90,7 @@ public class DisplayerCoordinator {
             RendererLibrary renderer = rendererManager.getRendererForDisplayer(displayer.getDisplayerSettings());
             List<Displayer> rendererGroup = rendererMap.get(renderer);
             if (rendererGroup == null) {
-                rendererGroup = new ArrayList<Displayer>();
+                rendererGroup = new ArrayList<>();
                 rendererMap.put(renderer, rendererGroup);
             }
             rendererGroup.add(displayer);
@@ -252,6 +252,15 @@ public class DisplayerCoordinator {
             for (Displayer other : displayerList) {
                 if (other != displayer && !isNotificationVetoed(displayer, other)) {
                     other.onFilterEnabled(displayer, filter);
+                }
+            }
+        }
+
+        @Override
+        public void onFilterUpdate(Displayer displayer, DataSetFilter oldFilter, DataSetFilter newFilter) {
+            for (Displayer other : displayerList) {
+                if (other != displayer && !isNotificationVetoed(displayer, other)) {
+                    other.onFilterUpdate(displayer, oldFilter, newFilter);
                 }
             }
         }

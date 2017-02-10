@@ -238,10 +238,10 @@ public class ColumnFilterEditor implements IsWidget {
         Date param = (Date) paramList.get(paramIndex);
 
         final DateParameterEditor input = beanManager.lookupBean(DateParameterEditor.class).newInstance();
-        input.setCurrentValue(param);
+        input.setValue(param);
         input.setOnChangeCommand(new Command() {
             public void execute() {
-                paramList.set(paramIndex, input.getCurrentValue());
+                paramList.set(paramIndex, input.getValue());
                 updateSelectedFilter();
             }
         });

@@ -30,29 +30,42 @@ public class DisplayerConstraints {
 
     protected DataSetLookupConstraints dataSetLookupConstraints;
     protected Set<DisplayerAttributeDef> supportedEditorAttributes;
+    protected Set<DisplayerAttributeDef> excludedEditorAttributes;
     protected Set<String> supportedEditorAttrStrings;
 
     public DisplayerConstraints(DataSetLookupConstraints dataSetLookupConstraints) {
         this.dataSetLookupConstraints = dataSetLookupConstraints;
-        supportedEditorAttributes = new HashSet<DisplayerAttributeDef>();
-        supportedEditorAttrStrings = new HashSet<String>();
+        supportedEditorAttributes = new HashSet<>();
+        supportedEditorAttrStrings = new HashSet<>();
+        excludedEditorAttributes = new HashSet<>();
     }
 
     public DisplayerConstraints supportsAttribute( DisplayerAttributeDef attributeDef ) {
 
-        // Support the attribute and all its ancestors.
-        DisplayerAttributeDef _attr = attributeDef;
-        while (_attr != null) {
-            supportedEditorAttributes.add(_attr);
-            supportedEditorAttrStrings.add(_attr.getFullId());
-            _attr = _attr.getParent();
-        }
-        // ... and all its descendants as well.
-        if (attributeDef instanceof DisplayerAttributeGroupDef) {
-            for (DisplayerAttributeDef member : ((DisplayerAttributeGroupDef) attributeDef).getChildren()) {
-                supportsAttribute(member);
+        // Discard excluded attributes
+        if (!excludedEditorAttributes.contains(attributeDef)) {
+
+            // Support the attribute and all its ancestors.
+            DisplayerAttributeDef _attr = attributeDef;
+            while (_attr != null) {
+                supportedEditorAttributes.add(_attr);
+                supportedEditorAttrStrings.add(_attr.getFullId());
+                _attr = _attr.getParent();
+            }
+            // ... and all its descendants as well.
+            if (attributeDef instanceof DisplayerAttributeGroupDef) {
+                for (DisplayerAttributeDef member : ((DisplayerAttributeGroupDef) attributeDef).getChildren()) {
+                    supportsAttribute(member);
+                }
             }
         }
+        return this;
+    }
+
+    public DisplayerConstraints excludeAttribute(DisplayerAttributeDef attributeDef) {
+        excludedEditorAttributes.add(attributeDef);
+        supportedEditorAttributes.remove(attributeDef);
+        supportedEditorAttrStrings.remove(attributeDef.getFullId());
         return this;
     }
 
@@ -71,7 +84,7 @@ public class DisplayerConstraints {
 
     public void removeUnsupportedAttributes(DisplayerSettings displayerSettings) {
         Map<String,String> settingsMap = displayerSettings.getSettingsFlatMap();
-        for (String setting : new HashSet<String>(settingsMap.keySet())) {
+        for (String setting : new HashSet<>(settingsMap.keySet())) {
             if (!supportedEditorAttrStrings.contains(setting)) {
                 displayerSettings.removeDisplayerSetting(setting);
             }

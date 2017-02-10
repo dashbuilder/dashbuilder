@@ -34,6 +34,8 @@ public class ElasticSearchCommonTests extends ElasticSearchDataSetTestBase {
     public void testDataSetGroup() throws Exception {
         DataSetGroupTest subTest = new DataSetGroupTest();
         subTest.testDataSetFunctions();
+        // Not supported - subTest.testDateMinMaxFunctions();
+        subTest.testNumberMinMaxFunctions();
         subTest.testGroupByLabelDynamic();
         subTest.testGroupByYearDynamic();
         subTest.testGroupByMonthDynamic();

@@ -36,32 +36,44 @@ public class DistinctFunction extends AbstractFunction {
         return AggregateFunctionType.DISTINCT;
     }
 
-    public double aggregate(List values) {
-        if (values == null || values.isEmpty()) return 0;
+    public Object aggregate(List values) {
+        if (values == null || values.isEmpty()) {
+            return 0d;
+        }
 
         // Return the number of distinct items in the collection.
         Set distincts = new HashSet();
         Iterator it = values.iterator();
         while (it.hasNext()) {
             Object o = it.next();
-            if (distincts.contains(o)) continue;
+            if (distincts.contains(o)) {
+                continue;
+            }
             distincts.add(o);
         }
-        return distincts.size();
+        return (double) distincts.size();
     }
 
-    public double aggregate(List values, List<Integer> rows) {
-        if (rows == null) return aggregate(values);
-        if (rows.isEmpty()) return 0;
-        if (values == null || values.isEmpty()) return 0;
+    public Object aggregate(List values, List<Integer> rows) {
+        if (rows == null) {
+            return aggregate(values);
+        }
+        if (rows.isEmpty()) {
+            return 0d;
+        }
+        if (values == null || values.isEmpty()) {
+            return 0d;
+        }
 
         // Return the number of distinct items in the collection.
         Set distincts = new HashSet();
         for (Integer row : rows) {
             Object o = values.get(row);
-            if (distincts.contains(o)) continue;
+            if (distincts.contains(o)) {
+                continue;
+            }
             distincts.add(o);
         }
-        return distincts.size();
+        return (double) distincts.size();
     }
 }

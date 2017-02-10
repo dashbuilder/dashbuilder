@@ -28,10 +28,10 @@ public abstract class AbstractFunction implements AggregateFunction {
         precission = 2;
     }
 
-    public double round(double value, int precission) {
+    public Number round(Number value, int precission) {
         if (precission < 0) return value;
 
         double power = Math.pow(10, precission);
-        return Math.round(value * power) / power;
+        return Math.round(value.doubleValue() * power) / power;
     }
 }

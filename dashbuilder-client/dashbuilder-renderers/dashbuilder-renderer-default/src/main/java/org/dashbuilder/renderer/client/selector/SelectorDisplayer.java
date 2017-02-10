@@ -23,7 +23,7 @@ import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
-import org.dashbuilder.displayer.client.AbstractDisplayer;
+import org.dashbuilder.displayer.client.AbstractGwtDisplayer;
 import org.dashbuilder.displayer.client.Displayer;
 
 import java.util.List;
@@ -31,9 +31,9 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 @Dependent
-public class SelectorDisplayer extends AbstractDisplayer<SelectorDisplayer.View> {
+public class SelectorDisplayer extends AbstractGwtDisplayer<SelectorDisplayer.View> {
 
-    public interface View extends AbstractDisplayer.View<SelectorDisplayer> {
+    public interface View extends AbstractGwtDisplayer.View<SelectorDisplayer> {
 
         void showSelectHint(String column);
 

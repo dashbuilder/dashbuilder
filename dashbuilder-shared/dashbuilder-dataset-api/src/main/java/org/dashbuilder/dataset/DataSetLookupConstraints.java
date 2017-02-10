@@ -38,6 +38,7 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
     public static final int ERROR_DUPLICATED_COLUMN_ID = 204;
 
     protected boolean uniqueColumnIds = false;
+    protected boolean filterAllowed = true;
     protected boolean groupAllowed = true;
     protected boolean groupRequired = false;
     protected int maxGroups = -1;
@@ -53,6 +54,15 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
 
     public DataSetLookupConstraints setUniqueColumnIds(boolean uniqueColumnIds) {
         this.uniqueColumnIds = uniqueColumnIds;
+        return this;
+    }
+
+    public boolean isFilterAllowed() {
+        return filterAllowed;
+    }
+
+    public DataSetLookupConstraints setFilterAllowed(boolean filterAllowed) {
+        this.filterAllowed = filterAllowed;
         return this;
     }
 
@@ -263,12 +273,12 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
             builder.column(metatada.getColumnId(groupIdx));
             startIndex = 1;
         }
-        // If no target columns has been specified then take them all
+        // If no target columns has been specified then take the minimum requested
         ColumnType[] types = getColumnTypes();
         if (types == null || types.length == 0) {
 
-            if (maxColumns > 0 && maxColumns < metatada.getNumberOfColumns()) {
-                types = new ColumnType[maxColumns];
+            if (minColumns > 0 && minColumns < metatada.getNumberOfColumns()) {
+                types = new ColumnType[minColumns];
             }
             else {
                 types = new ColumnType[metatada.getNumberOfColumns()];

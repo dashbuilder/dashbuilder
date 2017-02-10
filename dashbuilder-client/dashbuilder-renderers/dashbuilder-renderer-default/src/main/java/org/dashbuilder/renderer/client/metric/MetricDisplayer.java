@@ -20,25 +20,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import org.dashbuilder.common.client.StringTemplateBuilder;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
+import org.dashbuilder.dataset.filter.ColumnFilter;
+import org.dashbuilder.dataset.filter.CoreFunctionFilter;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
-import org.dashbuilder.displayer.client.AbstractDisplayer;
+import org.dashbuilder.displayer.client.AbstractGwtDisplayer;
 import org.dashbuilder.displayer.client.resources.i18n.DisplayerConstants;
 import org.dashbuilder.displayer.client.widgets.sourcecode.HasHtmlTemplate;
 import org.dashbuilder.displayer.client.widgets.sourcecode.HasJsTemplate;
 
-public class MetricDisplayer extends AbstractDisplayer<MetricDisplayer.View>
+@Dependent
+public class MetricDisplayer extends AbstractGwtDisplayer<MetricDisplayer.View>
         implements HasHtmlTemplate, HasJsTemplate {
 
-    public interface View extends AbstractDisplayer.View<MetricDisplayer> {
+    public interface View extends AbstractGwtDisplayer.View<MetricDisplayer> {
 
         String getUniqueId();
 
@@ -83,10 +87,7 @@ public class MetricDisplayer extends AbstractDisplayer<MetricDisplayer.View>
     protected boolean filterOn = false;
     protected StringTemplateBuilder codeBuilder = new StringTemplateBuilder();
 
-    public MetricDisplayer() {
-        this(new MetricView());
-    }
-
+    @Inject
     public MetricDisplayer(View view) {
         this.view = view;
         this.view.init(this);

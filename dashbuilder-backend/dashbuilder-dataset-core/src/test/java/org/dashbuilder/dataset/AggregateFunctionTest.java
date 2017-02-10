@@ -41,42 +41,42 @@ public class AggregateFunctionTest {
     @Test
     public void testSumFunction() throws Exception {
         AggregateFunction sf = aggregateFunctionManager.getFunctionByType(AggregateFunctionType.SUM);
-        double result = sf.aggregate(listOfNumbers);
-        assertThat(result).isEqualTo(15);
+        Object result = sf.aggregate(listOfNumbers);
+        assertThat(result).isEqualTo(15d);
     }
 
     @Test
     public void testAvgFunction() throws Exception {
         AggregateFunction sf = aggregateFunctionManager.getFunctionByType(AggregateFunctionType.AVERAGE);
-        double result = sf.aggregate(listOfNumbers);
-        assertThat(result).isEqualTo(3);
+        Object result = sf.aggregate(listOfNumbers);
+        assertThat(result).isEqualTo(3d);
     }
 
     @Test
     public void testMaxFunction() throws Exception {
         AggregateFunction sf = aggregateFunctionManager.getFunctionByType(AggregateFunctionType.MAX);
-        double result = sf.aggregate(listOfNumbers);
-        assertThat(result).isEqualTo(5);
+        Object result = sf.aggregate(listOfNumbers);
+        assertThat(result).isEqualTo(5d);
     }
 
     @Test
     public void testMinFunction() throws Exception {
         AggregateFunction sf = aggregateFunctionManager.getFunctionByType(AggregateFunctionType.MIN);
-        double result = sf.aggregate(listOfNumbers);
-        assertThat(result).isEqualTo(1);
+        Object result = sf.aggregate(listOfNumbers);
+        assertThat(result).isEqualTo(1d);
     }
 
     @Test
     public void testCountFunction() throws Exception {
         AggregateFunction sf = aggregateFunctionManager.getFunctionByType(AggregateFunctionType.COUNT);
-        double result = sf.aggregate(listOfStrings);
-        assertThat(result).isEqualTo(5);
+        Object result = sf.aggregate(listOfStrings);
+        assertThat(result).isEqualTo(5d);
     }
 
     @Test
     public void testDistinctFunction() throws Exception {
         AggregateFunction sf = aggregateFunctionManager.getFunctionByType(AggregateFunctionType.DISTINCT);
-        double result = sf.aggregate(listOfStrings);
-        assertThat(result).isEqualTo(3);
+        Object result = sf.aggregate(listOfStrings);
+        assertThat(result).isEqualTo(3d);
     }
 }

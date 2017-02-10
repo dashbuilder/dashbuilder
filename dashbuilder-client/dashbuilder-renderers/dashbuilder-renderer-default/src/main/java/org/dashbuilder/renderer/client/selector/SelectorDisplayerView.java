@@ -20,11 +20,11 @@ import com.google.gwt.dom.client.OptionElement;
 import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import org.dashbuilder.displayer.client.AbstractDisplayerView;
+import org.dashbuilder.displayer.client.AbstractGwtDisplayerView;
 import org.dashbuilder.renderer.client.resources.i18n.SelectorConstants;
 import org.gwtbootstrap3.client.ui.ListBox;
 
-public class SelectorDisplayerView extends AbstractDisplayerView<SelectorDisplayer> implements SelectorDisplayer.View {
+public class SelectorDisplayerView extends AbstractGwtDisplayerView<SelectorDisplayer> implements SelectorDisplayer.View {
 
     protected ListBox listBox = new ListBox();
     protected boolean hintEnabled = false;
