@@ -24,13 +24,13 @@ Before deploying the WAR artifact for Dashbuilder please follow these steps:
 
 * Copy the JACC jar into `$CATALINA_HOME/lib`. This JAR has the Maven coordinates `javax.security.jacc:javax.security.jacc-api:jar:1.5` and can be found at the JBoss Maven Repository.             
         
-Get the proper war file `dashbuilder-<version>-tomcat7.war` and copy it to `$CATALINA_HOME/webapps` or deploy it using the Tomcat Manager application.         
+Get the proper war file `dashbuilder-<version>-tomcat8.war` and copy it to `$CATALINA_HOME/webapps` or deploy it using the Tomcat Manager application.
 
 User Authentication
 --------------------------
 
 Once started, open a browser and type the following URL:
-`http://localhost:8080/dashbuilder-<version>-tomcat7/`. A login page should be displayed.
+`http://localhost:8080/dashbuilder-<version>-tomcat8/`. A login page should be displayed.
 
 File System provider
 ---------------------

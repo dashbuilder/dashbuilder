@@ -26,6 +26,6 @@ Currently, the following artifacts are generated:
 
   Detailed installation instructions [here](./src/main/wildfly10/README.md).
 
-* **dashbuilder-tomcat7.war:**  Product distribution for Apache Tomcat 7 server.
+* **dashbuilder-tomcat8.war:**  Product distribution for Apache Tomcat 8 server.
 
-  Detailed installation instructions [here](./src/main/tomcat7/README.md).
+  Detailed installation instructions [here](./src/main/tomcat8/README.md).
