@@ -6,7 +6,7 @@
          version="2.5">
 
   <!-- ********************************************************** -->
-  <!-- Custom JEE servlet configuration for Tomcat7 distribution. -->
+  <!-- Custom JEE servlet configuration for Tomcat8 distribution. -->
   <!-- ********************************************************** -->
   
   <listener>
