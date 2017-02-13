@@ -689,7 +689,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                     }
 
                     // ... the sort clauses
-                    DataSetSort sortOp = lookup.getFirstSortOp();
+                    DataSetSort sortOp = lookup.getFirstSortOp(groupIdx);
                     if (sortOp != null) {
                         if (cg != null) {
                             _appendOrderGroupBy(groupOp, sortOp);

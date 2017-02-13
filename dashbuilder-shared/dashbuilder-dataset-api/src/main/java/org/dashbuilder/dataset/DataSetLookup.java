@@ -175,12 +175,14 @@ public class DataSetLookup {
         return ops.get(0);
     }
 
-    public DataSetSort getFirstSortOp() {
-        List<DataSetSort> ops = getOperationList(DataSetSort.class);
-        if (ops.isEmpty()) {
-            return null;
+    public DataSetSort getFirstSortOp(int fromIndex) {
+        for (int i = Math.max(fromIndex, 0); i < operationList.size(); i++) {
+            DataSetOp op = operationList.get(i);
+            if (DataSetOpType.SORT.equals(op.getType())) {
+                return (DataSetSort) op;
+            }
         }
-        return ops.get(0);
+        return null;
     }
 
     public int getFirstGroupOpIndex(int fromIndex, String columnId, Boolean onlySelections) {
