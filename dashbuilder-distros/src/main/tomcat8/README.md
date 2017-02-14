@@ -1,7 +1,7 @@
-Deployment onto Apache Tomcat 7.X
+Deployment onto Apache Tomcat 8.x
 =================================
 
-This module contains all the artifacts to build the distribution for Apache Tomcat 7, in the simplest way possible and using a default configuration with the H2 database.                      
+This module contains all the artifacts to build the distribution for Apache Tomcat 8, in the simplest way possible and using a default configuration with the H2 database.                      
 
 Please follow the next steps in order to deploy the application.
 
