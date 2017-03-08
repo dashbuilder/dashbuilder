@@ -334,6 +334,8 @@ public class DataSetLookupConstraints extends DataSetConstraints<DataSetLookupCo
 
     public String buildUniqueColumnId(DataSetLookup lookup, GroupFunction column) {
         String targetId = column.getSourceId();
+        targetId = targetId == null ? column.getColumnId() : targetId;
+
         int lastGop = lookup.getLastGroupOpIndex(0);
         if (lastGop != -1) {
             DataSetGroup groupOp = lookup.getOperation(lastGop);

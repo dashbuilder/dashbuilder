@@ -41,6 +41,10 @@ public class DataSetLookupConstraintsTest {
             Arrays.asList(OFFICE, DEPARTMENT, EMPLOYEE, AMOUNT, DATE),
             Arrays.asList(LABEL, LABEL, LABEL, NUMBER, ColumnType.DATE), 0);
 
+    public static final DataSetMetadata METADATA2 = new DataSetMetadataImpl(null, "test", 100, 3,
+            Arrays.asList(OFFICE, DEPARTMENT, EMPLOYEE),
+            Arrays.asList(LABEL, LABEL, LABEL), 0);
+
 
     public static final DataSetLookupConstraints TWO_COLUMNS_GROUPED = new DataSetLookupConstraints()
             .setGroupRequired(true)
@@ -63,6 +67,16 @@ public class DataSetLookupConstraintsTest {
             .setGroupsTitle("Rows")
             .setColumnsTitle("Columns");
 
+    DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
+            .setGroupRequired(true)
+            .setGroupColumn(true)
+            .setMaxColumns(10)
+            .setMinColumns(2)
+            .setExtraColumnsAllowed(true)
+            .setExtraColumnsType( ColumnType.NUMBER)
+            .setColumnTypes(new ColumnType[] {
+                    ColumnType.LABEL,
+                    ColumnType.NUMBER});
     @Test
     public void testTwoColumns() {
         DataSetLookup lookup = TWO_COLUMNS_GROUPED.newDataSetLookup(METADATA);
@@ -95,6 +109,52 @@ public class DataSetLookupConstraintsTest {
         assertNotNull(gf2.getFunction());
         assertEquals(gf2.getSourceId(), AMOUNT);
         assertEquals(gf2.getColumnId(), AMOUNT);
+    }
+    @Test
+    public void testLabelOnlyMetadata() {
+        DataSetLookup lookup = lookupConstraints.newDataSetLookup(METADATA2);
+        assertEquals(lookup.getDataSetUUID(), "test");
+
+        List<DataSetOp> opList = lookup.getOperationList();
+        assertEquals(opList.size(), 1);
+
+        List<DataSetGroup> groupList = lookup.getOperationList(DataSetGroup.class);
+        assertEquals(groupList.size(), 1);
+
+        DataSetGroup groupOp = groupList.get(0);
+        assertNotNull(groupOp);
+        assertEquals(groupOp.getGroupFunctions().size(), 2);
+
+        ColumnGroup cg = groupOp.getColumnGroup();
+        assertNotNull(groupOp);
+        assertEquals(cg.getSourceId(), OFFICE);
+        assertEquals(cg.getColumnId(), OFFICE);
+        assertEquals(cg.getStrategy(), GroupStrategy.DYNAMIC);
+
+        GroupFunction gf1 = groupOp.getGroupFunctions().get(0);
+        assertNotNull(gf1);
+        assertNull(gf1.getFunction());
+        assertEquals(gf1.getSourceId(), OFFICE);
+        assertEquals(gf1.getColumnId(), OFFICE);
+
+        GroupFunction gf2 = groupOp.getGroupFunctions().get(1);
+        assertNotNull(gf2);
+        assertEquals(gf2.getFunction(), AggregateFunctionType.COUNT);
+        assertNull(gf2.getSourceId());
+        assertNotNull(gf2.getColumnId());
+
+        // DASHBUILDE-180: Unable to add new series in displayer based on SQL query dataset
+        GroupFunction extra = gf2.cloneInstance();
+        String extraId = lookupConstraints.buildUniqueColumnId(lookup, extra);
+        extra.setColumnId(extraId);
+        groupOp.getGroupFunctions().add(extra);
+        assertNotNull(extraId);
+
+        extra = gf2.cloneInstance();
+        extraId = lookupConstraints.buildUniqueColumnId(lookup, extra);
+        extra.setColumnId(extraId);
+        groupOp.getGroupFunctions().add(extra);
+        assertNotNull(extraId);
     }
 
     @Test
