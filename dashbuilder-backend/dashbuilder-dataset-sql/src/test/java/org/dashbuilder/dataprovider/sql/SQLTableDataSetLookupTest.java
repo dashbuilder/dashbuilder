@@ -209,6 +209,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         subTest.testDateMinMaxFunctions();
         subTest.testNumberMinMaxFunctions();
         subTest.testGroupByLabelDynamic();
+        subTest.testGroupByExludeColumn();
         subTest.testGroupByYearDynamic();
         subTest.testGroupByMonthDynamic();
         subTest.testGroupByMonthDynamicNonEmpty();

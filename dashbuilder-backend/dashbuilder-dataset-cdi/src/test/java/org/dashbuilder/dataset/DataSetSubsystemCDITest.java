@@ -79,6 +79,7 @@ public class DataSetSubsystemCDITest extends BaseCDITest {
         dataSetGroupTest.testDateMinMaxFunctions();
         dataSetGroupTest.testNumberMinMaxFunctions();
         dataSetGroupTest.testGroupByLabelDynamic();
+        dataSetGroupTest.testGroupByExludeColumn();
         dataSetGroupTest.testGroupByYearDynamic();
         dataSetGroupTest.testGroupByMonthDynamic();
         dataSetGroupTest.testGroupByMonthDynamicNonEmpty();

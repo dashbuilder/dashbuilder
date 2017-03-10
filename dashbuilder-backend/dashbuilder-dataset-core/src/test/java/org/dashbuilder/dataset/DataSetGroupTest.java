@@ -120,6 +120,27 @@ public class DataSetGroupTest {
     }
 
     @Test
+    public void testGroupByExludeColumn() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                .dataset(EXPENSE_REPORTS)
+                .group(COLUMN_DEPARTMENT)
+                .column(COLUMN_EMPLOYEE)
+                .column(COUNT, "Occurrences")
+                .column(COLUMN_AMOUNT, MAX, "max")
+                .column(COLUMN_AMOUNT, AVERAGE, "average")
+                .column(COLUMN_AMOUNT, SUM, "total")
+                .sort("Occurrences", SortOrder.ASCENDING)
+                .buildLookup());
+
+        assertThat(result.getValueAt(0,1)).isEqualTo(5d);
+        assertThat(result.getValueAt(1,1)).isEqualTo(7d);
+        assertThat(result.getValueAt(2,1)).isEqualTo(8d);
+        assertThat(result.getValueAt(3,1)).isEqualTo(11d);
+        assertThat(result.getValueAt(4,1)).isEqualTo(19d);
+    }
+
+    @Test
     public void testGroupByYearDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetLookupFactory.newDataSetLookupBuilder()
@@ -491,7 +512,6 @@ public class DataSetGroupTest {
         //printDataSet(result);
         assertThat(result.getRowCount()).isEqualTo(49);
         assertThat(result.getValueAt(0, 0)).isEqualTo(1.1);
-        assertThat(result.getValueAt(1, 0)).isEqualTo(1.4);
         assertThat(result.getValueAt(17, 0)).isEqualTo(300d);
         assertThat(result.getValueAt(17, 1)).isEqualTo(2d);
         assertThat(result.getValueAt(48, 0)).isEqualTo(1100.1);

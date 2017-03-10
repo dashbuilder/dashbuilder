@@ -628,6 +628,25 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
             }
         }
 
+        public boolean groupColumnMustBeIncluded(DataSetGroup groupOp) {
+            if (groupOp != null) {
+                ColumnGroup cg = groupOp.getColumnGroup();
+                if (cg != null) {
+                    for (GroupFunction gf : groupOp.getGroupFunctions()) {
+                        if (cg.getSourceId().equals(gf.getSourceId()) && gf.getFunction() == null) {
+                            return false;
+                        }
+                    }
+                    for (GroupFunction gf : groupOp.getGroupFunctions()) {
+                        if (!cg.getSourceId().equals(gf.getSourceId()) && gf.getFunction() == null) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
         public DataSet run() throws Exception {
             DataSource ds = dataSourceLocator.lookup(def);
             conn = ds.getConnection();
@@ -644,7 +663,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                     _appendFrom(def, _query);
 
                     // Row limits
-                    if (trim) {
+                    if (trim && postProcessingOps.isEmpty()) {
                         totalRows = _query.fetchCount();
                         _query.limit(lookup.getNumberOfRows()).offset(lookup.getRowOffset());
                     }
@@ -681,10 +700,19 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
 
                     // ... the group by clauses
                     ColumnGroup cg = null;
+                    boolean groupColumnAdded = groupColumnMustBeIncluded(groupOp);
                     if (groupOp != null) {
                         cg = groupOp.getColumnGroup();
                         if (cg != null) {
                             _appendGroupBy(groupOp);
+
+                            // The in-memory post processing requires that the group column is also included.
+                            // (see DASHBUILDE-181: Error "Column not found" when adding group by column from SQL dataset)
+                            if (groupColumnAdded) {
+                                GroupFunction gf = new GroupFunction(cg.getSourceId(), cg.getColumnId(), null);
+                                groupOp.getGroupFunctions().add(gf);
+                                _query.columns(_createColumn(gf));
+                            }
                         }
                     }
 
@@ -692,7 +720,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                     DataSetSort sortOp = lookup.getFirstSortOp();
                     if (sortOp != null) {
                         if (cg != null) {
-                            _appendOrderGroupBy(groupOp, sortOp);
+                            _appendOrderGroupBy(groupOp, sortOp, groupColumnAdded);
                         } else {
                             _appendOrderBy(sortOp);
                         }
@@ -700,8 +728,9 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                         _appendOrderGroupBy(groupOp);
                     }
 
-                    // ... and the row limits
-                    if (trim) {
+                    // ... and the row limits.
+                    // If post-processing then defer the trim operation in order to not leave out rows
+                    if (trim && postProcessingOps.isEmpty()) {
                         totalRows = _query.fetchCount();
                         _query.limit(lookup.getNumberOfRows()).offset(lookup.getRowOffset());
                     }
@@ -783,7 +812,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
         }
 
         protected List<DataColumn> calculateColumns(DataSetGroup gOp) {
-            List<DataColumn> result = new ArrayList<DataColumn>();
+            List<DataColumn> result = new ArrayList<>();
 
             if (gOp == null) {
                 for (int i = 0; i < metadata.getNumberOfColumns(); i++) {
@@ -826,12 +855,17 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                         column.setColumnType(columnType);
                     }
                 }
+                // DASHBUILDE-181: Error "Column not found" when adding group by column from SQL dataset
+                if (groupColumnMustBeIncluded(gOp)) {
+                    GroupFunction gf = new GroupFunction(cg.getSourceId(), cg.getColumnId(), null);
+                    gOp.getGroupFunctions().add(gf);
+                }
             }
             return result;
         }
 
         protected void _appendOrderBy(DataSetSort sortOp) {
-            List<SortColumn> _columns = new ArrayList<SortColumn>();
+            List<SortColumn> _columns = new ArrayList<>();
             List<ColumnSort> sortList = sortOp.getColumnSortList();
             for (ColumnSort columnSort : sortList) {
                 String dbColumnId = _columnFromMetadata(metadata, columnSort.getColumnId());
@@ -872,11 +906,15 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
             }
         }
 
-        protected void _appendOrderGroupBy(DataSetGroup groupOp, DataSetSort sortOp) {
-            List<SortColumn> _columns = new ArrayList<SortColumn>();
+        protected void _appendOrderGroupBy(DataSetGroup groupOp, DataSetSort sortOp, boolean post) {
+            List<SortColumn> _columns = new ArrayList<>();
             List<ColumnSort> sortList = sortOp.getColumnSortList();
             ColumnGroup cg = groupOp.getColumnGroup();
-
+            boolean sortPost = post;
+            if (post) {
+                postProcessingOps.add(sortOp);
+                sortPost = false;
+            }
             for (ColumnSort cs : sortList) {
                 GroupFunction gf = groupOp.getGroupFunction(cs.getColumnId());
 
@@ -884,12 +922,12 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                 if (cg.getSourceId().equals(cs.getColumnId()) || cg.getColumnId().equals(cs.getColumnId())) {
                     if (SortOrder.DESCENDING.equals(cs.getOrder())) {
                         _columns.add(_createColumn(cg).desc());
-                        if (isDynamicDateGroup(groupOp)) {
+                        if (isDynamicDateGroup(groupOp) && !sortPost) {
                             postProcessingOps.add(sortOp);
                         }
                     } else {
                         _columns.add(_createColumn(cg).asc());
-                        if (isDynamicDateGroup(groupOp)) {
+                        if (isDynamicDateGroup(groupOp) && !sortPost) {
                             postProcessingOps.add(sortOp);
                         }
                     }
@@ -1086,19 +1124,10 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
             }
             // Some operations requires some in-memory post-processing
             if (!postProcessingOps.isEmpty()) {
-                DataSet tempSet = opEngine.execute(dataSet, postProcessingOps);
-                dataSet = dataSet.cloneEmpty();
+                dataSet = opEngine.execute(dataSet, postProcessingOps);
+                dataSet = dataSet.trim(lookup.getRowOffset(), lookup.getNumberOfRows());
                 dataSet.setUUID(def.getUUID());
                 dataSet.setDefinition(def);
-                for (int i=0; i<columns.size(); i++) {
-                    DataColumn source = tempSet.getColumnByIndex(i);
-                    DataColumn target = dataSet.getColumnByIndex(i);
-                    target.setColumnType(source.getColumnType());
-                    target.setIntervalType(source.getIntervalType());
-                    target.setMinValue(target.getMinValue());
-                    target.setMaxValue(target.getMaxValue());
-                    target.setValues(new ArrayList(source.getValues()));
-                }
             }
             // Group by date might require to include empty intervals
             if (dateIncludeEmptyIntervals)  {
@@ -1122,7 +1151,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
         }
 
         protected Collection<Column> _createAllColumns() {
-            Collection<Column> columns = new ArrayList<Column>();
+            Collection<Column> columns = new ArrayList<>();
             for (int i = 0; i < metadata.getNumberOfColumns(); i++) {
                 String columnId = metadata.getColumnId(i);
                 columns.add(SQLFactory.column(columnId));
@@ -1185,7 +1214,6 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
             }
             return SQLFactory.column(dbColumnId);
         }
-
 
         protected String _getTargetColumnId(GroupFunction gf) {
             String sourceId = gf.getSourceId();
