@@ -45,9 +45,9 @@ import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
 import org.uberfire.ext.widgets.common.client.common.BusyPopup;
+import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.Command;
-import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 
@@ -115,16 +115,16 @@ public class DataSetDefWizardScreen {
         providerTypeEdition();
     }
     
+    @OnClose
+    public void onClose() {
+        disposeCurrentWorkflow();
+    }
+
     private void providerTypeEdition() {
         final DataSetDef dataSetDef = new DataSetDef();
         final DataSetProviderTypeWorkflow providerTypeWorkflow = workflowFactory.providerType();
-        this.nextCommand = new Command() {
-            @Override
-            public void execute() {
-                onProviderTypeSelected(providerTypeWorkflow);
-            }
-        };
-        
+        this.nextCommand = () -> onProviderTypeSelected(providerTypeWorkflow);
+
         // First step, provider type selection.
         setCurrentWorkflow(providerTypeWorkflow);
         providerTypeWorkflow.edit(dataSetDef).providerTypeEdition().showNextButton();
@@ -133,12 +133,7 @@ public class DataSetDefWizardScreen {
     void onProviderTypeSelected(final DataSetProviderTypeWorkflow providerTypeWorkflow) {
         final DataSetProviderType selectedProviderType = providerTypeWorkflow.getProviderType();
         try {
-            clientServices.newDataSet(selectedProviderType, new RemoteCallback<DataSetDef>() {
-                @Override
-                public void callback(final DataSetDef typedDataSetDef) {
-                    basicAttributesEdition(typedDataSetDef);
-                }
-            });
+            clientServices.newDataSet(selectedProviderType, this::basicAttributesEdition);
         } catch (final Exception e) {
             showError(e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
         }
@@ -147,6 +142,13 @@ public class DataSetDefWizardScreen {
     private void setCurrentWorkflow(final DataSetEditorWorkflow w) {
         this.currentWorkflow = w;
         view.setWidget(w);
+    }
+
+    private void disposeCurrentWorkflow() {
+        if (this.currentWorkflow != null) {
+            workflowFactory.dispose(this.currentWorkflow);
+            this.currentWorkflow = null;
+        }
     }
 
     private void basicAttributesEdition(final DataSetDef typedDataSetDef) {
@@ -173,12 +175,12 @@ public class DataSetDefWizardScreen {
 
     public void completeEdition(final DataSetDef dataSetDef, final DataSet dataset) {
         if (dataset != null) {
-            this.nextCommand = saveCommand;
+            this.nextCommand = this::save;
             List<DataColumn> columns = dataset.getColumns();
             if (columns != null && !columns.isEmpty()) {
 
                 // Obtain all data columns available from the resulting data set.
-                List<DataColumnDef> columnDefs = new ArrayList<DataColumnDef>(columns.size());
+                List<DataColumnDef> columnDefs = new ArrayList<>(columns.size());
                 for (final DataColumn column : columns) {
                     columnDefs.add(new DataColumnDef(column.getId(), column.getColumnType()));
                 }
@@ -201,26 +203,14 @@ public class DataSetDefWizardScreen {
 
     }
 
-    final Command saveCommand = new Command() {
-        @Override
-        public void execute() {
-            save();
-        }
-    };
-    
     protected void save() {
         final DataSetDef dataSetDef = currentWorkflow.getDataSetDef();
-        savePopUpPresenter.show(new ParameterizedCommand<String>() {
-            @Override public void execute(final String message) {
-                onSave(dataSetDef, message);
-            }
-        });
+        savePopUpPresenter.show(message -> onSave(dataSetDef, message));
     }
     
     void onSave(final DataSetDef dataSetDef, final String message) {
         BusyPopup.showMessage(DataSetAuthoringConstants.INSTANCE.saving());
-        services.call(saveSuccessCallback, errorCallback)
-                .save(dataSetDef, message);
+        services.call(saveSuccessCallback, errorCallback).save(dataSetDef, message);
         placeManager.goTo("DataSetAuthoringHome");
     }
 
@@ -233,12 +223,10 @@ public class DataSetDefWizardScreen {
         }
     };
 
-    ErrorCallback<Message> errorCallback = new ErrorCallback<Message>() {
-        @Override public boolean error(Message message, Throwable throwable) {
-            BusyPopup.close();
-            showError(new ClientRuntimeError(throwable));
-            return false;
-        }
+    ErrorCallback<Message> errorCallback = (message, throwable) -> {
+        BusyPopup.close();
+        showError(new ClientRuntimeError(throwable));
+        return false;
     };
 
     void showError(final ClientRuntimeError error) {

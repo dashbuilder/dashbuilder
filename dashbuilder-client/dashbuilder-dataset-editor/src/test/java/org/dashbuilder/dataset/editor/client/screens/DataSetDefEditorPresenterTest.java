@@ -81,7 +81,7 @@ public class DataSetDefEditorPresenterTest  {
         when(dataSetDef.getName()).thenReturn("name1");
         when(dataSetDef.getProvider()).thenReturn(DataSetProviderType.BEAN);
         when(dataSetDef.getColumns()).thenReturn(columns);
-        services = new CallerMock<DataSetDefVfsServices>( dataSetDefVfsServices );
+        services = new CallerMock<>(dataSetDefVfsServices);
         presenter.services = services;
         presenter.workflow = editWorkflow;
         final EditDataSetDef editDataSetDef = mock(EditDataSetDef.class);
@@ -94,6 +94,13 @@ public class DataSetDefEditorPresenterTest  {
         when(editWorkflow.getEditor()).thenReturn(dataSetDefEditor);
         when(editWorkflow.edit(any(DataSetDef.class), any(List.class))).thenReturn(editWorkflow);
         assertEquals(view.asWidget(), presenter.getWidget());
+    }
+
+    @Test
+    public void testOnClose() throws Exception {
+        presenter.onClose();
+
+        verify(workflowFactory).dispose(editWorkflow);
     }
 
     @Test

@@ -216,6 +216,9 @@ public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsW
         // Override by typed sub-classes to perform specific data set definition flush constraints that depends on the editor state.
     }
 
+    protected void dispose() {
+    }
+
     protected void addViolations(final Iterable<ConstraintViolation<?>> _violations) {
         if (_violations != null) {
             final Iterator<ConstraintViolation<?>> it = _violations.iterator();

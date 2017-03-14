@@ -102,6 +102,11 @@ public class DataSetDefPreviewTable implements IsWidget {
             DataSetDef editCloneWithoutCacheSettings = dataSetDef.clone();
             editCloneWithoutCacheSettings.setCacheEnabled(false);
 
+            // Close the current displayer (if any)
+            if (tableDisplayer != null) {
+                tableDisplayer.close();
+            }
+
             // Configure the table displayer and the data set handler for edition.
             tableDisplayer = displayerLocator.lookupDisplayer(settings);
             tableDisplayer.setDataSetHandler(new DataSetEditHandler(clientServices, settings.getDataSetLookup(), editCloneWithoutCacheSettings));
