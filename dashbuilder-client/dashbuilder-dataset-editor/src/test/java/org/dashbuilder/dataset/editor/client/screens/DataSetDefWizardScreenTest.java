@@ -45,8 +45,7 @@ import org.uberfire.workbench.events.NotificationEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jgroups.util.Util.assertEquals;
-import static org.jgroups.util.Util.assertNotNull;
+import static org.jgroups.util.Util.*;
 import static org.mockito.Mockito.*;
 
 
@@ -108,6 +107,16 @@ public class DataSetDefWizardScreenTest {
         presenter = new DataSetDefWizardScreen( beanManager, workflowFactory, services, clientServices,
                                                 notification, placeManager, errorPopupPresenter, savePopUpPresenter, view );
         presenter.services = services;
+    }
+
+    @Test
+    public void testOnClose() {
+        presenter.init(PlaceRequest.NOWHERE);
+        DataSetEditorWorkflow currentWorkflow = presenter.currentWorkflow;
+
+        presenter.onClose();
+        verify(workflowFactory).dispose(currentWorkflow);
+        assertNull("current workflow null", presenter.currentWorkflow);
     }
 
     @Test

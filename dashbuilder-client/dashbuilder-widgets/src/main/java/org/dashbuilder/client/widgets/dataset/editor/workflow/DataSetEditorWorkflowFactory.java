@@ -51,6 +51,14 @@ public class DataSetEditorWorkflowFactory {
     }
 
     /**
+     * Dispose the given workflow instance.
+     */
+    public void dispose(DataSetEditorWorkflow workflow) {
+        workflow.dispose();
+        beanManager.destroyBean(workflow);
+    }
+
+    /**
      * Obtain the bean for editing the data set definition's provider type.
      * @return The workflow instance.
      */
