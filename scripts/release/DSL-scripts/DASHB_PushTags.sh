@@ -8,7 +8,7 @@ fi
 
 commitMSG="Tagging $TAG"
 cd $WORKSPACE/dashbuilder
-# pushes the TAG to jboss-integration or droolsjbpm [IMPORTANT: "push -n" (--dryrun) should be replaced by "push" when script is ready]
+# pushes the TAG to github.com:jboss-integration or github.com:dashbuilder [IMPORTANT: "push -n" (--dryrun) should be replaced by "push" when script is ready]
 if [ "$TARGET" == "productized" ]; then
    git tag -a $TAG -m "$commitMSG"
    git remote add upstream git@github.com:jboss-integration/dashbuilder.git

@@ -9,7 +9,7 @@ PR_BRANCH=dashbuilder-$DATE-$BASE_BRANCH
 git checkout -b $PR_BRANCH $BASE_BRANCH
 git remote add $TARGET_USER $REMOTE_URL
 
-# upgrades the version to next development version of Uberfire
+# upgrades the version to next development version of dashbuilder
 sh scripts/release/update-version.sh $newVersion
 
 # git add and commit the version update changes 

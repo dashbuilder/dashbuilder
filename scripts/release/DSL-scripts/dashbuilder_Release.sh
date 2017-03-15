@@ -73,12 +73,12 @@ job("01.DASHB_Release-0.6.x") {
 
 job("02.DASHB_PushTags-0.6.x") {
 
-  description("This job: <br> creates and pushes the tags for <br> community (droolsjbpm) or product (jboss-integration) <br> IMPORTANT: Created automatically by Jenkins job DSL plugin. Do not edit manually! The changes will get lost next time the job is generated.")
+  description("This job: <br> creates and pushes the tags for <br> community (dashbuilder) or product (jboss-integration) <br> IMPORTANT: Created automatically by Jenkins job DSL plugin. Do not edit manually! The changes will get lost next time the job is generated.")
 
   parameters {
-    choiceParam("TARGET", ["community", "productized"], "please select if this release is for community <b> community </b> or <br> if it is for building a productization tag <b>productized <br> ******************************************************** <br> ")
-    stringParam("RELEASE_BRANCH", "r0.5.0.Final", "please edit the name of the release branch <br> i.e. typically <b> r0.5.0.Final </b> for <b> community </b>or <b> bsync-6.5.x-2016.08.05  </b> for <b> productization </b> <br> ******************************************************** <br> ")
-    stringParam("TAG_NAME", "Please enter the name of the tag", "The tag should typically look like <b> 0.5.0.Final </b> for <b> community </b> or <b> sync-6.5.0.2016.08.05 </b> for <b> productization </b> <br> ******************************************************** <br> ")
+    choiceParam("TARGET", ["community", "productized"], "please select if this release is for community: <b> community </b> or <br> if it is for building a productization tag: <b>productized <br> ******************************************************** <br> ")
+    stringParam("RELEASE_BRANCH", "release branch", "please edit the name of the release branch <br> i.e. typically <b> r0.5.0.Final </b> for <b> community </b>or <b> bsync-6.5.x-2016.08.05  </b> for <b> productization </b> <br> ******************************************************** <br> ")
+    stringParam("TAG_NAME", "tag", "The tag should typically look like <b> 0.5.0.Final </b> for <b> community </b> or <b> sync-6.5.0.2016.08.05 </b> for <b> productization </b> <br> ******************************************************** <br> ")
   };
 
   label("kie-releases")
@@ -125,11 +125,11 @@ job("02.DASHB_PushTags-0.6.x") {
 
 job("03.DASHB_updateVersion-0.6.x") {
 
-  description("This job: <br> updates the UF and UF-extensions repositories to a new developmenmt version <br> for 0.7.x, 0.8.x or 0.9.x branches <br> IMPORTANT: Created automatically by Jenkins job DSL plugin. Do not edit manually! The changes will get lost next time the job is generated.")
+  description("This job: <br> updates dashbuilder repository to a new developmenmt version <br> IMPORTANT: Created automatically by Jenkins job DSL plugin. Do not edit manually! The changes will get lost next time the job is generated.")
  
   parameters {
-    stringParam("newVersion", "1.0.x", "Edit the new UF version")
-    choiceParam("BASE_BRANCH", ["master", "7.0.x"], "please select the base branch <br> ******************************************************** <br> ")
+    stringParam("newVersion", "new dashbuilder version", "Edit the new dashbuilder version")
+    stringParam("BASE_BRANCH", "base branch", "please select the base branch <br> ******************************************************** <br> ")
   }
 
   label("kie-releases")
