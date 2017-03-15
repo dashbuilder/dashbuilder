@@ -42,7 +42,7 @@ mvn -B -e org.sonatype.plugins:nexus-staging-maven-plugin:1.6.5:deploy-staged-re
  -DrepositoryDirectory=$DEPLOY_DIR -DstagingProfileId=$STAGING_PROFILE -DstagingDescription="dashbuilder $newVersion" -DstagingProgressTimeoutMinutes=30 
 
 cd $WORKSPACE/dashbuilder
-# pushes the release-branches to jboss-integration or droolsjbpm [IMPORTANT: "push -n" (--dryrun) should be replaced by "push" when script is finished and will be applied]
+# pushes the release-branches to rhub.com:jboss-integration or github.com:dashbuilder [IMPORTANT: "push -n" (--dryrun) should be replaced by "push" when script is finished and will be applied]
 if [ "$TARGET" == "community" ]; then
    git push origin $RELEASE_BRANCH
 else
