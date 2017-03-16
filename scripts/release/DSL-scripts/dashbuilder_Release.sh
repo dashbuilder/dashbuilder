@@ -175,21 +175,18 @@ job("03.DASHB_updateVersion-0.6.x") {
 // *************************
 // *************************
 
-nestedView("DASHB_Releases-0.6.x") {
-    views {
-        listView("dashbuilder-0.6.x") {
-            jobs {
+listView("0.6.x-dashbuilder-releases") {
+    description("all scripts needed to build dashbuilder release")
+    jobs {
                 name("01.DASHB_Release-0.6.x")
                 name("02.DASHB_PushTags-0.6.x")
                 name("03.DASHB_updateVersion-0.6.x")
-            }
-            columns {
+    }
+    columns {
                 status()
                 weather()
                 name()
                 lastSuccess()
                 lastFailure()
-            }
-        }
     }
 }
