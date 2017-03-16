@@ -21,11 +21,11 @@ job("01.DASHB_Release-0.6.x") {
 
   parameters {
     choiceParam("TARGET", ["community", "productized"], "please select if this release is for community <b> community </b> or <br> if it is for building a productization tag <b>productized <br> ******************************************************** <br> ")
-    choiceParam("BASE_BRANCH", ["master", "7.0.x"], "please select the base branch <br> ******************************************************** <br> ")
-    stringParam("RELEASE_BRANCH", "r0.6.0.Beta6", "please edit the name of the release branch <br> i.e. typically <b> r0.6.0.Beta6 </b> for <b> community </b>or <b> bsync-7.0.x-2017.01.20  </b> for <b> productization </b> <br> ******************************************************** <br> ")
-    stringParam("newVersion", "0.6.0.Beta6", "please edit the old version used in the poms<br> The version old should typically look like <b> 0.6.0.Beta6 </b> for <b> community </b> or <b> 0.6.0.20170120-productized </b> for <b> productization </b> <br> ******************************************************** <br> ")
-    stringParam("UBERFIRE_VERSION", "1.0.0.Beta6", "please edit the version of uberfire <br> The version should typically look like <b> 1.0.0.Beta6 </b> for <b> community </b> or <b> 1.0.0.20170120-productized </b> for <b> productization </b> <br> ******************************************************** <br> ")
-    choiceParam("ERRAI_VERSION", ["4.0.0.Beta6", "4.0.0.Beta7"], "please select the needed errai version <br> ******************************************************** <br> ")
+    stringParam("BASE_BRANCH", "base branch", "please select the base branch <br> ******************************************************** <br> ")
+    stringParam("RELEASE_BRANCH", "release branch", "please edit the name of the release branch <br> i.e. typically <b> r0.6.0.Beta6 </b> for <b> community </b>or <b> bsync-6.5.x-2017.01.20  </b> for <b> productization </b> <br> ******************************************************** <br> ")
+    stringParam("newVersion", "new version", "please edit the old version used in the poms<br> The version old should typically look like <b> 0.6.0.Beta6 </b> for <b> community </b> or <b> 6.5.1.20170120-productized </b> for <b> productization </b> <br> ******************************************************** <br> ")
+    stringParam("UBERFIRE_VERSION", "uberfire version", "please edit the version of uberfire <br> The version should typically look like <b> 1.0.0.Beta6 </b> for <b> community </b> or <b> 6.5.1.20170120-productized </b> for <b> productization </b> <br> ******************************************************** <br> ")
+    stringParam("ERRAI_VERSION", "errai version", "please select the needed errai version <br> ******************************************************** <br> ")
   }
   
   label("kie-releases")
@@ -77,8 +77,8 @@ job("02.DASHB_PushTags-0.6.x") {
 
   parameters {
     choiceParam("TARGET", ["community", "productized"], "please select if this release is for community: <b> community </b> or <br> if it is for building a productization tag: <b>productized <br> ******************************************************** <br> ")
-    stringParam("RELEASE_BRANCH", "release branch", "please edit the name of the release branch <br> i.e. typically <b> r0.5.0.Final </b> for <b> community </b>or <b> bsync-6.5.x-2016.08.05  </b> for <b> productization </b> <br> ******************************************************** <br> ")
-    stringParam("TAG_NAME", "tag", "The tag should typically look like <b> 0.5.0.Final </b> for <b> community </b> or <b> sync-6.5.0.2016.08.05 </b> for <b> productization </b> <br> ******************************************************** <br> ")
+    stringParam("RELEASE_BRANCH", "release branch", "please edit the name of the release branch <br> i.e. typically <b> r0.6.0.Final </b> for <b> community </b>or <b> bsync-6.5.x-2016.08.05  </b> for <b> productization </b> <br> ******************************************************** <br> ")
+    stringParam("TAG_NAME", "tag", "The tag should typically look like <b> 0.6.0.Final </b> for <b> community </b> or <b> sync-6.5.x-2016.08.05 </b> for <b> productization </b> <br> ******************************************************** <br> ")
   };
 
   label("kie-releases")
