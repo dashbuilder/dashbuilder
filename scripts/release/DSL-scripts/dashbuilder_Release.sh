@@ -1,16 +1,16 @@
 def dashDeploy=
 """
-sh /home/jenkins/workspace/DASHB-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_Deploy.sh
+sh /home/jenkins/workspace/DASHBUILDER-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_Deploy.sh
 """
 
 def dashPushTags=
 """
-sh /home/jenkins/workspace/DASHB-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_PushTags.sh
+sh /home/jenkins/workspace/DASHBUILDER-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_PushTags.sh
 """
 
 def dashUpdateVersions=
 """
-sh /home/jenkins/workspace/DASHB-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_UpdateVersions.sh
+sh /home/jenkins/workspace/DASHBUILDER-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_UpdateVersions.sh
 """
 
 // ******************************************************
