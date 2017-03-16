@@ -26,11 +26,9 @@ import org.dashbuilder.dataset.service.DataSetDefServices;
 import org.dashbuilder.dataset.service.DataSetExportServices;
 import org.dashbuilder.dataset.service.DataSetLookupServices;
 import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.common.client.api.RemoteCallback;
 import org.junit.Before;
 import org.mockito.Mock;
-
-import static org.mockito.Mockito.*;
+import org.uberfire.mocks.CallerMock;
 
 public abstract class AbstractDataSetTest {
 
@@ -44,9 +42,6 @@ public abstract class AbstractDataSetTest {
     protected Event<DataSetModifiedEvent> dataSetModifiedEvent;
 
     @Mock
-    protected Caller<DataSetLookupServices> dataSetLookupServicesCaller;
-
-    @Mock
     protected DataSetLookupServices dataSetLookupServices;
 
     @Mock
@@ -55,6 +50,7 @@ public abstract class AbstractDataSetTest {
     @Mock
     protected Caller<DataSetExportServices> dataSetExportServicesCaller;
 
+    protected Caller<DataSetLookupServices> dataSetLookupServicesCaller;
     protected ClientDataSetCore clientDataSetCore;
     protected DataSetClientServices clientServices;
     protected ClientDataSetManager clientDataSetManager;
@@ -74,6 +70,7 @@ public abstract class AbstractDataSetTest {
     }
 
     public void initDataSetClientServices() {
+        dataSetLookupServicesCaller = new CallerMock<>(dataSetLookupServices);
         clientServices = new DataSetClientServices(
                 clientDataSetManager,
                 clientDataSetCore.getAggregateFunctionManager(),
@@ -98,8 +95,6 @@ public abstract class AbstractDataSetTest {
         initClientDataSetManager();
         initDataSetClientServices();
         registerExpensesDataSet();
-
-        when(dataSetLookupServicesCaller.call(any(RemoteCallback.class))).thenReturn(dataSetLookupServices);
     }
 
 

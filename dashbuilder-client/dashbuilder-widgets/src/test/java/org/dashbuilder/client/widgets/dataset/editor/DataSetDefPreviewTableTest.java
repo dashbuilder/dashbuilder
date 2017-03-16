@@ -1,32 +1,32 @@
 package org.dashbuilder.client.widgets.dataset.editor;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.dashbuilder.dataprovider.DataSetProviderType;
-import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetFactory;
 import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.def.DataSetDefFactory;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.AbstractDisplayerTest;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerListener;
-import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-
+import org.mockito.runners.MockitoJUnitRunner;
+import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(GwtMockitoTestRunner.class)
-public class DataSetDefPreviewTableTest {
+@RunWith(MockitoJUnitRunner.class)
+public class DataSetDefPreviewTableTest extends AbstractDisplayerTest {
     
-    @Mock DisplayerLocator displayerLocator;
-    @Mock DataSetClientServices dataSetClientServices;
     @Mock DataSetDefPreviewTable.View view;
     @Mock DataSetDef dataSetDef;
     
@@ -44,7 +44,7 @@ public class DataSetDefPreviewTableTest {
         
         when(columnDefList.isEmpty()).thenReturn(true);
         when(dataSetDef.clone()).thenReturn(dataSetDef);
-        tested = new DataSetDefPreviewTable(displayerLocator, dataSetClientServices, view);
+        tested = new DataSetDefPreviewTable(displayerLocator, clientServices, view);
     }
 
     @Test
@@ -85,6 +85,29 @@ public class DataSetDefPreviewTableTest {
         verify(view, times(0)).init(tested);
         verify(view, times(0)).clear();
     }
-    
-    
+
+    @Test
+    public void testCSVConfig() throws Exception {
+        DataSetDef dataSetDef = DataSetDefFactory.newCSVDataSetDef()
+                .datePattern("dd/MM/yyyy")
+                .numberPattern("#,###")
+                .allColumns(true)
+                .buildDef();
+
+        DataSet dataSet = DataSetFactory.newDataSetBuilder()
+                .date("date")
+                .number("number")
+                .row(new Date(), 1d)
+                .buildDataSet();
+
+        when(dataSetLookupServices.lookupDataSet(any(), any())).thenReturn(dataSet);
+        tested.show(dataSetDef, null, displayerListener);
+
+        ArgumentCaptor<Displayer> argumentCaptor = ArgumentCaptor.forClass(Displayer.class);
+        verify(displayerListener).onDataLoaded(argumentCaptor.capture());
+        Displayer displayer = argumentCaptor.getValue();
+        DisplayerSettings settings = displayer.getDisplayerSettings();
+        assertEquals(settings.getColumnSettings("date").getValuePattern(), "dd/MM/yyyy");
+        assertEquals(settings.getColumnSettings("number").getValuePattern(), "#,###");
+    }
 }

@@ -74,6 +74,14 @@
       <artifactId>dashbuilder-displayer-client</artifactId>
     </dependency>
 
+    <!-- Test dependencies -->
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-testing-utils</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-dataset-api</artifactId>

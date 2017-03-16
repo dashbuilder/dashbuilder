@@ -30,6 +30,11 @@ public abstract class AbstractDisplayerListener implements DisplayerListener {
 
     }
 
+    @Override
+    public void onDataLoaded(Displayer displayer) {
+
+    }
+
     @Override public void onDraw(Displayer displayer) {
 
     }
