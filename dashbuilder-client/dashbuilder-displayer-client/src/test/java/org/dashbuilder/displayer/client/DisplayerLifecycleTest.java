@@ -66,6 +66,7 @@ public class DisplayerLifecycleTest extends AbstractDisplayerTest {
         verify(view).setId("expenses");
 
         verify(listener).onDataLookup(displayer);
+        verify(listener).onDataLoaded(displayer);
         verify(listener).onDraw(displayer);
         verify(listener, never()).onRedraw(displayer);
 

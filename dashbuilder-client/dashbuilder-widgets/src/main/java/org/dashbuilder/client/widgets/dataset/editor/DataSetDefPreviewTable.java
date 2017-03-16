@@ -17,17 +17,21 @@ package org.dashbuilder.client.widgets.dataset.editor;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.dataset.DataColumn;
+import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.def.CSVDataSetDef;
 import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.dashbuilder.displayer.TableDisplayerSettingsBuilder;
+import org.dashbuilder.displayer.client.AbstractDisplayerListener;
 import org.dashbuilder.displayer.client.DataSetEditHandler;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerListener;
 import org.dashbuilder.displayer.client.DisplayerLocator;
-import org.dashbuilder.displayer.impl.TableDisplayerSettingsBuilderImpl;
 import org.dashbuilder.renderer.client.DefaultRenderer;
 import org.uberfire.client.mvp.UberView;
 
@@ -83,7 +87,7 @@ public class DataSetDefPreviewTable implements IsWidget {
         if (dataSetDef != null) {
             
             // Build the table displayer settings.
-            final TableDisplayerSettingsBuilder<TableDisplayerSettingsBuilderImpl> tableDisplayerSettingsBuilder = DisplayerSettingsFactory.newTableSettings()
+            final TableDisplayerSettingsBuilder settingsBuilder = DisplayerSettingsFactory.newTableSettings()
                     .dataset(dataSetDef.getUUID())
                     .renderer(DefaultRenderer.UUID)
                     .titleVisible(false)
@@ -91,13 +95,13 @@ public class DataSetDefPreviewTable implements IsWidget {
                     .tableOrderEnabled(true)
                     .filterOn(true, false, false);
 
+            // Make only the specified columns visible (if null then show all)
             if (columns != null && !columns.isEmpty()) {
                 for (final DataColumnDef column : columns) {
-                    tableDisplayerSettingsBuilder.column(column.getId());
+                    settingsBuilder.column(column.getId());
                 }
             }
 
-            final DisplayerSettings settings = tableDisplayerSettingsBuilder.buildSettings();
             // Disable backend cache for preview.
             DataSetDef editCloneWithoutCacheSettings = dataSetDef.clone();
             editCloneWithoutCacheSettings.setCacheEnabled(false);
@@ -108,11 +112,46 @@ public class DataSetDefPreviewTable implements IsWidget {
             }
 
             // Configure the table displayer and the data set handler for edition.
+            DisplayerSettings settings = settingsBuilder.buildSettings();
             tableDisplayer = displayerLocator.lookupDisplayer(settings);
             tableDisplayer.setDataSetHandler(new DataSetEditHandler(clientServices, settings.getDataSetLookup(), editCloneWithoutCacheSettings));
+
+            // For CSV datasets, make sure dates & numbers are displayed as defined in the CSV configuration
+            if (dataSetDef instanceof CSVDataSetDef) {
+                CSVDataSetDef csvDataSetDef = (CSVDataSetDef) dataSetDef;
+                tableDisplayer.addListener(new AbstractDisplayerListener() {
+
+                    // The column settings are set right after the data set load, once the dataset columns are known
+                    @Override
+                    public void onDataLoaded(Displayer displayer) {
+                        configureColumnSettings(displayer, csvDataSetDef);
+                    }
+                });
+            }
+
+            // Draw the table
             draw(displayerListener);
         }
+    }
 
+    protected void configureColumnSettings(Displayer displayer, CSVDataSetDef csvDataSetDef) {
+
+        DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
+        for (DataColumn column : dataSet.getColumns()) {
+
+            if (column.getColumnType().equals(ColumnType.DATE)) {
+                String pattern = csvDataSetDef.getDatePattern(column.getId());
+                if (pattern != null) {
+                    displayer.getDisplayerSettings().setColumnValuePattern(column.getId(), pattern);
+                }
+            }
+            else if (column.getColumnType().equals(ColumnType.NUMBER)) {
+                String pattern = csvDataSetDef.getNumberPattern(column.getId());
+                if (pattern != null) {
+                    displayer.getDisplayerSettings().setColumnValuePattern(column.getId(), pattern);
+                }
+            }
+        }
     }
 
     // Show the table displayer.
@@ -126,5 +165,4 @@ public class DataSetDefPreviewTable implements IsWidget {
         tableDisplayer = null;
         view.clear();
     }
-    
 }

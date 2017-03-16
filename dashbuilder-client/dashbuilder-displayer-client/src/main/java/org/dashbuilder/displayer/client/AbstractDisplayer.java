@@ -249,6 +249,7 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
                     public void callback(DataSet result) {
                         try {
                             dataSet = result;
+                            afterLoad();
                             afterDataSetLookup(result);
                             createVisualization();
                             getView().showVisualization();
@@ -388,6 +389,12 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
         }
     }
 
+    protected void afterLoad() {
+        for (DisplayerListener listener : listenerList) {
+            listener.onDataLoaded(this);
+        }
+    }
+
     protected void afterDraw() {
         updateRefreshTimer();
         for (DisplayerListener listener : listenerList) {
@@ -431,6 +438,11 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
 
     @Override
     public void onDataLookup(Displayer displayer) {
+        // Do nothing
+    }
+
+    @Override
+    public void onDataLoaded(Displayer displayer) {
         // Do nothing
     }
 

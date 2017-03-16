@@ -35,6 +35,7 @@ import org.dashbuilder.dataset.client.editor.DataSetDefEditor;
 import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.filter.DataSetFilter;
+import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.displayer.client.AbstractDisplayerListener;
 import org.dashbuilder.displayer.client.Displayer;
 import org.uberfire.client.mvp.UberView;

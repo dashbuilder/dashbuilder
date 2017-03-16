@@ -208,6 +208,15 @@ public class DisplayerCoordinator {
         }
 
         @Override
+        public void onDataLoaded(Displayer displayer) {
+            for (Displayer other : displayerList) {
+                if (other != displayer && !isNotificationVetoed(displayer, other)) {
+                    other.onDataLoaded(displayer);
+                }
+            }
+        }
+
+        @Override
         public void onDraw(Displayer displayer) {
             if (draw) {
                 count();
