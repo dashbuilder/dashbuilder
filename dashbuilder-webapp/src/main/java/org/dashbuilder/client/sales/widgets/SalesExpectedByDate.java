@@ -185,6 +185,7 @@ public class SalesExpectedByDate extends Composite implements GalleryWidget {
                         .tableWidth(800)
                         .tableOrderEnabled(true)
                         .tableOrderDefault(AMOUNT, DESCENDING)
+                        .tableColumnPickerEnabled(false)
                         .renderer(DefaultRenderer.UUID)
                         .column(COUNTRY, AppConstants.INSTANCE.sales_bydate_table_column1())
                         .column(CUSTOMER, AppConstants.INSTANCE.sales_bydate_table_column2())

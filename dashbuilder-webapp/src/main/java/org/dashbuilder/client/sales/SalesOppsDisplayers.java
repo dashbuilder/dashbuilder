@@ -124,6 +124,7 @@ public class SalesOppsDisplayers {
             .title(AppConstants.INSTANCE.salesopps_displayers_country_summary_title())
             .titleVisible(false)
             .tablePageSize(20)
+            .tableColumnPickerEnabled(false)
             .filterOff(true)
             .refreshOn()
             .buildSettings();
@@ -136,6 +137,7 @@ public class SalesOppsDisplayers {
             .tablePageSize(20)
             .tableOrderEnabled(true)
             .tableOrderDefault(AMOUNT, DESCENDING)
+            .tableColumnPickerEnabled(false)
             .filterOn(true, true, true)
             .refreshOn()
             .buildSettings();

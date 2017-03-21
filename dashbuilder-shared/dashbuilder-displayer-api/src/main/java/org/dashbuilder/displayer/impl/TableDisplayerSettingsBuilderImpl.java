@@ -52,4 +52,9 @@ public class TableDisplayerSettingsBuilderImpl extends AbstractDisplayerSettings
         displayerSettings.setTableWidth( tableWidth );
         return this;
     }
+
+    public TableDisplayerSettingsBuilderImpl tableColumnPickerEnabled(boolean enabled) {
+        displayerSettings.setTableColumnPickerEnabled(enabled);
+        return this;
+    }
 }

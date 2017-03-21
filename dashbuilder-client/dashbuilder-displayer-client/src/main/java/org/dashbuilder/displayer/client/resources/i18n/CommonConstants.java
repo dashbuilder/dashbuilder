@@ -51,6 +51,8 @@ public interface CommonConstants extends Messages {
 
     String common_title_placeholder();
 
+    String common_export();
+
     String common_allowCSV();
 
     String common_allowExcel();
@@ -118,6 +120,8 @@ public interface CommonConstants extends Messages {
     String table_ascSortOrder();
 
     String table_descSortOrder();
+
+    String table_columnPicker();
 
     String axis_group();
 

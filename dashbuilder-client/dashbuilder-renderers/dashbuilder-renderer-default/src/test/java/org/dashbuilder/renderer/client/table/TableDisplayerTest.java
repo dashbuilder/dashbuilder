@@ -59,6 +59,8 @@ public class TableDisplayerTest extends AbstractDisplayerTest {
                 .tablePageSize(10)
                 .tableWidth(1000)
                 .filterOn(true, true, true)
+                .allowCsvExport(true)
+                .allowExcelExport(false)
                 .buildSettings();
 
         TableDisplayer table = createTableDisplayer(allRows);
@@ -75,6 +77,8 @@ public class TableDisplayerTest extends AbstractDisplayerTest {
         verify(tableView).addColumn(ColumnType.LABEL, COLUMN_EMPLOYEE, COLUMN_EMPLOYEE, 3, true, true);
         verify(tableView).addColumn(ColumnType.DATE, COLUMN_DATE, COLUMN_DATE, 4, false, true);
         verify(tableView).addColumn(ColumnType.NUMBER, COLUMN_AMOUNT, COLUMN_AMOUNT, 5, false, true);
+        verify(tableView).setExportToCsvEnabled(true);
+        verify(tableView).setExportToXlsEnabled(false);
         verify(tableView).gotoFirstPage();
     }
 

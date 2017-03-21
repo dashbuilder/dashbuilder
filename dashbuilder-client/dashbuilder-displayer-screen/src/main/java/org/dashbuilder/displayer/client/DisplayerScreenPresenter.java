@@ -15,26 +15,22 @@
  */
 package org.dashbuilder.displayer.client;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
-import org.dashbuilder.dataset.DataSetLookup;
-import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.client.DataSetClientServices;
-import org.dashbuilder.dataset.client.DataSetExportReadyCallback;
 import org.dashbuilder.dataset.uuid.UUIDGenerator;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.export.ExportCallback;
+import org.dashbuilder.displayer.client.export.ExportFormat;
 import org.dashbuilder.displayer.json.DisplayerSettingsJSONMarshaller;
 import org.dashbuilder.displayer.client.resources.i18n.Constants;
 import org.dashbuilder.displayer.client.widgets.DisplayerEditorPopup;
@@ -47,7 +43,6 @@ import org.gwtbootstrap3.client.ui.constants.ButtonSize;
 import org.gwtbootstrap3.client.ui.constants.Pull;
 import org.gwtbootstrap3.client.ui.constants.Toggle;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
-import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -204,150 +199,101 @@ public class DisplayerScreenPresenter {
     }
 
     private Command getEditCommand() {
-        return new Command() {
-            public void execute() {
-                perspectiveCoordinator.editOn();
+        return () -> {
+            perspectiveCoordinator.editOn();
 
-                String currentTitle = displayerSettings.getTitle();
-                DisplayerEditorPopup displayerEditor = beanManager.lookupBean(DisplayerEditorPopup.class).newInstance();
-                displayerEditor.init(displayerSettings.cloneInstance());
-                displayerEditor.setOnSaveCommand(getSaveCommand(displayerEditor, currentTitle));
-                displayerEditor.setOnCloseCommand(getCloseCommand(displayerEditor));
-            }
+            String currentTitle = displayerSettings.getTitle();
+            DisplayerEditorPopup displayerEditor = beanManager.lookupBean(DisplayerEditorPopup.class).newInstance();
+            displayerEditor.init(displayerSettings.cloneInstance());
+            displayerEditor.setOnSaveCommand(getSaveCommand(displayerEditor, currentTitle));
+            displayerEditor.setOnCloseCommand(getCloseCommand(displayerEditor));
         };
     }
 
     protected Command getCloneCommand() {
-        return new Command() {
-            public void execute() {
-                perspectiveCoordinator.editOn();
+        return () -> {
+            perspectiveCoordinator.editOn();
 
-                DisplayerSettings clonedSettings = displayerSettings.cloneInstance();
-                clonedSettings.setUUID(uuidGenerator.newUuid());
-                clonedSettings.setTitle("Copy of " + clonedSettings.getTitle());
-                DisplayerEditorPopup displayerEditor = beanManager.lookupBean(DisplayerEditorPopup.class).newInstance();
-                displayerEditor.init(clonedSettings);
-                displayerEditor.setOnSaveCommand(getSaveCloneCommand(displayerEditor));
-                displayerEditor.setOnCloseCommand(getCloseCommand(displayerEditor));
-            }
+            DisplayerSettings clonedSettings = displayerSettings.cloneInstance();
+            clonedSettings.setUUID(uuidGenerator.newUuid());
+            clonedSettings.setTitle("Copy of " + clonedSettings.getTitle());
+            DisplayerEditorPopup displayerEditor = beanManager.lookupBean(DisplayerEditorPopup.class).newInstance();
+            displayerEditor.init(clonedSettings);
+            displayerEditor.setOnSaveCommand(getSaveCloneCommand(displayerEditor));
+            displayerEditor.setOnCloseCommand(getCloseCommand(displayerEditor));
         };
     }
 
     protected Command getSaveCommand(final DisplayerEditorPopup displayerEditor, final String currentTitle) {
-        return new Command() {
-            public void execute() {
-                // On save
-                perspectiveCoordinator.editOff();
-                DisplayerSettings newSettings = displayerEditor.getDisplayerSettings();
-                if (!displayerSettings.equals(newSettings)) {
+        return () -> {
+            // On save
+            perspectiveCoordinator.editOff();
+            DisplayerSettings newSettings = displayerEditor.getDisplayerSettings();
+            if (!displayerSettings.equals(newSettings)) {
 
-                    String newTitle = newSettings.getTitle();
-                    if (!currentTitle.equals(newTitle)) {
-                        changeTitleEvent.fire(new ChangeTitleWidgetEvent(placeRequest, newSettings.getTitle()));
-                    }
-
-                    PanelDefinition panelDefinition = panelManager.getPanelForPlace(placeRequest);
-                    beanManager.destroyBean(displayerEditor);
-                    placeManager.goTo(createPlaceRequest(newSettings), panelDefinition);
-                    placeManager.closePlace(placeRequest);
-                    perspectiveManager.savePerspectiveState(new Command() {
-                        public void execute() {
-                        }
-                    });
+                String newTitle = newSettings.getTitle();
+                if (!currentTitle.equals(newTitle)) {
+                    changeTitleEvent.fire(new ChangeTitleWidgetEvent(placeRequest, newSettings.getTitle()));
                 }
+
+                PanelDefinition panelDefinition = panelManager.getPanelForPlace(placeRequest);
+                beanManager.destroyBean(displayerEditor);
+                placeManager.goTo(createPlaceRequest(newSettings), panelDefinition);
+                placeManager.closePlace(placeRequest);
+                perspectiveManager.savePerspectiveState(() -> {});
             }
         };
     }
 
     protected Command getSaveCloneCommand(final DisplayerEditorPopup displayerEditor) {
-        return new Command() {
-            public void execute() {
-                perspectiveCoordinator.editOff();
-                beanManager.destroyBean(displayerEditor);
+        return () -> {
+            perspectiveCoordinator.editOff();
+            beanManager.destroyBean(displayerEditor);
 
-                PanelDefinition panelDefinition = panelManager.getPanelForPlace(placeRequest);
-                placeManager.goTo(createPlaceRequest(displayerEditor.getDisplayerSettings()), panelDefinition);
-                perspectiveManager.savePerspectiveState(new Command() {
-                    public void execute() {
-                    }
-                } );
-            }
+            PanelDefinition panelDefinition = panelManager.getPanelForPlace(placeRequest);
+            placeManager.goTo(createPlaceRequest(displayerEditor.getDisplayerSettings()), panelDefinition);
+            perspectiveManager.savePerspectiveState(() -> {});
         };
     }
 
     protected Command getCloseCommand(final DisplayerEditorPopup displayerEditor) {
-        return new Command() {
-            public void execute() {
-                perspectiveCoordinator.editOff();
-                beanManager.destroyBean(displayerEditor);
-            }
+        return () -> {
+            perspectiveCoordinator.editOff();
+            beanManager.destroyBean(displayerEditor);
         };
     }
 
     protected Command getExportCsvCommand() {
-        return new Command() {
-            public void execute() {
-                try {
-                    // Get all the data set rows with a maximum of 10000
-                    DataSetLookup currentLookup = getConstrainedDataSetLookup(displayerViewer.getDisplayer().getDataSetHandler().getCurrentDataSetLookup());
-                    dataSetClientServices.exportDataSetCSV(currentLookup, new DataSetExportReadyCallback() {
-                        @Override
-                        public void exportReady(Path exportFilePath) {
-                            final String u = dataSetClientServices.getDownloadFileUrl(exportFilePath);
-                            Window.open(u,
-                                        "downloading",
-                                        "resizable=no,scrollbars=yes,status=no");
-                        }
-                        @Override
-                        public void onError(ClientRuntimeError error) {
-                            displayerViewer.error(error);
-                        }
-                    });
-                } catch (Exception e) {
-                    displayerViewer.error(new ClientRuntimeError(e));
-                }
-            }
-        };
+        return getExportCommand(ExportFormat.CSV);
     }
 
     protected Command getExportExcelCommand() {
-        return new Command() {
-            public void execute() {
-                try {
-                    // Get all the data set rows with a maximum of 10000
-                    DataSetLookup currentLookup = getConstrainedDataSetLookup(displayerViewer.getDisplayer().getDataSetHandler().getCurrentDataSetLookup());
-                    dataSetClientServices.exportDataSetExcel(currentLookup, new DataSetExportReadyCallback() {
-                        @Override
-                        public void exportReady(Path exportFilePath) {
-                            final String u = dataSetClientServices.getDownloadFileUrl(exportFilePath);
-                            Window.open(u,
-                                        "downloading",
-                                        "resizable=no,scrollbars=yes,status=no");
-                        }
-                        @Override
-                        public void onError(ClientRuntimeError error) {
-                            displayerViewer.error(error);
-                        }
-                    });
-                } catch (Exception e) {
-                    displayerViewer.error(new ClientRuntimeError(e));
-                }
-            }
-        };
+        return getExportCommand(ExportFormat.XLS);
     }
 
-    protected DataSetLookup getConstrainedDataSetLookup(DataSetLookup dataSetLookup) {
-        DataSetLookup _dataSetLookup = dataSetLookup.cloneInstance();
-        if ( dataSetLookup.getNumberOfRows() > 0 ) {
-            // TODO: ask the user ....
-            DataSetMetadata metadata = dataSetClientServices.getMetadata( dataSetLookup.getDataSetUUID());
-            if (metadata.getNumberOfRows() > MAX_EXPORT_LIMIT) {
+    protected Command getExportCommand(ExportFormat format) {
+        return () -> displayerViewer.getDisplayer().export(format, MAX_EXPORT_LIMIT, new ExportCallback() {
+
+            @Override
+            public void noData() {
+                Window.alert(Constants.INSTANCE.displayer_presenter_export_no_data());
+            }
+
+            @Override
+            public void tooManyRows(int rowNum) {
                 Window.alert(Constants.INSTANCE.displayer_presenter_export_large_dataset());
             }
-            _dataSetLookup.setRowOffset(0);
-            _dataSetLookup.setNumberOfRows( MAX_EXPORT_LIMIT );
-        }
-        return _dataSetLookup;
+
+            @Override
+            public void exportFileUrl(String url) {
+                Window.open(url, "downloading", "resizable=no,scrollbars=yes,status=no");
+            }
+
+            @Override
+            public void error(ClientRuntimeError error) {
+                displayerViewer.error(error);
+            }
+        });
     }
 
     protected void removeDisplayer() {
@@ -359,7 +305,7 @@ public class DisplayerScreenPresenter {
 
     protected PlaceRequest createPlaceRequest( DisplayerSettings displayerSettings ) {
         String json = jsonMarshaller.toJsonString(displayerSettings);
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put("json", json);
         params.put("edit", "true");
         params.put("clone", "true");
@@ -381,36 +327,16 @@ public class DisplayerScreenPresenter {
             }} );
             add(new DropDownMenu() {{
                 add(new AnchorListItem(Constants.INSTANCE.menu_edit()) {{
-                    addClickHandler(new ClickHandler() {
-                        @Override
-                        public void onClick( ClickEvent clickEvent ) {
-                            getEditCommand().execute();
-                        }
-                    });
+                    addClickHandler(event -> getEditCommand().execute());
                 }} );
                 add(new AnchorListItem(Constants.INSTANCE.menu_clone() ) {{
-                    addClickHandler( new ClickHandler() {
-                        @Override
-                        public void onClick( ClickEvent clickEvent ) {
-                            getCloneCommand().execute();
-                        }
-                    });
+                    addClickHandler(event -> getCloneCommand().execute());
                 }} );
                 add(new AnchorListItem(Constants.INSTANCE.menu_export_csv() ) {{
-                    addClickHandler(new ClickHandler() {
-                        @Override
-                        public void onClick( ClickEvent clickEvent ) {
-                            getExportCsvCommand().execute();
-                        }
-                    });
+                    addClickHandler(event -> getExportCsvCommand().execute());
                 }} );
                 add(new AnchorListItem(Constants.INSTANCE.menu_export_excel()) {{
-                    addClickHandler( new ClickHandler() {
-                        @Override
-                        public void onClick( ClickEvent clickEvent ) {
-                            getExportExcelCommand().execute();
-                        }
-                    } );
+                    addClickHandler(event -> getExportExcelCommand().execute());
                 }} );
             }} );
         }};
