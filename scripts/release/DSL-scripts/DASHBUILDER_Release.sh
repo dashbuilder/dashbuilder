@@ -1,21 +1,21 @@
 def dashDeploy=
 """
-sh /home/jenkins/workspace/DASHBUILDER-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_Deploy.sh
+sh /home/jenkins/workspace/DASHBUILDER-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_deploy.sh
 """
 
 def dashPushTags=
 """
-sh /home/jenkins/workspace/DASHBUILDER-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_PushTags.sh
+sh /home/jenkins/workspace/DASHBUILDER-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_pushTags.sh
 """
 
 def dashUpdateVersions=
 """
-sh /home/jenkins/workspace/DASHBUILDER-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_UpdateVersions.sh
+sh /home/jenkins/workspace/DASHBUILDER-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_updateVersions.sh
 """
 
 // ******************************************************
 
-job("01.DASHB_Release-0.6.x") {
+job("DASHB_release-0.6.x") {
 
   description("This job: <br> releases dashbuilder, upgrades the version, builds and deploys, copies artifacts to Nexus, closes the release on Nexus  <br> <b>IMPORTANT: Created automatically by Jenkins job DSL plugin. Do not edit manually! The changes will get lost next time the job is generated.<b>")
 
@@ -69,7 +69,7 @@ job("01.DASHB_Release-0.6.x") {
 
 // ******************************************************
 
-job("02.DASHB_PushTags-0.6.x") {
+job("DASHB_pushTags-0.6.x") {
 
   description("This job: <br> creates and pushes the tags for <br> community (dashbuilder) or product (jboss-integration) <br> IMPORTANT: Created automatically by Jenkins job DSL plugin. Do not edit manually! The changes will get lost next time the job is generated.")
 
@@ -121,7 +121,7 @@ job("02.DASHB_PushTags-0.6.x") {
 
 // ******************************************************
 
-job("03.DASHB_updateVersion-0.6.x") {
+job("DASHB_updateVersion-0.6.x") {
 
   description("This job: <br> updates dashbuilder repository to a new developmenmt version <br> IMPORTANT: Created automatically by Jenkins job DSL plugin. Do not edit manually! The changes will get lost next time the job is generated.")
  
@@ -176,9 +176,9 @@ job("03.DASHB_updateVersion-0.6.x") {
 listView("0.6.x-dashbuilder-releases") {
     description("all scripts needed to build dashbuilder release")
     jobs {
-                name("01.DASHB_Release-0.6.x")
-                name("02.DASHB_PushTags-0.6.x")
-                name("03.DASHB_updateVersion-0.6.x")
+                name("DASHB_release-0.6.x")
+                name("DASHB_pushTags-0.6.x")
+                name("DASHB_updateVersion-0.6.x")
     }
     columns {
                 status()
