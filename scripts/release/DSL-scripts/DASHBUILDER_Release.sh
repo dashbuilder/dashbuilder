@@ -3,14 +3,14 @@ def dashDeploy=
 sh /home/jenkins/workspace/DASHBUILDER-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_deploy.sh
 """
 
-def dashPushTags=
+def dashPushTag=
 """
-sh /home/jenkins/workspace/DASHBUILDER-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_pushTags.sh
+sh /home/jenkins/workspace/DASHBUILDER-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_pushTag.sh
 """
 
-def dashUpdateVersions=
+def dashUpdateVersion=
 """
-sh /home/jenkins/workspace/DASHBUILDER-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_updateVersions.sh
+sh /home/jenkins/workspace/DASHBUILDER-Release-0.6.x/release-scripts/dashbuilder/scripts/release/DSL-scripts/DASHB_updateVersion.sh
 """
 
 // ******************************************************
@@ -69,7 +69,7 @@ job("DASHB_release-0.6.x") {
 
 // ******************************************************
 
-job("DASHB_pushTags-0.6.x") {
+job("DASHB_pushTag-0.6.x") {
 
   description("This job: <br> creates and pushes the tags for <br> community (dashbuilder) or product (jboss-integration) <br> IMPORTANT: Created automatically by Jenkins job DSL plugin. Do not edit manually! The changes will get lost next time the job is generated.")
 
@@ -115,7 +115,7 @@ job("DASHB_pushTags-0.6.x") {
     environmentVariables {
         envs(MAVEN_OPTS :"-Xms2g -Xmx3g", MAVEN_HOME: "\$APACHE_MAVEN_3_2_5_HOME", MAVEN_REPO_LOCAL: "/home/jenkins/.m2/repository", PATH :"\$MAVEN_HOME/bin:\$PATH")
     }
-    shell(dashPushTags)
+    shell(dashPushTag)
   }
 }
 
@@ -166,7 +166,7 @@ job("DASHB_updateVersion-0.6.x") {
     environmentVariables {
         envs(MAVEN_OPTS :"-Xms2g -Xmx3g", MAVEN_HOME: "\$APACHE_MAVEN_3_2_5_HOME", MAVEN_REPO_LOCAL: "/home/jenkins/.m2/repository", PATH :"\$MAVEN_HOME/bin:\$PATH")
     }
-    shell(dashUpdateVersions)
+    shell(dashUpdateVersion)
   }
 }
 
@@ -177,7 +177,7 @@ listView("0.6.x-dashbuilder-releases") {
     description("all scripts needed to build dashbuilder release")
     jobs {
                 name("DASHB_release-0.6.x")
-                name("DASHB_pushTags-0.6.x")
+                name("DASHB_pushTag-0.6.x")
                 name("DASHB_updateVersion-0.6.x")
     }
     columns {
