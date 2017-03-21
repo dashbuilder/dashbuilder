@@ -40,6 +40,8 @@ import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.client.AbstractGwtDisplayer;
 import org.dashbuilder.displayer.client.Displayer;
+import org.dashbuilder.displayer.client.export.ExportCallback;
+import org.dashbuilder.displayer.client.export.ExportFormat;
 import org.uberfire.client.callbacks.Callback;
 import org.uberfire.mvp.Command;
 
@@ -66,6 +68,12 @@ public class TableDisplayer extends AbstractGwtDisplayer<TableDisplayer.View> {
 
         void setPagerEnabled(boolean enabled);
 
+        void setColumnPickerEnabled(boolean enabled);
+
+        void setExportToCsvEnabled(boolean enabled);
+
+        void setExportToXlsEnabled(boolean enabled);
+
         void addColumn(ColumnType columnType, String columnId, String columnName, int index, boolean selectEnabled, boolean sortEnabled);
 
         void clearFilterStatus();
@@ -77,6 +85,12 @@ public class TableDisplayer extends AbstractGwtDisplayer<TableDisplayer.View> {
         void gotoFirstPage();
 
         int getLastOffset();
+
+        void exportNoData();
+
+        void exportTooManyRows(int rowNum, int limit);
+
+        void exportFileUrl(String url);
     }
 
     protected View view;
@@ -86,6 +100,7 @@ public class TableDisplayer extends AbstractGwtDisplayer<TableDisplayer.View> {
     protected List<Command> onCellSelectedCommands = new ArrayList<>();
     protected String selectedCellColumn = null;
     protected Integer selectedCellRow = null;
+    protected int exportRowNumMax = 100000;
 
     @Inject
     public TableDisplayer(View view) {
@@ -118,6 +133,14 @@ public class TableDisplayer extends AbstractGwtDisplayer<TableDisplayer.View> {
         return selectedCellRow;
     }
 
+    public int getExportRowNumMax() {
+        return exportRowNumMax;
+    }
+
+    public void setExportRowNumMax(int exportRowNumMax) {
+        this.exportRowNumMax = exportRowNumMax;
+    }
+
     public void addOnCellSelectedCommand(Command onCellSelectedCommand) {
         this.onCellSelectedCommands.add(onCellSelectedCommand);
     }
@@ -139,6 +162,7 @@ public class TableDisplayer extends AbstractGwtDisplayer<TableDisplayer.View> {
                 .supportsAttribute( DisplayerAttributeGroupDef.FILTER_GROUP )
                 .supportsAttribute( DisplayerAttributeGroupDef.REFRESH_GROUP )
                 .supportsAttribute( DisplayerAttributeGroupDef.GENERAL_GROUP)
+                .supportsAttribute( DisplayerAttributeGroupDef.EXPORT_GROUP)
                 .supportsAttribute( DisplayerAttributeGroupDef.TABLE_GROUP );
     }
 
@@ -180,6 +204,9 @@ public class TableDisplayer extends AbstractGwtDisplayer<TableDisplayer.View> {
         view.setSortEnabled(displayerSettings.isTableSortEnabled());
         view.setTotalRows(totalRows);
         view.setPagerEnabled(displayerSettings.getTablePageSize() < dataSet.getRowCountNonTrimmed());
+        view.setColumnPickerEnabled(displayerSettings.isTableColumnPickerEnabled());
+        view.setExportToCsvEnabled(displayerSettings.isCSVExportAllowed());
+        view.setExportToXlsEnabled(displayerSettings.isExcelExportAllowed());
 
         for ( int i = 0; i < dataColumns.size(); i++ ) {
             DataColumn dataColumn = dataColumns.get(i);
@@ -292,6 +319,31 @@ public class TableDisplayer extends AbstractGwtDisplayer<TableDisplayer.View> {
         } catch (Exception e) {
             showError(new ClientRuntimeError(e));
         }
+    }
+
+    public void export(ExportFormat format) {
+        super.export(format, exportRowNumMax, new ExportCallback() {
+
+            @Override
+            public void noData() {
+                view.exportNoData();
+            }
+
+            @Override
+            public void tooManyRows(int rowNum) {
+                view.exportTooManyRows(rowNum, exportRowNumMax);
+            }
+
+            @Override
+            public void exportFileUrl(String url) {
+                view.exportFileUrl(url);
+            }
+
+            @Override
+            public void error(ClientRuntimeError error) {
+                view.error(error);
+            }
+        });
     }
 
     // Reset the current navigation status on filter requests from external displayers

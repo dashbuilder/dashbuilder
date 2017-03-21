@@ -68,4 +68,11 @@ public interface TableDisplayerSettingsBuilder<T extends TableDisplayerSettingsB
      * @return The DisplayerSettingsBuilder instance that is being used to configure a Table data displayer.
      */
     T tableWidth(int tableWidth);
+
+    /**
+     * If true, it enables to show/hide the table columns by means of a column picker widget.
+     * @param enabled True to enable, false to disable.
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a Table data displayer.
+     */
+    T tableColumnPickerEnabled(boolean enabled);
 }

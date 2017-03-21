@@ -24,8 +24,7 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.client.Window;
@@ -38,9 +37,12 @@ import com.google.gwt.view.client.HasData;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.client.AbstractGwtDisplayerView;
+import org.dashbuilder.displayer.client.AbstractDisplayerView;
+import org.dashbuilder.displayer.client.export.ExportFormat;
 import org.dashbuilder.renderer.client.resources.i18n.TableConstants;
+import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Label;
-import org.uberfire.client.callbacks.Callback;
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.uberfire.ext.widgets.common.client.tables.PagedTable;
 
 import static com.google.gwt.dom.client.BrowserEvents.*;
@@ -52,6 +54,8 @@ public class TableDisplayerView extends AbstractGwtDisplayerView<TableDisplayer>
     protected TableProvider tableProvider = new TableProvider();
     protected VerticalPanel rootPanel = new VerticalPanel();
     protected PagedTable<Integer> table;
+    protected Button exportToCsvButton;
+    protected Button exportToXlsButton;
 
     @Override
     public void init(TableDisplayer presenter) {
@@ -77,10 +81,19 @@ public class TableDisplayerView extends AbstractGwtDisplayerView<TableDisplayer>
 
     @Override
     public void createTable(int pageSize) {
-        table = new PagedTable<Integer>(pageSize);
+        table = new PagedTable<>(pageSize);
         table.pageSizesSelector.setVisible(false);
         table.setEmptyTableCaption(TableConstants.INSTANCE.tableDisplayer_noDataAvailable());
         tableProvider.addDataDisplay(table);
+
+        exportToCsvButton = new Button("", IconType.FILE_TEXT, e -> getPresenter().export(ExportFormat.CSV));
+        exportToXlsButton = new Button("", IconType.FILE_EXCEL_O, e -> getPresenter().export(ExportFormat.XLS));
+        exportToCsvButton.setTitle(TableConstants.INSTANCE.tableDisplayer_export_to_csv());
+        exportToXlsButton.setTitle(TableConstants.INSTANCE.tableDisplayer_export_to_xls());
+
+        HorizontalPanel rightToolbar = (HorizontalPanel) table.getRightToolbar();
+        rightToolbar.insert(exportToCsvButton, 0);
+        rightToolbar.insert(exportToXlsButton, 1);
         rootPanel.add(table);
     }
 
@@ -118,6 +131,21 @@ public class TableDisplayerView extends AbstractGwtDisplayerView<TableDisplayer>
     }
 
     @Override
+    public void setColumnPickerEnabled(boolean enabled) {
+        table.setColumnPickerButtonVisible(enabled);
+    }
+
+    @Override
+    public void setExportToCsvEnabled(boolean enabled) {
+        exportToCsvButton.setVisible(enabled);
+    }
+
+    @Override
+    public void setExportToXlsEnabled(boolean enabled) {
+        exportToXlsButton.setVisible(enabled);
+    }
+
+    @Override
     public void addColumn(ColumnType columnType, String columnId, String columnName, int index, boolean selectEnabled, boolean sortEnabled) {
         Column<Integer,?> column = createColumn(columnType, columnId, selectEnabled, index);
         if (column != null) {
@@ -148,11 +176,7 @@ public class TableDisplayerView extends AbstractGwtDisplayerView<TableDisplayer>
     public void addFilterReset() {
         Anchor anchor = new Anchor(TableConstants.INSTANCE.tableDisplayer_reset());
         filterPanel.add(anchor);
-        anchor.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                getPresenter().filterReset();
-            }
-        });
+        anchor.addClickHandler( event -> getPresenter().filterReset());
     }
 
     @Override
@@ -165,6 +189,20 @@ public class TableDisplayerView extends AbstractGwtDisplayerView<TableDisplayer>
         return tableProvider.lastOffset;
     }
 
+    @Override
+    public void exportNoData() {
+        Window.alert(TableConstants.INSTANCE.tableDisplayer_export_no_data());
+    }
+
+    @Override
+    public void exportTooManyRows(int rowNum, int limit) {
+        Window.alert(TableConstants.INSTANCE.tableDisplayer_export_too_many_rows(rowNum, limit));
+    }
+
+    @Override
+    public void exportFileUrl(String url) {
+        Window.open(url, "downloading", "resizable=no,scrollbars=yes,status=no");
+    }
 
     // Table internals
 
@@ -182,21 +220,19 @@ public class TableDisplayerView extends AbstractGwtDisplayerView<TableDisplayer>
                                              final int columnNumber) {
 
         switch (type) {
-            case LABEL: return new Column<Integer,String>(
-                            new DataColumnCell(columnId, selectable)) {
-                                public String getValue(Integer row) {
-                                    return getPresenter().formatValue(row, columnNumber);
-                                }
-                            };
+            case LABEL: return new Column<Integer,String>(new DataColumnCell(columnId, selectable)) {
+                            public String getValue(Integer row) {
+                                return getPresenter().formatValue(row, columnNumber);
+                            }
+                        };
 
             case NUMBER:
             case DATE:
-            case TEXT: return new Column<Integer,String>(
-                            new DataColumnCell(columnId, selectable)) {
-                                public String getValue(Integer row) {
-                                    return getPresenter().formatValue(row, columnNumber);
-                                }
-            };
+            case TEXT: return new Column<Integer,String>(new DataColumnCell(columnId, selectable)) {
+                            public String getValue(Integer row) {
+                                return getPresenter().formatValue(row, columnNumber);
+                            }
+                        };
         }
         return null;
     }
@@ -216,6 +252,7 @@ public class TableDisplayerView extends AbstractGwtDisplayerView<TableDisplayer>
             Set<String> consumedEvents = new HashSet<String>();
             if (selectable) {
                 consumedEvents.add(CLICK);
+                consumedEvents.add(MOUSEOVER);
             }
             return consumedEvents;
         }
@@ -228,8 +265,18 @@ public class TableDisplayerView extends AbstractGwtDisplayerView<TableDisplayer>
                                    ValueUpdater<String> valueUpdater) {
 
             if (selectable) {
-                int rowIndexInPage = context.getIndex() - table.getPageStart();
-                getPresenter().selectCell(columnId, rowIndexInPage);
+                String eventType = event.getType();
+                switch (eventType) {
+
+                    case MOUSEOVER:
+                        parent.getStyle().setCursor(Style.Cursor.POINTER);
+                        break;
+
+                    case CLICK:
+                        int rowIndexInPage = context.getIndex() - table.getPageStart();
+                        getPresenter().selectCell(columnId, rowIndexInPage);
+                        break;
+                }
             }
         }
     }
@@ -294,11 +341,9 @@ public class TableDisplayerView extends AbstractGwtDisplayerView<TableDisplayer>
             }
             else {
                 lastOffset = start;
-                getPresenter().lookupCurrentPage(new Callback<Integer>() {
-                    public void callback(Integer rowsFetched) {
-                        updateRowData(lastOffset, rows);
-                        table.setHeight(calculateHeight(rowsFetched) + "px");
-                    }
+                getPresenter().lookupCurrentPage(rowsFetched -> {
+                    updateRowData(lastOffset, rows);
+                    table.setHeight(calculateHeight(rowsFetched) + "px");
                 });
             }
         }

@@ -139,8 +139,8 @@ public class DisplayerSettingsEditorTest {
         verify(view).clear();
         verify(view).addTextProperty(TITLE, "Sales by dept");
         verify(view).addBooleanProperty(TITLE_VISIBLE, true);
-        verify(view).addBooleanProperty(ALLOW_EXPORT_CSV, false);
-        verify(view).addBooleanProperty(ALLOW_EXPORT_EXCEL, false);
+        verify(view, never()).addBooleanProperty(EXPORT_TO_CSV, false);
+        verify(view, never()).addBooleanProperty(EXPORT_TO_XLS, false);
         verify(view).addTextProperty(eq(CHART_WIDTH), eq("400"), any(DisplayerSettingsEditor.LongValidator.class));
         verify(view).addTextProperty(eq(CHART_HEIGHT), eq("200"), any(DisplayerSettingsEditor.LongValidator.class));
         verify(view).addColorProperty(eq(CHART_BGCOLOR), anyString());
@@ -176,8 +176,8 @@ public class DisplayerSettingsEditorTest {
         presenter.init(displayer);
         presenter.onAttributeChanged(TITLE.getFullId(), "Test");
         presenter.onAttributeChanged(TITLE_VISIBLE.getFullId(), "true");
-        presenter.onAttributeChanged(ALLOW_EXPORT_CSV.getFullId(), "false");
-        presenter.onAttributeChanged(ALLOW_EXPORT_EXCEL.getFullId(), "false");
+        presenter.onAttributeChanged(EXPORT_TO_CSV.getFullId(), "false");
+        presenter.onAttributeChanged(EXPORT_TO_XLS.getFullId(), "false");
         presenter.onAttributeChanged(CHART_HEIGHT.getFullId(), "400");
         presenter.onAttributeChanged("columns.amount.name", "Total");
         presenter.onAttributeChanged("columns.amount.pattern", "#.###,00");
@@ -206,13 +206,17 @@ public class DisplayerSettingsEditorTest {
 
         when(displayer.getDisplayerConstraints()).thenReturn(
                 new DisplayerConstraints(null)
-                        .supportsAttribute(TABLE_GROUP));
+                        .supportsAttribute(TABLE_GROUP)
+                        .supportsAttribute(EXPORT_GROUP));
 
         when(displayer.getDisplayerSettings()).thenReturn(DisplayerSettingsFactory.newTableSettings()
                 .tablePageSize(10)
                 .tableWidth(500)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("date", SortOrder.ASCENDING)
+                .tableColumnPickerEnabled(false)
+                .allowCsvExport(true)
+                .allowExcelExport(false)
                 .buildSettings());
 
         presenter.init(displayer);
@@ -222,6 +226,9 @@ public class DisplayerSettingsEditorTest {
         verify(view).addBooleanProperty(TABLE_SORTENABLED, true);
         verify(view).addListProperty(eq(TABLE_SORTCOLUMNID), anyListOf(String.class), eq("date"));
         verify(view).addListProperty(eq(TABLE_SORTORDER), anyListOf(String.class), eq(SortOrder.ASCENDING.toString()));
+        verify(view).addBooleanProperty(TABLE_COLUMN_PICKER_ENABLED, false);
+        verify(view).addBooleanProperty(EXPORT_TO_CSV, true);
+        verify(view).addBooleanProperty(EXPORT_TO_XLS, false);
         verify(view).show();
     }
 

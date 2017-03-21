@@ -41,6 +41,8 @@ public class DisplayerAttributeGroupDef extends DisplayerAttributeDef {
 
     public static final DisplayerAttributeGroupDef HTML_GROUP = new DisplayerAttributeGroupDef( "html" );
 
+    public static final DisplayerAttributeGroupDef EXPORT_GROUP = new DisplayerAttributeGroupDef( "export" );
+
 
     // SUBGROUPS
     public static final DisplayerAttributeGroupDef CHART_MARGIN_GROUP =

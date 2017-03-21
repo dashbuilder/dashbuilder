@@ -27,8 +27,21 @@ public class DisplayerAttributeDef {
 
     public static final DisplayerAttributeDef TITLE = new DisplayerAttributeDef("title", DisplayerAttributeGroupDef.GENERAL_GROUP);
     public static final DisplayerAttributeDef TITLE_VISIBLE = new DisplayerAttributeDef("visible", DisplayerAttributeGroupDef.GENERAL_GROUP);
+
+    /**
+     * @deprecated Replaced by {@link #EXPORT_TO_CSV}. (Kept for backward compatibility)
+     * @since 0.6
+     */
     public static final DisplayerAttributeDef ALLOW_EXPORT_CSV = new DisplayerAttributeDef("allow_csv", DisplayerAttributeGroupDef.GENERAL_GROUP);
+
+    /**
+     * @deprecated Replaced by {@link #EXPORT_TO_XLS}. (Kept for backward compatibility)
+     * @since 0.6
+     */
     public static final DisplayerAttributeDef ALLOW_EXPORT_EXCEL = new DisplayerAttributeDef("allow_excel", DisplayerAttributeGroupDef.GENERAL_GROUP);
+
+    public static final DisplayerAttributeDef EXPORT_TO_CSV = new DisplayerAttributeDef("export_csv", DisplayerAttributeGroupDef.EXPORT_GROUP);
+    public static final DisplayerAttributeDef EXPORT_TO_XLS = new DisplayerAttributeDef("export_xls", DisplayerAttributeGroupDef.EXPORT_GROUP);
 
     public static final DisplayerAttributeDef REFRESH_STALE_DATA = new DisplayerAttributeDef("staleData", DisplayerAttributeGroupDef.REFRESH_GROUP);
     public static final DisplayerAttributeDef REFRESH_INTERVAL = new DisplayerAttributeDef("interval", DisplayerAttributeGroupDef.REFRESH_GROUP);
@@ -62,6 +75,7 @@ public class DisplayerAttributeDef {
     public static final DisplayerAttributeDef TABLE_SORTENABLED = new DisplayerAttributeDef("enabled", DisplayerAttributeGroupDef.TABLE_SORT_GROUP);
     public static final DisplayerAttributeDef TABLE_SORTCOLUMNID = new DisplayerAttributeDef("columnId", DisplayerAttributeGroupDef.TABLE_SORT_GROUP);
     public static final DisplayerAttributeDef TABLE_SORTORDER = new DisplayerAttributeDef("order", DisplayerAttributeGroupDef.TABLE_SORT_GROUP);
+    public static final DisplayerAttributeDef TABLE_COLUMN_PICKER_ENABLED = new DisplayerAttributeDef("show_column_picker", DisplayerAttributeGroupDef.TABLE_GROUP);
 
     public static final DisplayerAttributeDef XAXIS_SHOWLABELS = new DisplayerAttributeDef("labels_show", DisplayerAttributeGroupDef.XAXIS_GROUP);
     public static final DisplayerAttributeDef XAXIS_TITLE = new DisplayerAttributeDef("title", DisplayerAttributeGroupDef.XAXIS_GROUP);

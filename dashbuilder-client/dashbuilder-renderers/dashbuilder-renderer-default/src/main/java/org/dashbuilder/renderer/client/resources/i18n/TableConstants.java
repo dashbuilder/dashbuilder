@@ -21,7 +21,7 @@ import com.google.gwt.i18n.client.Messages;
 
 public interface TableConstants extends Messages {
 
-    public static final TableConstants INSTANCE = GWT.create( TableConstants.class );
+    TableConstants INSTANCE = GWT.create(TableConstants.class);
 
     String tableDisplayer_noDataAvailable();
 
@@ -29,5 +29,13 @@ public interface TableConstants extends Messages {
 
     String tableDisplayer_columnsTitle();
 
+    String tableDisplayer_export_to_csv();
+
+    String tableDisplayer_export_to_xls();
+
     String tableDisplayer_reset();
+
+    String tableDisplayer_export_no_data();
+
+    String tableDisplayer_export_too_many_rows(int rowNum, int limit);
 }

@@ -18,12 +18,16 @@ package org.dashbuilder.displayer.client;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.*;
 import org.dashbuilder.dataset.client.DataSetClientServices;
+import org.dashbuilder.dataset.client.DataSetExportReadyCallback;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.filter.DataSetFilter;
 import org.dashbuilder.dataset.group.*;
 import org.dashbuilder.dataset.sort.ColumnSort;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.sort.SortOrder;
+import org.dashbuilder.displayer.client.export.ExportCallback;
+import org.dashbuilder.displayer.client.export.ExportFormat;
+import org.uberfire.backend.vfs.Path;
 
 import java.util.*;
 
@@ -242,16 +246,61 @@ public class DataSetHandlerImpl implements DataSetHandler {
         return result;
     }
 
+    @Override
+    public void exportCurrentDataSetLookup(ExportFormat format, int maxRows, ExportCallback callback) {
+
+        // Export an empty data set does not make sense
+        if (lastLookedUpDataSet == null || lastLookedUpDataSet.getRowCount() == 0) {
+            callback.noData();
+            return;
+        }
+        // Ensure the entire dataset does not exceed the maximum export limit
+        int allRows = lastLookedUpDataSet.getRowCountNonTrimmed();
+        if (maxRows > 0 && allRows > maxRows) {
+            callback.tooManyRows(allRows);
+            return;
+        }
+        try {
+            // Create a backend export callback
+            DataSetExportReadyCallback exportReadyCallback = new DataSetExportReadyCallback() {
+
+                @Override
+                public void exportReady(Path exportFilePath) {
+                    final String u = clientServices.getDownloadFileUrl(exportFilePath);
+                    callback.exportFileUrl(u);
+                }
+                @Override
+                public void onError(ClientRuntimeError error) {
+                    callback.error(error);
+                }
+            };
+
+            // Export the entire data set
+            DataSetLookup exportLookup = getCurrentDataSetLookup().cloneInstance();
+            exportLookup.setRowOffset(0);
+            exportLookup.setNumberOfRows(maxRows);
+
+            if (ExportFormat.XLS.equals(format)) {
+                clientServices.exportDataSetExcel(exportLookup, exportReadyCallback);
+            } else {
+                clientServices.exportDataSetCSV(exportLookup, exportReadyCallback);
+            }
+        }
+        catch (Exception e) {
+            callback.error(new ClientRuntimeError(e));
+        }
+    }
+
     // Internal filter/drillDown implementation logic
 
-    protected Map<String,List<GroupOpFilter>> _groupOpsAdded = new HashMap<String,List<GroupOpFilter>>();
-    protected Map<String,List<GroupOpFilter>> _groupOpsSelected = new HashMap<String,List<GroupOpFilter>>();
+    protected Map<String,List<GroupOpFilter>> _groupOpsAdded = new HashMap<>();
+    protected Map<String,List<GroupOpFilter>> _groupOpsSelected = new HashMap<>();
 
     protected void _filter(int index, DataSetGroup op, boolean drillDown) {
 
         ColumnGroup cgroup = op.getColumnGroup();
         String columnId = cgroup.getColumnId();
-        if (!_groupOpsAdded.containsKey(columnId)) _groupOpsAdded.put(columnId, new ArrayList<GroupOpFilter>());
+        if (!_groupOpsAdded.containsKey(columnId)) _groupOpsAdded.put(columnId, new ArrayList<>());
         List<GroupOpFilter> filterOps = _groupOpsAdded.get(columnId);
 
         // When adding an external filter, look first if it exists an existing filter already.
@@ -355,8 +404,8 @@ public class DataSetHandlerImpl implements DataSetHandler {
         private GroupOpFilter(DataSetGroup op, boolean drillDown) {
             this.groupOp = op;
             this.drillDown = drillDown;
-            this.groupFunctions = new ArrayList<GroupFunction>(op.getGroupFunctions());
-            this.intervalList = new ArrayList<Interval>(op.getSelectedIntervalList());
+            this.groupFunctions = new ArrayList<>(op.getGroupFunctions());
+            this.intervalList = new ArrayList<>(op.getSelectedIntervalList());
         }
 
         public String toString() {

@@ -45,6 +45,8 @@ import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.export.ExportCallback;
+import org.dashbuilder.displayer.client.export.ExportFormat;
 import org.dashbuilder.displayer.client.formatter.ValueFormatter;
 
 /**
@@ -921,5 +923,16 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
     protected Date parseDynamicGroupDate(DateIntervalType type, String date) {
         String pattern = DateIntervalPattern.getPattern(type);
         return getFormatter().parseDate(pattern, date);
+    }
+
+    // EXPORT
+
+    @Override
+    public void export(ExportFormat format, int maxRows, ExportCallback callback) {
+        if (dataSetHandler == null) {
+            callback.noData();
+        } else {
+            dataSetHandler.exportCurrentDataSetLookup(format, maxRows, callback);
+        }
     }
 }
