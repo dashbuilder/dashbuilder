@@ -36,8 +36,6 @@ job("01.DASHB_Release-0.6.x") {
 
   jdk("jdk1.8")
 
-  customWorkspace("/home/jenkins/workspace/DASHB-Release-0.6.x")
-
   wrappers {
     timeout {
       absolute(60)
