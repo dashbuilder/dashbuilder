@@ -67,6 +67,8 @@ public class NavItemEditorTest {
         verify(view).setItemDescription("description");
         verify(view).setItemEditable(false);
         verify(view).setItemType(NavItemEditor.ItemType.GROUP);
+        verify(view, atLeastOnce()).setCommandsEnabled(true);
+        verify(view, atLeastOnce()).addCommand(any(), any());
         verify(view, never()).setContextWidget(any());
     }
 
@@ -83,6 +85,8 @@ public class NavItemEditorTest {
         verify(view).setItemDescription("description");
         verify(view).setItemEditable(false);
         verify(view).setItemType(NavItemEditor.ItemType.DIVIDER);
+        verify(view, atLeastOnce()).setCommandsEnabled(true);
+        verify(view, atLeastOnce()).addCommand(any(), any());
         verify(view, never()).setContextWidget(any());
 
         reset(view);
@@ -100,6 +104,67 @@ public class NavItemEditorTest {
         verify(view).setItemName("--------------");
         verify(view).setItemEditable(false);
         verify(view).setItemType(NavItemEditor.ItemType.PERSPECTIVE);
+        verify(view, atLeastOnce()).setCommandsEnabled(true);
+        verify(view, atLeastOnce()).addCommand(any(), any());
         verify(view).setContextWidget(perspectiveDropDown);
+    }
+
+    @Test
+    public void testCommandsAvailability() {
+        // Disable move actions
+        presenter.setMoveUpEnabled(false);
+        presenter.setMoveDownEnabled(false);
+
+        // Non-modifiable group (only creation actions available)
+        NavGroup navGroup = NavFactory.get().createNavGroup();
+        navGroup.setModifiable(false);
+        presenter.edit(navGroup);
+        verify(view, atLeastOnce()).setCommandsEnabled(true);
+
+        // Modifiable group (creation actions)
+        reset(view);
+        navGroup.setModifiable(true);
+        presenter.edit(navGroup);
+        verify(view, atLeastOnce()).setCommandsEnabled(true);
+
+        // Non-modifiable perspective (move actions disabled => no actions)
+        reset(view);
+        NavItem navItem = NavFactory.get().createNavItem();
+        navItem.setContext(NavWorkbenchCtx.perspective("p1").toString());
+        navItem.setModifiable(false);
+        presenter.edit(navItem);
+        verify(view, never()).setCommandsEnabled(true);
+
+        // Modifiable perspective (only delete action)
+        reset(view);
+        navItem.setModifiable(true);
+        presenter.edit(navItem);
+        verify(view).setCommandsEnabled(true);
+
+        // Modifiable divider (only delete action)
+        reset(view);
+        NavDivider navDivider = NavFactory.get().createDivider();
+        navDivider.setModifiable(true);
+        presenter.edit(navDivider);
+        verify(view, atLeastOnce()).setCommandsEnabled(true);
+
+        // Non-modifiable divider (no actions)
+        reset(view);
+        navDivider.setModifiable(false);
+        presenter.edit(navDivider);
+        verify(view, never()).setCommandsEnabled(true);
+
+        // Move actions available
+        reset(view);
+        presenter.setMoveUpEnabled(true);
+        presenter.setMoveDownEnabled(true);
+        presenter.edit(navItem);
+        verify(view, atLeastOnce()).setCommandsEnabled(true);
+        reset(view);
+        presenter.edit(navDivider);
+        verify(view, atLeastOnce()).setCommandsEnabled(true);
+        reset(view);
+        presenter.edit(navGroup);
+        verify(view, atLeastOnce()).setCommandsEnabled(true);
     }
 }
