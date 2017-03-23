@@ -87,7 +87,7 @@ public class NavItemEditor implements IsWidget {
     boolean newDividerEnabled = true;
     boolean newGroupEnabled = true;
     boolean newPerspectiveEnabled = true;
-    boolean commandsEnabled = false;
+    boolean creationEnabled = false;
     boolean moveUpEnabled = true;
     boolean moveDownEnabled = true;
     boolean gotoPerspectiveEnabled = false;
@@ -257,13 +257,14 @@ public class NavItemEditor implements IsWidget {
             view.setItemDescription(navItem.getDescription());
         }
 
+        creationEnabled = false;
         editEnabled = navItem.isModifiable();
         deleteEnabled = navItem.isModifiable();
 
         // Nav group
         if (navItem instanceof NavGroup) {
             view.setItemType(ItemType.GROUP);
-            commandsEnabled = true;
+            creationEnabled = true;
         }
         // Divider
         else if (navItem instanceof NavDivider) {
@@ -304,20 +305,18 @@ public class NavItemEditor implements IsWidget {
 
     private void addCommands() {
         boolean dividerRequired = false;
-        view.setCommandsEnabled(commandsEnabled || moveUpEnabled || moveDownEnabled);
 
-        if (commandsEnabled) {
-            view.setCommandsEnabled(true);
+        if (creationEnabled) {
             if (newGroupEnabled) {
-                view.addCommand(view.i18nNewItem(literalGroup), this::onNewSubGroup);
+                this.addCommand(view.i18nNewItem(literalGroup), this::onNewSubGroup);
                 dividerRequired = true;
             }
             if (newDividerEnabled) {
-                view.addCommand(view.i18nNewItem(literalDivider), this::onNewDivider);
+                this.addCommand(view.i18nNewItem(literalDivider), this::onNewDivider);
                 dividerRequired = true;
             }
             if (newPerspectiveEnabled) {
-                view.addCommand(view.i18nNewItem(literalPerspective), this::onNewPerspective);
+                this.addCommand(view.i18nNewItem(literalPerspective), this::onNewPerspective);
                 dividerRequired = true;
             }
         }
@@ -328,12 +327,12 @@ public class NavItemEditor implements IsWidget {
             }
             dividerRequired = true;
             if (moveUpEnabled) {
-                view.addCommand(view.i18nMoveFirst(), this::onMoveFirstItem);
-                view.addCommand(view.i18nMoveUp(), this::onMoveUpItem);
+                this.addCommand(view.i18nMoveFirst(), this::onMoveFirstItem);
+                this.addCommand(view.i18nMoveUp(), this::onMoveUpItem);
             }
             if (moveDownEnabled) {
-                view.addCommand(view.i18nMoveDown(), this::onMoveDownItem);
-                view.addCommand(view.i18nMoveLast(), this::onMoveLastItem);
+                this.addCommand(view.i18nMoveDown(), this::onMoveDownItem);
+                this.addCommand(view.i18nMoveLast(), this::onMoveLastItem);
             }
         }
         if (gotoPerspectiveEnabled && perspectiveId != null) {
@@ -341,15 +340,20 @@ public class NavItemEditor implements IsWidget {
                 view.addCommandDivider();
             }
             dividerRequired = true;
-            view.addCommand(view.i18nGotoItem(literalPerspective), this::onGotoPerspective);
+            this.addCommand(view.i18nGotoItem(literalPerspective), this::onGotoPerspective);
         }
         if (deleteEnabled) {
             if (dividerRequired) {
                 view.addCommandDivider();
             }
             dividerRequired = true;
-            view.addCommand(view.i18nDeleteItem(), this::onDeleteItem);
+            this.addCommand(view.i18nDeleteItem(), this::onDeleteItem);
         }
+    }
+
+    private void addCommand(String name, Command action) {
+        view.addCommand(name, action);
+        view.setCommandsEnabled(true);
     }
 
     public void onItemClick() {
