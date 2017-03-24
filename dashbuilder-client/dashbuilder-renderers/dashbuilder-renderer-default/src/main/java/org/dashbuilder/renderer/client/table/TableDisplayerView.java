@@ -37,7 +37,6 @@ import com.google.gwt.view.client.HasData;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.client.AbstractGwtDisplayerView;
-import org.dashbuilder.displayer.client.AbstractDisplayerView;
 import org.dashbuilder.displayer.client.export.ExportFormat;
 import org.dashbuilder.renderer.client.resources.i18n.TableConstants;
 import org.gwtbootstrap3.client.ui.Button;

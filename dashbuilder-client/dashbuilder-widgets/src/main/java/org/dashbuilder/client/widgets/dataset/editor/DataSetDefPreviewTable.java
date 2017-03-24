@@ -137,7 +137,7 @@ public class DataSetDefPreviewTable implements IsWidget {
     protected void configureColumnSettings(Displayer displayer, CSVDataSetDef csvDataSetDef) {
 
         DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
-        for (DataColumn column : dataSet.getColumns()) {
+        dataSet.getColumns().stream().forEach(column -> {
 
             if (column.getColumnType().equals(ColumnType.DATE)) {
                 String pattern = csvDataSetDef.getDatePattern(column.getId());
@@ -151,7 +151,7 @@ public class DataSetDefPreviewTable implements IsWidget {
                     displayer.getDisplayerSettings().setColumnValuePattern(column.getId(), pattern);
                 }
             }
-        }
+        });
     }
 
     // Show the table displayer.

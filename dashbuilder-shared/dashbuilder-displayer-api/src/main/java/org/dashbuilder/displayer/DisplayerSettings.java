@@ -186,11 +186,6 @@ public class DisplayerSettings {
         return Boolean.parseBoolean(value);
     }
 
-    private boolean parseBoolean(String value, boolean defaultValue) {
-        if (value == null || value.trim().length() == 0) return defaultValue;
-        return Boolean.parseBoolean(value);
-    }
-
     private String parseString(String value) {
         if (value == null || value.trim().length() == 0) return "";
         return value;
@@ -549,13 +544,13 @@ public class DisplayerSettings {
         settings.put( getSettingPath( DisplayerAttributeDef.XAXIS_SHOWLABELS ), Boolean.toString( axisShowLabels ) );
     }
 
-//    public int getXAxisLabelsAngle() {
-//        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.XAXIS_LABELSANGLE ) ), 10 );
-//    }
-//
-//    public void setXAxisLabelsAngle( int axisLabelsAngle ) {
-//        settings.put( getSettingPath( DisplayerAttributeDef.XAXIS_LABELSANGLE ), Integer.toString( axisLabelsAngle ) );
-//    }
+    public int getXAxisLabelsAngle() {
+        return parseInt(settings.get(getSettingPath(DisplayerAttributeDef.XAXIS_LABELSANGLE)), 0);
+    }
+
+    public void setXAxisLabelsAngle(int axisLabelsAngle) {
+        settings.put(getSettingPath(DisplayerAttributeDef.XAXIS_LABELSANGLE), Integer.toString(axisLabelsAngle));
+    }
 
     public String getXAxisTitle() {
         return parseString(settings.get( getSettingPath( DisplayerAttributeDef.XAXIS_TITLE ) ));

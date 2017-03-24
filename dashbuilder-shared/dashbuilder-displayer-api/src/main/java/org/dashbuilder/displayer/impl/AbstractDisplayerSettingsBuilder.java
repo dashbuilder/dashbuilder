@@ -76,6 +76,11 @@ public abstract class AbstractDisplayerSettingsBuilder<T> extends AbstractDataSe
         return (T) this;
     }
 
+    public T xAxisAngle(int angle) {
+        displayerSettings.setXAxisLabelsAngle(angle);
+        return (T) this;
+    }
+
     public T yAxisTitle(String title) {
         displayerSettings.setYAxisShowLabels(true);
         displayerSettings.setYAxisTitle(title);

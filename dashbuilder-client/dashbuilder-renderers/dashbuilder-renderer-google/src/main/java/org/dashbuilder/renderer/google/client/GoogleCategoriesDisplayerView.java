@@ -40,6 +40,7 @@ public abstract class GoogleCategoriesDisplayerView<P extends GoogleCategoriesDi
     protected boolean showYLabels = false;
     protected String xAxisTitle = null;
     protected String yAxisTitle = null;
+    protected int xAxisAngle = 0;
     protected boolean animationOn = false;
     protected int animationDuration = 700;
     protected String[] colors = null;
@@ -62,6 +63,11 @@ public abstract class GoogleCategoriesDisplayerView<P extends GoogleCategoriesDi
     @Override
     public void setXAxisTitle(String xAxisTitle) {
         this.xAxisTitle = xAxisTitle;
+    }
+
+    @Override
+    public void setXAxisAngle(int xAxisAngle) {
+        this.xAxisAngle = xAxisAngle;
     }
 
     @Override
@@ -170,7 +176,9 @@ public abstract class GoogleCategoriesDisplayerView<P extends GoogleCategoriesDi
     }
 
     protected HAxis createHAxis() {
-        return xAxisTitle == null ? null : HAxis.create(xAxisTitle);
+        HAxis xAxis = xAxisTitle == null ? HAxis.create() : HAxis.create(xAxisTitle);
+        xAxis.setSlantedTextAngle(xAxisAngle);
+        return xAxis;
     }
 
     protected VAxis createVAxis() {

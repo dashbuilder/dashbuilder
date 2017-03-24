@@ -31,6 +31,8 @@ public abstract class GoogleCategoriesDisplayer<V extends GoogleCategoriesDispla
 
         void setXAxisTitle(String xAxisTitle);
 
+        void setXAxisAngle(int xAxisAngle);
+
         void setYAxisTitle(String yAxisTitle);
 
         void setColors(String[] colors);
@@ -81,6 +83,7 @@ public abstract class GoogleCategoriesDisplayer<V extends GoogleCategoriesDispla
         getView().setShowXLabels(displayerSettings.isXAxisShowLabels());
         getView().setShowYLabels(displayerSettings.isYAxisShowLabels());
         getView().setXAxisTitle(displayerSettings.getXAxisTitle());
+        getView().setXAxisAngle(displayerSettings.getXAxisLabelsAngle());
         getView().setYAxisTitle(displayerSettings.getYAxisTitle());
         getView().setColors(createColorArray());
         drawChart();

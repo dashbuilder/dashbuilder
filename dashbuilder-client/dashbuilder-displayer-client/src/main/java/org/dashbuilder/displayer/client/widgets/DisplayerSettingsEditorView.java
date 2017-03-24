@@ -93,6 +93,7 @@ public class DisplayerSettingsEditorView extends Composite implements DisplayerS
         attrMapI18n.put(YAXIS_GROUP, CommonConstants.INSTANCE.axis_group());
         attrMapI18n.put(XAXIS_SHOWLABELS, CommonConstants.INSTANCE.xaxis_showLabels());
         attrMapI18n.put(XAXIS_TITLE, CommonConstants.INSTANCE.xaxis_title());
+        attrMapI18n.put(XAXIS_LABELSANGLE, CommonConstants.INSTANCE.xaxis_angle());
         attrMapI18n.put(YAXIS_SHOWLABELS, CommonConstants.INSTANCE.yaxis_showLabels());
         attrMapI18n.put(YAXIS_TITLE, CommonConstants.INSTANCE.yaxis_title());
         attrMapI18n.put(TABLE_GROUP, CommonConstants.INSTANCE.table_group());

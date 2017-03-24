@@ -79,6 +79,7 @@ public class DisplayerAttributeDef {
 
     public static final DisplayerAttributeDef XAXIS_SHOWLABELS = new DisplayerAttributeDef("labels_show", DisplayerAttributeGroupDef.XAXIS_GROUP);
     public static final DisplayerAttributeDef XAXIS_TITLE = new DisplayerAttributeDef("title", DisplayerAttributeGroupDef.XAXIS_GROUP);
+    public static final DisplayerAttributeDef XAXIS_LABELSANGLE = new DisplayerAttributeDef("labels_angle", DisplayerAttributeGroupDef.XAXIS_GROUP);
     public static final DisplayerAttributeDef YAXIS_SHOWLABELS = new DisplayerAttributeDef("labels_show", DisplayerAttributeGroupDef.YAXIS_GROUP);
     public static final DisplayerAttributeDef YAXIS_TITLE = new DisplayerAttributeDef("title", DisplayerAttributeGroupDef.YAXIS_GROUP);
 

@@ -66,13 +66,9 @@ public class GoogleBubbleChartDisplayerView
         options.setChartArea(createChartArea());
         options.setLegend(createChartLegend());
         options.setColors(colors);
+        options.setHAxis(createHAxis());
+        options.setVAxis(createVAxis());
 
-        if (showXLabels) {
-            options.setHAxis(createHAxis());
-        }
-        if (showYLabels) {
-            options.setVAxis(createVAxis());
-        }
         if (animationOn) {
             Animation anim = Animation.create();
             anim.setDuration(animationDuration);

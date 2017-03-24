@@ -39,11 +39,11 @@ import org.uberfire.mvp.Command;
 @Dependent
 public class DisplayerCoordinator {
 
-    protected List<Displayer> displayerList = new ArrayList<Displayer>();
-    protected Set<DisplayerListener> listenerSet = new HashSet<DisplayerListener>();
-    protected Map<RendererLibrary,List<Displayer>> rendererMap = new HashMap<RendererLibrary,List<Displayer>>();
+    protected List<Displayer> displayerList = new ArrayList<>();
+    protected Set<DisplayerListener> listenerSet = new HashSet<>();
+    protected Map<RendererLibrary,List<Displayer>> rendererMap = new HashMap<>();
     protected CoordinatorListener coordinatorListener = new CoordinatorListener();
-    protected Map<Displayer,List<Displayer>> notificationVetoMap = new HashMap<Displayer, List<Displayer>>();
+    protected Map<Displayer,List<Displayer>> notificationVetoMap = new HashMap<>();
     protected RendererManager rendererManager;
 
     @Inject
@@ -56,17 +56,13 @@ public class DisplayerCoordinator {
             for (DisplayerListener listener : listeners) {
                 listenerSet.add(listener);
             }
-            for (Displayer displayer : displayerList) {
-                displayer.addListener(listeners);
-            }
+            displayerList.stream().forEach(displayer -> displayer.addListener(listeners));
         }
     }
 
     public void addDisplayers(Collection<Displayer> displayers) {
         if (displayers != null) {
-            for (Displayer displayer : displayers) {
-                addDisplayer(displayer);
-            }
+            displayers.stream().forEach(this::addDisplayer);
         }
     }
     
@@ -83,9 +79,7 @@ public class DisplayerCoordinator {
             displayerList.add(displayer);
 
             displayer.addListener(coordinatorListener);
-            for (DisplayerListener listener : listenerSet) {
-                displayer.addListener(listener);
-            }
+            listenerSet.stream().forEach(displayer::addListener);
 
             RendererLibrary renderer = rendererManager.getRendererForDisplayer(displayer.getDisplayerSettings());
             List<Displayer> rendererGroup = rendererMap.get(renderer);
@@ -137,9 +131,7 @@ public class DisplayerCoordinator {
     }
 
     public void closeAll() {
-        for (Displayer displayer : displayerList) {
-            displayer.close();
-        }
+        displayerList.stream().forEach(Displayer::close);
     }
 
     public void clear() {
@@ -200,20 +192,16 @@ public class DisplayerCoordinator {
 
         @Override
         public void onDataLookup(Displayer displayer) {
-            for (Displayer other : displayerList) {
-                if (other != displayer && !isNotificationVetoed(displayer, other)) {
-                    other.onDataLookup(displayer);
-                }
-            }
+            displayerList.stream()
+                    .filter(other -> other != displayer && !isNotificationVetoed(displayer, other))
+                    .forEach(other -> other.onDataLookup(displayer));
         }
 
         @Override
         public void onDataLoaded(Displayer displayer) {
-            for (Displayer other : displayerList) {
-                if (other != displayer && !isNotificationVetoed(displayer, other)) {
-                    other.onDataLoaded(displayer);
-                }
-            }
+            displayerList.stream()
+                    .filter(other -> other != displayer && !isNotificationVetoed(displayer, other))
+                    .forEach(other -> other.onDataLoaded(displayer));
         }
 
         @Override
@@ -221,10 +209,9 @@ public class DisplayerCoordinator {
             if (draw) {
                 count();
             }
-            for (Displayer other : displayerList) {
-                if (other == displayer) continue;
-                other.onDraw(displayer);
-            }
+            displayerList.stream()
+                    .filter(other -> other != displayer && !isNotificationVetoed(displayer, other))
+                    .forEach(other -> other.onDraw(displayer));
         }
 
         @Override
@@ -232,37 +219,29 @@ public class DisplayerCoordinator {
             if (!draw) {
                 count();
             }
-            for (Displayer other : displayerList) {
-                if (other != displayer && !isNotificationVetoed(displayer, other)) {
-                    other.onRedraw(displayer);
-                }
-            }
+            displayerList.stream()
+                    .filter(other -> other != displayer && !isNotificationVetoed(displayer, other))
+                    .forEach(other -> other.onRedraw(displayer));
         }
 
         public void onClose(Displayer displayer) {
-            for (Displayer other : displayerList) {
-                if (other != displayer && !isNotificationVetoed(displayer, other)) {
-                    other.onClose(displayer);
-                }
-            }
+            displayerList.stream()
+                    .filter(other -> other != displayer && !isNotificationVetoed(displayer, other))
+                    .forEach(other -> other.onClose(displayer));
         }
 
         @Override
         public void onFilterEnabled(Displayer displayer, DataSetGroup groupOp) {
-            for (Displayer other : displayerList) {
-                if (other != displayer && !isNotificationVetoed(displayer, other)) {
-                    other.onFilterEnabled(displayer, groupOp);
-                }
-            }
+            displayerList.stream()
+                    .filter(other -> other != displayer && !isNotificationVetoed(displayer, other))
+                    .forEach(other -> other.onFilterEnabled(displayer, groupOp));
         }
 
         @Override
         public void onFilterEnabled(Displayer displayer, DataSetFilter filter) {
-            for (Displayer other : displayerList) {
-                if (other != displayer && !isNotificationVetoed(displayer, other)) {
-                    other.onFilterEnabled(displayer, filter);
-                }
-            }
+            displayerList.stream()
+                    .filter(other -> other != displayer && !isNotificationVetoed(displayer, other))
+                    .forEach(other -> other.onFilterEnabled(displayer, filter));
         }
 
         @Override
@@ -276,30 +255,24 @@ public class DisplayerCoordinator {
 
         @Override
         public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
-            for (Displayer other : displayerList) {
-                if (other != displayer && !isNotificationVetoed(displayer, other)) {
-                    other.onFilterReset(displayer, groupOps);
-                }
-            }
+            displayerList.stream()
+                    .filter(other -> other != displayer && !isNotificationVetoed(displayer, other))
+                    .forEach(other -> other.onFilterReset(displayer, groupOps));
         }
 
         @Override
         public void onFilterReset(Displayer displayer, DataSetFilter filter) {
-            for (Displayer other : displayerList) {
-                if (other != displayer && !isNotificationVetoed(displayer, other)) {
-                    other.onFilterReset(displayer, filter);
-                }
-            }
+            displayerList.stream()
+                    .filter(other -> other != displayer && !isNotificationVetoed(displayer, other))
+                    .forEach(other -> other.onFilterReset(displayer, filter));
         }
 
         @Override
         public void onError(final Displayer displayer, ClientRuntimeError error) {
             error();
-            for (Displayer other : displayerList) {
-                if (other != displayer && !isNotificationVetoed(displayer, other)) {
-                    other.onError(displayer, error);
-                }
-            }
+            displayerList.stream()
+                    .filter(other -> other != displayer && !isNotificationVetoed(displayer, other))
+                    .forEach(other -> other.onError(displayer, error));
         }
     }
 }
