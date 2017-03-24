@@ -59,12 +59,9 @@ public class GoogleBarChartDisplayerView
         options.setBackgroundColor(bgColor);
         options.setLegend(createChartLegend());
         options.setIsStacked(isStacked);
-        if (showXLabels) {
-            options.setHAxis(createHAxis());
-        }
-        if (showYLabels) {
-            options.setVAxis(createVAxis());
-        }
+        options.setHAxis(createHAxis());
+        options.setVAxis(createVAxis());
+
         if (animationOn) {
             Animation anim = Animation.create();
             anim.setDuration(animationDuration);

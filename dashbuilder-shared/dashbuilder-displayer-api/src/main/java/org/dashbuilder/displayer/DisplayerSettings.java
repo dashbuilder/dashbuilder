@@ -521,13 +521,13 @@ public class DisplayerSettings {
         settings.put( getSettingPath( DisplayerAttributeDef.XAXIS_SHOWLABELS ), Boolean.toString( axisShowLabels ) );
     }
 
-//    public int getXAxisLabelsAngle() {
-//        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.XAXIS_LABELSANGLE ) ), 10 );
-//    }
-//
-//    public void setXAxisLabelsAngle( int axisLabelsAngle ) {
-//        settings.put( getSettingPath( DisplayerAttributeDef.XAXIS_LABELSANGLE ), Integer.toString( axisLabelsAngle ) );
-//    }
+    public int getXAxisLabelsAngle() {
+        return parseInt(settings.get(getSettingPath(DisplayerAttributeDef.XAXIS_LABELSANGLE)), 0);
+    }
+
+    public void setXAxisLabelsAngle(int axisLabelsAngle) {
+        settings.put(getSettingPath(DisplayerAttributeDef.XAXIS_LABELSANGLE), Integer.toString(axisLabelsAngle));
+    }
 
     public String getXAxisTitle() {
         return parseString(settings.get( getSettingPath( DisplayerAttributeDef.XAXIS_TITLE ) ));

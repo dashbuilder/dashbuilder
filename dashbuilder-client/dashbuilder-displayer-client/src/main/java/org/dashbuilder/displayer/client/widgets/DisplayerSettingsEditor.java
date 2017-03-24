@@ -263,6 +263,9 @@ public class DisplayerSettingsEditor implements IsWidget {
             if (isSupported(XAXIS_TITLE)) {
                 view.addTextProperty(XAXIS_TITLE, displayerSettings.getXAxisTitle());
             }
+            if (isSupported(XAXIS_LABELSANGLE)) {
+                view.addTextProperty(XAXIS_LABELSANGLE, String.valueOf(displayerSettings.getXAxisLabelsAngle()));
+            }
             if (isSupported(YAXIS_SHOWLABELS)) {
                 view.addBooleanProperty(YAXIS_SHOWLABELS, displayerSettings.isXAxisShowLabels());
             }

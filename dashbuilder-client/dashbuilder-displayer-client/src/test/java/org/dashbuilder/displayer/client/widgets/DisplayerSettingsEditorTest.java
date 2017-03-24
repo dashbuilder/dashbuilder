@@ -152,6 +152,7 @@ public class DisplayerSettingsEditorTest {
         verify(view).addBooleanProperty(CHART_SHOWLEGEND, true);
         verify(view).addListProperty(eq(CHART_LEGENDPOSITION), anyListOf(String.class), anyString());
         verify(view).addBooleanProperty(XAXIS_SHOWLABELS, true);
+        verify(view).addTextProperty(XAXIS_LABELSANGLE, "0");
         verify(view).addTextProperty(XAXIS_TITLE, "Depts");
         verify(view).addBooleanProperty(YAXIS_SHOWLABELS, true);
         verify(view).addTextProperty(YAXIS_TITLE, "Amount $");

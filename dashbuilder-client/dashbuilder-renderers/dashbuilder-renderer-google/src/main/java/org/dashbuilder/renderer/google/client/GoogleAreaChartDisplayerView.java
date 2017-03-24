@@ -47,13 +47,9 @@ public class GoogleAreaChartDisplayerView
         options.setChartArea(createChartArea());
         options.setColors(colors);
         options.setIsStacked(isStacked);
+        options.setHAxis(createHAxis());
+        options.setVAxis(createVAxis());
 
-        if (showXLabels) {
-            options.setHAxis(createHAxis());
-        }
-        if (showYLabels) {
-            options.setVAxis(createVAxis());
-        }
         if (animationOn) {
             Animation anim = Animation.create();
             anim.setDuration(animationDuration);

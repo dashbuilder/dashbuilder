@@ -8,6 +8,9 @@
   <ui:with field='res' type='org.dashbuilder.dataset.client.resources.bundles.DataSetClientImages'/>
   
   <ui:style type="org.dashbuilder.client.widgets.dataset.explorer.DataSetPanelView.DataSetPanelViewStyle">
+    .headerPanel {
+      cursor: pointer;
+    }
     .actionButtonColumn {
       text-align: center;
     }
@@ -23,7 +26,7 @@
   </ui:style>
 
   <b:Panel>
-    <b:PanelHeader ui:field="headerPanel">
+    <b:PanelHeader ui:field="headerPanel" addStyleNames="{style.headerPanel}">
       <b:Image ui:field="typeIcon" addStyleNames="{style.typeIcon}"/>
       <b:Heading ui:field="title" size="H6"/>
     </b:PanelHeader>
