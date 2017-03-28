@@ -41,6 +41,7 @@ job("DASHB_release-0.6.x") {
       absolute(60)
     }
     timestamps()
+    preBuildCleanup()
     colorizeOutput()
     toolenv("APACHE_MAVEN_3_2_5", "JDK1_8")
   }
