@@ -33,16 +33,22 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.DateFormatConverter;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataset.DataColumn;
@@ -101,11 +107,13 @@ public class DataSetExportServicesImpl implements DataSetExportServices {
 
     public org.uberfire.backend.vfs.Path exportDataSetCSV(DataSet dataSet) {
         try {
-            if (dataSet == null) throw new IllegalArgumentException("Null dataSet specified!");
+            if (dataSet == null) {
+                throw new IllegalArgumentException("Null dataSet specified!");
+            }
             int columnCount = dataSet.getColumns().size();
             int rowCount = dataSet.getRowCount();
 
-            List<String[]> lines = new ArrayList<String[]>(rowCount+1);
+            List<String[]> lines = new ArrayList<>(rowCount+1);
 
             String[] line = new String[columnCount];
             for (int cc = 0; cc < columnCount; cc++) {
@@ -151,20 +159,23 @@ public class DataSetExportServicesImpl implements DataSetExportServices {
     public org.uberfire.backend.vfs.Path exportDataSetExcel(DataSet dataSet) {
         try {
             // TODO?: Excel 2010 limits: 1,048,576 rows by 16,384 columns; row width 255 characters
-            if (dataSet == null) throw new IllegalArgumentException("Null dataSet specified!");
+            if (dataSet == null) {
+                throw new IllegalArgumentException("Null dataSet specified!");
+            }
             int columnCount = dataSet.getColumns().size();
             int rowCount = dataSet.getRowCount() + 1; //Include header row;
             int row = 0;
 
             SXSSFWorkbook wb = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
             Map<String, CellStyle> styles = createStyles(wb);
-            Sheet sh = wb.createSheet("Sheet 1");
+            SXSSFSheet sh = wb.createSheet("Sheet 1");
 
             // General setup
             sh.setDisplayGridlines(true);
             sh.setPrintGridlines(false);
             sh.setFitToPage(true);
             sh.setHorizontallyCenter(true);
+            sh.trackAllColumnsForAutoSizing();
             PrintSetup printSetup = sh.getPrintSetup();
             printSetup.setLandscape(true);
 
@@ -184,23 +195,23 @@ public class DataSetExportServicesImpl implements DataSetExportServices {
                     Cell cell = _row.createCell(cellnum);
                     Object value = dataSet.getValueAt(row - 1, cellnum);
                     if (value instanceof Short || value instanceof Long || value instanceof Integer || value instanceof BigInteger ) {
-                        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                        cell.setCellType(CellType.NUMERIC);
                         cell.setCellStyle(styles.get("integer_number_cell"));
                         cell.setCellValue(((Number) value).doubleValue());
                     } else if (value instanceof Float || value instanceof Double || value instanceof BigDecimal ) {
-                        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+                        cell.setCellType(CellType.NUMERIC);
                         cell.setCellStyle(styles.get("decimal_number_cell"));
                         cell.setCellValue(((Number) value).doubleValue());
                     } else if (value instanceof Date) {
-                        cell.setCellType(Cell.CELL_TYPE_STRING);
+                        cell.setCellType(CellType.STRING);
                         cell.setCellStyle(styles.get("date_cell"));
                         cell.setCellValue((Date) value);
                     } else if (value instanceof Interval) {
-                        cell.setCellType(Cell.CELL_TYPE_STRING);
+                        cell.setCellType(CellType.STRING);
                         cell.setCellStyle(styles.get(TEXT_CELL));
                         cell.setCellValue(((Interval) value).getName());
                     } else {
-                        cell.setCellType(Cell.CELL_TYPE_STRING);
+                        cell.setCellType(CellType.STRING);
                         cell.setCellStyle(styles.get(TEXT_CELL));
                         cell.setCellValue(value.toString());
                     }
@@ -239,54 +250,54 @@ public class DataSetExportServicesImpl implements DataSetExportServices {
     }
 
     private Map<String, CellStyle> createStyles(Workbook wb){
-        Map<String, CellStyle> styles = new HashMap<String, CellStyle>();
+        Map<String, CellStyle> styles = new HashMap<>();
         CellStyle style;
 
         Font titleFont = wb.createFont();
         titleFont.setFontHeightInPoints((short)12);
-        titleFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        titleFont.setBold(true);
         style = wb.createCellStyle();
-        style.setAlignment(CellStyle.ALIGN_CENTER);
-        style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
         style.setFillForegroundColor( IndexedColors.GREY_25_PERCENT.getIndex());
-        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setFont(titleFont);
         style.setWrapText(false);
-        style.setBorderBottom(CellStyle.BORDER_THIN);
+        style.setBorderBottom(BorderStyle.THIN);
         style.setBottomBorderColor(IndexedColors.GREY_80_PERCENT.getIndex());
         styles.put("header", style);
 
         Font cellFont = wb.createFont();
         cellFont.setFontHeightInPoints((short)10);
-        cellFont.setBoldweight(Font.BOLDWEIGHT_NORMAL);
+        cellFont.setBold(true);
 
         style = wb.createCellStyle();
-        style.setAlignment(CellStyle.ALIGN_RIGHT);
-        style.setVerticalAlignment(CellStyle.VERTICAL_BOTTOM);
+        style.setAlignment(HorizontalAlignment.RIGHT);
+        style.setVerticalAlignment(VerticalAlignment.BOTTOM);
         style.setFont(cellFont);
         style.setWrapText(false);
         style.setDataFormat(wb.createDataFormat().getFormat( BuiltinFormats.getBuiltinFormat( 3 )));
         styles.put("integer_number_cell", style);
 
         style = wb.createCellStyle();
-        style.setAlignment(CellStyle.ALIGN_RIGHT);
-        style.setVerticalAlignment(CellStyle.VERTICAL_BOTTOM);
+        style.setAlignment(HorizontalAlignment.RIGHT);
+        style.setVerticalAlignment(VerticalAlignment.BOTTOM);
         style.setFont(cellFont);
         style.setWrapText(false);
         style.setDataFormat(wb.createDataFormat().getFormat(BuiltinFormats.getBuiltinFormat(4)));
         styles.put("decimal_number_cell", style);
 
         style = wb.createCellStyle();
-        style.setAlignment(CellStyle.ALIGN_LEFT);
-        style.setVerticalAlignment(CellStyle.VERTICAL_BOTTOM);
+        style.setAlignment(HorizontalAlignment.LEFT);
+        style.setVerticalAlignment(VerticalAlignment.BOTTOM);
         style.setFont(cellFont);
         style.setWrapText(false);
         style.setDataFormat( (short) BuiltinFormats.getBuiltinFormat("text") );
         styles.put(TEXT_CELL, style);
 
         style = wb.createCellStyle();
-        style.setAlignment(CellStyle.ALIGN_CENTER);
-        style.setVerticalAlignment(CellStyle.VERTICAL_BOTTOM);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.BOTTOM);
         style.setFont(cellFont);
         style.setWrapText(false);
         style.setDataFormat(wb.createDataFormat().getFormat( DateFormatConverter.convert( Locale.getDefault(), dateFormatPattern )));

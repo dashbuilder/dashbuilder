@@ -18,6 +18,8 @@ package org.dashbuilder.displayer.client;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.export.ExportCallback;
+import org.dashbuilder.displayer.client.export.ExportFormat;
 import org.dashbuilder.displayer.client.formatter.ValueFormatter;
 
 /**
@@ -83,6 +85,15 @@ public interface Displayer extends DisplayerListener, IsWidget {
      * Check if the automatic refresh is on.
      */
     boolean isRefreshOn();
+
+    /**
+     * Export the data being displayed into the specified output format.
+     *
+     * @param format The output format
+     * @param maxRows Max rows to be exported. If lower or equals to 0 then all rows will be exported.
+     * @param callback The callback instance to be notified
+     */
+    void export(ExportFormat format, int maxRows, ExportCallback callback);
 
     /**
      * Frees any resource the displayer is consuming.

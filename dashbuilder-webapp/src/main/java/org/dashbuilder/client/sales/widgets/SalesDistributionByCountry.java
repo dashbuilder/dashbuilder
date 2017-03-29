@@ -125,6 +125,7 @@ public class SalesDistributionByCountry extends Composite implements GalleryWidg
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
+                .tableColumnPickerEnabled(false)
                 .column(COUNTRY, AppConstants.INSTANCE.sales_bycountry_table_column1())
                 .column(CUSTOMER, AppConstants.INSTANCE.sales_bycountry_table_column2())
                 .column(PRODUCT, AppConstants.INSTANCE.sales_bycountry_table_column3())

@@ -15,9 +15,8 @@
  */
 package org.dashbuilder.dataset.client;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.http.client.URL;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
+import org.dashbuilder.common.client.backend.PathUrlFactory;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.service.DataSetLookupServices;
@@ -51,10 +50,8 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
 @ApplicationScoped
 public class DataSetClientServices {
 
-    private static final String UPLOAD_SERVLET_URL = "defaulteditor/upload";
-    private static final String EXPORT_SERVLER_URL = "defaulteditor/download";
-
     private ClientDataSetManager clientDataSetManager;
+    private PathUrlFactory pathUrlFactory;
     private AggregateFunctionManager aggregateFunctionManager;
     private IntervalBuilderLocator intervalBuilderLocator;
     private Event<DataSetPushingEvent> dataSetPushingEvent;
@@ -84,6 +81,7 @@ public class DataSetClientServices {
 
     @Inject
     public DataSetClientServices(ClientDataSetManager clientDataSetManager,
+                                 PathUrlFactory pathUrlFactory,
                                  AggregateFunctionManager aggregateFunctionManager,
                                  IntervalBuilderLocator intervalBuilderLocator,
                                  Event<DataSetPushingEvent> dataSetPushingEvent,
@@ -94,6 +92,7 @@ public class DataSetClientServices {
                                  Caller<DataSetExportServices> dataSetExportServices) {
 
         this.clientDataSetManager = clientDataSetManager;
+        this.pathUrlFactory = pathUrlFactory;
         this.aggregateFunctionManager = aggregateFunctionManager;
         this.intervalBuilderLocator = intervalBuilderLocator;
         this.dataSetPushingEvent = dataSetPushingEvent;
@@ -499,15 +498,13 @@ public class DataSetClientServices {
         // In this case the notification is always send, no matter whether the data set is pushed to the client or not.
         dataSetModifiedEvent.fire(new DataSetModifiedEvent(event.getDataSetDef()));
     }
-    
+
     /**
      * <p>Returns the download URL for a given file provided by a servlet method.</p>
      * @param path The path of the file.
      */
     public String getDownloadFileUrl(final Path path) {
-        final StringBuilder sb = new StringBuilder(GWT.getModuleBaseURL() + EXPORT_SERVLER_URL);
-        sb.append("?").append("path").append("=").append(URL.encode(path.toURI()));
-        return sb.toString();
+        return pathUrlFactory.getDownloadFileUrl(path);
     }
 
     /**
@@ -515,8 +512,6 @@ public class DataSetClientServices {
      * @param path The path of the file.
      */
     public String getUploadFileUrl(String path) {
-        final StringBuilder sb = new StringBuilder(GWT.getModuleBaseURL() + UPLOAD_SERVLET_URL);
-        sb.append("?").append("path").append("=").append(URL.encode(path));
-        return sb.toString();
+        return pathUrlFactory.getUploadFileUrl(path);
     }
 }

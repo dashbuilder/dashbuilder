@@ -182,6 +182,11 @@ public class DisplayerSettings {
         return Boolean.parseBoolean(value);
     }
 
+    private boolean parseBoolean(String value, boolean defaultValue) {
+        if (value == null || value.trim().length() == 0) return defaultValue;
+        return Boolean.parseBoolean(value);
+    }
+
     private String parseString(String value) {
         if (value == null || value.trim().length() == 0) return "";
         return value;
@@ -295,19 +300,21 @@ public class DisplayerSettings {
     }
 
     public boolean isCSVExportAllowed() {
-        return parseBoolean(settings.get(getSettingPath(DisplayerAttributeDef.ALLOW_EXPORT_CSV)));
+        return parseBoolean(settings.get(getSettingPath(DisplayerAttributeDef.ALLOW_EXPORT_CSV)))
+                || parseBoolean(settings.get(getSettingPath(DisplayerAttributeDef.EXPORT_TO_CSV)));
     }
 
     public void setCSVExportAllowed(boolean csvExportAllowed) {
-        settings.put(getSettingPath(DisplayerAttributeDef.ALLOW_EXPORT_CSV), Boolean.toString(csvExportAllowed));
+        settings.put(getSettingPath(DisplayerAttributeDef.EXPORT_TO_CSV), Boolean.toString(csvExportAllowed));
     }
 
     public boolean isExcelExportAllowed() {
-        return parseBoolean(settings.get(getSettingPath(DisplayerAttributeDef.ALLOW_EXPORT_EXCEL)));
+        return parseBoolean(settings.get(getSettingPath(DisplayerAttributeDef.ALLOW_EXPORT_EXCEL)))
+        || parseBoolean(settings.get(getSettingPath(DisplayerAttributeDef.EXPORT_TO_XLS)));
     }
 
     public void setExcelExportAllowed(boolean excelExportAllowed) {
-        settings.put(getSettingPath(DisplayerAttributeDef.ALLOW_EXPORT_EXCEL), Boolean.toString(excelExportAllowed));
+        settings.put(getSettingPath(DisplayerAttributeDef.EXPORT_TO_XLS), Boolean.toString(excelExportAllowed));
     }
 
     public int getRefreshInterval() {
@@ -480,6 +487,10 @@ public class DisplayerSettings {
         settings.put( getSettingPath( DisplayerAttributeDef.TABLE_SORTENABLED ), Boolean.toString( tableSortEnabled ) );
     }
 
+    public void setTableColumnPickerEnabled(boolean tableColumnPickerEnabled) {
+        settings.put(getSettingPath(DisplayerAttributeDef.TABLE_COLUMN_PICKER_ENABLED), Boolean.toString(tableColumnPickerEnabled));
+    }
+
     public String getTableDefaultSortColumnId() {
         return parseString(settings.get(getSettingPath(DisplayerAttributeDef.TABLE_SORTCOLUMNID)));
     }
@@ -498,6 +509,10 @@ public class DisplayerSettings {
         settings.put( getSettingPath( DisplayerAttributeDef.TABLE_SORTORDER ), tableDefaultSortOrder.toString() );
     }
 
+    public boolean isTableColumnPickerEnabled() {
+        return parseBoolean(settings.get(getSettingPath(DisplayerAttributeDef.TABLE_COLUMN_PICKER_ENABLED)), true);
+    }
+
     public boolean isXAxisShowLabels() {
         return parseBoolean( settings.get( getSettingPath( DisplayerAttributeDef.XAXIS_SHOWLABELS ) ) );
     }
@@ -506,13 +521,13 @@ public class DisplayerSettings {
         settings.put( getSettingPath( DisplayerAttributeDef.XAXIS_SHOWLABELS ), Boolean.toString( axisShowLabels ) );
     }
 
-//    public int getXAxisLabelsAngle() {
-//        return parseInt( settings.get( getSettingPath( DisplayerAttributeDef.XAXIS_LABELSANGLE ) ), 10 );
-//    }
-//
-//    public void setXAxisLabelsAngle( int axisLabelsAngle ) {
-//        settings.put( getSettingPath( DisplayerAttributeDef.XAXIS_LABELSANGLE ), Integer.toString( axisLabelsAngle ) );
-//    }
+    public int getXAxisLabelsAngle() {
+        return parseInt(settings.get(getSettingPath(DisplayerAttributeDef.XAXIS_LABELSANGLE)), 0);
+    }
+
+    public void setXAxisLabelsAngle(int axisLabelsAngle) {
+        settings.put(getSettingPath(DisplayerAttributeDef.XAXIS_LABELSANGLE), Integer.toString(axisLabelsAngle));
+    }
 
     public String getXAxisTitle() {
         return parseString(settings.get( getSettingPath( DisplayerAttributeDef.XAXIS_TITLE ) ));

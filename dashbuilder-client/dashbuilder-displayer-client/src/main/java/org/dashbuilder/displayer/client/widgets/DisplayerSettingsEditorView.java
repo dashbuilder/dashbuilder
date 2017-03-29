@@ -72,6 +72,9 @@ public class DisplayerSettingsEditorView extends Composite implements DisplayerS
         attrMapI18n.put(TITLE_VISIBLE, CommonConstants.INSTANCE.common_showTitle());
         attrMapI18n.put(ALLOW_EXPORT_CSV, CommonConstants.INSTANCE.common_allowCSV());
         attrMapI18n.put(ALLOW_EXPORT_EXCEL, CommonConstants.INSTANCE.common_allowExcel());
+        attrMapI18n.put(EXPORT_GROUP, CommonConstants.INSTANCE.common_export());
+        attrMapI18n.put(EXPORT_TO_CSV, CommonConstants.INSTANCE.common_allowCSV());
+        attrMapI18n.put(EXPORT_TO_XLS, CommonConstants.INSTANCE.common_allowExcel());
         attrMapI18n.put(RENDERER, CommonConstants.INSTANCE.common_renderer());
         attrMapI18n.put(CHART_GROUP, CommonConstants.INSTANCE.chart_group());
         attrMapI18n.put(CHART_WIDTH, CommonConstants.INSTANCE.chart_width());
@@ -90,6 +93,7 @@ public class DisplayerSettingsEditorView extends Composite implements DisplayerS
         attrMapI18n.put(YAXIS_GROUP, CommonConstants.INSTANCE.axis_group());
         attrMapI18n.put(XAXIS_SHOWLABELS, CommonConstants.INSTANCE.xaxis_showLabels());
         attrMapI18n.put(XAXIS_TITLE, CommonConstants.INSTANCE.xaxis_title());
+        attrMapI18n.put(XAXIS_LABELSANGLE, CommonConstants.INSTANCE.xaxis_angle());
         attrMapI18n.put(YAXIS_SHOWLABELS, CommonConstants.INSTANCE.yaxis_showLabels());
         attrMapI18n.put(YAXIS_TITLE, CommonConstants.INSTANCE.yaxis_title());
         attrMapI18n.put(TABLE_GROUP, CommonConstants.INSTANCE.table_group());
@@ -98,6 +102,7 @@ public class DisplayerSettingsEditorView extends Composite implements DisplayerS
         attrMapI18n.put(TABLE_SORTENABLED, CommonConstants.INSTANCE.table_sortEnabled());
         attrMapI18n.put(TABLE_SORTCOLUMNID, CommonConstants.INSTANCE.table_sortColumn());
         attrMapI18n.put(TABLE_SORTORDER, CommonConstants.INSTANCE.table_sortOrder());
+        attrMapI18n.put(TABLE_COLUMN_PICKER_ENABLED, CommonConstants.INSTANCE.table_columnPicker());
         attrMapI18n.put(METER_GROUP, CommonConstants.INSTANCE.meter_group());
         attrMapI18n.put(METER_START, CommonConstants.INSTANCE.meter_start());
         attrMapI18n.put(METER_WARNING, CommonConstants.INSTANCE.meter_warning());

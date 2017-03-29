@@ -103,6 +103,7 @@ public class SalesTableReports extends Composite implements GalleryWidget {
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault(AMOUNT, DESCENDING)
+                .tableColumnPickerEnabled(false)
                 .column(COUNTRY, AppConstants.INSTANCE.sales_tablereports_all_column1())
                 .column(CUSTOMER, AppConstants.INSTANCE.sales_tablereports_all_column2())
                 .column(PRODUCT, AppConstants.INSTANCE.sales_tablereports_all_column3())
@@ -130,6 +131,7 @@ public class SalesTableReports extends Composite implements GalleryWidget {
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
+                .tableColumnPickerEnabled(false)
                 .filterOn(false, true, true)
                 .buildSettings());
 
@@ -148,6 +150,7 @@ public class SalesTableReports extends Composite implements GalleryWidget {
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
+                .tableColumnPickerEnabled(false)
                 .filterOn(false, true, true)
                 .buildSettings());
 
@@ -166,6 +169,7 @@ public class SalesTableReports extends Composite implements GalleryWidget {
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
+                .tableColumnPickerEnabled(false)
                 .filterOn(false, true, true)
                 .buildSettings());
 
@@ -184,6 +188,7 @@ public class SalesTableReports extends Composite implements GalleryWidget {
                 .tablePageSize(8)
                 .tableOrderEnabled(true)
                 .tableOrderDefault("Total", DESCENDING)
+                .tableColumnPickerEnabled(false)
                 .filterOn(false, true, true)
                 .buildSettings());
 

@@ -27,6 +27,12 @@ public interface XAxisChartSettingsBuilder<T extends XAxisChartSettingsBuilder> 
     T xAxisTitle(String title);
 
     /**
+     * Set the X axis labels display angle (from 0 to 360).
+     * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
+     */
+    T xAxisAngle(int angle);
+
+    /**
      * Set the Y axis title.
      * @return The DisplayerSettingsBuilder instance that is being used to configure a DisplayerSettings.
      */

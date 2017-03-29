@@ -163,6 +163,7 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
                         .tablePageSize(8)
                         .tableOrderEnabled(true)
                         .tableOrderDefault(AMOUNT, DESCENDING)
+                        .tableColumnPickerEnabled(false)
                         .column(OFFICE).format(AppConstants.INSTANCE.expensesdb_table_column1())
                         .column(DEPARTMENT).format(AppConstants.INSTANCE.expensesdb_table_column2())
                         .column(EMPLOYEE).format(AppConstants.INSTANCE.expensesdb_table_column3())

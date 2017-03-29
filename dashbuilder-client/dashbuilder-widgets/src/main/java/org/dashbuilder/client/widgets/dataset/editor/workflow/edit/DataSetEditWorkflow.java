@@ -87,25 +87,16 @@ public abstract class DataSetEditWorkflow<T extends DataSetDef, E extends DataSe
         editor.setAcceptableValues( allColumns );
         driver.edit( definition );
 
-        this.flushCommand = new Command() {
-            @Override
-            public void execute() {
-                flush( DataSetEditWorkflow.this.driver );
-            }
-        };
-
-        this.stepValidator = new Command() {
-            @Override
-            public void execute() {
-                final boolean isCacheEnabled = definition.isCacheEnabled();
-                final boolean isPushEnabled = definition.isPushEnabled();
-                final boolean isRefreshEnabled = definition.getRefreshTime() != null;
-                Iterable<ConstraintViolation<?>> violations = validate( isCacheEnabled,
-                                                                        isPushEnabled,
-                                                                        isRefreshEnabled );
-                driver.setConstraintViolations( violations );
-                addViolations( violations );
-            }
+        this.flushCommand = () -> flush(DataSetEditWorkflow.this.driver);
+        this.stepValidator = () -> {
+            final boolean isCacheEnabled = definition.isCacheEnabled();
+            final boolean isPushEnabled = definition.isPushEnabled();
+            final boolean isRefreshEnabled = definition.getRefreshTime() != null;
+            Iterable<ConstraintViolation<?>> violations = validate( isCacheEnabled,
+                                                                    isPushEnabled,
+                                                                    isRefreshEnabled );
+            driver.setConstraintViolations( violations );
+            addViolations( violations );
         };
 
         // Show data set editor view.
@@ -113,6 +104,16 @@ public abstract class DataSetEditWorkflow<T extends DataSetDef, E extends DataSe
         view.add( getWidget() );
 
         return this;
+    }
+
+    @Override
+    public void dispose() {
+        if (driver != null) {
+            beanManager.destroyBean(driver);
+        }
+        if (editor != null) {
+            beanManager.destroyBean(editor);
+        }
     }
 
     public E getEditor() {
@@ -152,5 +153,4 @@ public abstract class DataSetEditWorkflow<T extends DataSetDef, E extends DataSe
     void _setDataSetDef( final T def ) {
         this.dataSetDef = def;
     }
-
 }

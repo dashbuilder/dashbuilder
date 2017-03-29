@@ -44,6 +44,8 @@ import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.client.export.ExportCallback;
+import org.dashbuilder.displayer.client.export.ExportFormat;
 import org.dashbuilder.displayer.client.formatter.ValueFormatter;
 import org.uberfire.client.mvp.UberView;
 
@@ -249,6 +251,7 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
                     public void callback(DataSet result) {
                         try {
                             dataSet = result;
+                            afterLoad();
                             afterDataSetLookup(result);
                             createVisualization();
                             getView().showVisualization();
@@ -388,6 +391,12 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
         }
     }
 
+    protected void afterLoad() {
+        for (DisplayerListener listener : listenerList) {
+            listener.onDataLoaded(this);
+        }
+    }
+
     protected void afterDraw() {
         updateRefreshTimer();
         for (DisplayerListener listener : listenerList) {
@@ -431,6 +440,11 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
 
     @Override
     public void onDataLookup(Displayer displayer) {
+        // Do nothing
+    }
+
+    @Override
+    public void onDataLoaded(Displayer displayer) {
         // Do nothing
     }
 
@@ -872,5 +886,16 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
     protected Date parseDynamicGroupDate(DateIntervalType type, String date) {
         String pattern = DateIntervalPattern.getPattern(type);
         return getFormatter().parseDate(pattern, date);
+    }
+
+    // EXPORT
+
+    @Override
+    public void export(ExportFormat format, int maxRows, ExportCallback callback) {
+        if (dataSetHandler == null) {
+            callback.noData();
+        } else {
+            dataSetHandler.exportCurrentDataSetLookup(format, maxRows, callback);
+        }
     }
 }

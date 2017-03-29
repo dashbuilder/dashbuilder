@@ -95,6 +95,7 @@ public class SalesGoals extends Composite implements GalleryWidget {
                 .titleVisible(true)
                 .width(800).height(200)
                 .margins(10, 80, 80, 100)
+                .xAxisAngle(30)
                 .filterOn(false, true, true)
                 .buildSettings());
 
@@ -110,6 +111,7 @@ public class SalesGoals extends Composite implements GalleryWidget {
                 .titleVisible(true)
                 .width(400).height(150)
                 .margins(10, 80, 80, 10)
+                .xAxisAngle(30)
                 .filterOn(false, true, true)
                 .buildSettings());
 
@@ -125,6 +127,7 @@ public class SalesGoals extends Composite implements GalleryWidget {
                 .titleVisible(true)
                 .width(400).height(150)
                 .margins(10, 80, 80, 10)
+                .xAxisAngle(30)
                 .filterOn(false, true, true)
                 .buildSettings());
 

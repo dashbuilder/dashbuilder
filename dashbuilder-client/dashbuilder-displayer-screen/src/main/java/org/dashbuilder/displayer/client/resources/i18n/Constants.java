@@ -20,7 +20,7 @@ import com.google.gwt.i18n.client.Messages;
 
 public interface Constants extends Messages {
 
-    public static final Constants INSTANCE = GWT.create( Constants.class );
+    Constants INSTANCE = GWT.create(Constants.class);
 
     String menu_button_actions();
 
@@ -35,5 +35,7 @@ public interface Constants extends Messages {
     String displayer_presenter_displayer_notfound();
 
     String displayer_presenter_export_large_dataset();
+
+    String displayer_presenter_export_no_data();
 
 }
