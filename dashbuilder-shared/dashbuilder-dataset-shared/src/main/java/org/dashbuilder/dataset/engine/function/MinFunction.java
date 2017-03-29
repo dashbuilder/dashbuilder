@@ -15,14 +15,14 @@
  */
 package org.dashbuilder.dataset.engine.function;
 
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 
 /**
- * It calculates the min. number of a set of numbers.
+ * It calculates the min. number of a set of values.
  */
 public class MinFunction extends AbstractFunction {
 
@@ -34,36 +34,47 @@ public class MinFunction extends AbstractFunction {
         return AggregateFunctionType.MIN;
     }
 
-    public double aggregate(List values) {
-        if (values == null || values.isEmpty()) return 0;
+    public Object aggregate(List values) {
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
 
         // Get the min. value from the collection.
-        Number min = null;
-        Iterator it = values.iterator();
-        while (it.hasNext()) {
-            Number n = (Number) it.next();
-            if (n == null) continue;
-            if (min == null || n.doubleValue() < min.doubleValue()) min = n;
+        Comparable result = null;
+        for (Object obj : values) {
+            Comparable val = (Comparable) obj;
+            if (val == null) {
+                continue;
+            }
+            if (result == null || val.compareTo(result) < 0) {
+                result = val;
+            }
         }
+
         // Adjust to the specified precision.
-        if (min == null) return 0;
-        return round(min.doubleValue(), precission);
+        return result instanceof Number ? round((Number) result, precission) : result;
     }
 
-    public double aggregate(List values, List<Integer> rows) {
-        if (rows == null) return aggregate(values);
-        if (rows.isEmpty()) return 0;
-        if (values == null || values.isEmpty()) return 0;
+    public Object aggregate(List values, List<Integer> rows) {
+        if (rows == null) {
+            return aggregate(values);
+        }
+        if (rows.isEmpty() || values == null || values.isEmpty()) {
+            return null;
+        }
 
-        // Get the min. value from the collection.
-        Number min = null;
+        // Get the min. value within the target rows.
+        Comparable result = null;
         for (Integer row : rows) {
-            Number n = (Number) values.get(row);
-            if (n == null) continue;
-            if (min == null || n.doubleValue() < min.doubleValue()) min = n;
+            Comparable val = (Comparable) values.get(row);
+            if (val == null) {
+                continue;
+            }
+            if (result == null || val.compareTo(result) < 0) {
+                result = val;
+            }
         }
         // Adjust to the specified precision.
-        if (min == null) return 0;
-        return round(min.doubleValue(), precission);
+        return result instanceof Number ? round((Number) result, precission) : result;
     }
 }

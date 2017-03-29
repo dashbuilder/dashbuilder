@@ -10,7 +10,6 @@
   <ui:style type="org.dashbuilder.client.widgets.dataset.explorer.DataSetExplorerView.DataSetExplorerViewStyle">
     .mainPanel {
       width: 100%;
-      font-size: 12pt;
     }
     .errorPanel {
       margin: 25px;

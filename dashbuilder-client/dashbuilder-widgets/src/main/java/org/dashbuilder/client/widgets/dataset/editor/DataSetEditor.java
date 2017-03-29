@@ -35,9 +35,8 @@ import org.dashbuilder.dataset.client.editor.DataSetDefEditor;
 import org.dashbuilder.dataset.def.DataColumnDef;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.filter.DataSetFilter;
-import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.displayer.client.AbstractDisplayerListener;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.displayer.client.DisplayerListener;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.Command;
 
@@ -295,17 +294,12 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
         loadingBox.hide();
     }
     
-    private class DataSetEditorListener implements DisplayerListener {
+    private class DataSetEditorListener extends AbstractDisplayerListener {
 
         private boolean isUpdateFilter;
 
         public DataSetEditorListener(final boolean isUpdateFilter) {
             this.isUpdateFilter = isUpdateFilter;
-        }
-
-        @Override
-        public void onDataLookup(final Displayer displayer) {
-            
         }
 
         @Override
@@ -323,26 +317,6 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
         @Override
         public void onClose(final Displayer displayer) {
             loadingBox.hide();
-        }
-
-        @Override
-        public void onFilterEnabled(final Displayer displayer, final DataSetGroup groupOp) {
-
-        }
-
-        @Override
-        public void onFilterEnabled(final Displayer displayer, final DataSetFilter filter) {
-
-        }
-
-        @Override
-        public void onFilterReset(final Displayer displayer, final List<DataSetGroup> groupOps) {
-
-        }
-
-        @Override
-        public void onFilterReset(final Displayer displayer, final DataSetFilter filter) {
-
         }
 
         @Override

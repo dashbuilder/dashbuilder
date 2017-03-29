@@ -33,7 +33,10 @@ public enum DisplayerSubType {
     METRIC_CARD,
     METRIC_CARD2,
     METRIC_PLAIN_TEXT,
-    METRIC_QUOTA;
+    METRIC_QUOTA,
+    SELECTOR_DROPDOWN,
+    SELECTOR_SLIDER,
+    SELECTOR_LABELS;
 
     public static DisplayerSubType getByName(String str) {
         if (str == null) return null;

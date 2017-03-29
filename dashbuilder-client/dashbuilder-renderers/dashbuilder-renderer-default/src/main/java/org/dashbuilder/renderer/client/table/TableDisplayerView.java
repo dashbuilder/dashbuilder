@@ -37,7 +37,7 @@ import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.sort.SortOrder;
-import org.dashbuilder.displayer.client.AbstractDisplayerView;
+import org.dashbuilder.displayer.client.AbstractGwtDisplayerView;
 import org.dashbuilder.renderer.client.resources.i18n.TableConstants;
 import org.gwtbootstrap3.client.ui.Label;
 import org.uberfire.client.callbacks.Callback;
@@ -45,7 +45,7 @@ import org.uberfire.ext.widgets.common.client.tables.PagedTable;
 
 import static com.google.gwt.dom.client.BrowserEvents.*;
 
-public class TableDisplayerView extends AbstractDisplayerView<TableDisplayer> implements TableDisplayer.View {
+public class TableDisplayerView extends AbstractGwtDisplayerView<TableDisplayer> implements TableDisplayer.View {
 
     protected HTML titleHtml = new HTML();
     protected HorizontalPanel filterPanel;

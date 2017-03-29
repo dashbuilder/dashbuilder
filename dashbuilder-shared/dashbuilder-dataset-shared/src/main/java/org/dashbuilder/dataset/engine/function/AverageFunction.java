@@ -32,18 +32,26 @@ public class AverageFunction extends SumFunction {
         return AggregateFunctionType.AVERAGE;
     }
 
-    public double aggregate(List values) {
-        if (values == null || values.isEmpty()) return 0;
-        double average = super.aggregate(values) / values.size();
+    public Object aggregate(List values) {
+        if (values == null || values.isEmpty()) {
+            return 0d;
+        }
+        double average = (double) super.aggregate(values) / values.size();
         return round(average, precission);
     }
 
-    public double aggregate(List values, List<Integer> rows) {
-        if (rows == null) return aggregate(values);
-        if (rows.isEmpty()) return 0;
-        if (values == null || values.isEmpty()) return 0;
+    public Object aggregate(List values, List<Integer> rows) {
+        if (rows == null) {
+            return aggregate(values);
+        }
+        if (rows.isEmpty()) {
+            return 0d;
+        }
+        if (values == null || values.isEmpty()) {
+            return 0d;
+        }
 
-        double average = super.aggregate(values, rows) / rows.size();
+        double average = (double) super.aggregate(values, rows) / rows.size();
         return round(average, precission);
     }
 

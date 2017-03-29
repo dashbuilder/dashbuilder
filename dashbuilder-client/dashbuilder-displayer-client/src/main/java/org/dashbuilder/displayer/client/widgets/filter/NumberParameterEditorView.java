@@ -19,6 +19,7 @@ import javax.enterprise.context.Dependent;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -67,6 +68,11 @@ public class NumberParameterEditorView extends Composite implements NumberParame
     public void setValue(String value) {
         input.setValue(value);
         form.setValidationState(ValidationState.NONE);
+    }
+
+    @Override
+    public void setWidth(int width) {
+        input.asWidget().getElement().getStyle().setWidth(width, Style.Unit.PX);
     }
 
     @Override

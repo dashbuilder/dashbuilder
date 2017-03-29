@@ -32,12 +32,14 @@ public class NumberParameterEditor implements FunctionParameterEditor {
 
         void setValue(String value);
 
+        void setWidth(int width);
+
         void error();
 
         void setFocus(boolean focus);
     }
 
-    Command onChangeCommand = new Command() { public void execute() {} };
+    Command onChangeCommand = () -> {};
     Number value;
     View view;
 
@@ -61,8 +63,20 @@ public class NumberParameterEditor implements FunctionParameterEditor {
     }
 
     public void setValue(Number input) {
-        value = input;
-        view.setValue(format(value));
+        Command backup = onChangeCommand;
+        try {
+            onChangeCommand = null;
+            value = input;
+            view.setValue(format(value));
+        } finally {
+            onChangeCommand = backup;
+        }
+    }
+
+    public void setWidth(int width) {
+        if (width > 0) {
+            view.setWidth(width);
+        }
     }
 
     @Override
@@ -77,7 +91,9 @@ public class NumberParameterEditor implements FunctionParameterEditor {
                 view.error();
             } else {
                 value = n;
-                onChangeCommand.execute();
+                if (onChangeCommand != null) {
+                    onChangeCommand.execute();
+                }
             }
         } catch (Exception e) {
             view.error();

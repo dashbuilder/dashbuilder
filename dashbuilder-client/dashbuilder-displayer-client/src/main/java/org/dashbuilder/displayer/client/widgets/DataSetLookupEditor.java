@@ -361,7 +361,7 @@ public class DataSetLookupEditor implements IsWidget {
     }
 
     void updateFilterControls() {
-        view.setFilterEnabled(true);
+        view.setFilterEnabled(lookupConstraints.isFilterAllowed());
         filterEditor.init(dataSetLookup.getFirstFilterOp(), dataSetMetadata);
     }
 

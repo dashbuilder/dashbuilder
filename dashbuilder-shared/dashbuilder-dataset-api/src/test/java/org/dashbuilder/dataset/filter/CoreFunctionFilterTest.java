@@ -77,4 +77,16 @@ public class CoreFunctionFilterTest {
 
         assertNotEquals(cf1, cf2);
     }
+
+    @Test
+    public void testNotEquals5() {
+        CoreFunctionFilter cf1 = new CoreFunctionFilter("column1", EQUALS_TO, 1, 1);
+        CoreFunctionFilter cf2 = new CoreFunctionFilter("column1", EQUALS_TO, 1, 2);
+        CoreFunctionFilter cf3 = new CoreFunctionFilter("column1", EQUALS_TO, 2, 1);
+
+        assertNotEquals(cf1, cf2);
+        assertNotEquals(cf2, cf1);
+        assertNotEquals(cf2, cf3);
+        assertNotEquals(cf3, cf2);
+    }
 }

@@ -74,4 +74,12 @@ public class DataSetFilter extends AbstractDataSetOp {
             return false;
         }
     }
+
+    public String toString() {
+        StringBuilder out = new StringBuilder();
+        for (ColumnFilter columnFilter : columnFilterList) {
+            out.append("\"").append(columnFilter.toString()).append("\" ");
+        }
+        return out.toString();
+    }
 }

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
@@ -45,7 +46,6 @@ import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.formatter.ValueFormatter;
-import org.uberfire.client.mvp.UberView;
 
 /**
  * Base class for implementing custom displayers.
@@ -57,7 +57,7 @@ import org.uberfire.client.mvp.UberView;
  */
 public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implements Displayer {
 
-    public interface View<P extends Displayer> extends UberView<P> {
+    public interface View extends IsWidget {
 
         void errorMissingSettings();
 
@@ -473,6 +473,17 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
     }
 
     @Override
+    public void onFilterUpdate(Displayer displayer, DataSetFilter oldFilter, DataSetFilter newFilter) {
+        if (displayerSettings.isFilterListeningEnabled()) {
+            boolean unfilter = dataSetHandler.unfilter(oldFilter);
+            boolean filter = dataSetHandler.filter(newFilter);
+            if (unfilter || filter) {
+                redraw();
+            }
+        }
+    }
+
+    @Override
     public void onFilterReset(Displayer displayer, List<DataSetGroup> groupOps) {
         if (displayerSettings.isFilterListeningEnabled()) {
             boolean applied = false;
@@ -635,6 +646,32 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
             }
             // Drill-down support
             if (displayerSettings.isFilterSelfApplyEnabled()) {
+                dataSetHandler.filter(filter);
+                redraw();
+            }
+        }
+    }
+
+    /**
+     * Updates the current filter values for the given data set column. Any previous filter is reset.
+     *
+     * @param filter A filter
+     */
+    public void filterUpdate(DataSetFilter filter) {
+        if (displayerSettings.isFilterEnabled()) {
+
+            DataSetFilter oldFilter = currentFilter;
+            this.currentFilter = filter;
+
+            // Notify to those interested parties the selection event.
+            if (displayerSettings.isFilterNotificationEnabled()) {
+                for (DisplayerListener listener : listenerList) {
+                    listener.onFilterUpdate(this, oldFilter, filter);
+                }
+            }
+            // Drill-down support
+            if (displayerSettings.isFilterSelfApplyEnabled()) {
+                dataSetHandler.unfilter(oldFilter);
                 dataSetHandler.filter(filter);
                 redraw();
             }

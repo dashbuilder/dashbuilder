@@ -33,14 +33,20 @@ public class CountFunction extends AbstractFunction {
         return AggregateFunctionType.COUNT;
     }
 
-    public double aggregate(List values) {
-        if (values == null || values.isEmpty()) return 0;
-        return values.size();
+    public Object aggregate(List values) {
+        if (values == null || values.isEmpty()) {
+            return 0d;
+        }
+        return (double) values.size();
     }
 
-    public double aggregate(List values, List<Integer> rows) {
-        if (rows == null) return aggregate(values);
-        if (rows.isEmpty()) return 0;
-        return rows.size();
+    public Object aggregate(List values, List<Integer> rows) {
+        if (rows == null) {
+            return aggregate(values);
+        }
+        if (rows.isEmpty()) {
+            return 0d;
+        }
+        return (double) rows.size();
     }
 }

@@ -45,6 +45,16 @@
 
     <dependency>
       <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-ioc</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-ui</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
       <artifactId>errai-cdi-server</artifactId>
     </dependency>
 
@@ -57,6 +67,11 @@
     <dependency>
       <groupId>org.gwtbootstrap3</groupId>
       <artifactId>gwtbootstrap3</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.gwtbootstrap3</groupId>
+      <artifactId>gwtbootstrap3-extras</artifactId>
     </dependency>
 
     <dependency>
@@ -82,6 +97,11 @@
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-dataset-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-dataset-shared</artifactId>
     </dependency>
 
     <dependency>

@@ -38,6 +38,10 @@ public class DisplayerAttributeDef {
     public static final DisplayerAttributeDef FILTER_NOTIFICATION_ENABLED = new DisplayerAttributeDef("notification", DisplayerAttributeGroupDef.FILTER_GROUP);
     public static final DisplayerAttributeDef FILTER_LISTENING_ENABLED = new DisplayerAttributeDef("listening", DisplayerAttributeGroupDef.FILTER_GROUP);
 
+    public static final DisplayerAttributeDef SELECTOR_WIDTH = new DisplayerAttributeDef("width", DisplayerAttributeGroupDef.SELECTOR_GROUP);
+    public static final DisplayerAttributeDef SELECTOR_MULTIPLE = new DisplayerAttributeDef("multiple", DisplayerAttributeGroupDef.SELECTOR_GROUP);
+    public static final DisplayerAttributeDef SELECTOR_SHOW_INPUTS = new DisplayerAttributeDef("inputs_show", DisplayerAttributeGroupDef.SELECTOR_GROUP);
+
     public static final DisplayerAttributeDef CHART_WIDTH = new DisplayerAttributeDef("width", DisplayerAttributeGroupDef.CHART_GROUP);
     public static final DisplayerAttributeDef CHART_HEIGHT = new DisplayerAttributeDef("height", DisplayerAttributeGroupDef.CHART_GROUP);
     public static final DisplayerAttributeDef CHART_RESIZABLE = new DisplayerAttributeDef("resizable", DisplayerAttributeGroupDef.CHART_GROUP);

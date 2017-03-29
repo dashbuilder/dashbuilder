@@ -3,9 +3,7 @@
 
 <module>
   <inherits name="org.dashbuilder.DisplayerClient"/>
-
   <inherits name="org.uberfire.ext.widgets.common.UberfireWidgetsCommons"/>
-
   <inherits name="org.gwtbootstrap3.GwtBootstrap3NoTheme"/>
-
+  <inherits name="org.gwtbootstrap3.extras.slider.Slider"/>
 </module>

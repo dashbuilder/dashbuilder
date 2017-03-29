@@ -15,32 +15,20 @@
  */
 package org.dashbuilder.renderer.lienzo.client;
 
-import com.ait.lienzo.charts.client.core.AbstractChart;
-import com.ait.lienzo.charts.client.core.model.DataTable;
-import com.ait.lienzo.charts.client.core.model.DataTableColumn;
-import com.ait.lienzo.client.core.shape.Layer;
-import com.ait.lienzo.client.widget.LienzoPanel;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.*;
-import org.dashbuilder.common.client.error.ClientRuntimeError;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerSubType;
-import org.dashbuilder.displayer.client.AbstractDisplayer;
+import org.dashbuilder.displayer.client.AbstractGwtDisplayer;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-public abstract class LienzoDisplayer<V extends LienzoDisplayer.View> extends AbstractDisplayer<V> {
+public abstract class LienzoDisplayer<V extends LienzoDisplayer.View> extends AbstractGwtDisplayer<V> {
 
-    public interface View<P extends LienzoDisplayer> extends AbstractDisplayer.View<P> {
+    public interface View<P extends LienzoDisplayer> extends AbstractGwtDisplayer.View<P> {
 
         void showTitle(String  title);
 

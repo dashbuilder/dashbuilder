@@ -23,11 +23,11 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.displayer.ColumnSettings;
-import org.dashbuilder.displayer.client.AbstractDisplayer;
+import org.dashbuilder.displayer.client.AbstractGwtDisplayer;
 
-public abstract class GoogleDisplayer<V extends GoogleDisplayer.View> extends AbstractDisplayer<V> {
+public abstract class GoogleDisplayer<V extends GoogleDisplayer.View> extends AbstractGwtDisplayer<V> {
 
-    public interface View<P extends GoogleDisplayer> extends AbstractDisplayer.View<P> {
+    public interface View<P extends GoogleDisplayer> extends AbstractGwtDisplayer.View<P> {
 
         void draw();
 

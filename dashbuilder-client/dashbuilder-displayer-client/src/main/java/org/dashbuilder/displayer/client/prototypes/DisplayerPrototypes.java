@@ -283,6 +283,47 @@ public class DisplayerPrototypes {
                 .tablePageSize(8)
                 .filterOn(false, true, true)
                 .buildSettings());
+
+        DisplayerSettings selectorDropDown = DisplayerSettingsFactory
+                .newSelectorSettings()
+                .uuid("selectorDropDownPrototype")
+                .dataset(dataSetPrototypes.getTopRichCountries())
+                .subtype(DisplayerSubType.SELECTOR_DROPDOWN)
+                .title("Country selector").titleVisible(true)
+                .column(COUNTRY).format("Country")
+                .width(200)
+                .multiple(true)
+                .filterOn(false, true, false)
+                .buildSettings();
+
+        DisplayerSettings selectorLabels = DisplayerSettingsFactory
+                .newSelectorSettings()
+                .uuid("selectorLabelsPrototype")
+                .dataset(dataSetPrototypes.getTopRichCountries())
+                .subtype(DisplayerSubType.SELECTOR_LABELS)
+                .title("Country selector").titleVisible(true)
+                .column(COUNTRY).format("Country")
+                .width(-1)
+                .multiple(true)
+                .filterOn(false, true, false)
+                .buildSettings();
+
+        DisplayerSettings selectorSlider = DisplayerSettingsFactory
+                .newSelectorSettings()
+                .uuid("selectorSliderPrototype")
+                .dataset(dataSetPrototypes.getPopulationLimits())
+                .subtype(DisplayerSubType.SELECTOR_SLIDER)
+                .title("World population").titleVisible(true)
+                .column(POPULATION).format("Population", "#,##0 MM").expression("value/1000000")
+                .margins(0, 0, 0, 0)
+                .width(-1)
+                .filterOn(false, true, false)
+                .buildSettings();
+
+        prototypeMap.put(DisplayerType.SELECTOR, selectorDropDown);
+        subprotoMap.put(DisplayerSubType.SELECTOR_DROPDOWN, selectorDropDown);
+        subprotoMap.put(DisplayerSubType.SELECTOR_LABELS, selectorLabels);
+        subprotoMap.put(DisplayerSubType.SELECTOR_SLIDER, selectorSlider);
     }
 
     public DisplayerSettings getProto(DisplayerType type) {

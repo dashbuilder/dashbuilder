@@ -76,6 +76,8 @@ public class DataSetSubsystemCDITest extends BaseCDITest {
     @Test
     public void testGroup() throws Exception {
         dataSetGroupTest.testDataSetFunctions();
+        dataSetGroupTest.testDateMinMaxFunctions();
+        dataSetGroupTest.testNumberMinMaxFunctions();
         dataSetGroupTest.testGroupByLabelDynamic();
         dataSetGroupTest.testGroupByYearDynamic();
         dataSetGroupTest.testGroupByMonthDynamic();

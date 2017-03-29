@@ -85,8 +85,27 @@ public class DataSetGroup extends AbstractDataSetOp {
     }
 
     public void setSelectedIntervalList(List<Interval> intervalList) {
-        if (intervalList == null) selectedIntervalList.clear();
-        else selectedIntervalList = intervalList;
+        if (intervalList == null) {
+            selectedIntervalList.clear();
+        } else {
+            selectedIntervalList = intervalList;
+
+            // Make sure the interval types match
+            String intervalsType = null;
+            for (Interval interval : intervalList) {
+                if (intervalsType == null) {
+                    intervalsType = interval.getType();
+                }
+                else if (!interval.getType().equals(intervalsType)) {
+                    throw new RuntimeException("Different interval types. Expected " + intervalsType + " Found " + interval.getType());
+                }
+            }
+            // Force the group interval type to match the intervals declared. This is required in order to ensure
+            // the intervals selection are always applied over a properly grouped data independently of the filters present.
+            if (columnGroup != null && columnGroup.getIntervalSize() == null) {
+                columnGroup.setIntervalSize(intervalsType);
+            }
+        }
     }
 
     public List<Interval> getSelectedIntervalList() {

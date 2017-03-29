@@ -139,6 +139,24 @@ public interface DisplayerImagesResources extends ClientBundleWithLookup {
     @Source("metric_plaintext_unselected.png")
     ImageResource METRIC_METRIC_PLAIN_TEXT_unselected();
 
+    @Source("selector_dropdown_selected.png")
+    ImageResource SELECTOR_SELECTOR_DROPDOWN_selected();
+
+    @Source("selector_dropdown_unselected.png")
+    ImageResource SELECTOR_SELECTOR_DROPDOWN_unselected();
+
+    @Source("selector_labels_selected.png")
+    ImageResource SELECTOR_SELECTOR_LABELS_selected();
+
+    @Source("selector_labels_unselected.png")
+    ImageResource SELECTOR_SELECTOR_LABELS_unselected();
+
+    @Source("selector_slider_selected.png")
+    ImageResource SELECTOR_SELECTOR_SLIDER_selected();
+
+    @Source("selector_slider_unselected.png")
+    ImageResource SELECTOR_SELECTOR_SLIDER_unselected();
+
     @Source("table_default.png")
     ImageResource TABLE_default();
 

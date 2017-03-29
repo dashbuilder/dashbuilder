@@ -799,6 +799,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
 
                     String sourceId = gf.getSourceId();
                     String columnId = _getTargetColumnId(gf);
+                    ColumnType columnType = metadata.getColumnType(sourceId);
 
                     DataColumnImpl column = new DataColumnImpl();
                     column.setId(columnId);
@@ -809,19 +810,20 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                     if (cg != null && cg.getSourceId().equals(sourceId) && gf.getFunction() == null) {
                         column.setColumnType(ColumnType.LABEL);
                         column.setColumnGroup(cg);
-                        if (ColumnType.DATE.equals(metadata.getColumnType(sourceId))) {
+                        if (ColumnType.DATE.equals(columnType)) {
                             column.setIntervalType(dateIntervalType != null ? dateIntervalType.toString() : null);
                             column.setMinValue(dateLimits != null ? dateLimits[0] : null);
                             column.setMaxValue(dateLimits != null ? dateLimits[1] : null);
                         }
                     }
-                    // Aggregated column
+                    // Function column
                     else if (gf.getFunction() != null) {
-                        column.setColumnType(ColumnType.NUMBER);
+                        ColumnType resultType = gf.getFunction().getResultType(columnType);
+                        column.setColumnType(resultType);
                     }
                     // Existing Column
                     else {
-                        column.setColumnType(metadata.getColumnType(sourceId));
+                        column.setColumnType(columnType);
                     }
                 }
             }

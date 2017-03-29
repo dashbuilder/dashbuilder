@@ -96,8 +96,6 @@ public class GoogleTableDisplayer extends GoogleDisplayer<GoogleTableDisplayer.V
         DataSetLookupConstraints lookupConstraints = new DataSetLookupConstraints()
                 .setGroupAllowed(true)
                 .setGroupRequired(false)
-                .setMaxColumns(-1)
-                .setMinColumns(1)
                 .setExtraColumnsAllowed(true)
                 .setGroupsTitle(view.getGroupsTitle())
                 .setColumnsTitle(view.getColumnsTitle());

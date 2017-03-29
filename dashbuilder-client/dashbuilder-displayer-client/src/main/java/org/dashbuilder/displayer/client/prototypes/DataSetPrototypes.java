@@ -59,6 +59,10 @@ public class DataSetPrototypes {
         return dataSetManager.getDataSet("continentPopulation");
     }
 
+    public DataSet getPopulationLimits() {
+        return dataSetManager.getDataSet("populationLimits");
+    }
+
     public DataSet getContinentPopulationExt() {
         return dataSetManager.getDataSet("continentPopulationExt");
     }
@@ -100,6 +104,14 @@ public class DataSetPrototypes {
                 .row("South America", 972005000L)
                 .row("Europe", 742452000L)
                 .row("Oceania", 38304000L)
+                .buildDataSet());
+
+        dataSetManager.registerDataSet(DataSetFactory
+                .newDataSetBuilder()
+                .uuid("populationLimits")
+                .number(POPULATION)
+                .number(POPULATION + "_max")
+                .row(38304000L, 4298723000L)
                 .buildDataSet());
 
         dataSetManager.registerDataSet(DataSetFactory

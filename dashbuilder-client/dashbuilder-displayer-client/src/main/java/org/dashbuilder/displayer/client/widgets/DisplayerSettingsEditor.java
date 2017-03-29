@@ -337,6 +337,19 @@ public class DisplayerSettingsEditor implements IsWidget {
                 view.addBooleanProperty(FILTER_NOTIFICATION_ENABLED, displayerSettings.isFilterNotificationEnabled());
             }
         }
+        if (isSupported(SELECTOR_GROUP)) {
+            view.addCategory(SELECTOR_GROUP);
+
+            if (isSupported(SELECTOR_WIDTH)) {
+                view.addTextProperty(SELECTOR_WIDTH, String.valueOf(displayerSettings.getSelectorWidth()), createLongValidator());
+            }
+            if (isSupported(SELECTOR_MULTIPLE)) {
+                view.addBooleanProperty(SELECTOR_MULTIPLE, displayerSettings.isSelectorMultiple());
+            }
+            if (isSupported(SELECTOR_SHOW_INPUTS)) {
+                view.addBooleanProperty(SELECTOR_SHOW_INPUTS, displayerSettings.isSelectorInputsEnabled());
+            }
+        }
         if (isSupported(REFRESH_GROUP)) {
             view.addCategory(REFRESH_GROUP);
 

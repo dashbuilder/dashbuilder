@@ -100,13 +100,14 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
 
     // Aggregate function indexes
 
-    public DataSetFunctionIndex indexAggValue(String columnId, AggregateFunctionType type, Double value, long buildTime) {
-        if (functionIndexes == null) functionIndexes = new HashMap<String, Map<AggregateFunctionType, DataSetFunctionIndex>>();
+    public DataSetFunctionIndex indexAggValue(String columnId, AggregateFunctionType type, Object value, long buildTime) {
+        if (functionIndexes == null) {
+            functionIndexes = new HashMap<>();
+        }
 
         Map<AggregateFunctionType,DataSetFunctionIndex> columnAggFunctions = functionIndexes.get(columnId);
         if (columnAggFunctions == null) {
-            functionIndexes.put(columnId, columnAggFunctions
-                    = new EnumMap<AggregateFunctionType, DataSetFunctionIndex>(AggregateFunctionType.class));
+            functionIndexes.put(columnId, columnAggFunctions = new EnumMap<>(AggregateFunctionType.class));
         }
 
         DataSetFunctionIndex index = new DataSetFunctionIndex(value, buildTime);
@@ -114,7 +115,7 @@ public abstract class DataSetIndexNode extends DataSetIndexElement {
         return index;
     }
 
-    public Double getAggValue(String columnId, AggregateFunctionType type) {
+    public Object getAggValue(String columnId, AggregateFunctionType type) {
         if (functionIndexes == null) return null;
 
         Map<AggregateFunctionType,DataSetFunctionIndex> columnAggFunctions = functionIndexes.get(columnId);
