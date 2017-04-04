@@ -1,3 +1,5 @@
+#!/bin/bash
+
 TARGET_USER=kiereleaseuser
 REMOTE_URL=git@github.com:kiereleaseuser/dashbuilder.git
 DATE=$(date "+%Y-%m-%d")
@@ -11,6 +13,13 @@ git remote add $TARGET_USER $REMOTE_URL
 
 # upgrades the version to next development version of dashbuilder
 sh scripts/release/update-version.sh $newVersion
+
+# change properties via sed as they don't update automatically
+
+sed -i \
+-e "$!N;s/<version.org.uberfire>.*.<\/version.org.uberfire>/<version.org.uberfire>$UF_DEVEL_VERSION<\/version.org.uberfire>/;" \
+-e "s/<version.org.jboss.errai>.*.<\/version.org.jboss.errai>/<version.org.jboss.errai>$ERRAI_DEVEL_VERSION<\/version.org.jboss.errai>/;P;D" \
+pom.xml
 
 # git add and commit the version update changes 
 git add .
