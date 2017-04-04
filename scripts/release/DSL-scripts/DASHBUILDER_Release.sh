@@ -129,8 +129,8 @@ job("DASHB_updateVersion-0.6.x") {
   parameters {
     stringParam("newVersion", "new dashbuilder version", "Edit the new dashbuilder version")
     stringParam("BASE_BRANCH", "base branch", "please select the base branch <br> ******************************************************** <br> ")
-    stringPARAM("UF_DEVEL_VERSION";"uberfire development version";"Edit the uberfire development version")
-    stringPARAM("ERRAI_DEVEL_VERSION";"errai development version";"Edit the errai development version")
+    stringParam("UF_DEVEL_VERSION", "uberfire development version", "Edit the uberfire development version")
+    stringParam("ERRAI_DEVEL_VERSION", "errai development version", "Edit the errai development version")
   }
 
   label("kie-releases")
