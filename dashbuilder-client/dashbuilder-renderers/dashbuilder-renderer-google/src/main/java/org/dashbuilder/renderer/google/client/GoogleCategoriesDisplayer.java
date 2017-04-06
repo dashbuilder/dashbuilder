@@ -49,10 +49,10 @@ public abstract class GoogleCategoriesDisplayer<V extends GoogleCategoriesDispla
     }
 
     public static final String[] COLOR_ARRAY = new String[] {
-            "blue", "red", "orange", "brown", "coral", "aqua", "fuchsia", "gold",
-            "green", "lime", "magenta", "pink", "silver", "yellow"};
+            "#0088CE", "#CC0000", "#EC7A08", "#3F9C35", "#F0AB00", "#703FEC", "#007A87", "#92D400", "#35CAED",
+            "#00659C", "#A30000", "#B35C00", "#B58100", "#6CA100", "#2D7623", "#005C66", "#008BAD", "#40199A"};
 
-    public static final String COLOR_NOT_SELECTED = "grey";
+    public static final String COLOR_NOT_SELECTED = "#8B8D8F";
 
     protected String[] createColorArray() {
         String[] colorArray = new String[dataSet.getRowCount()];
@@ -85,7 +85,6 @@ public abstract class GoogleCategoriesDisplayer<V extends GoogleCategoriesDispla
         getView().setXAxisTitle(displayerSettings.getXAxisTitle());
         getView().setXAxisAngle(displayerSettings.getXAxisLabelsAngle());
         getView().setYAxisTitle(displayerSettings.getYAxisTitle());
-        getView().setColors(createColorArray());
         drawChart();
     }
 
@@ -100,6 +99,7 @@ public abstract class GoogleCategoriesDisplayer<V extends GoogleCategoriesDispla
             getView().nodata();
         } else {
             super.pushDataToView();
+            getView().setColors(createColorArray());
             getView().drawChart();
         }
     }

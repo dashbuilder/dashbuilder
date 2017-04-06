@@ -108,7 +108,7 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
                         .column(AMOUNT, SUM, "sum3")
                         .format(AppConstants.INSTANCE.expensesdb_pie_column3(), "$ #,##0.00")
                         .title(AppConstants.INSTANCE.expensesdb_pie_title())
-                        .width(400).height(250)
+                        .width(250).height(250)
                         .margins(10, 10, 10, 0)
                         .filterOn(true, true, true)
                         .buildSettings());
@@ -120,8 +120,8 @@ public class ExpensesDashboard extends Composite implements GalleryWidget {
                         .column(DEPARTMENT)
                         .column(AMOUNT, SUM).format(AppConstants.INSTANCE.expensesdb_bar_column1(), "$ #,##0.00")
                         .title(AppConstants.INSTANCE.expensesdb_bar_title())
-                        .width(400).height(250)
-                        .margins(10, 50, 50, 20)
+                        .width(350).height(250)
+                        .margins(10, 50, 100, 20)
                         .filterOn(false, true, true)
                         .buildSettings());
 

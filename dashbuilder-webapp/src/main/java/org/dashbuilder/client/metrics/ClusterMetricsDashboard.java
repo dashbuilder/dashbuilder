@@ -194,6 +194,7 @@ public class ClusterMetricsDashboard extends Composite implements GalleryWidget 
                 .tableOrderDefault(COLUMN_SERVER, ASCENDING)
                 .filterOn(true, true, false)
                 .dataset("clusterMetrics")
+                .tableColumnPickerEnabled(false)
                 .filter(COLUMN_TIMESTAMP, timeFrame("now -2second till now"))
                 .group(COLUMN_SERVER)
                 .column(COLUMN_SERVER).format("Server")
