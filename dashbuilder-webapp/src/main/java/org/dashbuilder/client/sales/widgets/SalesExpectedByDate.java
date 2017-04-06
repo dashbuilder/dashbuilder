@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.gallery.GalleryWidget;
 import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
+import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerLocator;
@@ -112,14 +113,14 @@ public class SalesExpectedByDate extends Composite implements GalleryWidget {
         areaChartByDate = displayerLocator.lookupDisplayer(
                 DisplayerSettingsFactory.newAreaChartSettings()
                 .dataset(SALES_OPPS)
-                .group(CREATION_DATE).dynamic(80, MONTH, true)
+                .group(CREATION_DATE).dynamic(20, QUARTER, true)
                 .column(CREATION_DATE, "Creation date")
                 .column(EXPECTED_AMOUNT, SUM).format(AppConstants.INSTANCE.sales_bydate_area_column1(), "$ #,###")
                 .title(AppConstants.INSTANCE.sales_bydate_area_title())
                 .titleVisible(true)
                 .width(700).height(200)
-                .margins(10, 100, 80, 100)
-                .xAxisAngle(45)
+                .margins(10, 80, 80, 50)
+                .xAxisAngle(30)
                 .filterOn(true, true, true)
                 .buildSettings());
 
@@ -159,7 +160,7 @@ public class SalesExpectedByDate extends Composite implements GalleryWidget {
                 .title(AppConstants.INSTANCE.sales_bydate_bar_weekday_title())
                 .titleVisible(true)
                 .width(200).height(150)
-                .margins(0, 20, 80, 0)
+                .margins(0, 20, 80, 10)
                 .filterOn(false, true, true)
                 .buildSettings());
 
@@ -210,6 +211,9 @@ public class SalesExpectedByDate extends Composite implements GalleryWidget {
                         .column(COUNT, "#Opps").format("#Opps", "#,###")
                         .column(AMOUNT, SUM).format(AppConstants.INSTANCE.sales_bydate_selector_total(), "$ #,##0.00")
                         .sort(COUNTRY, ASCENDING)
+                        .subtype(DisplayerSubType.SELECTOR_DROPDOWN)
+                        .width(150)
+                        .multiple(true)
                         .filterOn(false, true, true)
                         .buildSettings());
 
@@ -221,6 +225,9 @@ public class SalesExpectedByDate extends Composite implements GalleryWidget {
                         .column(COUNT, "#Opps").format("#Opps", "#,###")
                         .column(AMOUNT, SUM).format(AppConstants.INSTANCE.sales_bydate_selector_total(), "$ #,##0.00")
                         .sort(SALES_PERSON, ASCENDING)
+                        .subtype(DisplayerSubType.SELECTOR_DROPDOWN)
+                        .width(150)
+                        .multiple(true)
                         .filterOn(false, true, true)
                         .buildSettings());
 
@@ -232,7 +239,10 @@ public class SalesExpectedByDate extends Composite implements GalleryWidget {
                         .column(COUNT, "#Opps").format("#Opps", "#,###")
                         .column(AMOUNT, SUM).format(AppConstants.INSTANCE.sales_bydate_selector_total(), "$ #,##0.00")
                         .sort(CUSTOMER, ASCENDING)
-                        .filterOn(false, true, true)
+                        .subtype(DisplayerSubType.SELECTOR_DROPDOWN)
+                        .width(150)
+                        .multiple(true)
+                            .filterOn(false, true, true)
                         .buildSettings());
 
         // Make the displayers interact among them

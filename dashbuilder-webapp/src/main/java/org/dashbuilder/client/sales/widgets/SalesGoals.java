@@ -87,7 +87,7 @@ public class SalesGoals extends Composite implements GalleryWidget {
         lineChartByDate = displayerLocator.lookupDisplayer(
                 DisplayerSettingsFactory.newLineChartSettings()
                 .dataset(SALES_OPPS)
-                .group(CLOSING_DATE).dynamic(80, MONTH, true)
+                .group(CLOSING_DATE).dynamic(60, MONTH, true)
                 .column(CLOSING_DATE).format(AppConstants.INSTANCE.sales_goals_line_column1())
                 .column(AMOUNT, SUM).format(AppConstants.INSTANCE.sales_goals_line_column2(), "$ #,### K").expression("value/1000")
                 .column(EXPECTED_AMOUNT, SUM).format(AppConstants.INSTANCE.sales_goals_line_column3(), "$ #,### K").expression("value/1000")
