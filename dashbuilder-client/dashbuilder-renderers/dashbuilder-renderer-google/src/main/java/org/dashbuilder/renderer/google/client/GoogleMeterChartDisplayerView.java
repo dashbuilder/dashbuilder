@@ -85,6 +85,9 @@ public class GoogleMeterChartDisplayerView
         options.setYellowTo(meterCritical);
         options.setRedFrom(meterCritical);
         options.setRedTo(meterEnd);
+        options.setGreenColor("#0088CE");
+        options.setYellowColor("#EC7A08");
+        options.setRedColor("#CC0000");
         if (animationOn) {
             Animation anim = Animation.create();
             anim.setDuration(animationDuration);
