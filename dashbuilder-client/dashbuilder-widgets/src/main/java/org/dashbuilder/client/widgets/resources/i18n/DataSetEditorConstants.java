@@ -86,6 +86,7 @@ public interface DataSetEditorConstants extends Messages {
     String sql_table_description();
     String sql_table_placeHolder();
     String sql_source();
+    String sql_source_description();
     String sql_query();
     String sql_query_description();
     String sql_query_placeHolder();

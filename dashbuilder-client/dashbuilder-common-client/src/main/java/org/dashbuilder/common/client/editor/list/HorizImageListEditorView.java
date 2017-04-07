@@ -75,50 +75,47 @@ public class HorizImageListEditorView<T> extends Composite implements ImageListE
         final VerticalPanel panel = new VerticalPanel();
         panel.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
         panel.setHeight("100%");
-        
+
         final Image image = new Image(uri);
         image.setWidth(width);
         image.setHeight(height);
         image.addStyleName(style.image());
         final double alpha = selected ? 1 : 0.2;
         image.getElement().setAttribute("style", "filter: alpha(opacity=5);opacity: " + alpha);
-        image.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(final ClickEvent event) {
-                clickCommand.execute();
-            }
-        });
-        
-        final Popover popover = new Popover();
-        popover.setTitle( heading.asString() );
-        popover.setContent( text.asString() );
-        popover.setWidget(image);
-        popover.setContainer("body");
-        popover.setPlacement(Placement.BOTTOM);
-        popover.setShowDelayMs(1000);
-        
+
+        final Tooltip tooltip = new Tooltip();
+        tooltip.setTitle( text.asString() );
+        tooltip.setWidget(image);
+        tooltip.setContainer("body");
+        tooltip.setPlacement(Placement.BOTTOM);
+        tooltip.setShowDelayMs(1);
+
         final HTML label = new HTML(heading.asString());
         final HorizontalPanel labelPanel = new HorizontalPanel();
         labelPanel.setWidth("100%");
         labelPanel.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         labelPanel.add(label);
 
-        panel.add(popover);
+        panel.add(tooltip);
         panel.add(labelPanel);        
         mainPanel.add(panel);
-        
+
+        image.addClickHandler(e -> {
+            clickCommand.execute();
+            tooltip.hide();
+        });
+
         return this;
     }
 
     @Override
     public ImageListEditorView<T> addHelpContent(final String title, final String content, final Placement placement) {
-        final Popover popover = new Popover(mainPanel);
-        popover.setContainer("body");
-        popover.setShowDelayMs(1000);
-        popover.setPlacement(placement);
-        popover.setTitle(title);
-        popover.setContent(content);
-        helpPanel.add(popover);
+        final Tooltip tooltip = new Tooltip(mainPanel);
+        tooltip.setContainer("body");
+        tooltip.setShowDelayMs(1000);
+        tooltip.setPlacement(placement);
+        tooltip.setTitle(content);
+        helpPanel.add(tooltip);
         return this;
     }
 

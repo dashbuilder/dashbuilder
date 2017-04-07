@@ -87,13 +87,12 @@ public class ValueBoxEditorView<T> extends Composite implements ValueBoxEditor.V
     }
 
     public ValueBoxEditor.View<T> addHelpContent(final String title, final String content, final Placement placement) {
-        final Popover popover = new Popover(widget);
-        popover.setContainer("body");
-        popover.setShowDelayMs(1000);
-        popover.setPlacement(placement);
-        popover.setTitle(title);
-        popover.setContent(content);
-        contents.add(popover);
+        final Tooltip tooltip = new Tooltip(widget);
+        tooltip.setContainer("body");
+        tooltip.setShowDelayMs(1000);
+        tooltip.setPlacement(placement);
+        tooltip.setTitle(content);
+        contents.add(tooltip);
         return this;
     }
 

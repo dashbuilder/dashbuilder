@@ -113,14 +113,14 @@ public class SalesExpectedByDate extends Composite implements GalleryWidget {
         areaChartByDate = displayerLocator.lookupDisplayer(
                 DisplayerSettingsFactory.newAreaChartSettings()
                 .dataset(SALES_OPPS)
-                .group(CREATION_DATE).dynamic(20, QUARTER, true)
+                .group(CREATION_DATE).dynamic(30, QUARTER, true)
                 .column(CREATION_DATE, "Creation date")
                 .column(EXPECTED_AMOUNT, SUM).format(AppConstants.INSTANCE.sales_bydate_area_column1(), "$ #,###")
                 .title(AppConstants.INSTANCE.sales_bydate_area_title())
                 .titleVisible(true)
                 .width(700).height(200)
-                .margins(10, 80, 80, 50)
-                .xAxisAngle(30)
+                .margins(10, 100, 80, 50)
+                .xAxisAngle(45)
                 .filterOn(true, true, true)
                 .buildSettings());
 

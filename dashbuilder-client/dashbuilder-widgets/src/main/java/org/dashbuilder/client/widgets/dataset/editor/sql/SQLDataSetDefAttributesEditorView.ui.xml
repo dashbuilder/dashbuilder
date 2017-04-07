@@ -18,6 +18,10 @@
     .row {
       margin-bottom: 5px;
     }
+    .attr {
+      float: left;
+      margin-right: 5px;
+    }
   </ui:style>
 
   <b:Container fluid="true">
@@ -25,7 +29,10 @@
     <!-- dataSource. -->
     <b:Row addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.sql_datasource}"/>
+        <g:HTML text="{i18n.sql_datasource}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.sql_datasource_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <ddwn:DropDownEditor.View ui:field="dataSource" />
@@ -35,7 +42,10 @@
     <!-- dbSchema. -->
     <b:Row addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.sql_schema}"/>
+        <g:HTML text="{i18n.sql_schema}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.sql_schema_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <editor:ValueBoxEditor.View ui:field="dbSchema">
@@ -49,7 +59,10 @@
     <!-- Source selector (table or query). -->
     <b:Row addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.sql_source}"/>
+        <g:HTML text="{i18n.sql_source}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.sql_source_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <g:FlowPanel>
