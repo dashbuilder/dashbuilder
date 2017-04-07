@@ -19,6 +19,10 @@
       min-height: 20px;
       padding: 20px;
     }
+    .attr {
+      float: left;
+      margin-right: 5px;
+    }
   </ui:style>
   
   <b:Container fluid="true">
@@ -26,7 +30,10 @@
     <!-- Generator class. -->
     <b:Row addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.bean_generator_class}"/>
+        <g:HTML text="{i18n.bean_generator_class}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.bean_generator_class_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <editor:ValueBoxEditor.View ui:field="generatorClassView">
@@ -40,7 +47,10 @@
     <!-- Generator parameters. -->
     <b:Row addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.bean_generator_params}"/>
+        <g:HTML text="{i18n.bean_generator_params}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.bean_generator_params_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <g:FlowPanel addStyleNames="{style.parameterMap}">

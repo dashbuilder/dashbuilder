@@ -118,13 +118,12 @@ public class DropDownImageListEditorView<T> extends Composite implements DropDow
 
     @Override
     public ImageListEditorView<T> addHelpContent(String title, String content, Placement placement) {
-        final Popover popover = new Popover(dropDown);
-        popover.setContainer("body");
-        popover.setShowDelayMs(1000);
-        popover.setPlacement(placement);
-        popover.setTitle(title);
-        popover.setContent(content);
-        helpPanel.add(popover);
+        final Tooltip tooltip = new Tooltip(dropDown);
+        tooltip.setContainer("body");
+        tooltip.setShowDelayMs(1000);
+        tooltip.setPlacement(placement);
+        tooltip.setTitle(content);
+        helpPanel.add(tooltip);
         return this;
     }
 

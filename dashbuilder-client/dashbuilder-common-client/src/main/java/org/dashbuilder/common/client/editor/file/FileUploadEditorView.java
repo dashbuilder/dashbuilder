@@ -102,13 +102,12 @@ public class FileUploadEditorView extends Composite implements FileUploadEditor.
 
     @Override
     public FileUploadEditor.View addHelpContent(final String title, final String content, final Placement placement) {
-        final Popover popover = new Popover(fileUpload);
-        popover.setContainer("body");
-        popover.setShowDelayMs(1000);
-        popover.setPlacement(placement);
-        popover.setTitle(title);
-        popover.setContent(content);
-        formPanel.add(popover);
+        final Tooltip tooltip = new Tooltip(fileUpload);
+        tooltip.setContainer("body");
+        tooltip.setShowDelayMs(1000);
+        tooltip.setPlacement(placement);
+        tooltip.setTitle(content);
+        formPanel.add(tooltip);
         return this;
     }
 
