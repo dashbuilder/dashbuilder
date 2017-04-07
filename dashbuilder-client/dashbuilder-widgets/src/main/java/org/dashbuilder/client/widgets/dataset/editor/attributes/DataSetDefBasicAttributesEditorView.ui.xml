@@ -10,6 +10,10 @@
     .row {
       margin-bottom: 5px;
     }
+    .attr {
+      float: left;
+      margin-right: 5px;
+    }
   </ui:style>
 
   <b:Container fluid="true">
@@ -17,7 +21,10 @@
     <!-- UUID. -->
     <b:Row addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.attributeUUID}"/>
+        <g:HTML text="{i18n.attributeUUID}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.attributeUUID_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <editor:ValueBoxEditor.View ui:field="uuid">
@@ -31,7 +38,10 @@
     <!-- Name. -->
     <b:Row addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.attributeName}"/>
+        <g:HTML text="{i18n.attributeName}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.attributeName_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <editor:ValueBoxEditor.View ui:field="name">

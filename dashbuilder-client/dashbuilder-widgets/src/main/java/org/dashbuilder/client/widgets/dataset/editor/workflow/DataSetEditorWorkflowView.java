@@ -12,6 +12,7 @@ import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Container;
 import org.gwtbootstrap3.client.ui.Popover;
+import org.gwtbootstrap3.client.ui.Tooltip;
 import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.uberfire.mvp.Command;
@@ -56,21 +57,20 @@ public class DataSetEditorWorkflowView extends Composite implements DataSetEdito
         if (isPrimary) {
             button.setType(ButtonType.PRIMARY);
         }
-        button.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(final ClickEvent event) {
-                clickCommand.execute();
-            }
+
+        final Tooltip tooltip = new Tooltip(button);
+        tooltip.setTitle(content);
+        tooltip.setContainer("body");
+        tooltip.setPlacement(Placement.BOTTOM);
+        tooltip.setShowDelayMs(500);
+        tooltip.setHideDelayMs(100);
+
+        buttonsPanel.add(tooltip);
+
+        button.addClickHandler(e -> {
+            tooltip.hide();
+            clickCommand.execute();
         });
-
-        final Popover popover = new Popover(button);
-        popover.setTitle(text);
-        popover.setContent(content);
-        popover.setContainer("body");
-        popover.setPlacement(Placement.RIGHT);
-        popover.setShowDelayMs(1000);
-
-        buttonsPanel.add(popover);
         return this;
     }
 

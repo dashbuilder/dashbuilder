@@ -14,6 +14,10 @@
     .row {
       margin-bottom: 5px;
     }
+    .attr {
+      float: left;
+      margin-right: 5px;
+    }
   </ui:style>
   
   <b:Container fluid="true">
@@ -21,14 +25,17 @@
     <!-- File path. -->
     <b:Row ui:field="filePathRow" addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.csv_filePath}" />
+        <g:HTML text="{i18n.csv_filePath}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.csv_filePath_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <g:HorizontalPanel width="100%">
           <g:cell width="1%" verticalAlignment="MIDDLE">
             <b:Popover container="body" showDelayMs="1000" content="{i18n.csv_URL_description}" title="{i18n.csv_useFileURL}" placement="BOTTOM">
               <b:Button icon="CLOUD_UPLOAD" type="DEFAULT" ui:field="useFileURLButton" size="EXTRA_SMALL" addStyleNames="{style.inline}"/>
-            </b:Popover>    
+            </b:Popover>
           </g:cell>
           <g:cell width="99%" verticalAlignment="MIDDLE">
             <g:IsWidget ui:field="filePathView"/>
@@ -40,30 +47,36 @@
     <!-- File URL. -->
     <b:Row ui:field="fileURLRow" addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.csv_URL}" />
+        <g:HTML text="{i18n.csv_URL}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.csv_URL_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <g:HorizontalPanel width="100%">
           <g:cell width="1%" verticalAlignment="MIDDLE">
             <b:Popover container="body" showDelayMs="1000" content="{i18n.csv_filePath_description}" title="{i18n.csv_useFilePath}" placement="BOTTOM">
               <b:Button icon="FILE" type="DEFAULT" ui:field="useFilePathButton" size="EXTRA_SMALL" addStyleNames="{style.inline}"/>
-            </b:Popover>  
+            </b:Popover>
           </g:cell>
           <g:cell width="99%" verticalAlignment="MIDDLE">
             <editor:ValueBoxEditor.View ui:field="fileURLView">
               <editor:valuebox>
                 <b:TextBox placeholder="{i18n.csv_URL_placeholder}" />
               </editor:valuebox>
-            </editor:ValueBoxEditor.View>  
+            </editor:ValueBoxEditor.View>
           </g:cell>
         </g:HorizontalPanel>
       </b:Column>
     </b:Row>
-    
+
     <!-- Separator character. -->
     <b:Row addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.csv_sepChar}"/>
+        <g:HTML text="{i18n.csv_sepChar}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.csv_sepChar_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <editor:ValueBoxEditor.View ui:field="sepCharView">
@@ -77,7 +90,10 @@
     <!-- Quote character. -->
     <b:Row addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.csv_quoteChar}"/>
+        <g:HTML text="{i18n.csv_quoteChar}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.csv_quoteChar_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <editor:ValueBoxEditor.View ui:field="quoteCharView">
@@ -91,7 +107,10 @@
     <!-- Escape character. -->
     <b:Row addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.csv_escapeChar}"/>
+        <g:HTML text="{i18n.csv_escapeChar}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.csv_escapeChar_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <editor:ValueBoxEditor.View ui:field="escCharView">
@@ -105,7 +124,10 @@
     <!-- Date pattern. -->
     <b:Row addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.csv_datePattern}"/>
+        <g:HTML text="{i18n.csv_datePattern}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.csv_datePattern_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <editor:ValueBoxEditor.View ui:field="datePatternView">
@@ -119,7 +141,10 @@
     <!-- Number pattern. -->
     <b:Row addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.csv_numberPattern}"/>
+        <g:HTML text="{i18n.csv_numberPattern}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.csv_numberPattern_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <editor:ValueBoxEditor.View ui:field="numberPatternView">

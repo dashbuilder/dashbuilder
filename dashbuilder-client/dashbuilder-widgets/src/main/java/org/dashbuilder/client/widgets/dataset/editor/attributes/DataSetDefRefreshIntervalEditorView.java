@@ -12,6 +12,7 @@ import org.dashbuilder.common.client.editor.file.FileUploadEditor;
 import org.gwtbootstrap3.client.ui.IntegerBox;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.Popover;
+import org.gwtbootstrap3.client.ui.Tooltip;
 import org.gwtbootstrap3.client.ui.constants.Placement;
 
 import javax.enterprise.context.Dependent;
@@ -88,13 +89,12 @@ public class DataSetDefRefreshIntervalEditorView extends Composite implements Da
 
     @Override
     public DataSetDefRefreshIntervalEditor.View addHelpContent(final String title, final String content, final Placement placement) {
-        final Popover popover = new Popover(intervalType);
-        popover.setContainer("body");
-        popover.setShowDelayMs(1000);
-        popover.setPlacement(placement);
-        popover.setTitle(title);
-        popover.setContent(content);
-        mainPanel.add(popover);
+        final Tooltip tooltip = new Tooltip(intervalType);
+        tooltip.setContainer("body");
+        tooltip.setShowDelayMs(1000);
+        tooltip.setPlacement(placement);
+        tooltip.setTitle(content);
+        mainPanel.add(tooltip);
         return this;
     }
 }

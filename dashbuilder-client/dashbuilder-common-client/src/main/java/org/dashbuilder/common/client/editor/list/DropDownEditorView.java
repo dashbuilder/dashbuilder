@@ -91,13 +91,12 @@ public class DropDownEditorView extends Composite implements DropDownEditor.View
 
     @Override
     public DropDownEditorView addHelpContent(String title, String content, Placement placement) {
-        final Popover popover = new Popover(dropDown.asWidget());
-        popover.setContainer("body");
-        popover.setShowDelayMs(1000);
-        popover.setPlacement(placement);
-        popover.setTitle(title);
-        popover.setContent(content);
-        helpPanel.add(popover);
+        final Tooltip tooltip = new Tooltip(dropDown.asWidget());
+        tooltip.setContainer("body");
+        tooltip.setShowDelayMs(1000);
+        tooltip.setPlacement(placement);
+        tooltip.setTitle(content);
+        helpPanel.add(tooltip);
         return this;
     }
 
