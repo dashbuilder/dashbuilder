@@ -10,6 +10,10 @@
     .row {
       margin-bottom: 5px;
     }
+    .attr {
+      float: left;
+      margin-right: 5px;
+    }
   </ui:style>
   
   <b:Container fluid="true">
@@ -17,7 +21,10 @@
     <!-- Server URL. -->
     <b:Row addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.el_server_url}"/>
+        <g:HTML text="{i18n.el_server_url}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.el_server_url_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <editor:ValueBoxEditor.View ui:field="serverUrlView">
@@ -31,7 +38,10 @@
     <!-- Cluster name. -->
     <b:Row addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.el_cluster_name}"/>
+        <g:HTML text="{i18n.el_cluster_name}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.el_cluster_name_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <editor:ValueBoxEditor.View ui:field="clusterNameView">
@@ -45,7 +55,10 @@
     <!-- Index. -->
     <b:Row addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.el_index}"/>
+        <g:HTML text="{i18n.el_index}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.el_index_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <editor:ValueBoxEditor.View ui:field="indexView">
@@ -59,7 +72,10 @@
     <!-- Type. -->
     <b:Row addStyleNames="{style.row}">
       <b:Column size="MD_3">
-        <g:HTML text="{i18n.el_type}"/>
+        <g:HTML text="{i18n.el_type}" addStyleNames="{style.attr}"/>
+        <b:Tooltip isAnimated="true" placement="BOTTOM" title="{i18n.el_type_description}">
+          <b:Icon type="QUESTION_CIRCLE" />
+        </b:Tooltip>
       </b:Column>
       <b:Column size="MD_9">
         <editor:ValueBoxEditor.View ui:field="typeView">
