@@ -162,13 +162,6 @@ public class SelectorDropDownDisplayer extends AbstractErraiDisplayer<SelectorDr
 
         clearItems();
 
-        // Add a selector hint according to the filter status
-        if (currentFilter.isEmpty()) {
-            view.showSelectHint(firstColumnName, multipleSelections);
-        } else {
-            view.showResetHint(firstColumnName, multipleSelections);
-        }
-
         // Generate the list entries from the current data set
         for (int i = 0; i < dataSet.getRowCount(); i++) {
 
@@ -199,8 +192,20 @@ public class SelectorDropDownDisplayer extends AbstractErraiDisplayer<SelectorDr
             item.setSelectionIconVisible(multipleSelections);
             item.setOnSelectCommand(() -> onItemSelected(item));
             item.setOnResetCommand(() -> onItemReset(item));
+            if (currentFilter.contains(i)) {
+                item.select();
+            } else {
+                item.reset();
+            }
             view.addItem(item);
             itemCollection.add(item);
+        }
+
+        // Add a selector hint according to the filter status
+        if (currentFilter.isEmpty()) {
+            view.showSelectHint(firstColumnName, multipleSelections);
+        } else {
+            view.showResetHint(firstColumnName, multipleSelections);
         }
     }
 

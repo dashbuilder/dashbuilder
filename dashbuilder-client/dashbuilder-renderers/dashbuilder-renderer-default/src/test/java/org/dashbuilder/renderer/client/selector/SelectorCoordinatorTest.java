@@ -66,6 +66,24 @@ public class SelectorCoordinatorTest extends AbstractDisplayerTest {
             .subtype(DisplayerSubType.SELECTOR_SLIDER)
             .buildSettings();
 
+    DisplayerSettings dropDownDept = DisplayerSettingsFactory.newSelectorSettings()
+            .dataset(EXPENSES)
+            .group(COLUMN_DEPARTMENT)
+            .column(COLUMN_DEPARTMENT)
+            .filterOn(false, true, true)
+            .subtype(DisplayerSubType.SELECTOR_DROPDOWN)
+            .multiple(true)
+            .buildSettings();
+
+    DisplayerSettings dropDownCity = DisplayerSettingsFactory.newSelectorSettings()
+            .dataset(EXPENSES)
+            .group(COLUMN_CITY)
+            .column(COLUMN_CITY)
+            .filterOn(false, true, true)
+            .subtype(DisplayerSubType.SELECTOR_DROPDOWN)
+            .multiple(true)
+            .buildSettings();
+
     DisplayerSettings allRows = DisplayerSettingsFactory.newTableSettings()
             .dataset(EXPENSES)
             .column(COLUMN_DEPARTMENT)
@@ -81,6 +99,8 @@ public class SelectorCoordinatorTest extends AbstractDisplayerTest {
     SelectorLabelSetDisplayer yearLabelDisplayer;
     SelectorSliderDisplayer dateSliderDisplayer;
     SelectorSliderDisplayer numberSliderDisplayer;
+    SelectorDropDownDisplayer deptDropDownDisplayer;
+    SelectorDropDownDisplayer cityDropDownDisplayer;
 
     @Mock
     SelectorLabelSetDisplayer.View labelSetView;
@@ -106,12 +126,22 @@ public class SelectorCoordinatorTest extends AbstractDisplayerTest {
     @Mock
     SyncBeanDef<SelectorLabelItem> labelItemBean;
 
+    @Mock
+    SyncBeanDef<SelectorDropDownItem> dropDownItemBean;
+
+    @Mock
+    SelectorDropDownItem dropDownItem;
+
     public SelectorLabelSetDisplayer createLabelSetDisplayer(DisplayerSettings settings) {
         return initDisplayer(new SelectorLabelSetDisplayer(labelSetView, beanManager), settings);
     }
 
     public SelectorSliderDisplayer createSliderDisplayer(DisplayerSettings settings) {
         return initDisplayer(new SelectorSliderDisplayer(sliderView, dateEditor, dateEditor, numberEditor, numberEditor), settings);
+    }
+
+    public SelectorDropDownDisplayer createDropDownDisplayer(DisplayerSettings settings) {
+        return initDisplayer(new SelectorDropDownDisplayer(mock(SelectorDropDownDisplayerView.class), beanManager), settings);
     }
 
     @Before
@@ -121,13 +151,18 @@ public class SelectorCoordinatorTest extends AbstractDisplayerTest {
         when(beanManager.lookupBean(SelectorLabelItem.class)).thenReturn(labelItemBean);
         when(labelItemBean.newInstance()).thenReturn(labelItem);
 
+        when(beanManager.lookupBean(SelectorDropDownItem.class)).thenReturn(dropDownItemBean);
+        when(dropDownItemBean.newInstance()).thenReturn(dropDownItem);
+
         allRowsDisplayer = createNewDisplayer(allRows);
         dateSliderDisplayer = createSliderDisplayer(dateSlider);
         numberSliderDisplayer = createSliderDisplayer(numberSlider);
         yearLabelDisplayer = createLabelSetDisplayer(yearLabels);
+        cityDropDownDisplayer = createDropDownDisplayer(dropDownCity);
+        deptDropDownDisplayer = createDropDownDisplayer(dropDownDept);
 
         displayerCoordinator = new DisplayerCoordinator(rendererManager);
-        displayerCoordinator.addDisplayers(allRowsDisplayer, dateSliderDisplayer, numberSliderDisplayer, yearLabelDisplayer);
+        displayerCoordinator.addDisplayers(allRowsDisplayer, dateSliderDisplayer, numberSliderDisplayer, yearLabelDisplayer, cityDropDownDisplayer, deptDropDownDisplayer);
         displayerCoordinator.addListener(listener);
     }
 
@@ -135,7 +170,7 @@ public class SelectorCoordinatorTest extends AbstractDisplayerTest {
     public void testDrawAll() {
         displayerCoordinator.drawAll();
 
-        verify(listener, times(4)).onDraw(any(Displayer.class));
+        verify(listener, times(6)).onDraw(any(Displayer.class));
     }
 
     @Test
@@ -153,7 +188,6 @@ public class SelectorCoordinatorTest extends AbstractDisplayerTest {
         verify(listener).onDataLookup(allRowsDisplayer);
         verify(listener).onRedraw(allRowsDisplayer);
     }
-
     @Test
     public void testTwoDateFilters() {
         displayerCoordinator.drawAll();
@@ -194,5 +228,18 @@ public class SelectorCoordinatorTest extends AbstractDisplayerTest {
         assertEquals(dataSet.getRowCount(), 1);
         verify(listener).onDataLookup(allRowsDisplayer);
         verify(listener).onRedraw(allRowsDisplayer);
+    }
+
+    @Test
+    public void testSelectedDropDownItems() {
+        displayerCoordinator.drawAll();
+
+        // Select the first item on both drop down selectors
+        when(dropDownItem.getId()).thenReturn(0);
+        cityDropDownDisplayer.onItemSelected(dropDownItem);
+
+        reset(dropDownItem);
+        deptDropDownDisplayer.onItemSelected(dropDownItem);
+        verify(dropDownItem).select();
     }
 }
