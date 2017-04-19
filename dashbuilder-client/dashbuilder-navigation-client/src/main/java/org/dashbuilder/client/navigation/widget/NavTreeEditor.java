@@ -17,6 +17,7 @@ package org.dashbuilder.client.navigation.widget;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -72,6 +73,7 @@ public class NavTreeEditor implements IsWidget {
     String literalGroup = "Group";
     String literalPerspective = "Perspective";
     String literalDivider = "Divider";
+    Optional<NavItemEditor> currentlyEditedItem = Optional.empty();
 
     @Inject
     public NavTreeEditor(View view, SyncBeanManager beanManager, PerspectiveTreeProvider perspectiveTreeProvider) {
@@ -158,6 +160,7 @@ public class NavTreeEditor implements IsWidget {
         this.navTree = navTree.cloneTree();
         this.navTreeBackup = navTree.cloneTree();
         this.inCreationId = null;
+        this.currentlyEditedItem = Optional.empty();
         _edit(this.navTree);
     }
 
@@ -197,6 +200,7 @@ public class NavTreeEditor implements IsWidget {
         navItemEditor.setOnNewSubgroupCommand(() -> onNewSubGroup((NavGroup) navItem));
         navItemEditor.setOnNewPerspectiveCommand(() -> onNewPerspective((NavGroup) navItem));
         navItemEditor.setOnNewDividerCommand(() -> onNewDivider((NavGroup) navItem));
+        navItemEditor.setOnEditStartedCommand(() -> onEditStarted(navItemEditor));
         navItemEditor.setMoveUpEnabled(!isFirst);
         navItemEditor.setMoveDownEnabled(!isLast);
         navItemEditor.setNewGroupEnabled(newGroupEnabled && subGroupsAllowed);
@@ -265,6 +269,11 @@ public class NavTreeEditor implements IsWidget {
         navTree.setItemDescription(oldItem.getId(), newItem.getDescription());
         navTree.setItemContext(oldItem.getId(), newItem.getContext());
         view.setChangedFlag(true);
+    }
+
+    void onEditStarted(NavItemEditor newEditor) {
+        currentlyEditedItem.ifPresent(oldEditor -> oldEditor.finishEditing());
+        currentlyEditedItem = Optional.of(newEditor);
     }
 
     private void onDeleteItem(NavItem navItem) {
