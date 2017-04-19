@@ -25,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NavItemSelectionModalTest {
@@ -49,11 +50,45 @@ public class NavItemSelectionModalTest {
 
         presenter = new NavItemSelectionModal(view);
         presenter.setOnlyGroups(true);
-        presenter.show(tree.getRootItems(), "A");
     }
 
     @Test
-    public void testInit() {
+    public void testInitDefaultAll() {
+        presenter.setOnlyGroups(false);
+        presenter.show(tree.getRootItems(), null);
+
+        verify(view).init(presenter);
+        verify(view).clearItems();
+        verify(view).setCurrentSelection("H1");
+        verify(view).addItem(eq("A"), any());
+        verify(view).addItem(eq("A>A1"), any());
+        verify(view).addItem(eq("A>A2"), any());
+        verify(view).addItem(eq("A>B"), any());
+        verify(view).addItem(eq("A>B>C"), any());
+        verify(view).show();
+    }
+
+    @Test
+    public void testInitSelectedAll() {
+        presenter.setOnlyGroups(false);
+        presenter.show(tree.getRootItems(), "B");
+
+        verify(view).init(presenter);
+        verify(view).clearItems();
+        verify(view).setCurrentSelection("A>B");
+        verify(view).addItem(eq("H1"), any());
+        verify(view).addItem(eq("A"), any());
+        verify(view).addItem(eq("A>A1"), any());
+        verify(view).addItem(eq("A>A2"), any());
+        verify(view).addItem(eq("A>B>C"), any());
+        verify(view).show();
+    }
+
+    @Test
+    public void testInitDefaultOnlyGroups() {
+        presenter.setOnlyGroups(true);
+        presenter.show(tree.getRootItems(), null);
+
         verify(view).init(presenter);
         verify(view).clearItems();
         verify(view).setCurrentSelection("A");
@@ -63,11 +98,27 @@ public class NavItemSelectionModalTest {
     }
 
     @Test
+    public void testInitSelectedOnlyGroups() {
+        presenter.setOnlyGroups(true);
+        presenter.show(tree.getRootItems(), "B");
+
+        verify(view).init(presenter);
+        verify(view).clearItems();
+        verify(view).setCurrentSelection("A>B");
+        verify(view).addItem(eq("A"), any());
+        verify(view).addItem(eq("A>B>C"), any());
+        verify(view).show();
+    }
+
+    @Test
     public void testSelectItem() {
+        presenter.show(tree.getRootItems(), "A");
+
         reset(view);
         NavItem navItem = tree.getItemById("B");
         presenter.onItemSelected(navItem);
 
+        assertEquals(presenter.getSelectedItem(), navItem);
         verify(view).clearItems();
         verify(view).setCurrentSelection("A>B");
         verify(view).addItem(eq("A"), any());

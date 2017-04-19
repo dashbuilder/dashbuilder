@@ -107,7 +107,7 @@ public class NavItemSelectionModal implements IsWidget {
             }
             // Check if the item is already selected
             String fullPath = calculateFullPath(navItem);
-            if (selectedItemId != null && navItem.getId().equals(selectedItemId)) {
+            if ((selectedItemId == null && selectedItem == null) || (selectedItemId != null && navItem.getId().equals(selectedItemId))) {
                 selectedItem = navItem;
                 view.setCurrentSelection(fullPath);
             } else {
@@ -139,9 +139,11 @@ public class NavItemSelectionModal implements IsWidget {
     }
 
     void onOk() {
-        view.hide();
-        if (onOk != null) {
-            onOk.execute();
+        if (selectedItem != null) {
+            view.hide();
+            if (onOk != null) {
+                onOk.execute();
+            }
         }
     }
 
