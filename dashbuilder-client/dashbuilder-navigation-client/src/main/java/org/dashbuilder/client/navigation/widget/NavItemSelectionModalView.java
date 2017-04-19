@@ -86,7 +86,7 @@ public class NavItemSelectionModalView implements NavItemSelectionModal.View {
                 .build();
 
         modal.addHiddenHandler(hiddenEvent -> {
-            if ( ButtonPressed.CLOSE.equals( buttonPressed ) ) {
+            if (ButtonPressed.CLOSE.equals(buttonPressed)) {
                 presenter.onCancel();
             }
         });
@@ -148,14 +148,14 @@ public class NavItemSelectionModalView implements NavItemSelectionModal.View {
 
     @SinkNative(Event.ONCLICK)
     @EventHandler("okButton")
-    public void okClick( final Event event ) {
+    public void okClick(final Event event) {
         buttonPressed = ButtonPressed.OK;
         presenter.onOk();
     }
 
     @SinkNative(Event.ONCLICK)
     @EventHandler("cancelButton")
-    public void cancelClick( final Event event ) {
+    public void cancelClick(final Event event) {
         buttonPressed = ButtonPressed.CANCEL;
         presenter.onCancel();
     }
