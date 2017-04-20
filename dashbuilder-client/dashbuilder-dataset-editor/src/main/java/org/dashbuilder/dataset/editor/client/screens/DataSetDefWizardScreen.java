@@ -127,7 +127,7 @@ public class DataSetDefWizardScreen {
 
         // First step, provider type selection.
         setCurrentWorkflow(providerTypeWorkflow);
-        providerTypeWorkflow.edit(dataSetDef).providerTypeEdition().showNextButton();
+        providerTypeWorkflow.edit(dataSetDef).providerTypeEdition();
     }
     
     void onProviderTypeSelected(final DataSetProviderTypeWorkflow providerTypeWorkflow) {

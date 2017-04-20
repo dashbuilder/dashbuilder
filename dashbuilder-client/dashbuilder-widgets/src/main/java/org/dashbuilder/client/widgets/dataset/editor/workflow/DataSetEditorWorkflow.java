@@ -248,7 +248,7 @@ public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsW
         }
     }
 
-    final Command testButtonCommand = new Command() {
+    protected final Command testButtonCommand = new Command() {
         @Override
         public void execute() {
             flush();
@@ -256,7 +256,7 @@ public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsW
         }
     };
 
-    final Command saveButtonCommand = new Command() {
+    protected final Command saveButtonCommand = new Command() {
         @Override
         public void execute() {
             flush();
@@ -264,7 +264,7 @@ public abstract class DataSetEditorWorkflow<T extends DataSetDef> implements IsW
         }
     };
 
-    final Command cancelButtonCommand = new Command() {
+    protected final Command cancelButtonCommand = new Command() {
         @Override
         public void execute() {
             cancelRequestEvent.fire(new CancelRequestEvent(DataSetEditorWorkflow.this));

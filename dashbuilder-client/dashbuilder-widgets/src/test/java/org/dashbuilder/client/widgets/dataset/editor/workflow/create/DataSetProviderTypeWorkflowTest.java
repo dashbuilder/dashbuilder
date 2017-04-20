@@ -8,6 +8,7 @@ import org.dashbuilder.client.widgets.dataset.editor.driver.DataSetDefProviderTy
 import org.dashbuilder.client.widgets.dataset.editor.workflow.AbstractDataSetWorkflowTest;
 import org.dashbuilder.client.widgets.dataset.editor.workflow.DataSetEditorWorkflow;
 import org.dashbuilder.client.widgets.dataset.event.CancelRequestEvent;
+import org.dashbuilder.client.widgets.dataset.event.DataSetDefCreationRequestEvent;
 import org.dashbuilder.client.widgets.dataset.event.SaveRequestEvent;
 import org.dashbuilder.client.widgets.dataset.event.TestDataSetRequestEvent;
 import org.dashbuilder.common.client.editor.list.HorizImageListEditor;
@@ -83,7 +84,7 @@ public class DataSetProviderTypeWorkflowTest extends AbstractDataSetWorkflowTest
 
 
     @Test
-    public void testProviderType() {
+    public void testProviderTypeValue() {
         when( provider.getValue() ).thenReturn( DataSetProviderType.SQL );
         assertEquals( DataSetProviderType.SQL, presenter.getProviderType() );
     }
@@ -102,4 +103,11 @@ public class DataSetProviderTypeWorkflowTest extends AbstractDataSetWorkflowTest
         verify( view, times( 0 ) ).clearButtons();
     }
 
+    @Test
+    public void testProviderTypeSelected() {
+        DataSetDefCreationRequestEvent createEvent = new DataSetDefCreationRequestEvent(providerTypeEditor, DataSetProviderType.BEAN);
+        presenter.onProviderTypeSelected(createEvent);
+
+        verify(saveRequestEvent).fire(any());
+    }
 }
