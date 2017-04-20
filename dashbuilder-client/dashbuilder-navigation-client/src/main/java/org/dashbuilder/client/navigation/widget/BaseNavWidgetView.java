@@ -23,6 +23,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.LIElement;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -95,5 +96,21 @@ public abstract class BaseNavWidgetView<T> extends Composite implements NavWidge
     @Override
     public void errorNavItemsEmpty() {
         addItem("error", NavigationConstants.INSTANCE.navItemsEmpty(), null, () -> {});
+    }
+
+    public Element createErrorWidget(String message) {
+        Element div = DOM.createDiv();
+        Element span1 = DOM.createSpan();
+        Element span2 = DOM.createSpan();
+
+        div.setClassName("alert alert-warning");
+        div.getStyle().setWidth(30, Style.Unit.PCT);
+        div.getStyle().setMargin(10, Style.Unit.PX);
+        span1.setClassName("pficon pficon-warning-triangle-o");
+        span2.setInnerText(message);
+
+        div.appendChild(span1);
+        div.appendChild(span2);
+        return div;
     }
 }
