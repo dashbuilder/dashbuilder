@@ -21,8 +21,6 @@ import javax.inject.Inject;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
 import org.jboss.errai.common.client.dom.DOMUtil;
@@ -35,6 +33,10 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 @Templated
 public class NavCarouselWidgetView extends BaseNavWidgetView<NavCarouselWidget>
     implements NavCarouselWidget.View {
+
+    @Inject
+    @DataField
+    Div mainDiv;
 
     @Inject
     @DataField
@@ -60,8 +62,9 @@ public class NavCarouselWidgetView extends BaseNavWidgetView<NavCarouselWidget>
 
     @Override
     public void errorNavItemsEmpty() {
-        super.errorNavItemsEmpty();
-        DOMUtil.removeAllChildren(carouselDiv);
+        DOMUtil.removeAllChildren(mainDiv);
+        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navCarouselDragComponentEmptyError());
+        mainDiv.appendChild((Node) errorEl);
     }
 
     @Override
@@ -74,18 +77,7 @@ public class NavCarouselWidgetView extends BaseNavWidgetView<NavCarouselWidget>
 
     @Override
     public void recursivityError() {
-        Element div = DOM.createDiv();
-        Element span1 = DOM.createSpan();
-        Element span2 = DOM.createSpan();
-
-        div.setClassName("alert alert-warning");
-        div.getStyle().setWidth(30, Style.Unit.PCT);
-        div.getStyle().setMargin(10, Style.Unit.PX);
-        span1.setClassName("pficon pficon-warning-triangle-o");
-        span2.setInnerText(NavigationConstants.INSTANCE.navCarouselDragComponentRecursivityError());
-
-        div.appendChild(span1);
-        div.appendChild(span2);
-        carouselDiv.appendChild((Node) div);
+        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navCarouselDragComponentRecursivityError());
+        carouselDiv.appendChild((Node) errorEl);
     }
 }
