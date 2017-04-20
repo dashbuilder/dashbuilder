@@ -19,8 +19,6 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
 import org.jboss.errai.common.client.dom.DOMUtil;
@@ -34,6 +32,10 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 @Templated
 public class NavTabListWidgetView extends BaseNavWidgetView<NavTabListWidget>
     implements NavTabListWidget.View {
+
+    @Inject
+    @DataField
+    Div mainDiv;
 
     @Inject
     @DataField
@@ -63,8 +65,9 @@ public class NavTabListWidgetView extends BaseNavWidgetView<NavTabListWidget>
 
     @Override
     public void errorNavItemsEmpty() {
-        super.errorNavItemsEmpty();
-        DOMUtil.removeAllChildren(tabContent);
+        DOMUtil.removeAllChildren(mainDiv);
+        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navTabListDragComponentEmptyError());
+        mainDiv.appendChild((Node) errorEl);
     }
 
     @Override
@@ -76,18 +79,7 @@ public class NavTabListWidgetView extends BaseNavWidgetView<NavTabListWidget>
     @Override
     public void recursivityError() {
         DOMUtil.removeAllChildren(tabContent);
-        Element div = DOM.createDiv();
-        Element span1 = DOM.createSpan();
-        Element span2 = DOM.createSpan();
-
-        div.setClassName("alert alert-warning");
-        div.getStyle().setWidth(30, Style.Unit.PCT);
-        div.getStyle().setMargin(10, Style.Unit.PX);
-        span1.setClassName("pficon pficon-warning-triangle-o");
-        span2.setInnerText(NavigationConstants.INSTANCE.navTabListDragComponentRecursivityError());
-
-        div.appendChild(span1);
-        div.appendChild(span2);
-        tabContent.appendChild((Node) div);
+        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navTabListDragComponentRecursivityError());
+        tabContent.appendChild((Node) errorEl);
     }
 }
