@@ -23,7 +23,6 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.LIElement;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
@@ -40,6 +39,10 @@ import org.uberfire.mvp.Command;
 @Templated
 public class NavTilesWidgetView extends BaseNavWidgetView<NavTilesWidget>
     implements NavTilesWidget.View {
+
+    @Inject
+    @DataField
+    Div mainDiv;
 
     @Inject
     @DataField
@@ -68,6 +71,13 @@ public class NavTilesWidgetView extends BaseNavWidgetView<NavTilesWidget>
     }
 
     @Override
+    public void errorNavItemsEmpty() {
+        DOMUtil.removeAllChildren(mainDiv);
+        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navTilesDragComponentEmptyError());
+        mainDiv.appendChild((Node) errorEl);
+    }
+
+    @Override
     public void addTileWidget(IsElement tileWidget) {
         tilesDiv.appendChild(tileWidget.getElement());
     }
@@ -81,19 +91,8 @@ public class NavTilesWidgetView extends BaseNavWidgetView<NavTilesWidget>
     @Override
     public void recursivityError() {
         DOMUtil.removeAllChildren(tilesDiv);
-        Element div = DOM.createDiv();
-        Element span1 = DOM.createSpan();
-        Element span2 = DOM.createSpan();
-
-        div.setClassName("alert alert-warning");
-        div.getStyle().setWidth(30, Style.Unit.PCT);
-        div.getStyle().setMargin(10, Style.Unit.PX);
-        span1.setClassName("pficon pficon-warning-triangle-o");
-        span2.setInnerText(NavigationConstants.INSTANCE.navTilesDragComponentRecursivityError());
-
-        div.appendChild(span1);
-        div.appendChild(span2);
-        tilesDiv.appendChild((Node) div);
+        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navTilesDragComponentRecursivityError());
+        tilesDiv.appendChild((Node) errorEl);
     }
 
     @Override

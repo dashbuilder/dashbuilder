@@ -58,6 +58,12 @@ public interface NavigationConstants extends Messages {
 
     String navCarouselDragComponentHelp();
 
+    String navTabListDragComponentEmptyError();
+
+    String navTilesDragComponentEmptyError();
+
+    String navCarouselDragComponentEmptyError();
+
     String navTabListDragComponentRecursivityError();
 
     String navTilesDragComponentRecursivityError();
