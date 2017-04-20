@@ -3,15 +3,20 @@ package org.dashbuilder.client.widgets.dataset.editor;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import org.dashbuilder.client.widgets.dataset.event.DataSetDefCreationRequestEvent;
 import org.dashbuilder.common.client.editor.list.HorizImageListEditor;
+import org.dashbuilder.common.client.event.ValueChangeEvent;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.uberfire.mocks.EventSourceMock;
 
 import java.util.Collection;
+
+import javax.enterprise.event.Event;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.mockito.Matchers.any;
@@ -22,12 +27,13 @@ public class DataSetDefProviderTypeEditorTest {
     
     @Mock HorizImageListEditor<DataSetProviderType> provider;
     @Mock DataSetDefProviderTypeEditor.View view;
-    
+    @Mock EventSourceMock<DataSetDefCreationRequestEvent> createEvent;
+
     private DataSetDefProviderTypeEditor tested;
     
     @Before
     public void setup() {
-        tested = spy(new DataSetDefProviderTypeEditor(provider, view));
+        tested = spy(new DataSetDefProviderTypeEditor(provider, createEvent, view));
 
         final String typeTitle = "typeTitle";
         doReturn(typeTitle).when(tested).getTypeSelectorTitle(any(DataSetProviderType.class));
@@ -49,7 +55,13 @@ public class DataSetDefProviderTypeEditorTest {
     }
 
     @Test
-    public void testProvider() throws Exception {
+    public void testProviderInstance() throws Exception {
         assertEquals(provider, tested.provider());
+    }
+
+    @Test
+    public void testProviderSelected() throws Exception {
+        tested.onItemClicked(new ValueChangeEvent<>(provider, null, DataSetProviderType.BEAN));
+        verify(createEvent).fire(any());
     }
 }

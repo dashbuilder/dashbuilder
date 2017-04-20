@@ -20,15 +20,20 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import org.dashbuilder.client.widgets.dataset.event.DataSetDefCreationRequestEvent;
 import org.dashbuilder.client.widgets.resources.i18n.DataSetEditorConstants;
 import org.dashbuilder.common.client.editor.list.HorizImageListEditor;
 import org.dashbuilder.common.client.editor.list.ImageListEditor;
+import org.dashbuilder.common.client.event.ValueChangeEvent;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.uberfire.client.mvp.UberView;
+import org.uberfire.commons.validation.PortablePreconditions;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,12 +57,16 @@ public class DataSetDefProviderTypeEditor implements IsWidget, org.dashbuilder.d
     }
     
     HorizImageListEditor<DataSetProviderType> provider;
+    Event<DataSetDefCreationRequestEvent> createEvent;
     public View view;
 
 
     @Inject
-    public DataSetDefProviderTypeEditor(final HorizImageListEditor<DataSetProviderType> provider, final View view) {
+    public DataSetDefProviderTypeEditor(final HorizImageListEditor<DataSetProviderType> provider,
+                                        final Event<DataSetDefCreationRequestEvent> createEvent,
+                                        final View view) {
         this.provider = provider;
+        this.createEvent = createEvent;
         this.view = view;
     }
 
@@ -76,6 +85,12 @@ public class DataSetDefProviderTypeEditor implements IsWidget, org.dashbuilder.d
         return view.asWidget();
     }
 
+    void onItemClicked(@Observes ValueChangeEvent<DataSetProviderType> event) {
+        PortablePreconditions.checkNotNull("ValueChangeEvent<DataSetProviderType>", event);
+        if (event.getContext().equals(provider)) {
+            createEvent.fire(new DataSetDefCreationRequestEvent(this, event.getValue()));
+        }
+    }
     
     /*************************************************************
             ** GWT EDITOR CONTRACT METHODS **
