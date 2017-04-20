@@ -136,7 +136,7 @@ public class DataSetDefWizardScreenTest {
         verify(workflowFactory, times(1)).providerType();
         verify(view, times(1)).setWidget(any(IsWidget.class));
         verify(dataSetProviderTypeWorkflow, times(1)).edit(any(DataSetDef.class));
-        verify(dataSetProviderTypeWorkflow, times(1)).showNextButton();
+        verify(dataSetProviderTypeWorkflow, times(0)).showNextButton();
         verify(dataSetProviderTypeWorkflow, times(0)).showTestButton();
         verify(dataSetProviderTypeWorkflow, times(0)).showBackButton();
     }
