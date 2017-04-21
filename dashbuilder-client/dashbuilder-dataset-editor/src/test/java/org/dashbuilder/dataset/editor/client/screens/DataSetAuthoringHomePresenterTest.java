@@ -2,6 +2,8 @@ package org.dashbuilder.dataset.editor.client.screens;
 
 import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.def.DataSetDef;
+import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
+import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,5 +64,21 @@ public class DataSetAuthoringHomePresenterTest {
     public void testNewDataSet() {
         presenter.newDataSet();
         verify(placeManager, times(1)).goTo("DataSetDefWizard");
+    }
+
+    @Test
+    public void testDataSetRegistered() {
+        int count = presenter.getDataSetCount();
+        presenter.onDataSetDefRegisteredEvent(new DataSetDefRegisteredEvent(null));
+        assertEquals(presenter.getDataSetCount(), count+1);
+        verify(view).setDataSetCount(count+1);
+    }
+
+    @Test
+    public void testDataSetRemoved() {
+        int count = presenter.getDataSetCount();
+        presenter.onDataSetDefRemovedEvent(new DataSetDefRemovedEvent(null));
+        assertEquals(presenter.getDataSetCount(), count-1);
+        verify(view).setDataSetCount(count-1);
     }
 }
