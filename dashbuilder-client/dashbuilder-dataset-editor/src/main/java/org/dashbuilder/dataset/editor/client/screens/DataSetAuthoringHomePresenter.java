@@ -15,19 +15,20 @@
  */
 package org.dashbuilder.dataset.editor.client.screens;
 
-import java.util.List;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.dashbuilder.dataset.client.DataSetClientServices;
-import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.editor.client.resources.i18n.DataSetAuthoringConstants;
-import org.jboss.errai.common.client.api.RemoteCallback;
+import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
+import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.UberView;
+import org.uberfire.commons.validation.PortablePreconditions;
 import org.uberfire.lifecycle.OnStartup;
 
 @WorkbenchScreen(identifier = "DataSetAuthoringHome")
@@ -41,6 +42,7 @@ public class DataSetAuthoringHomePresenter {
     View view;
     PlaceManager placeManager;
     DataSetClientServices clientServices;
+    int dataSetCount = 0;
 
     @Inject
     public DataSetAuthoringHomePresenter(final View view, 
@@ -53,10 +55,9 @@ public class DataSetAuthoringHomePresenter {
 
     @OnStartup
     public void init() {
-        clientServices.getPublicDataSetDefs(new RemoteCallback<List<DataSetDef>>() {
-            @Override public void callback(List<DataSetDef> dataSetDefs) {
-                view.setDataSetCount(dataSetDefs.size());
-            }
+        clientServices.getPublicDataSetDefs(dataSetDefs -> {
+            dataSetCount = dataSetDefs.size();
+            view.setDataSetCount(dataSetCount);
         });
     }
 
@@ -72,5 +73,21 @@ public class DataSetAuthoringHomePresenter {
 
     public void newDataSet() {
         placeManager.goTo("DataSetDefWizard");
+    }
+
+    public int getDataSetCount() {
+        return dataSetCount;
+    }
+
+    // Be aware of data set lifecycle events
+
+    void onDataSetDefRegisteredEvent(@Observes DataSetDefRegisteredEvent event) {
+        PortablePreconditions.checkNotNull("DataSetDefRegisteredEvent", event);
+        view.setDataSetCount(++dataSetCount);
+    }
+
+    void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {
+        PortablePreconditions.checkNotNull("DataSetDefRemovedEvent", event);
+        view.setDataSetCount(--dataSetCount);
     }
 }
