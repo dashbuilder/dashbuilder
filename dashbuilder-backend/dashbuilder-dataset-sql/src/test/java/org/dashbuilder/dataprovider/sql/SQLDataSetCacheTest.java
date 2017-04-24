@@ -19,7 +19,7 @@ import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.DataSetLookupFactory;
 import org.dashbuilder.dataset.def.SQLDataSetDef;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -32,14 +32,14 @@ public class SQLDataSetCacheTest extends SQLDataSetTestBase {
 
     @Test
     public void testDataSetNonCached() throws Exception {
-        // A non-cached (database held) data set never gets outdated
-        _testDataSetCache("noncached", false, 100);
+        // A non cached DB always ask for content to the DB
+        _testDataSetCache("noncached", 100);
     }
 
-    //@Test
+    @Test
     public void testDataSetStaticCache() throws Exception {
-        // A non-synced (static) data set never gets outdated and it always contains the same content
-        _testDataSetCache("static", false, 50);
+        // A cached (static) do not see the changed on the DB
+        _testDataSetCache("static", 50);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class SQLDataSetCacheTest extends SQLDataSetTestBase {
         testDataSetStaticCache();
     }
 
-    protected void _testDataSetCache(String scenario, boolean outdated, int rows) throws Exception {
+    protected void _testDataSetCache(String scenario, int rows) throws Exception {
 
         // Register the data set definition
         URL fileURL = Thread.currentThread().getContextClassLoader().getResource("expenseReports_" + scenario + ".dset");
@@ -58,19 +58,19 @@ public class SQLDataSetCacheTest extends SQLDataSetTestBase {
 
         // Lookup the dataset (forces the caches to initialize)
         dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset("expense_reports_" + scenario)
                         .buildLookup());
 
         // Insert some extra rows into the database
         populateDbTable();
 
-        // Check if the the data set is outdated
-        assertThat(sqlDataSetProvider.isDataSetOutdated(def)).isEqualTo(outdated);
+        // Ensure the data set is now outdated
+        assertThat(sqlDataSetProvider.isDataSetOutdated(def)).isEqualTo(true);
 
         // Lookup the last database content
         DataSet result = dataSetManager.lookupDataSet(
-                DataSetFactory.newDataSetLookupBuilder()
+                DataSetLookupFactory.newDataSetLookupBuilder()
                         .dataset("expense_reports_" + scenario)
                         .buildLookup());
 
