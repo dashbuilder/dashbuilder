@@ -160,15 +160,14 @@
       <groupId>org.jboss.weld</groupId>
       <artifactId>weld-api</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.jboss.weld.servlet</groupId>
       <artifactId>weld-servlet-core</artifactId>
     </dependency>
-    
     <dependency>
-      <groupId>org.jboss.weld</groupId>
-      <artifactId>weld-spi</artifactId>
+      <groupId>org.jboss.weld.se</groupId>
+      <artifactId>weld-se-core</artifactId>
     </dependency>
 
     <!-- UF Security management provider for Tomcat. -->
