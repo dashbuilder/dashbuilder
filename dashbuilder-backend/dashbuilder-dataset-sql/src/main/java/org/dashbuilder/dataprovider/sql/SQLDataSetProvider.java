@@ -651,7 +651,8 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
             DataSource ds = dataSourceLocator.lookup(def);
             conn = ds.getConnection();
             try {
-                metadata = _getDataSetMetadata(def, conn, lookup.testMode());
+                boolean skipCache = lookup != null && lookup.testMode();
+                metadata = _getDataSetMetadata(def, conn, skipCache);
                 int totalRows = metadata.getNumberOfRows();
                 boolean trim = (lookup != null && (lookup.getNumberOfRows() > 0 || lookup.getRowOffset() > 0));
 
