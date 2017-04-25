@@ -117,8 +117,8 @@ public abstract class ImageListEditorTest extends AbstractEditorTest {
         final String title = "title";
         final String content = "content";
         final Placement p = Placement.BOTTOM;
-        presenter.addHelpContent(title, content, p);
-        verify(view, times(1)).addHelpContent(title, content, p);
+        presenter.setHelpContent(title, content, p);
+        verify(view, times(1)).setHelpContent(title, content, p);
         verify(view, times(0)).clearError();
         verify(view, times(0)).showError(any(SafeHtml.class));
         verify(view, times(0)).init(presenter);

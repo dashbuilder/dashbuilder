@@ -66,5 +66,5 @@ public class DataSetDefColumnsFilterEditorView extends Composite implements Data
     public void setMaxHeight(final String maxHeight) {
         tabContent.getElement().getStyle().setProperty("maxHeight", maxHeight);
     } 
-    
+
 }

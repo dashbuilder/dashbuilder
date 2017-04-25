@@ -84,7 +84,7 @@ public class DataSetDefColumnsFilterEditor implements IsWidget, org.dashbuilder.
     public void setMaxHeight(final String maxHeight) {
         view.setMaxHeight(maxHeight);
     }
-    
+
     /*************************************************************
      ** GWT EDITOR CONTRACT METHODS **
      *************************************************************/
