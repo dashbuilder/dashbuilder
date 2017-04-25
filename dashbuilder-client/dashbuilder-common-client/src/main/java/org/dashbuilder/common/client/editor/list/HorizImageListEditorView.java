@@ -109,7 +109,7 @@ public class HorizImageListEditorView<T> extends Composite implements ImageListE
     }
 
     @Override
-    public ImageListEditorView<T> addHelpContent(final String title, final String content, final Placement placement) {
+    public ImageListEditorView<T> setHelpContent(final String title, final String content, final Placement placement) {
         final Tooltip tooltip = new Tooltip(mainPanel);
         tooltip.setContainer("body");
         tooltip.setShowDelayMs(1000);

@@ -16,7 +16,7 @@ public interface ImageListEditorView<T> extends UberView<ImageListEditor<T>> {
     ImageListEditorView<T> add(final SafeUri uri, final String width, final String height,
                 final SafeHtml heading, final SafeHtml text,
                 final boolean selected, final Command clickCommand);
-    ImageListEditorView<T> addHelpContent(final String title, final String content, final Placement placement);
+    ImageListEditorView<T> setHelpContent(final String title, final String content, final Placement placement);
     ImageListEditorView<T> showError(final SafeHtml message);
     ImageListEditorView<T> clearError();
     ImageListEditorView<T> clear();

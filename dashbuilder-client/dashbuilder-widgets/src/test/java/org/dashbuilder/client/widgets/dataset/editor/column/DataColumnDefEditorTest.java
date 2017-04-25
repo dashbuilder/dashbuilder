@@ -38,7 +38,7 @@ public class DataColumnDefEditorTest {
         presenter.init();
         verify(view, times(1)).init(presenter);
         verify(view, times(1)).initWidgets(any(ValueBoxEditor.View.class), any(IsWidget.class));
-        verify(columnType, times(1)).addHelpContent(anyString(), anyString(), any(Placement.class));
+        verify(columnType, times(0)).addHelpContent(anyString(), anyString(), any(Placement.class));
     }
 
     @Test

@@ -25,8 +25,7 @@
     }
     .filterAndColumnsPanelToggleButton {
       position: absolute;
-      left: 30px;
-      margin-top: 10px;
+      left: 25px;
       color: black;
       filter: alpha(opacity=5);
       opacity: 0.5;

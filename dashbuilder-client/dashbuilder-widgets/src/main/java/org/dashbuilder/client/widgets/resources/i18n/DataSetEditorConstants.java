@@ -63,6 +63,10 @@ public interface DataSetEditorConstants extends Messages {
     String attributeId();
     String attributeColumnType();
     String attributeColumnType_description();
+    String labelColumnType_description();
+    String textColumnType_description();
+    String numberColumnType_description();
+    String dateColumnType_description();
     String attributeUUID();
     String attributeUUID_description();
     String attributeName();
