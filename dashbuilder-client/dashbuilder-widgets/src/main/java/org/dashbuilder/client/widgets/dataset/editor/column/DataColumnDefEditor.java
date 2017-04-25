@@ -64,9 +64,6 @@ public class DataColumnDefEditor implements IsWidget, org.dashbuilder.dataset.cl
     public void init() {
         view.init(this);
         view.initWidgets(id.view, columnType.asWidget());
-        columnType.addHelpContent(DataSetEditorConstants.INSTANCE.attributeColumnType(),
-                DataSetEditorConstants.INSTANCE.attributeColumnType_description(),
-                Placement.RIGHT);
     }
 
     @Override

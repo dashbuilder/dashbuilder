@@ -1,8 +1,6 @@
 package org.dashbuilder.common.client.editor.list;
 
 import com.google.gwt.editor.client.EditorError;
-import com.google.gwt.editor.client.HasEditorErrors;
-import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeUri;
@@ -10,7 +8,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.editor.LeafAttributeEditor;
 import org.gwtbootstrap3.client.ui.constants.Placement;
-import org.uberfire.mvp.Command;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -98,8 +95,8 @@ public abstract class ImageListEditor<T> implements IsWidget, LeafAttributeEdito
         this.imageHeight = h;
     }
 
-    public void addHelpContent(final String title, final String content, final Placement placement) {
-        view.addHelpContent(title, content, placement);
+    public void setHelpContent(final String title, final String content, final Placement placement) {
+        view.setHelpContent(title, content, placement);
     }
     
     /*************************************************************
@@ -169,11 +166,8 @@ public abstract class ImageListEditor<T> implements IsWidget, LeafAttributeEdito
         view.clear(); 
         for (final Entry entry : entries) {
             final boolean selected = this.value == null || entry.getValue().equals(this.value);
-            view.add(entry.getUri(), this.imageWidth, this.imageHeight, entry.getHeading(), entry.getText(), selected, new Command() {
-                @Override
-                public void execute() {
-                    ImageListEditor.this.setValue(entry.getValue(), true);
-                }
+            view.add(entry.getUri(), this.imageWidth, this.imageHeight, entry.getHeading(), entry.getText(), selected, () -> {
+                ImageListEditor.this.setValue(entry.getValue(), true);
             });
          }
     }

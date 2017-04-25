@@ -70,6 +70,7 @@ public class DropDownImageListEditorView<T> extends Composite implements DropDow
     @Editor.Ignore
     InlineLabel caret;
 
+    Tooltip currentTypeImageTooltip;
     ImageListEditor<T> presenter;
 
     @Override
@@ -88,28 +89,41 @@ public class DropDownImageListEditorView<T> extends Composite implements DropDow
         dropDownAnchor.add( currentTypeImage );
         dropDownAnchor.add( caret );
         dropDownAnchor.setEnabled( true );
+
+        currentTypeImageTooltip = new Tooltip(dropDown);
+        currentTypeImageTooltip.setContainer("body");
+        currentTypeImageTooltip.setShowDelayMs(100);
+        currentTypeImage.addClickHandler(e -> currentTypeImageTooltip.hide());
+        caret.addClickHandler(e -> currentTypeImageTooltip.hide());
+        helpPanel.add(currentTypeImageTooltip);
     }
 
     @Override
     public ImageListEditorView<T> add(final SafeUri uri, final String width, final String height,
-                                       final SafeHtml heading, final SafeHtml text, 
+                                       final SafeHtml heading, final SafeHtml text,
                                        final boolean selected, final Command clickCommand) {
-        final Image image = new Image(uri);
-        image.setWidth(width);
-        image.setHeight(height);
-        image.addStyleName(style.image());
-        image.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(final ClickEvent event) {
-                clickCommand.execute();
-            }
-        });
-        
+
         if (selected) {
             currentTypeImage.setUrl( uri );
             currentTypeImage.setSize( width, height );
-            currentTypeImage.setAltText( heading.asString() );
-        } else {
+        }
+        else {
+            final Tooltip tooltip = new Tooltip();
+            tooltip.setTitle(text.asString());
+            tooltip.setContainer("body");
+            tooltip.setPlacement(Placement.RIGHT);
+            tooltip.setShowDelayMs(100);
+
+            final Image image = new Image(uri);
+            image.setWidth(width);
+            image.setHeight(height);
+            image.addStyleName(style.image());
+            image.addClickHandler(e -> {
+                tooltip.hide();
+                clickCommand.execute();
+            });
+
+            tooltip.setWidget(image);
             dropDownMenu.add(image);
         }
 
@@ -117,13 +131,10 @@ public class DropDownImageListEditorView<T> extends Composite implements DropDow
     }
 
     @Override
-    public ImageListEditorView<T> addHelpContent(String title, String content, Placement placement) {
-        final Tooltip tooltip = new Tooltip(dropDown);
-        tooltip.setContainer("body");
-        tooltip.setShowDelayMs(1000);
-        tooltip.setPlacement(placement);
-        tooltip.setTitle(content);
-        helpPanel.add(tooltip);
+    public ImageListEditorView<T> setHelpContent(String title, String content, Placement placement) {
+        currentTypeImageTooltip.setPlacement(placement);
+        currentTypeImageTooltip.setTitle(content);
+        currentTypeImageTooltip.hide();
         return this;
     }
 
@@ -157,5 +168,4 @@ public class DropDownImageListEditorView<T> extends Composite implements DropDow
         dropDownAnchor.setEnabled( isDropDown );
         caret.setVisible( isDropDown );
     }
-    
 }
