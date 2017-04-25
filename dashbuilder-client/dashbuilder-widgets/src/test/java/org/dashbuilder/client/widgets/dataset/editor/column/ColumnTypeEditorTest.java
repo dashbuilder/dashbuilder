@@ -44,7 +44,7 @@ public class ColumnTypeEditorTest {
         presenter.init();
         verify(columnType, times(1)).setImageSize(anyString(), anyString());
         verify(columnType, times(1)).setEntries(any(Collection.class));
-        verify(columnType, times(0)).addHelpContent(anyString(), anyString(), any(Placement.class));
+        verify(columnType, times(0)).setHelpContent(anyString(), anyString(), any(Placement.class));
         verify(columnType, times(0)).isEditMode(anyBoolean());
     }
 
@@ -53,7 +53,7 @@ public class ColumnTypeEditorTest {
     public void testAddHelpContent() {
         final Placement p = mock(Placement.class);
         presenter.addHelpContent("t1", "c1", p);
-        verify(columnType, times(1)).addHelpContent("t1", "c1", p);
+        verify(columnType, times(1)).setHelpContent("t1", "c1", p);
         verify(columnType, times(0)).setImageSize(anyString(), anyString());
         verify(columnType, times(0)).setEntries(any(Collection.class));
         verify(columnType, times(0)).isEditMode(anyBoolean());
@@ -68,7 +68,7 @@ public class ColumnTypeEditorTest {
     public void testEnableEditMode() {
         presenter.isEditMode(true);
         verify(columnType, times(1)).isEditMode(true);
-        verify(columnType, times(0)).addHelpContent(anyString(), anyString(), any(Placement.class));
+        verify(columnType, times(0)).setHelpContent(anyString(), anyString(), any(Placement.class));
         verify(columnType, times(0)).setImageSize(anyString(), anyString());
         verify(columnType, times(0)).setEntries(any(Collection.class));
     }
@@ -77,7 +77,7 @@ public class ColumnTypeEditorTest {
     public void testDisableEditMode() {
         presenter.isEditMode(false);
         verify(columnType, times(1)).isEditMode(false);
-        verify(columnType, times(0)).addHelpContent(anyString(), anyString(), any(Placement.class));
+        verify(columnType, times(0)).setHelpContent(anyString(), anyString(), any(Placement.class));
         verify(columnType, times(0)).setImageSize(anyString(), anyString());
         verify(columnType, times(0)).setEntries(any(Collection.class));
     }
@@ -90,7 +90,7 @@ public class ColumnTypeEditorTest {
         presenter.setValue(col1);
         verify(columnType, times(1)).setEntries(any(Collection.class));
         verify(columnType, times(0)).isEditMode(anyBoolean());
-        verify(columnType, times(0)).addHelpContent(anyString(), anyString(), any(Placement.class));
+        verify(columnType, times(1)).setHelpContent(anyString(), anyString(), any(Placement.class));
         verify(columnType, times(0)).setImageSize(anyString(), anyString());
     }
 
@@ -100,7 +100,7 @@ public class ColumnTypeEditorTest {
         presenter.setOriginalColumnType(type);
         verify(columnType, times(1)).setEntries(any(Collection.class));
         verify(columnType, times(0)).isEditMode(anyBoolean());
-        verify(columnType, times(0)).addHelpContent(anyString(), anyString(), any(Placement.class));
+        verify(columnType, times(0)).setHelpContent(anyString(), anyString(), any(Placement.class));
         verify(columnType, times(0)).setImageSize(anyString(), anyString());
     }
 

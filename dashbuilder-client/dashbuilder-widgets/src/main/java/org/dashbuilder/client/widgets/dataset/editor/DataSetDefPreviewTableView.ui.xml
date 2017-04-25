@@ -3,10 +3,13 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
   <ui:style>
-    
+    .mainPanel {
+      margin-top: 10px;
+      width: 100%;
+    }
   </ui:style>
 
-  <g:FlowPanel ui:field="mainPanel" width="100%">
+  <g:FlowPanel ui:field="mainPanel" addStyleNames="{style.mainPanel}">
     
   </g:FlowPanel>
   
