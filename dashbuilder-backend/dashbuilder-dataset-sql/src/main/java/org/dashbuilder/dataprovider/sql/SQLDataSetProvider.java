@@ -1204,13 +1204,16 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
         protected Column _createColumn(ColumnGroup cg) {
             String sourceId = cg.getSourceId();
             String dbColumnId = _columnFromMetadata(metadata, sourceId);
-            ColumnType type = metadata.getColumnType(dbColumnId);
+            ColumnType columnType = metadata.getColumnType(dbColumnId);
 
-            if (ColumnType.DATE.equals(type)) {
-                DateIntervalType size = calculateDateInterval(cg);
-                return SQLFactory.column(dbColumnId, cg.getStrategy(), size);
+            if (ColumnType.DATE.equals(columnType)) {
+                DateIntervalType intervalType = calculateDateInterval(cg);
+                if (DateIntervalType.DAY_OF_WEEK.equals(intervalType)) {
+                    throw new IllegalArgumentException("Group by DAY_OF_WEEK not supported in SQL data sets");
+                }
+                return SQLFactory.column(dbColumnId, cg.getStrategy(), intervalType);
             }
-            if (ColumnType.TEXT.equals(type)) {
+            if (ColumnType.TEXT.equals(columnType)) {
                 throw new IllegalArgumentException("Group by text '" + sourceId + NOT_SUPPORTED);
             }
             return SQLFactory.column(dbColumnId);
