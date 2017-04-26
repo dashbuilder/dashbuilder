@@ -214,7 +214,7 @@ public class DataSetGroupTest {
 
 
     @Test
-    public void testGroupByDayDynamic() throws Exception {
+    public void testGroupByDayOfWeekDynamic() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
@@ -400,7 +400,7 @@ public class DataSetGroupTest {
     }
 
     @Test
-    public void testGroupByWeek() throws Exception {
+    public void testGroupByDayOfWeekFixed() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
