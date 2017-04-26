@@ -83,8 +83,8 @@ public class DataSetSubsystemCDITest extends BaseCDITest {
         dataSetGroupTest.testGroupByYearDynamic();
         dataSetGroupTest.testGroupByMonthDynamic();
         dataSetGroupTest.testGroupByMonthDynamicNonEmpty();
-        dataSetGroupTest.testGroupByDayDynamic();
-        dataSetGroupTest.testGroupByWeek();
+        dataSetGroupTest.testGroupByDayOfWeekDynamic();
+        dataSetGroupTest.testGroupByDayOfWeekFixed();
         dataSetGroupTest.testGroupByMonthReverse();
         dataSetGroupTest.testGroupByMonthFixed();
         dataSetGroupTest.testGroupByMonthFirstMonth();

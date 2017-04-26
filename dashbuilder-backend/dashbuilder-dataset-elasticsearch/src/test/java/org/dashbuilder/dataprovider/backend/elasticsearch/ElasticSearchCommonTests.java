@@ -40,8 +40,8 @@ public class ElasticSearchCommonTests extends ElasticSearchDataSetTestBase {
         subTest.testGroupByYearDynamic();
         subTest.testGroupByMonthDynamic();
         subTest.testGroupByMonthDynamicNonEmpty();
-        subTest.testGroupByDayDynamic();
-        subTest.testGroupByWeek();
+        subTest.testGroupByDayOfWeekDynamic();
+        subTest.testGroupByDayOfWeekFixed();
         subTest.testGroupByMonthReverse();
         subTest.testGroupByMonthFixed();
         subTest.testGroupByMonthFirstMonth();
