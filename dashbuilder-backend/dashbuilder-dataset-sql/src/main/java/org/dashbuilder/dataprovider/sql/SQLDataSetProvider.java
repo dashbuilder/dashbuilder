@@ -712,7 +712,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                             if (groupColumnAdded) {
                                 GroupFunction gf = new GroupFunction(cg.getSourceId(), cg.getColumnId(), null);
                                 groupOp.getGroupFunctions().add(gf);
-                                _query.columns(_createColumn(gf));
+                                _query.columns(_createColumn(cg));
                             }
                         }
                     }
@@ -740,8 +740,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                     ResultSet _results = logSQL(_query).fetch();
                     List<DataColumn> columns = calculateColumns(groupOp);
                     DataSet dataSet = _buildDataSet(columns, _results);
-                    if (trim) {
-                        totalRows = lookup.getNumberOfRows() > dataSet.getRowCount() ? dataSet.getRowCount() : totalRows;
+                    if (trim && postProcessingOps.isEmpty()) {
                         dataSet.setRowCountNonTrimmed(totalRows);
                     }
                     return dataSet;
@@ -895,15 +894,6 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
             if (isDynamicDateGroup(groupOp)) {
                 ColumnGroup cg = groupOp.getColumnGroup();
                 _query.orderBy(_createColumn(cg).asc());
-
-                // If the group column is in the resulting data set then ensure the data set order
-                GroupFunction gf = groupOp.getGroupFunction(cg.getSourceId());
-                if (gf != null) {
-                    DataSetSort sortOp = new DataSetSort();
-                    String targetId = _getTargetColumnId(gf);
-                    sortOp.addSortColumn(new ColumnSort(targetId, SortOrder.ASCENDING));
-                    postProcessingOps.add(sortOp);
-                }
             }
         }
 
@@ -1134,7 +1124,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
             if (dateIncludeEmptyIntervals)  {
                 IntervalBuilder intervalBuilder = intervalBuilderLocator.lookup(ColumnType.DATE, dateGroupColumn.getColumnGroup().getStrategy());
                 IntervalList intervalList = intervalBuilder.build(dateGroupColumn);
-                if (intervalList.size() > dataSet.getRowCount()) {
+                if (intervalList.size() > dataSet.getRowCount() && dataSet.getRowCountNonTrimmed() < 0) {
                     List values = dateGroupColumn.getValues();
                     int valueIdx = 0;
 

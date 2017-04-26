@@ -120,7 +120,7 @@ public class DataSetGroupTest {
     }
 
     @Test
-    public void testGroupByExludeColumn() throws Exception {
+    public void testGroupByExcludeLabelColumn() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetLookupFactory.newDataSetLookupBuilder()
                 .dataset(EXPENSE_REPORTS)
@@ -138,6 +138,34 @@ public class DataSetGroupTest {
         assertThat(result.getValueAt(2,1)).isEqualTo(8d);
         assertThat(result.getValueAt(3,1)).isEqualTo(11d);
         assertThat(result.getValueAt(4,1)).isEqualTo(19d);
+    }
+
+    @Test
+    public void testGroupByExcludeDateColumn() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                .dataset(EXPENSE_REPORTS)
+                .group(COLUMN_DATE)
+                .column(COLUMN_EMPLOYEE)
+                .column(COUNT, "Occurrences")
+                .sort("Occurrences", SortOrder.ASCENDING)
+                .buildLookup());
+
+        assertThat(result.getValueAt(0,1)).isEqualTo(11d);
+        assertThat(result.getValueAt(1,1)).isEqualTo(11d);
+        assertThat(result.getValueAt(2,1)).isEqualTo(13d);
+        assertThat(result.getValueAt(3,1)).isEqualTo(15d);
+
+        // Must also work without an explicit sort
+        result = dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                        .dataset(EXPENSE_REPORTS)
+                        .group(COLUMN_DATE)
+                        .column(COLUMN_EMPLOYEE)
+                        .column(COUNT, "Occurrences")
+                        .buildLookup());
+
+        assertThat(result.getRowCount()).isEqualTo(4);
     }
 
     @Test
@@ -254,6 +282,32 @@ public class DataSetGroupTest {
                 {"10", "3.00", "1,366.40"},
                 {"11", "3.00", "1,443.75"},
                 {"12", "4.00", "2,520.88"}
+        }, 0);
+    }
+
+    @Test
+    public void testGroupByFixedTrim() throws Exception {
+        DataSet result = dataSetManager.lookupDataSet(
+                DataSetLookupFactory.newDataSetLookupBuilder()
+                .dataset(EXPENSE_REPORTS)
+                .filter(COLUMN_ID, FilterFactory.equalsTo(1))
+                .group(COLUMN_DATE).fixed(MONTH, true)
+                .column(COLUMN_DATE, "Period")
+                .column(COUNT, "Occurrences")
+                .column(COLUMN_AMOUNT, SUM, "totalAmount")
+                .rowNumber(8)
+                .buildLookup());
+
+        assertThat(result.getRowCountNonTrimmed()).isEqualTo(12);
+        assertDataSetValues(result, dataSetFormatter, new String[][]{
+                {"1", "0.00", "0.00"},
+                {"2", "0.00", "0.00"},
+                {"3", "0.00", "0.00"},
+                {"4", "0.00", "0.00"},
+                {"5", "0.00", "0.00"},
+                {"6", "0.00", "0.00"},
+                {"7", "0.00", "0.00"},
+                {"8", "0.00", "0.00"},
         }, 0);
     }
 
