@@ -165,6 +165,8 @@ public interface DataSet {
     /**
      * If this data set is the result of a trim operation this method will return
      * the total number of rows existing before trim.
+     *
+     * @return The total number of existing rows before any trim operation (if any) or -1 if no trim operation has been carried out.
      */
     int getRowCountNonTrimmed();
 

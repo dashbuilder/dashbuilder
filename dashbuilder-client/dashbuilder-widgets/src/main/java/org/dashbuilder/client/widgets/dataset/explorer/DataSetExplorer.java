@@ -85,6 +85,7 @@ public class DataSetExplorer implements IsWidget {
             if (dataSetDefs != null && !dataSetDefs.isEmpty()) {
                 dataSetDefs.stream()
                         .filter(DataSetExplorer.this::isSupported)
+                        .sorted((o1, o2) -> o1.getName().compareTo(o2.getName()))
                         .forEach(DataSetExplorer.this::addDataSetDef);
             }
         });
@@ -122,7 +123,7 @@ public class DataSetExplorer implements IsWidget {
         }
         return null;
     }
-    
+
     private void clear() {
         panels.clear();
         view.clear();
@@ -134,9 +135,9 @@ public class DataSetExplorer implements IsWidget {
         checkNotNull("event", event);
 
         final DataSetDef def = event.getDataSetDef();
-        if (def != null && def.isPublic()) {
-            // GWT.log("Data Set Explorer - Data Set Def Registered");
-            addDataSetDef(def);
+        if (def != null && def.isPublic() && isSupported(def)) {
+            // Reload the whole data set panels list.
+            show();
         }
     }
 
@@ -145,7 +146,6 @@ public class DataSetExplorer implements IsWidget {
 
         final DataSetDef def = event.getNewDataSetDef();
         if (def != null && def.isPublic()) {
-            // GWT.log("Data Set Explorer - Data Set Def Modified");
             updateDataSetDef(def);
         }
     }
@@ -154,7 +154,6 @@ public class DataSetExplorer implements IsWidget {
         checkNotNull("event", event);
         final DataSetDef def = event.getDataSetDef();
         if (def != null && def.isPublic()) {
-            // GWT.log("Data Set Explorer - Data Set Def Removed");
             // Reload the whole data set panels list.
             show();
         }
