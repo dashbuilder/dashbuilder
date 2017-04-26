@@ -113,9 +113,9 @@ public class DataSetExplorerTest {
         presenter.onDataSetDefRegisteredEvent(event);
         assertEquals(1, presenter.panels.size());
         assertEquals(dataSetPanel, presenter.panels.get(0));
-        verify(view, times(0)).clear();
-        verify(view, times(1)).addPanel(any(DataSetPanel.View.class));
-        verify(dataSetPanel, times(1)).show(dataSetDef, "dataSetsExplorerPanelGroup");
+        verify(view).clear();
+        verify(view).addPanel(any(DataSetPanel.View.class));
+        verify(dataSetPanel).show(dataSetDef, "dataSetsExplorerPanelGroup");
     }
 
     @Test
