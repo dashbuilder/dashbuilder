@@ -213,8 +213,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         subTest.testGroupByYearDynamic();
         subTest.testGroupByMonthDynamic();
         subTest.testGroupByMonthDynamicNonEmpty();
-        subTest.testGroupByDayDynamic();
-        // TODO: Not supported by DB subTest.testGroupByWeek();
+        subTest.testGroupByDayOfWeekDynamic();
         subTest.testGroupByMonthReverse();
         subTest.testGroupByMonthFixed();
         subTest.testGroupByMonthFirstMonth();
@@ -224,6 +223,13 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         subTest.testGroupByDateOneDay();
         subTest.testGroupAndCountSameColumn();
         subTest.testGroupNumberAsLabel();
+    }
+
+    @Test(expected = Exception.class)
+    public void testGroupByDayOfWeekFixed() throws Exception {
+        // Not supported in SQL data sets
+        DataSetGroupTest subTest = new DataSetGroupTest();
+        subTest.testGroupByDayOfWeekFixed();
     }
 
     @Test
