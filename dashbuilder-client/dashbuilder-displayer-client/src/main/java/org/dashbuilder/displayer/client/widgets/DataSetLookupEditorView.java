@@ -184,6 +184,19 @@ public class DataSetLookupEditorView extends Composite
     @Override
     public void setGroupByDateEnabled(boolean enabled) {
         groupDetailsIcon.setVisible(enabled);
+        if (!enabled) {
+            collapseGroupDatePanel();
+        }
+    }
+
+    public void collapseGroupDatePanel() {
+        groupDatePanel.setVisible(false);
+        groupDetailsIcon.setType(IconType.ARROW_DOWN);
+    }
+
+    public void expandGroupDatePanel() {
+        groupDatePanel.setVisible(true);
+        groupDetailsIcon.setType(IconType.ARROW_UP);
     }
 
     @Override
@@ -265,11 +278,9 @@ public class DataSetLookupEditorView extends Composite
 
     public void expandCollapseGroupDetails(ClickEvent event) {
         if (groupDatePanel.isVisible()) {
-            groupDatePanel.setVisible(false);
-            groupDetailsIcon.setType(IconType.ARROW_DOWN);
+            collapseGroupDatePanel();
         } else {
-            groupDatePanel.setVisible(true);
-            groupDetailsIcon.setType(IconType.ARROW_UP);
+            expandGroupDatePanel();
         }
     }
 }
