@@ -94,6 +94,14 @@
       <modules>
         <module>dashbuilder-distros</module>
       </modules>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.commonjava.maven.plugins</groupId>
+            <artifactId>project-sources-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 
@@ -367,6 +375,20 @@
                   </manifestEntries>
                 </archive>
               </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.commonjava.maven.plugins</groupId>
+          <artifactId>project-sources-maven-plugin</artifactId>
+          <version>1.0</version>
+          <executions>
+            <execution>
+              <id>project-sources-archive</id>
+              <phase>initialize</phase>
+              <goals>
+                <goal>archive</goal>
+              </goals>
             </execution>
           </executions>
         </plugin>
