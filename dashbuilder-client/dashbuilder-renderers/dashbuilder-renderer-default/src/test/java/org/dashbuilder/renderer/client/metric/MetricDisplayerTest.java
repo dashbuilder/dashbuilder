@@ -42,6 +42,15 @@ public class MetricDisplayerTest extends AbstractDisplayerTest {
             "  <span>${value}</span>\n" +
             "</div>";
 
+    public static final String JS_TEMPLATE = "if (${isFilterEnabled}) {  \n" +
+            "  var filterOn = ${isFilterOn};\n" +
+            "  ${this}.style.cursor=\"pointer\";\n" +
+            "  ${this}.onclick = function() {\n" +
+            "    filterOn = !filterOn;\n" +
+            "    ${this}.style.backgroundColor = filterOn ? \"lightblue\" : \"${bgColor}\";\n" +
+            "    ${doFilter};\n" +
+            "  };\n" +
+            "}";
 
     @Mock
     MetricDisplayer.View view;
@@ -185,5 +194,55 @@ public class MetricDisplayerTest extends AbstractDisplayerTest {
         presenter.filterReset();
 
         verify(listener).onFilterReset(eq(presenter), any(DataSetFilter.class));
+    }
+
+    @Test
+    public void testFilterOn() {
+        DisplayerSettings empty = DisplayerSettingsFactory.newMetricSettings()
+                .dataset(EXPENSES)
+                .filter(COLUMN_ID, FilterFactory.isNull())
+                .column(COLUMN_AMOUNT)
+                .filterOn(false, true, true)
+                .jsTemplate(JS_TEMPLATE)
+                .buildSettings();
+
+        MetricDisplayer presenter = createMetricDisplayer(empty);
+        presenter.setFilterOn(true);
+        presenter.draw();
+        assertEquals(presenter.isFilterOn(), true);
+        verify(view).eval("if (true) {  \n" +
+                "  var filterOn = true;\n" +
+                "  document.getElementById(\"test_this\").style.cursor=\"pointer\";\n" +
+                "  document.getElementById(\"test_this\").onclick = function() {\n" +
+                "    filterOn = !filterOn;\n" +
+                "    document.getElementById(\"test_this\").style.backgroundColor = filterOn ? \"lightblue\" : \"white\";\n" +
+                "    window.metricDisplayerDoFilter('test');\n" +
+                "  };\n" +
+                "}");
+    }
+
+    @Test
+    public void testFilterOff() {
+        DisplayerSettings empty = DisplayerSettingsFactory.newMetricSettings()
+                .dataset(EXPENSES)
+                .filter(COLUMN_ID, FilterFactory.isNull())
+                .column(COLUMN_AMOUNT)
+                .filterOn(false, true, true)
+                .jsTemplate(JS_TEMPLATE)
+                .buildSettings();
+
+        MetricDisplayer presenter = createMetricDisplayer(empty);
+        presenter.setFilterOn(false);
+        presenter.draw();
+        assertEquals(presenter.isFilterOn(), false);
+        verify(view).eval("if (true) {  \n" +
+                "  var filterOn = false;\n" +
+                "  document.getElementById(\"test_this\").style.cursor=\"pointer\";\n" +
+                "  document.getElementById(\"test_this\").onclick = function() {\n" +
+                "    filterOn = !filterOn;\n" +
+                "    document.getElementById(\"test_this\").style.backgroundColor = filterOn ? \"lightblue\" : \"white\";\n" +
+                "    window.metricDisplayerDoFilter('test');\n" +
+                "  };\n" +
+                "}");
     }
 }
