@@ -216,6 +216,10 @@ public class MetricDisplayer extends AbstractGwtDisplayer<MetricDisplayer.View>
         return filterOn;
     }
 
+    public void setFilterOn(boolean on) {
+        filterOn = on;
+    }
+
     public boolean isFilterEnabled() {
         return displayerSettings.isFilterEnabled() && fetchFilter() != null;
     }
