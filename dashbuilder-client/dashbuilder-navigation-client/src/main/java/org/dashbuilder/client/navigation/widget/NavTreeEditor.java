@@ -200,7 +200,8 @@ public class NavTreeEditor implements IsWidget {
         navItemEditor.setOnNewSubgroupCommand(() -> onNewSubGroup((NavGroup) navItem));
         navItemEditor.setOnNewPerspectiveCommand(() -> onNewPerspective((NavGroup) navItem));
         navItemEditor.setOnNewDividerCommand(() -> onNewDivider((NavGroup) navItem));
-        navItemEditor.setOnEditStartedCommand(() -> onEditStarted(navItemEditor));
+        navItemEditor.setOnEditStartedCommand(() -> onItemEditStarted(navItemEditor));
+        navItemEditor.setOnEditFinishedCommand(() -> onItemEditFinished());
         navItemEditor.setMoveUpEnabled(!isFirst);
         navItemEditor.setMoveDownEnabled(!isLast);
         navItemEditor.setNewGroupEnabled(newGroupEnabled && subGroupsAllowed);
@@ -271,9 +272,13 @@ public class NavTreeEditor implements IsWidget {
         view.setChangedFlag(true);
     }
 
-    void onEditStarted(NavItemEditor newEditor) {
+    void onItemEditStarted(NavItemEditor newEditor) {
         currentlyEditedItem.ifPresent(oldEditor -> oldEditor.finishEditing());
         currentlyEditedItem = Optional.of(newEditor);
+    }
+
+    void onItemEditFinished() {
+        currentlyEditedItem = Optional.empty();
     }
 
     private void onDeleteItem(NavItem navItem) {
