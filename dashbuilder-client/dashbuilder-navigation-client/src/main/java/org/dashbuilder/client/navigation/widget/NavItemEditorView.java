@@ -24,6 +24,8 @@ import com.google.gwt.dom.client.LIElement;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
@@ -216,6 +218,13 @@ public class NavItemEditorView extends Composite
     @EventHandler("itemNameInput")
     public void onItemNameChanged(ChangeEvent event) {
         presenter.onItemNameChanged(itemNameInput.getValue());
+    }
+
+    @EventHandler("itemNameInput")
+    public void onEnterPressedAfterEditingName(KeyPressEvent keyEvent) {
+        if (keyEvent.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
+            presenter.finishEditing();
+        }
     }
 }
 
