@@ -109,6 +109,7 @@ public class NavItemEditor implements IsWidget {
     Command onNewPerspectiveCommand;
     Command onNewDividerCommand;
     Command onEditStartedCommand;
+    Command onEditFinishedCommand;
     String literalGroup = "Group";
     String literalPerspective = "Perspective";
     String literalDivider = "Divider";
@@ -218,6 +219,10 @@ public class NavItemEditor implements IsWidget {
 
     public void setOnEditStartedCommand(Command onEditStartedCommand) {
         this.onEditStartedCommand = onEditStartedCommand;
+    }
+
+    public void setOnEditFinishedCommand(Command onEditFinishedCommand) {
+        this.onEditFinishedCommand = onEditFinishedCommand;
     }
 
     public NavItem getNavItem() {
@@ -449,13 +454,20 @@ public class NavItemEditor implements IsWidget {
         }
     }
 
-    public void onEditStarted() {
+    private void onEditStarted() {
         if (onEditStartedCommand != null) {
             onEditStartedCommand.execute();
         }
     }
 
+    private void onEditFinished() {
+        if (onEditFinishedCommand != null) {
+            onEditFinishedCommand.execute();
+        }
+    }
+
     public void finishEditing() {
         view.finishItemEdition();
+        onEditFinished();
     }
 }
