@@ -44,7 +44,6 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.DateFormatConverter;
@@ -53,8 +52,8 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.dashbuilder.DataSetCore;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetDefRegistryCDI;
+import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.DataSetManagerCDI;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.dataset.uuid.UUIDGenerator;
@@ -158,77 +157,15 @@ public class DataSetExportServicesImpl implements DataSetExportServices {
     @Override
     public org.uberfire.backend.vfs.Path exportDataSetExcel(DataSet dataSet) {
         try {
-            // TODO?: Excel 2010 limits: 1,048,576 rows by 16,384 columns; row width 255 characters
-            if (dataSet == null) {
-                throw new IllegalArgumentException("Null dataSet specified!");
-            }
-            int columnCount = dataSet.getColumns().size();
-            int rowCount = dataSet.getRowCount() + 1; //Include header row;
-            int row = 0;
+            SXSSFWorkbook wb = dataSetToWorkbook(dataSet);
 
-            SXSSFWorkbook wb = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
-            Map<String, CellStyle> styles = createStyles(wb);
-            SXSSFSheet sh = wb.createSheet("Sheet 1");
-
-            // General setup
-            sh.setDisplayGridlines(true);
-            sh.setPrintGridlines(false);
-            sh.setFitToPage(true);
-            sh.setHorizontallyCenter(true);
-            sh.trackAllColumnsForAutoSizing();
-            PrintSetup printSetup = sh.getPrintSetup();
-            printSetup.setLandscape(true);
-
-            // Create header
-            Row header = sh.createRow(row++);
-            header.setHeightInPoints(20f);
-            for (int i = 0; i < columnCount; i++) {
-                Cell cell = header.createCell(i);
-                cell.setCellStyle(styles.get("header"));
-                cell.setCellValue(dataSet.getColumnByIndex(i).getId());
-            }
-
-            // Create data rows
-            for (; row < rowCount; row++) {
-                Row _row = sh.createRow(row);
-                for (int cellnum = 0; cellnum < columnCount; cellnum++) {
-                    Cell cell = _row.createCell(cellnum);
-                    Object value = dataSet.getValueAt(row - 1, cellnum);
-                    if (value instanceof Short || value instanceof Long || value instanceof Integer || value instanceof BigInteger ) {
-                        cell.setCellType(CellType.NUMERIC);
-                        cell.setCellStyle(styles.get("integer_number_cell"));
-                        cell.setCellValue(((Number) value).doubleValue());
-                    } else if (value instanceof Float || value instanceof Double || value instanceof BigDecimal ) {
-                        cell.setCellType(CellType.NUMERIC);
-                        cell.setCellStyle(styles.get("decimal_number_cell"));
-                        cell.setCellValue(((Number) value).doubleValue());
-                    } else if (value instanceof Date) {
-                        cell.setCellType(CellType.STRING);
-                        cell.setCellStyle(styles.get("date_cell"));
-                        cell.setCellValue((Date) value);
-                    } else if (value instanceof Interval) {
-                        cell.setCellType(CellType.STRING);
-                        cell.setCellStyle(styles.get(TEXT_CELL));
-                        cell.setCellValue(((Interval) value).getName());
-                    } else {
-                        cell.setCellType(CellType.STRING);
-                        cell.setCellStyle(styles.get(TEXT_CELL));
-                        cell.setCellValue(value.toString());
-                    }
-                }
-            }
-
-            // Adjust column size
-            for (int i = 0; i < columnCount; i++) {
-                sh.autoSizeColumn(i);
-            }
-
+            // Write workbook to Path
             String tempXlsFile = uuidGenerator.newUuid() + ".xlsx";
             Path tempXlsPath = gitStorage.createTempFile(tempXlsFile);
-            OutputStream os = Files.newOutputStream(tempXlsPath);
-            wb.write(os);
-            os.flush();
-            os.close();
+            try (OutputStream os = Files.newOutputStream(tempXlsPath)) {
+                wb.write(os);
+                os.flush();
+            }
 
             // Dispose of temporary files backing this workbook on disk
             if (!wb.dispose()) {
@@ -238,6 +175,77 @@ public class DataSetExportServicesImpl implements DataSetExportServices {
         } catch (Exception e) {
             throw exceptionManager.handleException(e);
         }
+    }
+
+    //Package private to enable testing
+    SXSSFWorkbook dataSetToWorkbook(DataSet dataSet) {
+        // TODO?: Excel 2010 limits: 1,048,576 rows by 16,384 columns; row width 255 characters
+        if (dataSet == null) {
+            throw new IllegalArgumentException("Null dataSet specified!");
+        }
+        int columnCount = dataSet.getColumns().size();
+        int rowCount = dataSet.getRowCount() + 1; //Include header row;
+        int row = 0;
+
+        SXSSFWorkbook wb = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
+        Map<String, CellStyle> styles = createStyles(wb);
+        SXSSFSheet sh = wb.createSheet("Sheet 1");
+
+        // General setup
+        sh.setDisplayGridlines(true);
+        sh.setPrintGridlines(false);
+        sh.setFitToPage(true);
+        sh.setHorizontallyCenter(true);
+        sh.trackAllColumnsForAutoSizing();
+        PrintSetup printSetup = sh.getPrintSetup();
+        printSetup.setLandscape(true);
+
+        // Create header
+        Row header = sh.createRow(row++);
+        header.setHeightInPoints(20f);
+        for (int i = 0; i < columnCount; i++) {
+            Cell cell = header.createCell(i);
+            cell.setCellStyle(styles.get("header"));
+            cell.setCellValue(dataSet.getColumnByIndex(i).getId());
+        }
+
+        // Create data rows
+        for (; row < rowCount; row++) {
+            Row _row = sh.createRow(row);
+            for (int cellnum = 0; cellnum < columnCount; cellnum++) {
+                Cell cell = _row.createCell(cellnum);
+                Object value = dataSet.getValueAt(row - 1,
+                                                  cellnum);
+                if (value instanceof Short || value instanceof Long || value instanceof Integer || value instanceof BigInteger) {
+                    cell.setCellType(CellType.NUMERIC);
+                    cell.setCellStyle(styles.get("integer_number_cell"));
+                    cell.setCellValue(((Number) value).doubleValue());
+                } else if (value instanceof Float || value instanceof Double || value instanceof BigDecimal) {
+                    cell.setCellType(CellType.NUMERIC);
+                    cell.setCellStyle(styles.get("decimal_number_cell"));
+                    cell.setCellValue(((Number) value).doubleValue());
+                } else if (value instanceof Date) {
+                    cell.setCellType(CellType.STRING);
+                    cell.setCellStyle(styles.get("date_cell"));
+                    cell.setCellValue((Date) value);
+                } else if (value instanceof Interval) {
+                    cell.setCellType(CellType.STRING);
+                    cell.setCellStyle(styles.get(TEXT_CELL));
+                    cell.setCellValue(((Interval) value).getName());
+                } else {
+                    cell.setCellType(CellType.STRING);
+                    cell.setCellStyle(styles.get(TEXT_CELL));
+                    String val = value == null ? "" : value.toString();
+                    cell.setCellValue(val);
+                }
+            }
+        }
+
+        // Adjust column size
+        for (int i = 0; i < columnCount; i++) {
+            sh.autoSizeColumn(i);
+        }
+        return wb;
     }
 
     private String formatAsString(Object value) {
