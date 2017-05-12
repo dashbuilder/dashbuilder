@@ -19,25 +19,15 @@ import javax.enterprise.context.Dependent;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.google.gwt.user.client.ui.Widget;
-import org.dashbuilder.common.client.editor.ValueBoxEditor;
-import org.gwtbootstrap3.client.ui.DropDown;
-import org.gwtbootstrap3.client.ui.DropDownMenu;
-import org.gwtbootstrap3.client.ui.Popover;
 import org.gwtbootstrap3.client.ui.Tooltip;
 import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.uberfire.ext.widgets.common.client.dropdown.LiveSearchDropDown;
@@ -103,7 +93,6 @@ public class DropDownEditorView extends Composite implements DropDownEditor.View
     @Override
     public DropDownEditorView showError(SafeHtml message) {
         errorTooltip.setTitle(message.asString());
-        errorTooltip.reconfigure();
         errorPanel.removeStyleName(style.errorPanel());
         errorPanel.addStyleName(style.errorPanelWithError());
         return this;
@@ -112,7 +101,6 @@ public class DropDownEditorView extends Composite implements DropDownEditor.View
     @Override
     public DropDownEditorView clearError() {
         errorTooltip.setTitle("");
-        errorTooltip.reconfigure();
         errorPanel.removeStyleName(style.errorPanelWithError());
         errorPanel.addStyleName(style.errorPanel());
         return this;

@@ -1,23 +1,27 @@
 package org.dashbuilder.common.client.editor.list;
 
+import javax.enterprise.context.Dependent;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.*;
-import org.gwtbootstrap3.client.ui.*;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Widget;
 import org.gwtbootstrap3.client.ui.Anchor;
+import org.gwtbootstrap3.client.ui.DropDown;
+import org.gwtbootstrap3.client.ui.DropDownMenu;
 import org.gwtbootstrap3.client.ui.Image;
+import org.gwtbootstrap3.client.ui.Tooltip;
 import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.uberfire.mvp.Command;
-
-import javax.enterprise.context.Dependent;
 
 /**
  * <p>The ImageListEditor view that uses a drop down as selector.</p>
@@ -141,7 +145,6 @@ public class DropDownImageListEditorView<T> extends Composite implements DropDow
     @Override
     public ImageListEditorView<T> showError(SafeHtml message) {
         errorTooltip.setTitle(message.asString());
-        errorTooltip.reconfigure();
         errorPanel.removeStyleName(style.errorPanel());
         errorPanel.addStyleName(style.errorPanelWithError());
         return this;
@@ -150,7 +153,6 @@ public class DropDownImageListEditorView<T> extends Composite implements DropDow
     @Override
     public ImageListEditorView<T> clearError() {
         errorTooltip.setTitle("");
-        errorTooltip.reconfigure();
         errorPanel.removeStyleName(style.errorPanelWithError());
         errorPanel.addStyleName(style.errorPanel());
         return this;
