@@ -1,22 +1,27 @@
 package org.dashbuilder.common.client.editor.list;
 
+import javax.enterprise.context.Dependent;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.*;
-import org.gwtbootstrap3.client.ui.*;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import org.gwtbootstrap3.client.ui.Image;
+import org.gwtbootstrap3.client.ui.Tooltip;
 import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.uberfire.mvp.Command;
-
-import javax.enterprise.context.Dependent;
 
 /**
  * <p>The ImageListEditor default view. It places images in an horizontal way.</p>
@@ -88,7 +93,8 @@ public class HorizImageListEditorView<T> extends Composite implements ImageListE
         tooltip.setWidget(image);
         tooltip.setContainer("body");
         tooltip.setPlacement(Placement.BOTTOM);
-        tooltip.setShowDelayMs(1);
+        tooltip.setIsAnimated(false);
+        tooltip.setShowDelayMs(100);
 
         final HTML label = new HTML(heading.asString());
         final HorizontalPanel labelPanel = new HorizontalPanel();
@@ -101,8 +107,9 @@ public class HorizImageListEditorView<T> extends Composite implements ImageListE
         mainPanel.add(panel);
 
         image.addClickHandler(e -> {
-            clickCommand.execute();
             tooltip.hide();
+            tooltip.destroy();
+            clickCommand.execute();
         });
 
         return this;
@@ -122,7 +129,6 @@ public class HorizImageListEditorView<T> extends Composite implements ImageListE
     @Override
     public ImageListEditorView<T> showError(SafeHtml message) {
         errorTooltip.setTitle(message.asString());
-        errorTooltip.reconfigure();
         errorPanel.removeStyleName(style.errorPanel());
         errorPanel.addStyleName(style.errorPanelWithError());
         return null;
@@ -131,7 +137,6 @@ public class HorizImageListEditorView<T> extends Composite implements ImageListE
     @Override
     public ImageListEditorView<T> clearError() {
         errorTooltip.setTitle("");
-        errorTooltip.reconfigure();
         errorPanel.removeStyleName(style.errorPanelWithError());
         errorPanel.addStyleName(style.errorPanel());
         return this;

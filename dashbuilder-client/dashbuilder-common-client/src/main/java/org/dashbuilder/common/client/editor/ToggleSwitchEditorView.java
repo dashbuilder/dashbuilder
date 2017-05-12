@@ -1,5 +1,7 @@
 package org.dashbuilder.common.client.editor;
 
+import javax.enterprise.context.Dependent;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -13,8 +15,6 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.gwtbootstrap3.client.ui.Tooltip;
 import org.gwtbootstrap3.extras.toggleswitch.client.ui.ToggleSwitch;
-
-import javax.enterprise.context.Dependent;
 
 /**
  * <p>The ValueBoxEditor view.</p>
@@ -79,7 +79,6 @@ public class ToggleSwitchEditorView extends Composite implements ToggleSwitchEdi
     public ToggleSwitchEditor.View showError(final SafeHtml message) {
         contents.addStyleName(STYLE_ERROR);
         errorTooltip.setTitle(message.asString());
-        errorTooltip.reconfigure();
         return this;
     }
 
@@ -87,7 +86,6 @@ public class ToggleSwitchEditorView extends Composite implements ToggleSwitchEdi
     public ToggleSwitchEditor.View clearError() {
         contents.removeStyleName(STYLE_ERROR);
         errorTooltip.setTitle("");
-        errorTooltip.reconfigure();
         return this;
     }
 
