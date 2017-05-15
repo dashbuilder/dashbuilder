@@ -85,11 +85,7 @@ public class ShowcaseEntryPoint {
 
     @AfterInitialization
     public void startApp() {
-        // Sometimes, due to unknown reasons, the Displayer editor does not show all the attributes in the "Display" tab
-        // The fix is to force the DisplayerAttributeDef static fields to initialize on startup
-        DisplayerAttributeDef def = DisplayerAttributeDef.TITLE;
-
-        // Rename perspectives to dashboards in CMS
+        // OPTIONAL: Rename perspectives to dashboards in CMS
         //customizeCMSTexts();
 
         userSystemManager.waitForInitialization(() ->
