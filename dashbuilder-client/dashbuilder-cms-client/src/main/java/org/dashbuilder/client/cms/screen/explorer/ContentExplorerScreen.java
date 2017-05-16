@@ -93,6 +93,14 @@ public class ContentExplorerScreen {
     @AfterInitialization
     private void init() {
         navTreeEditor.setLiteralPerspective(i18n.capitalizeFirst(i18n.getPerspectiveResourceName()));
+        navTreeEditor.setNewGroupEnabled(true);
+        navTreeEditor.setNewDividerEnabled(true);
+        navTreeEditor.setNewPerspectiveEnabled(true);
+        navTreeEditor.setMaxLevels(-1);
+        navTreeEditor.setOnlyRuntimePerspectives(false);
+        navTreeEditor.setGotoPerspectiveEnabled(true);
+        navTreeEditor.setOnChangeCommand(this::onNavTreeChanged);
+
         view.setPerspectivesName(i18n.capitalizeFirst(i18n.getPerspectivesResourceName()));
         view.setMenusName(i18n.getContentExplorerMenus());
         view.setCreateName(i18n.getContentExplorerNew());
@@ -111,6 +119,10 @@ public class ContentExplorerScreen {
         return view;
     }
 
+    public NavTreeEditor getNavTreeEditor() {
+        return navTreeEditor;
+    }
+
     public void createNewPerspective() {
         // TODO: customize new perpsective popup title
         // newPluginPopUp.show(PluginType.PERSPECTIVE_LAYOUT, i18n.getContentManagerHomeNewPerspectiveButton());
@@ -123,13 +135,6 @@ public class ContentExplorerScreen {
     }
 
     public void gotoMenus() {
-        navTreeEditor.setNewGroupEnabled(true);
-        navTreeEditor.setNewDividerEnabled(true);
-        navTreeEditor.setNewPerspectiveEnabled(true);
-        navTreeEditor.setMaxLevels(-1);
-        navTreeEditor.setOnlyRuntimePerspectives(false);
-        navTreeEditor.setGotoPerspectiveEnabled(true);
-        navTreeEditor.setOnChangeCommand(this::onNavTreeChanged);
         navTreeEditor.edit(navigationManager.getNavTree());
         view.showMenus(navTreeEditor);
     }
