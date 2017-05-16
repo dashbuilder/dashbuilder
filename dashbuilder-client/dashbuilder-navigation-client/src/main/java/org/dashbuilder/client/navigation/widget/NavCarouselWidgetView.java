@@ -42,12 +42,16 @@ public class NavCarouselWidgetView extends BaseNavWidgetView<NavCarouselWidget>
     @DataField
     Div carouselDiv;
 
+    @Inject
+    @DataField
+    Div slidesDiv;
+
     NavCarouselWidget presenter;
 
     @Override
     public void init(NavCarouselWidget presenter) {
         this.presenter = presenter;
-        super.navWidget = carouselDiv;
+        super.navWidget = slidesDiv;
     }
 
     @Override
@@ -61,6 +65,17 @@ public class NavCarouselWidgetView extends BaseNavWidgetView<NavCarouselWidget>
     }
 
     @Override
+    public void addContentSlide(IsWidget widget) {
+        DOMUtil.removeAllChildren(mainDiv);
+        mainDiv.appendChild(carouselDiv);
+
+        DivElement div = Document.get().createDivElement();
+        div.setClassName(slidesDiv.getChildNodes().getLength() == 0 ? "item active" : "item");
+        div.appendChild(widget.asWidget().getElement());
+        slidesDiv.appendChild((Node) div);
+    }
+
+    @Override
     public void errorNavItemsEmpty() {
         DOMUtil.removeAllChildren(mainDiv);
         Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navCarouselDragComponentEmptyError());
@@ -68,16 +83,8 @@ public class NavCarouselWidgetView extends BaseNavWidgetView<NavCarouselWidget>
     }
 
     @Override
-    public void addContentSlide(IsWidget widget) {
-        DivElement div = Document.get().createDivElement();
-        div.setClassName(carouselDiv.getChildNodes().getLength() == 0 ? "item active" : "item");
-        div.appendChild(widget.asWidget().getElement());
-        carouselDiv.appendChild((Node) div);
-    }
-
-    @Override
     public void recursivityError() {
         Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navCarouselDragComponentRecursivityError());
-        carouselDiv.appendChild((Node) errorEl);
+        slidesDiv.appendChild((Node) errorEl);
     }
 }
