@@ -15,8 +15,10 @@
  */
 package org.dashbuilder.client.navigation.widget;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import javax.enterprise.context.Dependent;
@@ -74,6 +76,7 @@ public class NavTreeEditor implements IsWidget {
     String literalPerspective = "Perspective";
     String literalDivider = "Divider";
     Optional<NavItemEditor> currentlyEditedItem = Optional.empty();
+    Map<String, Integer> navItemMaxLevelsMap = new HashMap<>();
 
     @Inject
     public NavTreeEditor(View view, SyncBeanManager beanManager, PerspectiveTreeProvider perspectiveTreeProvider) {
@@ -140,6 +143,18 @@ public class NavTreeEditor implements IsWidget {
         return maxLevels;
     }
 
+    public void setMaxLevels(String navItemId, int maxLevels) {
+        navItemMaxLevelsMap.put(navItemId, maxLevels);
+    }
+
+    public int getMaxLevels(String navItemId) {
+        if (!navItemMaxLevelsMap.containsKey(navItemId)) {
+            return -1;
+        } else {
+            return navItemMaxLevelsMap.get(navItemId);
+        }
+    }
+
     public void setMaxLevels(int maxLevels) {
         this.maxLevels = maxLevels;
     }
@@ -169,9 +184,12 @@ public class NavTreeEditor implements IsWidget {
         _edit(navTree.getRootItems(), maxLevels);
     }
 
-    private void _edit(List<NavItem> navItems, int max) {
+    private void _edit(List<NavItem> navItems, int maxDefault) {
         for (int i=0; i<navItems.size(); i++) {
             NavItem navItem = navItems.get(i);
+            int max = getMaxLevels(navItem.getId());
+            max = max > 0 ? max : maxDefault;
+
             NavItemEditor navItemEditor = createNavItemEditor(navItem, i==0, i==navItems.size()-1, max <=0 || max > 0, max <=0 || max > 1);
             view.addItemEditor(navItemEditor);
 
@@ -179,7 +197,7 @@ public class NavTreeEditor implements IsWidget {
             if (navItem instanceof NavGroup) {
                 NavGroup subGroup = (NavGroup) navItem;
                 view.goOneLevelDown();
-                _edit(subGroup.getChildren(), max > 0 ? max-1 : -1);
+                _edit(subGroup.getChildren(), max == 1 ? 1 : max-1);
                 view.goOneLevelUp();
             }
         }
