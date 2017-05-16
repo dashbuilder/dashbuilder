@@ -28,7 +28,7 @@ public class DisplayerEditorEntryPoint {
     /**
      * https://issues.jboss.org/browse/DASHBUILDE-105 => Sometimes, due to unknown reasons, the Displayer editor
      * does not show all the attributes in the "Display" tab The fix is to force the DisplayerAttributeDef static
-     * fields to initialize on startup
+     * fields to initialize on startup.
      */
     @AfterInitialization
     public void init() {

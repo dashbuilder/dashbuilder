@@ -46,6 +46,10 @@ public class NavTilesWidgetView extends BaseNavWidgetView<NavTilesWidget>
 
     @Inject
     @DataField
+    Div contentDiv;
+
+    @Inject
+    @DataField
     Div tilesDiv;
 
     @Inject
@@ -71,14 +75,9 @@ public class NavTilesWidgetView extends BaseNavWidgetView<NavTilesWidget>
     }
 
     @Override
-    public void errorNavItemsEmpty() {
-        DOMUtil.removeAllChildren(mainDiv);
-        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navTilesDragComponentEmptyError());
-        mainDiv.appendChild((Node) errorEl);
-    }
-
-    @Override
     public void addTileWidget(IsElement tileWidget) {
+        DOMUtil.removeAllChildren(mainDiv);
+        mainDiv.appendChild(contentDiv);
         tilesDiv.appendChild(tileWidget.getElement());
     }
 
@@ -86,6 +85,13 @@ public class NavTilesWidgetView extends BaseNavWidgetView<NavTilesWidget>
     public void showTileContent(IsWidget tileContent) {
         DOMUtil.removeAllChildren(tilesDiv);
         tilesDiv.appendChild((Node) tileContent.asWidget().getElement());
+    }
+
+    @Override
+    public void errorNavItemsEmpty() {
+        DOMUtil.removeAllChildren(mainDiv);
+        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navTilesDragComponentEmptyError());
+        mainDiv.appendChild((Node) errorEl);
     }
 
     @Override
