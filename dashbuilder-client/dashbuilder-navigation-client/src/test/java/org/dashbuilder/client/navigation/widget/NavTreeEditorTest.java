@@ -6,8 +6,11 @@ import java.util.Set;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.navigation.NavItem;
+import org.dashbuilder.navigation.NavTree;
+import org.dashbuilder.navigation.impl.NavTreeBuilder;
 import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -38,6 +41,83 @@ public class NavTreeEditorTest {
     private NavItemEditor.View navItemEditorViewM;
     @Mock
     private NavItem navItemM;
+    @Mock
+    private NavItemEditor navItemEditorM;
+    @Mock
+    private SyncBeanDef<NavItemEditor> navItemEditorBeanDef;
+
+    NavTree NAV_TREE = new NavTreeBuilder()
+            .group("root", "root", "root", true)
+                .group("level1a", "level1a", "level1a", true)
+                    .group("level2a", "level2a", "level2a", true)
+                    .endGroup()
+                .endGroup()
+                .group("level1b", "level1b", "level1b", true)
+                    .group("level2b", "level2b", "level2b", true)
+                    .endGroup()
+                .endGroup()
+            .build();
+
+    @Before
+    public void setUp() {
+        when(beanManagerM.lookupBean(NavItemEditor.class)).thenReturn(navItemEditorBeanDef);
+        when(navItemEditorBeanDef.newInstance()).thenReturn(navItemEditorM);
+    }
+    @Test
+    public void testAllSubgroupsAllowed() {
+        NavTreeEditor treeEditor = spy(new NavTreeEditor(viewM, beanManagerM, perspectiveTreeProviderM));
+        treeEditor.setMaxLevels(-1);
+        treeEditor.edit(NAV_TREE);
+
+        verify(treeEditor, never()).createNavItemEditor(any(), anyBoolean(), anyBoolean(), anyBoolean(), eq(false));
+    }
+
+    @Test
+    public void testNoSubgroupsAllowed() {
+        NavTreeEditor treeEditor = spy(new NavTreeEditor(viewM, beanManagerM, perspectiveTreeProviderM));
+        treeEditor.setMaxLevels(1);
+        treeEditor.edit(NAV_TREE);
+
+        verify(treeEditor, never()).createNavItemEditor(any(), anyBoolean(), anyBoolean(), anyBoolean(), eq(true));
+    }
+
+    @Test
+    public void testSubgroupNotAllowed() {
+        NavItem root = NAV_TREE.getItemById("root");
+        NavItem level1a = NAV_TREE.getItemById("level1a");
+        NavItem level2a = NAV_TREE.getItemById("level2a");
+        NavItem level1b = NAV_TREE.getItemById("level1b");
+        NavItem level2b = NAV_TREE.getItemById("level2b");
+
+        NavTreeEditor treeEditor = spy(new NavTreeEditor(viewM, beanManagerM, perspectiveTreeProviderM));
+        treeEditor.setMaxLevels("level1a", 1);
+        treeEditor.edit(NAV_TREE);
+
+        verify(treeEditor).createNavItemEditor(eq(root), anyBoolean(), anyBoolean(), anyBoolean(), eq(true));
+        verify(treeEditor, never()).createNavItemEditor(eq(level1a), anyBoolean(), anyBoolean(), anyBoolean(), eq(true));
+        verify(treeEditor, never()).createNavItemEditor(eq(level2a), anyBoolean(), anyBoolean(), anyBoolean(), eq(true));
+        verify(treeEditor).createNavItemEditor(eq(level1b), anyBoolean(), anyBoolean(), anyBoolean(), eq(true));
+        verify(treeEditor).createNavItemEditor(eq(level2b), anyBoolean(), anyBoolean(), anyBoolean(), eq(true));
+    }
+
+    @Test
+    public void testOnlyThreeLevelsAllowed() {
+        NavItem root = NAV_TREE.getItemById("root");
+        NavItem level1a = NAV_TREE.getItemById("level1a");
+        NavItem level2a = NAV_TREE.getItemById("level2a");
+        NavItem level1b = NAV_TREE.getItemById("level1b");
+        NavItem level2b = NAV_TREE.getItemById("level2b");
+
+        NavTreeEditor treeEditor = spy(new NavTreeEditor(viewM, beanManagerM, perspectiveTreeProviderM));
+        treeEditor.setMaxLevels("root", 3);
+        treeEditor.edit(NAV_TREE);
+
+        verify(treeEditor).createNavItemEditor(eq(root), anyBoolean(), anyBoolean(), anyBoolean(), eq(true));
+        verify(treeEditor).createNavItemEditor(eq(level1a), anyBoolean(), anyBoolean(), anyBoolean(), eq(true));
+        verify(treeEditor, never()).createNavItemEditor(eq(level2a), anyBoolean(), anyBoolean(), anyBoolean(), eq(true));
+        verify(treeEditor).createNavItemEditor(eq(level1b), anyBoolean(), anyBoolean(), anyBoolean(), eq(true));
+        verify(treeEditor, never()).createNavItemEditor(eq(level2b), anyBoolean(), anyBoolean(), anyBoolean(), eq(true));
+    }
 
     @Test
     public void itShouldBeImpossibleToOpenMultipleNavItemEditorInputs() { // DASHBUILDE-217
@@ -53,7 +133,6 @@ public class NavTreeEditorTest {
 
         verify(first).finishEditing();
     }
-
     @Test
     public void whenItemEditFinishedNavTreeEditorCleared() {
         NavTreeEditor treeEditor = new NavTreeEditor(viewM,
