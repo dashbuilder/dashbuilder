@@ -39,6 +39,10 @@ public class NavTabListWidgetView extends BaseNavWidgetView<NavTabListWidget>
 
     @Inject
     @DataField
+    Div tabsDiv;
+
+    @Inject
+    @DataField
     UnorderedList tabList;
 
     @Inject
@@ -64,16 +68,19 @@ public class NavTabListWidgetView extends BaseNavWidgetView<NavTabListWidget>
     }
 
     @Override
+    public void showContent(IsWidget widget) {
+        DOMUtil.removeAllChildren(mainDiv);
+        mainDiv.appendChild(tabsDiv);
+
+        DOMUtil.removeAllChildren(tabContent);
+        tabContent.appendChild((Node) widget.asWidget().getElement());
+    }
+
+    @Override
     public void errorNavItemsEmpty() {
         DOMUtil.removeAllChildren(mainDiv);
         Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navTabListDragComponentEmptyError());
         mainDiv.appendChild((Node) errorEl);
-    }
-
-    @Override
-    public void showContent(IsWidget widget) {
-        DOMUtil.removeAllChildren(tabContent);
-        tabContent.appendChild((Node) widget.asWidget().getElement());
     }
 
     @Override
