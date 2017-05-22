@@ -36,7 +36,7 @@ public class NavCarouselWidget extends BaseNavWidget {
 
         void addContentSlide(IsWidget widget);
 
-        void recursivityError();
+        void deadlockError();
     }
 
     View view;
@@ -73,7 +73,7 @@ public class NavCarouselWidget extends BaseNavWidget {
         String perspectiveId = perspectivePluginManager.getRuntimePerspectiveId(navItem);
         if (perspectiveId != null) {
             perspectiveIds.add(perspectiveId);
-            perspectivePluginManager.buildPerspectiveWidget(perspectiveId, this::showWidget, this::recursivityError);
+            perspectivePluginManager.buildPerspectiveWidget(perspectiveId, this::showWidget, this::deadlockError);
         }
     }
 
@@ -81,8 +81,8 @@ public class NavCarouselWidget extends BaseNavWidget {
         view.addContentSlide(widget);
     }
 
-    private void recursivityError() {
-        view.recursivityError();
+    private void deadlockError() {
+        view.deadlockError();
     }
 
     // Catch changes on runtime perspectives so as to display the most up to date changes

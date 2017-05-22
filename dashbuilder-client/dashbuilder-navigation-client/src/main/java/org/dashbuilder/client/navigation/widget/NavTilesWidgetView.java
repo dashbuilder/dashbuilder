@@ -95,9 +95,9 @@ public class NavTilesWidgetView extends BaseNavWidgetView<NavTilesWidget>
     }
 
     @Override
-    public void recursivityError() {
+    public void deadlockError() {
         DOMUtil.removeAllChildren(tilesDiv);
-        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navTilesDragComponentRecursivityError());
+        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navTilesDragComponentDeadlockError());
         tilesDiv.appendChild((Node) errorEl);
     }
 

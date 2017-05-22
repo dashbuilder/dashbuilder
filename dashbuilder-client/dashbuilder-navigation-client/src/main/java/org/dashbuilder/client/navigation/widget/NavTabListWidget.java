@@ -35,7 +35,7 @@ public class NavTabListWidget extends BaseNavWidget {
 
         void showContent(IsWidget widget);
 
-        void recursivityError();
+        void deadlockError();
     }
 
     View view;
@@ -78,15 +78,15 @@ public class NavTabListWidget extends BaseNavWidget {
     }
 
     public void showPerspective(String perspectiveId) {
-        perspectivePluginManager.buildPerspectiveWidget(perspectiveId, this::showWidget, this::recursivityError);
+        perspectivePluginManager.buildPerspectiveWidget(perspectiveId, this::showWidget, this::deadlockError);
     }
 
     public void showWidget(IsWidget widget) {
         view.showContent(widget);
     }
 
-    private void recursivityError() {
-        view.recursivityError();
+    private void deadlockError() {
+        view.deadlockError();
     }
 
     // When an tab is selected its perspective is shown right under the tab
