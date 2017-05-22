@@ -54,7 +54,7 @@ public class NavTilesWidget extends BaseNavWidget {
 
         void addBreadcrumbItem(String navItemName, Command onClicked);
 
-        void recursivityError();
+        void deadlockError();
     }
 
     View view;
@@ -148,15 +148,15 @@ public class NavTilesWidget extends BaseNavWidget {
 
     protected void openPerspective(String id) {
         currentPerspectiveId = id;
-        perspectivePluginManager.buildPerspectiveWidget(id , this::showWidget, this::recursivityError);
+        perspectivePluginManager.buildPerspectiveWidget(id , this::showWidget, this::deadlockError);
     }
 
     public void showWidget(IsWidget widget) {
         view.showTileContent(widget);
     }
 
-    private void recursivityError() {
-        view.recursivityError();
+    private void deadlockError() {
+        view.deadlockError();
     }
 
     protected void updateBreadcrumb() {

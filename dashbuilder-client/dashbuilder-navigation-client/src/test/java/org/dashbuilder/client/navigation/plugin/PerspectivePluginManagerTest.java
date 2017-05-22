@@ -60,10 +60,7 @@ public class PerspectivePluginManagerTest {
         when(navigationManagerMock.getNavTree()).thenReturn(testTree);
         when(pluginDeletedEventMock.getPluginName()).thenReturn(ID_TO_DELETE);
 
-        PerspectivePluginManager testedPluginManager = new PerspectivePluginManager(
-                null, null, navigationManagerMock,
-                null, null, perspectiveChangedEventMock
-        );
+        PerspectivePluginManager testedPluginManager = new PerspectivePluginManager(null, null, navigationManagerMock, null, perspectiveChangedEventMock);
         testedPluginManager.onPlugInDeleted(pluginDeletedEventMock);
 
         assertNull("Plugin should be removed from the tree when PluginDeleted event occurs", testTree.getItemById(ID_TO_DELETE));

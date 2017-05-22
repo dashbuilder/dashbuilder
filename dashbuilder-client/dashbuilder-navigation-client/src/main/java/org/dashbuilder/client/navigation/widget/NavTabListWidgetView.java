@@ -84,9 +84,9 @@ public class NavTabListWidgetView extends BaseNavWidgetView<NavTabListWidget>
     }
 
     @Override
-    public void recursivityError() {
+    public void deadlockError() {
         DOMUtil.removeAllChildren(tabContent);
-        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navTabListDragComponentRecursivityError());
+        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navTabListDragComponentDeadlockError());
         tabContent.appendChild((Node) errorEl);
     }
 }

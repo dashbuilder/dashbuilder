@@ -83,8 +83,11 @@ public class NavCarouselWidgetView extends BaseNavWidgetView<NavCarouselWidget>
     }
 
     @Override
-    public void recursivityError() {
-        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navCarouselDragComponentRecursivityError());
-        slidesDiv.appendChild((Node) errorEl);
+    public void deadlockError() {
+        DivElement div = Document.get().createDivElement();
+        div.setClassName(slidesDiv.getChildNodes().getLength() == 0 ? "item active" : "item");
+        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navCarouselDragComponentDeadlockError());
+        div.appendChild(errorEl);
+        slidesDiv.appendChild((Node) div);
     }
 }
