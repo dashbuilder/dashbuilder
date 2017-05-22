@@ -81,15 +81,17 @@ public class DataSetDefWizardScreenTest {
         when(dataSetProviderTypeWorkflow.edit(any(DataSetDef.class))).thenReturn(dataSetProviderTypeWorkflow);
         when(dataSetProviderTypeWorkflow.providerTypeEdition()).thenReturn(dataSetProviderTypeWorkflow);
 
-        doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocationOnMock) throws Throwable {
-                RemoteCallback callback = (RemoteCallback) invocationOnMock.getArguments()[1];
-                callback.callback(dataSetDef);
-                return null;
-            }
+        doAnswer(invocationOnMock -> {
+            RemoteCallback callback = (RemoteCallback) invocationOnMock.getArguments()[1];
+            callback.callback(dataSetDef);
+            return null;
         }).when(clientServices).newDataSet(any(DataSetProviderType.class), any(RemoteCallback.class));
         
+        doAnswer(invocationOnMock -> {
+            presenter.onClose();
+            return null;
+        }).when(placeManager).closePlace(any(PlaceRequest.class));
+
         when(dataSetBasicAttributesWorkflow.edit(any(DataSetDef.class))).thenReturn(dataSetBasicAttributesWorkflow);
         when(dataSetBasicAttributesWorkflow.basicAttributesEdition()).thenReturn(editWorkflow);
         when(editWorkflow.getDataSetDef()).thenReturn(dataSetDef);
@@ -101,9 +103,6 @@ public class DataSetDefWizardScreenTest {
         when(editWorkflow.showConfigurationTab()).thenReturn(editWorkflow);
         when(editWorkflow.showAdvancedTab()).thenReturn(editWorkflow);
         when(workflowFactory.basicAttributes(any(DataSetProviderType.class))).thenReturn(dataSetBasicAttributesWorkflow);
-        doNothing().when(placeManager).goTo(anyString());
-        doNothing().when(placeManager).closePlace(any(PlaceRequest.class));
-        doNothing().when(placeManager).closePlace(anyString());
         presenter = new DataSetDefWizardScreen( beanManager, workflowFactory, services, clientServices,
                                                 notification, placeManager, errorPopupPresenter, savePopUpPresenter, view );
         presenter.services = services;
@@ -222,6 +221,7 @@ public class DataSetDefWizardScreenTest {
         verify(workflowFactory, times(0)).providerType();
         verify(workflowFactory, times(0)).edit(any(DataSetProviderType.class));
         verify(workflowFactory, times(0)).basicAttributes(any(DataSetProviderType.class));
+        assertNull("current workflow null", presenter.currentWorkflow);
     }
 
     @Test
