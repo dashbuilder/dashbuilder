@@ -216,10 +216,10 @@ public class DataSetDefWizardScreen {
 
     RemoteCallback<Path> saveSuccessCallback = new RemoteCallback<Path>() {
         @Override public void callback(Path path) {
+            currentWorkflow.clear();
             BusyPopup.close();
             notification.fire(new NotificationEvent(DataSetAuthoringConstants.INSTANCE.savedOk()));
             placeManager.closePlace(placeRequest);
-            currentWorkflow.clear();
         }
     };
 
