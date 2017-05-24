@@ -25,8 +25,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.ext.plugin.model.Plugin;
 import org.uberfire.ext.plugin.model.PluginType;
+import org.uberfire.mvp.ParameterizedCommand;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 
 import static org.mockito.Matchers.any;
@@ -50,8 +52,11 @@ public class PerspectivesExplorerTest {
 
     @Test
     public void showShouldDisplayEmptyMessage_whenNoPerspectivesAvailable() {
-        when(perspectivePluginManagerM.getPerspectivePlugins())
-                .thenReturn(Collections.emptyList());
+        doAnswer(invocationOnMock -> {
+            ParameterizedCommand<Collection<Plugin>> callback = invocationOnMock.getArgumentAt(0, ParameterizedCommand.class);
+            callback.execute(Collections.emptyList());
+            return null;
+        }).when(perspectivePluginManagerM).getPerspectivePlugins(any());
 
         PerspectivesExplorer testedPE = new PerspectivesExplorer(viewM, perspectivePluginManagerM, placeManagerM, i18nM);
         testedPE.show();
@@ -66,8 +71,12 @@ public class PerspectivesExplorerTest {
                 b = mkPlugin("B"),
                 c = mkPlugin("cEE");
 
-        when(perspectivePluginManagerM.getPerspectivePlugins())
-                .thenReturn(Arrays.asList(b, c, a)); //Return list NOT sorted by name
+        doAnswer(invocationOnMock -> {
+            ParameterizedCommand<Collection<Plugin>> callback = invocationOnMock.getArgumentAt(0, ParameterizedCommand.class);
+            callback.execute(Arrays.asList(b, c, a));
+            return null;
+        }).when(perspectivePluginManagerM).getPerspectivePlugins(any());
+
         InOrder inOrder = inOrder(viewM);
 
         PerspectivesExplorer testedPE = new PerspectivesExplorer(viewM, perspectivePluginManagerM, placeManagerM, i18nM);

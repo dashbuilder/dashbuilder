@@ -69,14 +69,15 @@ public class PerspectivesExplorer implements IsWidget {
     public void show() {
         view.clear();
 
-        List<Plugin> perspectivePlugins = perspectivePluginManager.getPerspectivePlugins();
-        if (perspectivePlugins.isEmpty()) {
-            view.showEmpty(i18n.getNoPerspectives());
-        } else {
-            perspectivePlugins.stream()
-                    .sorted((p1, p2) -> p1.getName().compareToIgnoreCase(p2.getName()))
-                    .forEach(p -> view.addPerspective(p.getName(), () -> onPerspectiveClick(p)));
-        }
+        perspectivePluginManager.getPerspectivePlugins(perspectivePlugins -> {
+            if (perspectivePlugins.isEmpty()) {
+                view.showEmpty(i18n.getNoPerspectives());
+            } else {
+                perspectivePlugins.stream()
+                        .sorted((p1, p2) -> p1.getName().compareToIgnoreCase(p2.getName()))
+                        .forEach(p -> view.addPerspective(p.getName(), () -> onPerspectiveClick(p)));
+            }
+        });
     }
 
     public void onPerspectiveClick(Plugin plugin) {
