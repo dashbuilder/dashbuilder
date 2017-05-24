@@ -59,6 +59,7 @@ public class PerspectivePluginManager {
     private Caller<PerspectivePluginServices> pluginServices;
     private Event<PerspectivePluginsChangedEvent> perspectivesChangedEvent;
     private Map<String, Plugin> pluginMap = new HashMap<>();
+    private boolean pluginsLoaded = false;
 
     @Inject
     public PerspectivePluginManager(ClientTypeRegistry clientTypeRegistry,
@@ -75,15 +76,25 @@ public class PerspectivePluginManager {
 
     @AfterInitialization
     private void init() {
-        pluginServices.call(((Collection<Plugin> plugins) -> {
-            plugins.stream().filter(this::isRuntimePerspective).forEach(p -> {
-                pluginMap.put(p.getName(), p);
-            });
-        })).listPlugins();
+        loadPlugins(plugins -> {});
     }
 
-    public List<Plugin> getPerspectivePlugins() {
-        return new ArrayList<>(pluginMap.values());
+    public void getPerspectivePlugins(ParameterizedCommand<Collection<Plugin>> callback) {
+        loadPlugins(callback);
+    }
+
+    private void loadPlugins(ParameterizedCommand<Collection<Plugin>> callback) {
+        if (pluginsLoaded) {
+            callback.execute(pluginMap.values());
+        }
+        else {
+            pluginServices.call(((Collection<Plugin> plugins) -> {
+                pluginMap.clear();
+                plugins.stream().filter(this::isRuntimePerspective).forEach(p -> pluginMap.put(p.getName(), p));
+                pluginsLoaded = true;
+                callback.execute(pluginMap.values());
+            })).listPlugins();
+        }
     }
 
     public boolean isRuntimePerspective(Plugin plugin) {
