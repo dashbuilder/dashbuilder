@@ -1,25 +1,66 @@
-.navitem-button {
-    margin-top: -3px;
-    margin-left: 5px;
+.navitem-name {
+    margin-left: 7px;
 }
 
-.navitem-button {
+.navitem-cog-icon,
+.navitem-edit-icon,
+.navitem-delete-icon {
+    margin-left: 5px;
+    visibility: hidden;
     cursor: pointer;
 }
 
-.navitem-menu {
-    margin-left: 10px;
+.navitem-confirm-icon,
+.navitem-cancel-icon {
+    margin-left: 5px;
+    cursor: pointer;
 }
 
-.navitem-name {
-    font-size: larger;
-    margin-left: 7px;
+.navitem-name-div {
+    background-color: lightcyan;
 }
 
 .navitem-name-input {
     margin-left: 7px;
+    font-size: smaller;
 }
 
-.navitem-extra {
-    margin-left: 30px;
+.navitem-name-error {
+    border-color: #c00;
+    border-width: 1px;
+}
+
+.navitem-extra-div {
+    margin-left: 20px;
+}
+
+.navitem-extra-div .dropdown-menu:before,
+.navitem-extra-div .dropdown-menu:after {
+    content: none;
+}
+
+.navitem-extra-div .dropdown-menu {
+    margin-top: -1px;
+    margin-left: 15px;
+}
+
+.navitem-view-div:hover {
+    background-color: lightcyan;
+    margin-left: -20px;
+}
+
+.navitem-view-div:hover .navitem-cog-icon,
+.navitem-view-div:hover .navitem-edit-icon,
+.navitem-view-div:hover .navitem-delete-icon {
+    visibility: visible;
+}
+
+.navitem-edit-icon:hover,
+.navitem-confirm-icon:hover,
+.navitem-cancel-icon:hover {
+    color: #0088ce;
+}
+
+.navitem-delete-icon:hover {
+    color: #990000;
 }

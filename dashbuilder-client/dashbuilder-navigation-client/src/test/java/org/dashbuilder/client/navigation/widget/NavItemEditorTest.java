@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.navigation;
+package org.dashbuilder.client.navigation.widget;
 
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.client.navigation.widget.NavItemEditor;
@@ -26,10 +26,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.ext.widgets.common.client.dropdown.PerspectiveDropDown;
+import org.uberfire.mvp.Command;
 
 import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NavItemEditorTest {
@@ -46,11 +49,134 @@ public class NavItemEditorTest {
     @Mock
     PerspectivePluginManager perspectivePluginManager;
 
+    @Mock
+    Command updateCommand;
+
+    @Mock
+    Command editFinishedCommand;
+
+    @Mock
+    Command errorCommand;
+
+    @Mock
+    PerspectiveActivity perspectiveActivity;
+
     NavItemEditor presenter;
 
     @Before
     public void setUp() throws Exception {
+        when(perspectiveDropDown.getSelectedPerspective()).thenReturn(perspectiveActivity);
         presenter = new NavItemEditor(view, placeManager, perspectiveDropDown, perspectivePluginManager);
+    }
+
+    @Test
+    public void testChangeGroup() {
+        NavGroup navGroup = NavFactory.get().createNavGroup();
+        navGroup.setId("id");
+        navGroup.setName("name");
+        navGroup.setDescription("description");
+        navGroup.setModifiable(true);
+        presenter.setOnUpdateCommand(updateCommand);
+        presenter.setOnEditFinishedCommand(editFinishedCommand);
+        presenter.edit(navGroup);
+
+        when(view.getItemName()).thenReturn("name");
+        presenter.confirmChanges();
+        verify(view).finishItemEdition();
+        verify(updateCommand, never()).execute();
+        verify(editFinishedCommand).execute();
+        assertEquals(presenter.getNavItem().getName(), "name");
+
+        reset(updateCommand);
+        reset(editFinishedCommand);
+        reset(view);
+        when(view.getItemName()).thenReturn("  \t   ");
+        presenter.confirmChanges();
+        verify(view, never()).finishItemEdition();
+        verify(updateCommand, never()).execute();
+        verify(editFinishedCommand, never()).execute();
+        assertEquals(presenter.getNavItem().getName(), "name");
+
+        reset(updateCommand);
+        reset(editFinishedCommand);
+        reset(view);
+        when(view.getItemName()).thenReturn("newName");
+        presenter.confirmChanges();
+        verify(view).finishItemEdition();
+        verify(updateCommand).execute();
+        verify(editFinishedCommand).execute();
+        assertEquals(presenter.getNavItem().getName(), "newName");
+    }
+
+    @Test
+    public void testChangePerspective() {
+        NavItem navItem = NavFactory.get().createNavItem();
+        NavWorkbenchCtx navCtxA = NavWorkbenchCtx.perspective("A");
+        NavWorkbenchCtx navCtxB = NavWorkbenchCtx.perspective("B");
+        navItem.setContext(navCtxA.toString());
+
+        navItem.setId("id");
+        navItem.setName("name");
+        navItem.setDescription("description");
+        navItem.setModifiable(true);
+        presenter.setOnErrorCommand(errorCommand);
+        presenter.setOnUpdateCommand(updateCommand);
+        presenter.setOnEditFinishedCommand(editFinishedCommand);
+        presenter.edit(navItem);
+
+        // Empty perspective
+        when(view.getItemName()).thenReturn("name");
+        presenter.confirmChanges();
+        verify(view, never()).finishItemEdition();
+        verify(errorCommand).execute();
+
+        // No perspective changes
+        reset(errorCommand);
+        reset(updateCommand);
+        reset(editFinishedCommand);
+        reset(view);
+        when(view.getItemName()).thenReturn("name");
+        when(perspectiveActivity.getIdentifier()).thenReturn("A");
+        presenter.confirmChanges();
+        verify(view).finishItemEdition();
+        verify(errorCommand, never()).execute();
+        verify(updateCommand, never()).execute();
+        verify(editFinishedCommand).execute();
+        assertEquals(presenter.getNavItem().getName(), "name");
+        assertEquals(presenter.getNavItem().getContext(), navCtxA.toString());
+
+        // Perspective changes
+        reset(errorCommand);
+        reset(updateCommand);
+        reset(editFinishedCommand);
+        reset(view);
+        when(view.getItemName()).thenReturn("name");
+        when(perspectiveActivity.getIdentifier()).thenReturn("B");
+        presenter.confirmChanges();
+        verify(view).finishItemEdition();
+        verify(errorCommand, never()).execute();
+        verify(updateCommand).execute();
+        verify(editFinishedCommand).execute();
+        assertEquals(presenter.getNavItem().getName(), "name");
+        assertEquals(presenter.getNavItem().getContext(), navCtxB.toString());
+
+        // Cancel changes
+        navItem.setContext(navCtxA.toString());
+        presenter.edit(navItem);
+        reset(errorCommand);
+        reset(updateCommand);
+        reset(editFinishedCommand);
+        reset(perspectiveDropDown);
+        reset(view);
+        when(view.getItemName()).thenReturn("newName");
+        when(perspectiveActivity.getIdentifier()).thenReturn("B");
+        presenter.cancelEdition();
+        verify(view).finishItemEdition();
+        verify(view).setItemName("name");
+        verify(perspectiveDropDown).setSelectedPerspective("A");
+        verify(editFinishedCommand, never()).execute();
+        assertEquals(presenter.getNavItem().getName(), "name");
+        assertEquals(presenter.getNavItem().getContext(), navCtxA.toString());
     }
 
     @Test
@@ -89,7 +215,7 @@ public class NavItemEditorTest {
         verify(view, never()).setContextWidget(any());
 
         reset(view);
-        presenter.onItemClick();
+        presenter.onItemEdit();
         verify(view, never()).startItemEdition();
     }
 
@@ -138,14 +264,18 @@ public class NavItemEditorTest {
         reset(view);
         navItem.setModifiable(true);
         presenter.edit(navItem);
-        verify(view).setCommandsEnabled(true);
+        verify(view).setItemEditable(true);
+        verify(view).setItemDeletable(true);
+        verify(view, never()).setCommandsEnabled(true);
 
         // Modifiable divider (only delete action)
         reset(view);
         NavDivider navDivider = NavFactory.get().createDivider();
         navDivider.setModifiable(true);
         presenter.edit(navDivider);
-        verify(view, atLeastOnce()).setCommandsEnabled(true);
+        verify(view).setItemEditable(false);
+        verify(view).setItemDeletable(true);
+        verify(view, never()).setCommandsEnabled(true);
 
         // Non-modifiable divider (no actions)
         reset(view);

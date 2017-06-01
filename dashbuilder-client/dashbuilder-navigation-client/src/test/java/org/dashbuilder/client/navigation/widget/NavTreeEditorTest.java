@@ -1,8 +1,5 @@
 package org.dashbuilder.client.navigation.widget;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
-
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.navigation.NavItem;
@@ -42,9 +39,9 @@ public class NavTreeEditorTest {
     @Mock
     private NavItem navItemM;
     @Mock
-    private NavItemEditor navItemEditorM;
-    @Mock
     private SyncBeanDef<NavItemEditor> navItemEditorBeanDef;
+
+    private NavItemEditor navItemEditor;
 
     NavTree NAV_TREE = new NavTreeBuilder()
             .group("root", "root", "root", true)
@@ -60,8 +57,9 @@ public class NavTreeEditorTest {
 
     @Before
     public void setUp() {
+        navItemEditor = spy(new NavItemEditor(navItemEditorViewM, placeManagerM, perspectiveDropDownM, perspectivePluginManagerM));
         when(beanManagerM.lookupBean(NavItemEditor.class)).thenReturn(navItemEditorBeanDef);
-        when(navItemEditorBeanDef.newInstance()).thenReturn(navItemEditorM);
+        when(navItemEditorBeanDef.newInstance()).thenReturn(navItemEditor);
     }
     @Test
     public void testAllSubgroupsAllowed() {
@@ -120,6 +118,17 @@ public class NavTreeEditorTest {
     }
 
     @Test
+    public void testFinishEdition() {
+        NavTreeEditor treeEditor = spy(new NavTreeEditor(viewM, beanManagerM, perspectiveTreeProviderM));
+        treeEditor.edit(NAV_TREE);
+
+        navItemEditor.onNewSubGroup();
+        navItemEditor.finishEditing();
+
+        assertNull(treeEditor.getCurrentlyEditedItem());
+    }
+
+    @Test
     public void itShouldBeImpossibleToOpenMultipleNavItemEditorInputs() { // DASHBUILDE-217
         NavTreeEditor treeEditor = new NavTreeEditor(viewM,
                                                      beanManagerM,
@@ -131,16 +140,13 @@ public class NavTreeEditorTest {
         treeEditor.onItemEditStarted(first);
         treeEditor.onItemEditStarted(second);
 
-        verify(first).finishEditing();
+        verify(first).cancelEdition();
     }
     @Test
     public void whenItemEditFinishedNavTreeEditorCleared() {
         NavTreeEditor treeEditor = new NavTreeEditor(viewM,
                                                      beanManagerM,
                                                      perspectiveTreeProviderM);
-
-        when(beanManagerM.lookupBean(NavItemEditor.class))
-                .thenReturn(new MockSyncBeanDefProvidingNavItemEditor());
 
         // This creates onItemEditFinishedCallback for the editor
         NavItemEditor navItemEditor = treeEditor.createNavItemEditor(navItemM,
@@ -160,67 +166,5 @@ public class NavTreeEditorTest {
         navItemEditor.finishEditing();
         verify(navItemEditorViewM).finishItemEdition();
         assertFalse(treeEditor.currentlyEditedItem.isPresent());
-    }
-
-    // The sole purpose of this class is to provide NavItemEditor instance
-    private class MockSyncBeanDefProvidingNavItemEditor implements SyncBeanDef<NavItemEditor> {
-
-        @Override
-        public NavItemEditor getInstance() {
-            return null;
-        }
-
-        @Override
-        public NavItemEditor newInstance() {
-            return new NavItemEditor(navItemEditorViewM,
-                                     placeManagerM,
-                                     perspectiveDropDownM,
-                                     perspectivePluginManagerM);
-        }
-
-        @Override
-        public boolean isAssignableTo(Class<?> type) {
-            return false;
-        }
-
-        @Override
-        public Class<NavItemEditor> getType() {
-            return null;
-        }
-
-        @Override
-        public Class<?> getBeanClass() {
-            return null;
-        }
-
-        @Override
-        public Class<? extends Annotation> getScope() {
-            return null;
-        }
-
-        @Override
-        public Set<Annotation> getQualifiers() {
-            return null;
-        }
-
-        @Override
-        public boolean matches(Set<Annotation> annotations) {
-            return false;
-        }
-
-        @Override
-        public String getName() {
-            return null;
-        }
-
-        @Override
-        public boolean isActivated() {
-            return false;
-        }
-
-        @Override
-        public boolean isDynamic() {
-            return false;
-        }
     }
 }
