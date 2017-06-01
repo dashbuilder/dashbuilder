@@ -104,7 +104,7 @@ public class NavTreeEditorView extends Composite
     @Override
     public void addItemEditor(NavItemEditor navItemEditor) {
         com.google.gwt.dom.client.Element el = navItemEditor.asWidget().getElement();
-        int margin = itemStack.size() * 20;
+        int margin = itemStack.size() * 15;
         el.getStyle().setMarginLeft(margin, Style.Unit.PX);
         treeDiv.appendChild((Node) el);
     }

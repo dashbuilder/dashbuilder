@@ -47,6 +47,10 @@ public class NavItemEditor implements IsWidget {
 
         void setItemName(String name);
 
+        String getItemName();
+
+        void setItemNameError(boolean hasError);
+
         void setItemDescription(String description);
 
         void setItemType(ItemType type);
@@ -58,6 +62,8 @@ public class NavItemEditor implements IsWidget {
         void setCommandsEnabled(boolean enabled);
 
         void setItemEditable(boolean editable);
+
+        void setItemDeletable(boolean deletable);
 
         void startItemEdition();
 
@@ -97,6 +103,7 @@ public class NavItemEditor implements IsWidget {
     Set<String> hiddenPerspectiveIds = null;
     PerspectiveNameProvider perspectiveNameProvider = null;
     NavItem navItem = null;
+    ItemType itemType = null;
     String perspectiveId = null;
     Command onUpdateCommand;
     Command onErrorCommand;
@@ -110,6 +117,7 @@ public class NavItemEditor implements IsWidget {
     Command onNewDividerCommand;
     Command onEditStartedCommand;
     Command onEditFinishedCommand;
+    Command onEditCancelledCommand;
     String literalGroup = "Group";
     String literalPerspective = "Perspective";
     String literalDivider = "Divider";
@@ -225,6 +233,10 @@ public class NavItemEditor implements IsWidget {
         this.onEditFinishedCommand = onEditFinishedCommand;
     }
 
+    public void setOnEditCancelledCommand(Command onEditCancelledCommand) {
+        this.onEditCancelledCommand = onEditCancelledCommand;
+    }
+
     public NavItem getNavItem() {
         return navItem;
     }
@@ -273,12 +285,12 @@ public class NavItemEditor implements IsWidget {
 
         // Nav group
         if (navItem instanceof NavGroup) {
-            view.setItemType(ItemType.GROUP);
+            view.setItemType(itemType = ItemType.GROUP);
             creationEnabled = true;
         }
         // Divider
         else if (navItem instanceof NavDivider) {
-            view.setItemType(ItemType.DIVIDER);
+            view.setItemType(itemType = ItemType.DIVIDER);
             editEnabled = false;
         }
         else if (navCtx.getResourceId() != null) {
@@ -299,9 +311,9 @@ public class NavItemEditor implements IsWidget {
                     perspectiveDropDown.setPerspectiveNameProvider(perspectiveNameProvider);
                 }
                 perspectiveDropDown.setMaxItems(50);
-                perspectiveDropDown.setOnChange(this::onPerspectiveChanged);
+                perspectiveDropDown.setWidth(150);
                 perspectiveDropDown.setSelectedPerspective(perspectiveId);
-                view.setItemType(perspectivePluginManager.isRuntimePerspective(perspectiveId) ? ItemType.RUNTIME_PERSPECTIVE : ItemType.PERSPECTIVE);
+                view.setItemType(itemType = perspectivePluginManager.isRuntimePerspective(perspectiveId) ? ItemType.RUNTIME_PERSPECTIVE : ItemType.PERSPECTIVE);
                 view.setContextWidget(perspectiveDropDown);
             }
         }
@@ -310,6 +322,7 @@ public class NavItemEditor implements IsWidget {
         }
 
         view.setItemEditable(editEnabled);
+        view.setItemDeletable(deleteEnabled);
         addCommands();
     }
 
@@ -352,13 +365,6 @@ public class NavItemEditor implements IsWidget {
             dividerRequired = true;
             this.addCommand(view.i18nGotoItem(literalPerspective), this::onGotoPerspective);
         }
-        if (deleteEnabled) {
-            if (dividerRequired) {
-                view.addCommandDivider();
-            }
-            dividerRequired = true;
-            this.addCommand(view.i18nDeleteItem(), this::onDeleteItem);
-        }
     }
 
     private void addCommand(String name, Command action) {
@@ -366,33 +372,49 @@ public class NavItemEditor implements IsWidget {
         view.setCommandsEnabled(true);
     }
 
-    public void onItemClick() {
+    public void onItemEdit() {
         if (editEnabled) {
             view.startItemEdition();
             onEditStarted();
         }
     }
 
-    public void onItemNameChanged(String name) {
-        if (name != null && name.length() > 0) {
-            navItem.setName(name);
-            view.setItemName(name);
-            if (onUpdateCommand != null) {
-                onUpdateCommand.execute();
+    public void confirmChanges() {
+        boolean error = false;
+        boolean update = false;
+
+        // Capture name changes
+        String name = view.getItemName();
+        if (name != null && !name.trim().isEmpty()) {
+            if (!name.equals(navItem.getName())) {
+                navItem.setName(name);
+                view.setItemName(name);
+                update = true;
             }
         } else {
-            if (onErrorCommand != null) {
-                onErrorCommand.execute();
+            error = true;
+        }
+        view.setItemNameError(error);
+
+        // Capture perspective changes
+        if (ItemType.PERSPECTIVE.equals(itemType) || ItemType.RUNTIME_PERSPECTIVE.equals(itemType)) {
+            String perspectiveId = perspectiveDropDown.getSelectedPerspective().getIdentifier();
+            if (perspectiveId != null && !perspectiveId.trim().isEmpty()) {
+                NavWorkbenchCtx navCtx = NavWorkbenchCtx.get(navItem);
+                if (navCtx.getResourceId() != null && !navCtx.getResourceId().equals(perspectiveId)){
+                    NavWorkbenchCtx newCtx = NavWorkbenchCtx.perspective(perspectiveId);
+                    navItem.setContext(newCtx.toString());
+                    update = true;
+                }
+            } else {
+                error = true;
             }
         }
-    }
 
-    private void onPerspectiveChanged() {
-        String perspectiveId = perspectiveDropDown.getSelectedPerspective().getIdentifier();
-        if (perspectiveId != null && perspectiveId.length() > 0) {
-            NavWorkbenchCtx navCtx = NavWorkbenchCtx.perspective(perspectiveId);
-            navItem.setContext(navCtx.toString());
-            if (onUpdateCommand != null) {
+        // Process updates
+        if (!error) {
+            finishEditing();
+            if (update && onUpdateCommand != null) {
                 onUpdateCommand.execute();
             }
         } else {
@@ -406,68 +428,83 @@ public class NavItemEditor implements IsWidget {
         placeManager.goTo(perspectiveId);
     }
 
-    private void onNewSubGroup() {
+    void onNewSubGroup() {
         if (onNewSubgroupCommand != null) {
             onNewSubgroupCommand.execute();
         }
     }
 
-    private void onNewPerspective() {
+    void onNewPerspective() {
         if (onNewPerspectiveCommand != null) {
             onNewPerspectiveCommand.execute();
         }
     }
 
-    private void onNewDivider() {
+    void onNewDivider() {
         if (onNewDividerCommand != null) {
             onNewDividerCommand.execute();
         }
     }
 
-    public void onDeleteItem() {
-        if (onDeleteCommand != null) {
+    void onDeleteItem() {
+        if (deleteEnabled && onDeleteCommand != null) {
             onDeleteCommand.execute();
         }
     }
 
-    private void onMoveUpItem() {
+    void onMoveUpItem() {
         if (onMoveUpCommand != null) {
             onMoveUpCommand.execute();
         }
     }
 
-    private void onMoveDownItem() {
+    void onMoveDownItem() {
         if (onMoveDownCommand != null) {
             onMoveDownCommand.execute();
         }
     }
 
-    private void onMoveFirstItem() {
+    void onMoveFirstItem() {
         if (onMoveFirstCommand != null) {
             onMoveFirstCommand.execute();
         }
     }
 
-    private void onMoveLastItem() {
+    void onMoveLastItem() {
         if (onMoveLastCommand != null) {
             onMoveLastCommand.execute();
         }
     }
 
-    private void onEditStarted() {
+    void onEditStarted() {
         if (onEditStartedCommand != null) {
             onEditStartedCommand.execute();
         }
     }
 
-    private void onEditFinished() {
+    void onEditFinished() {
         if (onEditFinishedCommand != null) {
             onEditFinishedCommand.execute();
+        }
+    }
+
+    void onEditCancelled() {
+        if (onEditCancelledCommand != null) {
+            onEditCancelledCommand.execute();
         }
     }
 
     public void finishEditing() {
         view.finishItemEdition();
         onEditFinished();
+    }
+
+    public void cancelEdition() {
+        view.finishItemEdition();
+        view.setItemName(navItem.getName());
+        if (ItemType.PERSPECTIVE.equals(itemType) || ItemType.RUNTIME_PERSPECTIVE.equals(itemType)) {
+            perspectiveDropDown.setSelectedPerspective(perspectiveId);
+        }
+        onEditCancelled();
     }
 }

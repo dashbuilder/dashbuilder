@@ -22,7 +22,6 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.LIElement;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
@@ -52,6 +51,26 @@ public class NavItemEditorView extends Composite
 
     @Inject
     @DataField
+    Span itemMenuIcon;
+
+    @Inject
+    @DataField
+    Span itemEditIcon;
+
+    @Inject
+    @DataField
+    Span itemDeleteIcon;
+
+    @Inject
+    @DataField
+    Span itemConfirmIcon;
+
+    @Inject
+    @DataField
+    Span itemCancelIcon;
+
+    @Inject
+    @DataField
     Span itemName;
 
     @Inject
@@ -64,6 +83,14 @@ public class NavItemEditorView extends Composite
 
     @Inject
     @DataField
+    Div itemViewDiv;
+
+    @Inject
+    @DataField
+    Div itemEditDiv;
+
+    @Inject
+    @DataField
     UnorderedList commandMenu;
 
     NavigationConstants i18n = NavigationConstants.INSTANCE;
@@ -72,15 +99,28 @@ public class NavItemEditorView extends Composite
     @Override
     public void init(NavItemEditor presenter) {
         this.presenter = presenter;
-        itemIcon.setTitle(i18n.itemMenuTitle());
-        itemNameInput.getStyle().setProperty("display", "none");
-        extraDiv.getStyle().setProperty("display", "none");
+        itemViewDiv.setHidden(false);
+        itemEditDiv.setHidden(true);
+        itemMenuIcon.setTitle(i18n.itemMenuTitle());
+        itemEditIcon.setTitle(i18n.editItem());
+        itemDeleteIcon.setTitle(i18n.deleteItem());
     }
 
     @Override
     public void setItemName(String name) {
         itemName.setTextContent(name);
         itemNameInput.setValue(name);
+    }
+
+    @Override
+    public String getItemName() {
+        return itemNameInput.getValue();
+    }
+
+    @Override
+    public void setItemNameError(boolean hasError) {
+        String classes = "navitem-name-input" + (hasError ? " navitem-name-error" : "");
+        itemNameInput.setClassName(classes);
     }
 
     @Override
@@ -131,26 +171,21 @@ public class NavItemEditorView extends Composite
 
     @Override
     public void setCommandsEnabled(boolean enabled) {
-        if (enabled) {
-            commandMenu.getStyle().removeProperty("display");
-        } else {
-            commandMenu.getStyle().setProperty("display", "none");
-        }
+        itemMenuIcon.setHidden(!enabled);
+        commandMenu.setHidden(!enabled);
     }
 
     @Override
     public void startItemEdition() {
-        itemName.getStyle().setProperty("display", "none");
-        itemNameInput.getStyle().removeProperty("display");
-        extraDiv.getStyle().removeProperty("display");
+        itemViewDiv.setHidden(true);
+        itemEditDiv.setHidden(false);
         itemNameInput.focus();
     }
 
     @Override
     public void finishItemEdition() {
-        itemName.getStyle().removeProperty("display");
-        itemNameInput.getStyle().setProperty("display", "none");
-        extraDiv.getStyle().setProperty("display", "none");
+        itemViewDiv.setHidden(false);
+        itemEditDiv.setHidden(true);
     }
 
     @Override
@@ -164,9 +199,18 @@ public class NavItemEditorView extends Composite
     @Override
     public void setItemEditable(boolean editable) {
         if (editable) {
-            itemName.getStyle().setProperty("cursor", "pointer");
+            itemEditIcon.getStyle().removeProperty("display");
         } else {
-            itemName.getStyle().removeProperty("cursor");
+            itemEditIcon.getStyle().setProperty("display", "none");
+        }
+    }
+
+    @Override
+    public void setItemDeletable(boolean deletable) {
+        if (deletable) {
+            itemDeleteIcon.getStyle().removeProperty("display");
+        } else {
+            itemDeleteIcon.getStyle().setProperty("display", "none");
         }
     }
 
@@ -205,9 +249,24 @@ public class NavItemEditorView extends Composite
         return i18n.moveLast();
     }
 
-    @EventHandler("itemName")
-    public void onItemNameClick(ClickEvent event) {
-        presenter.onItemClick();
+    @EventHandler("itemEditIcon")
+    public void onItemEditClick(ClickEvent event) {
+        presenter.onItemEdit();
+    }
+
+    @EventHandler("itemDeleteIcon")
+    public void onItemDeleteClick(ClickEvent event) {
+        presenter.onDeleteItem();
+    }
+
+    @EventHandler("itemConfirmIcon")
+    public void onItemEditOkClick(ClickEvent event) {
+        presenter.confirmChanges();
+    }
+
+    @EventHandler("itemCancelIcon")
+    public void onItemEditCancelClick(ClickEvent event) {
+        presenter.cancelEdition();
     }
 
     @EventHandler("itemNameInput")
@@ -216,14 +275,9 @@ public class NavItemEditorView extends Composite
     }
 
     @EventHandler("itemNameInput")
-    public void onItemNameChanged(ChangeEvent event) {
-        presenter.onItemNameChanged(itemNameInput.getValue());
-    }
-
-    @EventHandler("itemNameInput")
     public void onEnterPressedAfterEditingName(KeyPressEvent keyEvent) {
         if (keyEvent.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
-            presenter.finishEditing();
+            presenter.confirmChanges();
         }
     }
 }

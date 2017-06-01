@@ -209,7 +209,6 @@ public class NavTreeEditor implements IsWidget {
         navItemEditor.setLiteralPerspective(literalPerspective);
         navItemEditor.setLiteralDivider(literalDivider);
         navItemEditor.setOnUpdateCommand(() -> onChangeItem(navItem, navItemEditor.getNavItem()));
-        navItemEditor.setOnErrorCommand(() -> onItemError(navItem, navItemEditor.getNavItem()));
         navItemEditor.setOnDeleteCommand(() -> onDeleteItem(navItem));
         navItemEditor.setOnMoveFirstCommand(() -> onMoveFirstItem(navItem));
         navItemEditor.setOnMoveLastCommand(() -> onMoveLastItem(navItem));
@@ -220,6 +219,7 @@ public class NavTreeEditor implements IsWidget {
         navItemEditor.setOnNewDividerCommand(() -> onNewDivider((NavGroup) navItem));
         navItemEditor.setOnEditStartedCommand(() -> onItemEditStarted(navItemEditor));
         navItemEditor.setOnEditFinishedCommand(() -> onItemEditFinished());
+        navItemEditor.setOnEditCancelledCommand(() -> onItemEditCancelled());
         navItemEditor.setMoveUpEnabled(!isFirst);
         navItemEditor.setMoveDownEnabled(!isLast);
         navItemEditor.setNewGroupEnabled(newGroupEnabled && subGroupsAllowed);
@@ -231,9 +231,14 @@ public class NavTreeEditor implements IsWidget {
         navItemEditor.setPerspectiveNameProvider(perspectiveTreeProvider::getPerspectiveName);
         navItemEditor.edit(navItem);
         if (inCreationId != null && inCreationId.equals(navItem.getId())) {
-            navItemEditor.onItemClick();
+            inCreationId = null;
+            navItemEditor.onItemEdit();
         }
         return navItemEditor;
+    }
+
+    public NavItemEditor getCurrentlyEditedItem() {
+        return currentlyEditedItem.isPresent() ? currentlyEditedItem.get() : null;
     }
 
     public Set<String> getPerspectiveIds(boolean visible) {
@@ -279,10 +284,6 @@ public class NavTreeEditor implements IsWidget {
         showChanges();
     }
 
-    private void onItemError(NavItem oldItem, NavItem newItem) {
-        view.setChangedFlag(false);
-    }
-
     private void onChangeItem(NavItem oldItem, NavItem newItem) {
         navTree.setItemName(oldItem.getId(), newItem.getName());
         navTree.setItemDescription(oldItem.getId(), newItem.getDescription());
@@ -291,11 +292,15 @@ public class NavTreeEditor implements IsWidget {
     }
 
     void onItemEditStarted(NavItemEditor newEditor) {
-        currentlyEditedItem.ifPresent(oldEditor -> oldEditor.finishEditing());
+        currentlyEditedItem.ifPresent(NavItemEditor::cancelEdition);
         currentlyEditedItem = Optional.of(newEditor);
     }
 
     void onItemEditFinished() {
+        currentlyEditedItem = Optional.empty();
+    }
+
+    void onItemEditCancelled() {
         currentlyEditedItem = Optional.empty();
     }
 
