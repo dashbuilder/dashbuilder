@@ -25,6 +25,7 @@ import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.group.ColumnGroup;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.GroupStrategy;
 import org.dashbuilder.dataset.sort.DataSetSort;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.ColumnSettings;
@@ -126,7 +127,9 @@ public class SelectorLabelSetDisplayer extends AbstractErraiDisplayer<SelectorLa
         DataSetGroup group = dataSetHandler.getCurrentDataSetLookup().getLastGroupOp();
         if (dataSetHandler.getCurrentDataSetLookup().getOperationList(DataSetSort.class).isEmpty() && group != null) {
             ColumnGroup column = group.getColumnGroup();
-            dataSetHandler.sort(column.getSourceId(), SortOrder.ASCENDING);
+            if (!GroupStrategy.FIXED.equals(column.getStrategy())) {
+                dataSetHandler.sort(column.getSourceId(), SortOrder.ASCENDING);
+            }
         }
     }
 
