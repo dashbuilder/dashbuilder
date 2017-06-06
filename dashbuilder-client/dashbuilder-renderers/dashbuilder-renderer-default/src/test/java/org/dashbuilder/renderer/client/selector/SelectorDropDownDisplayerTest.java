@@ -18,9 +18,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.date.DayOfWeek;
+import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.filter.FilterFactory;
 import org.dashbuilder.dataset.group.AggregateFunctionType;
 import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.DateIntervalType;
 import org.dashbuilder.dataset.group.Interval;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
@@ -350,5 +353,117 @@ public class SelectorDropDownDisplayerTest extends AbstractDisplayerTest {
         DataSetGroup dataSetGroup = argument.getValue();
         Interval selectedInterval = dataSetGroup.getSelectedIntervalList().get(0);
         assertEquals(selectedInterval.getName(), "Engineering");
+    }
+
+    @Test
+    public void testSortFixedMonthDefault() {
+        DisplayerSettings displayerSettings = DisplayerSettingsFactory.newSelectorSettings()
+                .dataset(EXPENSES)
+                .group(COLUMN_DATE).fixed(DateIntervalType.MONTH, true)
+                .column(COLUMN_DATE)
+                .column(COLUMN_ID, AggregateFunctionType.COUNT)
+                .buildSettings();
+
+        SelectorDropDownDisplayer presenter = createSelectorDisplayer(displayerSettings);
+        presenter.draw();
+        DataSet dataSet = presenter.getDataSetHandler().getLastDataSet();
+        assertEquals(dataSet.getValueAt(0, 0), "1");
+        assertEquals(dataSet.getValueAt(11, 0), "12");
+    }
+
+    @Test
+    public void testSortFixedFirstMonth() {
+        DisplayerSettings displayerSettings = DisplayerSettingsFactory.newSelectorSettings()
+                .dataset(EXPENSES)
+                .group(COLUMN_DATE).fixed(DateIntervalType.MONTH, true).firstMonth(Month.FEBRUARY)
+                .column(COLUMN_DATE)
+                .column(COLUMN_ID, AggregateFunctionType.COUNT)
+                .buildSettings();
+
+        SelectorDropDownDisplayer presenter = createSelectorDisplayer(displayerSettings);
+        presenter.draw();
+        DataSet dataSet = presenter.getDataSetHandler().getLastDataSet();
+        assertEquals(dataSet.getValueAt(0, 0), "2");
+        assertEquals(dataSet.getValueAt(11, 0), "1");
+    }
+
+    @Test
+    public void testSortFixedDayOfWeekDefault() {
+        DisplayerSettings displayerSettings = DisplayerSettingsFactory.newSelectorSettings()
+                .dataset(EXPENSES)
+                .group(COLUMN_DATE).fixed(DateIntervalType.DAY_OF_WEEK, true)
+                .column(COLUMN_DATE)
+                .column(COLUMN_ID, AggregateFunctionType.COUNT)
+                .buildSettings();
+
+        SelectorDropDownDisplayer presenter = createSelectorDisplayer(displayerSettings);
+        presenter.draw();
+        DataSet dataSet = presenter.getDataSetHandler().getLastDataSet();
+        assertEquals(dataSet.getValueAt(0, 0), "2");
+        assertEquals(dataSet.getValueAt(6, 0), "1");
+    }
+
+    @Test
+    public void testSortFixedFirstDayOfWeek() {
+        DisplayerSettings displayerSettings = DisplayerSettingsFactory.newSelectorSettings()
+                .dataset(EXPENSES)
+                .group(COLUMN_DATE).fixed(DateIntervalType.DAY_OF_WEEK, true).firstDay(DayOfWeek.SUNDAY)
+                .column(COLUMN_DATE)
+                .column(COLUMN_ID, AggregateFunctionType.COUNT)
+                .buildSettings();
+
+        SelectorDropDownDisplayer presenter = createSelectorDisplayer(displayerSettings);
+        presenter.draw();
+        DataSet dataSet = presenter.getDataSetHandler().getLastDataSet();
+        assertEquals(dataSet.getValueAt(0, 0), "1");
+        assertEquals(dataSet.getValueAt(6, 0), "7");
+    }
+
+    @Test
+    public void testSortFixedHour() {
+        DisplayerSettings displayerSettings = DisplayerSettingsFactory.newSelectorSettings()
+                .dataset(EXPENSES)
+                .group(COLUMN_DATE).fixed(DateIntervalType.HOUR, true)
+                .column(COLUMN_DATE)
+                .column(COLUMN_ID, AggregateFunctionType.COUNT)
+                .buildSettings();
+
+        SelectorDropDownDisplayer presenter = createSelectorDisplayer(displayerSettings);
+        presenter.draw();
+        DataSet dataSet = presenter.getDataSetHandler().getLastDataSet();
+        assertEquals(dataSet.getValueAt(0, 0), "0");
+        assertEquals(dataSet.getValueAt(23, 0), "23");
+    }
+
+    @Test
+    public void testSortFixedMinute() {
+        DisplayerSettings displayerSettings = DisplayerSettingsFactory.newSelectorSettings()
+                .dataset(EXPENSES)
+                .group(COLUMN_DATE).fixed(DateIntervalType.MINUTE, true)
+                .column(COLUMN_DATE)
+                .column(COLUMN_ID, AggregateFunctionType.COUNT)
+                .buildSettings();
+
+        SelectorDropDownDisplayer presenter = createSelectorDisplayer(displayerSettings);
+        presenter.draw();
+        DataSet dataSet = presenter.getDataSetHandler().getLastDataSet();
+        assertEquals(dataSet.getValueAt(0, 0), "0");
+        assertEquals(dataSet.getValueAt(59, 0), "59");
+    }
+
+    @Test
+    public void testSortFixedSecond() {
+        DisplayerSettings displayerSettings = DisplayerSettingsFactory.newSelectorSettings()
+                .dataset(EXPENSES)
+                .group(COLUMN_DATE).fixed(DateIntervalType.SECOND, true)
+                .column(COLUMN_DATE)
+                .column(COLUMN_ID, AggregateFunctionType.COUNT)
+                .buildSettings();
+
+        SelectorDropDownDisplayer presenter = createSelectorDisplayer(displayerSettings);
+        presenter.draw();
+        DataSet dataSet = presenter.getDataSetHandler().getLastDataSet();
+        assertEquals(dataSet.getValueAt(0, 0), "0");
+        assertEquals(dataSet.getValueAt(59, 0), "59");
     }
 }
