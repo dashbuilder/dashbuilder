@@ -19,9 +19,8 @@ sed -i "$!N;s/<version.org.jboss.errai>.*.<\/version.org.jboss.errai>/<version.o
 
 # git add and commit the version update changes 
 git add .
-commitMSG_1="update to version "
-commitMSG_2="$commitMSG_1$newVersion"
-git commit -m "$commitMSG_2"
+commitMSG="update to version $newVersion"
+git commit -m "$commitMSG"
 
 if [ "$TARGET" == "community" ]; then
    STAGING_PROFILE=15c58a1abc895b
@@ -34,7 +33,7 @@ DEPLOY_DIR=$WORKSPACE/deploy-dir
 # (1) do a full build, but deploy only into local dir
 # we will deploy into remote staging repo only once the whole build passed (to save time and bandwith)
 mvn -B -e -U clean deploy -Dfull -Drelease -T1C -DaltDeploymentRepository=local::default::file://$DEPLOY_DIR -Dmaven.test.failure.ignore=true\
- -Dgwt.memory.settings="-Xmx2g -Xms1g -XX:MaxPermSize=256m -XX:PermSize=128m -Xss1M" -Dgwt.compiler.localWorkers=8
+ -Dgwt.memory.settings="-Xmx2g -Xms1g -Xss1M" -Dgwt.compiler.localWorkers=2
 
 # (2) upload the content to remote staging repo
 cd $DEPLOY_DIR
