@@ -15,17 +15,17 @@
  */
 package org.dashbuilder.client.navigation.plugin;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.event.PerspectivePluginsChangedEvent;
 import org.dashbuilder.navigation.NavItem;
@@ -34,7 +34,6 @@ import org.dashbuilder.navigation.service.LayoutTemplateInfo;
 import org.dashbuilder.navigation.service.PerspectivePluginServices;
 import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
 import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.uberfire.client.workbench.type.ClientResourceType;
 import org.uberfire.client.workbench.type.ClientTypeRegistry;
@@ -48,6 +47,8 @@ import org.uberfire.ext.plugin.model.Plugin;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.workbench.model.ActivityResourceType;
+
+import com.google.gwt.user.client.ui.IsWidget;
 
 @EntryPoint
 @ApplicationScoped
@@ -74,7 +75,7 @@ public class PerspectivePluginManager {
         this.perspectivesChangedEvent = perspectivesChangedEvent;
     }
 
-    @AfterInitialization
+    @PostConstruct
     private void init() {
         loadPlugins(plugins -> {});
     }

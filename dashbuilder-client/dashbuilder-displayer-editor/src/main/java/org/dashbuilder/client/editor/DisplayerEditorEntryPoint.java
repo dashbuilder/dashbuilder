@@ -15,14 +15,13 @@
  */
 package org.dashbuilder.client.editor;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.annotation.PostConstruct;
 
 import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 
 @EntryPoint
-@ApplicationScoped
 public class DisplayerEditorEntryPoint {
 
     /**
@@ -30,7 +29,7 @@ public class DisplayerEditorEntryPoint {
      * does not show all the attributes in the "Display" tab The fix is to force the DisplayerAttributeDef static
      * fields to initialize on startup.
      */
-    @AfterInitialization
+    @PostConstruct
     public void init() {
         DisplayerAttributeDef def = DisplayerAttributeDef.TITLE;
     }
