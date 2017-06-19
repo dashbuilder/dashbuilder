@@ -15,25 +15,14 @@
  */
 package org.dashbuilder.client.navigation.layout.editor;
 
-import java.util.Collections;
-import java.util.Map;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
 import org.dashbuilder.client.navigation.widget.NavItemSelectionModal;
-import org.dashbuilder.client.navigation.widget.NavItemSelectionModalView;
 import org.dashbuilder.client.navigation.widget.NavTilesWidget;
 import org.dashbuilder.navigation.NavGroup;
-import org.dashbuilder.navigation.NavItem;
-import org.dashbuilder.navigation.NavTree;
-import org.gwtbootstrap3.client.ui.Modal;
-import org.uberfire.ext.layout.editor.client.api.HasModalConfiguration;
-import org.uberfire.ext.layout.editor.client.api.ModalConfigurationContext;
-import org.uberfire.ext.layout.editor.client.api.RenderingContext;
-import org.uberfire.ext.plugin.client.perspective.editor.api.PerspectiveEditorDragComponent;
 
 /**
  * A layout editor's navigation component that shows a navigation group structure using two tile types: folders
@@ -41,24 +30,20 @@ import org.uberfire.ext.plugin.client.perspective.editor.api.PerspectiveEditorDr
  * @see NavTilesWidget
  */
 @Dependent
-public class NavTilesDragComponent implements PerspectiveEditorDragComponent, HasModalConfiguration {
-
-    NavigationManager navigationManager;
-    NavItemSelectionModal navItemSelectionModal;
-    NavTilesWidget navTilesWidget;
-    String navGroupId = null;
-
-    public static final String NAV_GROUP_ID = "navGroupId";
+public class NavTilesDragComponent extends AbstractNavDragComponent {
 
     @Inject
     public NavTilesDragComponent(NavigationManager navigationManager,
+                                 NavDragComponentRegistry navDragComponentRegistry,
                                  NavItemSelectionModal navItemSelectionModal,
-                                 NavTilesWidget navTilesWidget) {
-        this.navigationManager = navigationManager;
-        this.navItemSelectionModal = navItemSelectionModal;
-        this.navTilesWidget = navTilesWidget;
-        this.navTilesWidget.setHideEmptyGroups(true);
-        this.navTilesWidget.setOnStaleCommand(this::showNavTiles);
+                                 NavTilesWidget navWidget) {
+        super(navigationManager,
+                navDragComponentRegistry,
+                navItemSelectionModal,
+                navWidget);
+
+        this.navWidget.setHideEmptyGroups(true);
+
     }
 
     @Override
@@ -67,50 +52,17 @@ public class NavTilesDragComponent implements PerspectiveEditorDragComponent, Ha
     }
 
     @Override
-    public IsWidget getPreviewWidget(RenderingContext ctx) {
-        return getShowWidget(ctx);
+    public String getDragComponentHelp() {
+        return NavigationConstants.INSTANCE.navTilesDragComponentHelp();
     }
 
     @Override
-    public IsWidget getShowWidget(RenderingContext ctx) {
-        Map<String, String> properties = ctx.getComponent().getProperties();
-        navGroupId = properties.get(NAV_GROUP_ID);
-        this.showNavTiles();
-        return navTilesWidget;
-    }
-
-    private void showNavTiles() {
-        NavTree navTree = navigationManager.getNavTree();
-        NavGroup navGroup = (NavGroup) navTree.getItemById(navGroupId);
+    protected NavGroup fetchNavGroup() {
+        NavGroup navGroup = super.fetchNavGroup();
         if (navGroup != null) {
             navGroup = (NavGroup) navGroup.cloneItem();
             navGroup.setParent(null);
-            navTilesWidget.show(navGroup);
-        } else {
-            navTilesWidget.show(Collections.emptyList());
         }
-    }
-
-    @Override
-    public Modal getConfigurationModal(ModalConfigurationContext ctx) {
-        navItemSelectionModal.setHelpHint(NavigationConstants.INSTANCE.navTilesDragComponentHelp());
-        navItemSelectionModal.setOnlyGroups(true);
-        navItemSelectionModal.setOnOk(() -> navGroupSelectionOk(ctx));
-        navItemSelectionModal.setOnCancel(() -> navGroupSelectionCancel(ctx));
-
-        NavTree navTree = navigationManager.getNavTree();
-        String groupId = ctx.getComponentProperty(NAV_GROUP_ID);
-        navItemSelectionModal.show(navTree.getRootItems(), groupId);
-        return ((NavItemSelectionModalView) navItemSelectionModal.getView()).getModal();
-    }
-
-    private void navGroupSelectionOk(ModalConfigurationContext ctx) {
-        NavItem navItem = navItemSelectionModal.getSelectedItem();
-        ctx.setComponentProperty(NAV_GROUP_ID, navItem.getId());
-        ctx.configurationFinished();
-    }
-
-    private void navGroupSelectionCancel(ModalConfigurationContext ctx) {
-        ctx.configurationCancelled();
+        return navGroup;
     }
 }

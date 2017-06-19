@@ -15,47 +15,30 @@
  */
 package org.dashbuilder.client.navigation.layout.editor;
 
-import java.util.Collections;
-import java.util.Map;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
+import org.dashbuilder.client.navigation.widget.NavCarouselWidget;
 import org.dashbuilder.client.navigation.widget.NavItemSelectionModal;
-import org.dashbuilder.client.navigation.widget.NavItemSelectionModalView;
 import org.dashbuilder.client.navigation.widget.NavTabListWidget;
-import org.dashbuilder.navigation.NavGroup;
-import org.dashbuilder.navigation.NavItem;
-import org.dashbuilder.navigation.NavTree;
-import org.gwtbootstrap3.client.ui.Modal;
-import org.uberfire.ext.layout.editor.client.api.HasModalConfiguration;
-import org.uberfire.ext.layout.editor.client.api.ModalConfigurationContext;
-import org.uberfire.ext.layout.editor.client.api.RenderingContext;
-import org.uberfire.ext.plugin.client.perspective.editor.api.PerspectiveEditorDragComponent;
 
 /**
  * A layout editor's navigation component that shows a list of tabs providing links to workbench assets
  */
 @Dependent
-public class NavTabListDragComponent implements PerspectiveEditorDragComponent, HasModalConfiguration {
-
-    NavigationManager navigationManager;
-    NavItemSelectionModal navItemSelectionModal;
-    NavTabListWidget navTabListWidget;
-    String navGroupId = null;
-
-    public static final String NAV_GROUP_ID = "navGroupId";
+public class NavTabListDragComponent extends AbstractNavDragComponent {
 
     @Inject
     public NavTabListDragComponent(NavigationManager navigationManager,
+                                   NavDragComponentRegistry navDragComponentRegistry,
                                    NavItemSelectionModal navItemSelectionModal,
-                                   NavTabListWidget navTabListWidget) {
-        this.navigationManager = navigationManager;
-        this.navItemSelectionModal = navItemSelectionModal;
-        this.navTabListWidget = navTabListWidget;
-        this.navTabListWidget.setOnStaleCommand(this::showNavTabList);
+                                   NavTabListWidget navWidget) {
+        super(navigationManager,
+                navDragComponentRegistry,
+                navItemSelectionModal,
+                navWidget);
     }
 
     @Override
@@ -64,48 +47,7 @@ public class NavTabListDragComponent implements PerspectiveEditorDragComponent, 
     }
 
     @Override
-    public IsWidget getPreviewWidget(RenderingContext ctx) {
-        return getShowWidget(ctx);
-    }
-
-    @Override
-    public IsWidget getShowWidget(RenderingContext ctx) {
-        Map<String, String> properties = ctx.getComponent().getProperties();
-        navGroupId = properties.get(NAV_GROUP_ID);
-        this.showNavTabList();
-        return navTabListWidget;
-    }
-
-    private void showNavTabList() {
-        NavTree navTree = navigationManager.getNavTree();
-        NavGroup navGroup = (NavGroup) navTree.getItemById(navGroupId);
-        if (navGroup != null) {
-            navTabListWidget.show(navGroup);
-        } else {
-            navTabListWidget.show(Collections.emptyList());
-        }
-    }
-
-    @Override
-    public Modal getConfigurationModal(ModalConfigurationContext ctx) {
-        navItemSelectionModal.setHelpHint(NavigationConstants.INSTANCE.navTabListDragComponentHelp());
-        navItemSelectionModal.setOnlyGroups(true);
-        navItemSelectionModal.setOnOk(() -> navGroupSelectionOk(ctx));
-        navItemSelectionModal.setOnCancel(() -> navGroupSelectionCancel(ctx));
-
-        NavTree navTree = navigationManager.getNavTree();
-        String groupId = ctx.getComponentProperty(NAV_GROUP_ID);
-        navItemSelectionModal.show(navTree.getRootItems(), groupId);
-        return ((NavItemSelectionModalView) navItemSelectionModal.getView()).getModal();
-    }
-
-    private void navGroupSelectionOk(ModalConfigurationContext ctx) {
-        NavItem navItem = navItemSelectionModal.getSelectedItem();
-        ctx.setComponentProperty(NAV_GROUP_ID, navItem.getId());
-        ctx.configurationFinished();
-    }
-
-    private void navGroupSelectionCancel(ModalConfigurationContext ctx) {
-        ctx.configurationCancelled();
+    public String getDragComponentHelp() {
+        return NavigationConstants.INSTANCE.navTabListDragComponentHelp();
     }
 }

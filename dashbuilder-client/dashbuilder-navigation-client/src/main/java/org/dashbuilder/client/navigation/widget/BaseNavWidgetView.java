@@ -16,7 +16,9 @@
 package org.dashbuilder.client.navigation.widget;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gwt.dom.client.AnchorElement;
 import com.google.gwt.dom.client.Document;
@@ -29,6 +31,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
 import org.jboss.errai.common.client.dom.DOMUtil;
+import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.common.client.dom.Node;
 import org.uberfire.mvp.Command;
 
@@ -37,10 +40,17 @@ public abstract class BaseNavWidgetView<T> extends Composite implements NavWidge
     protected Node navWidget = null;
     protected Element selectedItem = null;
     protected Map<String,Element> itemMap = new HashMap<>();
+    protected Set<IsWidget> widgetSet = new HashSet<>();
+
+    protected void appendWidgetToElement(HTMLElement element, IsWidget widget) {
+        DOMUtil.appendWidgetToElement(element, widget);
+        widgetSet.add(widget);
+    }
 
     @Override
     public void clearItems() {
         DOMUtil.removeAllChildren(navWidget);
+        widgetSet.forEach(DOMUtil::removeFromParent);
     }
 
     @Override

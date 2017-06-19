@@ -26,6 +26,7 @@ import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.common.client.dom.Node;
+import org.jboss.errai.common.client.dom.Window;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
@@ -69,10 +70,10 @@ public class NavCarouselWidgetView extends BaseNavWidgetView<NavCarouselWidget>
         DOMUtil.removeAllChildren(mainDiv);
         mainDiv.appendChild(carouselDiv);
 
-        DivElement div = Document.get().createDivElement();
+        Div div = (Div) Window.getDocument().createElement("div");
         div.setClassName(slidesDiv.getChildNodes().getLength() == 0 ? "item active" : "item");
-        div.appendChild(widget.asWidget().getElement());
-        slidesDiv.appendChild((Node) div);
+        super.appendWidgetToElement(div, widget);
+        slidesDiv.appendChild(div);
     }
 
     @Override
