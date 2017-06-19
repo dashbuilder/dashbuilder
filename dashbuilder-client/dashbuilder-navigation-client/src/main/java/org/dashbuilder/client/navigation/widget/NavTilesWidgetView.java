@@ -84,7 +84,7 @@ public class NavTilesWidgetView extends BaseNavWidgetView<NavTilesWidget>
     @Override
     public void showTileContent(IsWidget tileContent) {
         DOMUtil.removeAllChildren(tilesDiv);
-        tilesDiv.appendChild((Node) tileContent.asWidget().getElement());
+        super.appendWidgetToElement(tilesDiv, tileContent);
     }
 
     @Override

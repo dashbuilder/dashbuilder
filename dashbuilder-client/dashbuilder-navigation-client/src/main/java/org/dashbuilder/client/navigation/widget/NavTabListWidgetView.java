@@ -73,7 +73,7 @@ public class NavTabListWidgetView extends BaseNavWidgetView<NavTabListWidget>
         mainDiv.appendChild(tabsDiv);
 
         DOMUtil.removeAllChildren(tabContent);
-        tabContent.appendChild((Node) widget.asWidget().getElement());
+        super.appendWidgetToElement(tabContent, widget);
     }
 
     @Override

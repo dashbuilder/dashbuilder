@@ -28,6 +28,7 @@ import org.dashbuilder.navigation.NavDivider;
 import org.dashbuilder.navigation.NavGroup;
 import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.NavTree;
+import org.uberfire.client.workbench.events.PerspectiveChange;
 import org.uberfire.ext.security.management.client.widgets.management.events.SaveGroupEvent;
 import org.uberfire.ext.security.management.client.widgets.management.events.SaveRoleEvent;
 import org.uberfire.mvp.Command;
@@ -277,6 +278,11 @@ public abstract class BaseNavWidget implements NavWidget {
         if (onStaleCommand != null) {
             onStaleCommand.execute();
         }
+    }
+
+    @Override
+    public void dispose() {
+        view.clearItems();
     }
 
     // Listen to changes in the navigation tree

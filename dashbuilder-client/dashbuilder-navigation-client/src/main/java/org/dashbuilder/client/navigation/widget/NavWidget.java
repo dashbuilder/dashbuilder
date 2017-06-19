@@ -63,4 +63,7 @@ public interface NavWidget extends IsWidget {
     void setActive(boolean active);
 
     void clearSelections();
+
+    void dispose();
+
 }
