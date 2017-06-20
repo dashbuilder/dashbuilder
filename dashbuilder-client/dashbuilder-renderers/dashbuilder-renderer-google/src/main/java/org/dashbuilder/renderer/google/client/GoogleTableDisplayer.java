@@ -20,6 +20,7 @@ import java.util.List;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.dashbuilder.common.client.widgets.FilterLabelSet;
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.filter.DataSetFilter;
@@ -29,7 +30,6 @@ import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.client.Displayer;
-import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
 
 @Dependent
 public class GoogleTableDisplayer extends GoogleDisplayer<GoogleTableDisplayer.View> {
@@ -76,12 +76,9 @@ public class GoogleTableDisplayer extends GoogleDisplayer<GoogleTableDisplayer.V
     protected boolean showTotalRowsHint = true;
     protected boolean showTotalPagesHint = true;
 
-    public GoogleTableDisplayer() {
-        this(new GoogleTableDisplayerView());
-    }
-
     @Inject
-    public GoogleTableDisplayer(View view) {
+    public GoogleTableDisplayer(View view, FilterLabelSet filterLabelSet) {
+        super(filterLabelSet);
         this.view = view;
         this.view.init(this);
     }

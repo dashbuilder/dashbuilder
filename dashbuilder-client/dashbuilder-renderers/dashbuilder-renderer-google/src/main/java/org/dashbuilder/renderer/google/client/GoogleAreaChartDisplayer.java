@@ -18,6 +18,7 @@ package org.dashbuilder.renderer.google.client;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.dashbuilder.common.client.widgets.FilterLabelSet;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
@@ -35,12 +36,9 @@ public class GoogleAreaChartDisplayer extends GoogleCategoriesDisplayer<GoogleAr
 
     private View view;
 
-    public GoogleAreaChartDisplayer() {
-        this(new GoogleAreaChartDisplayerView());
-    }
-
     @Inject
-    public GoogleAreaChartDisplayer(View view) {
+    public GoogleAreaChartDisplayer(View view, FilterLabelSet filterLabelSet) {
+        super(filterLabelSet);
         this.view = view;
         this.view.init(this);
     }

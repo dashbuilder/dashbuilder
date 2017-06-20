@@ -24,6 +24,9 @@
   <inherits name="org.gwtbootstrap3.GwtBootstrap3NoTheme"/>
   <inherits name="org.gwtbootstrap3.extras.toggleswitch.ToggleSwitch"/>
 
+  <inherits name="org.jboss.errai.common.ErraiCommon"/>
+  <inherits name="org.jboss.errai.ui.UI"/>
+
   <inherits name="org.dashbuilder.JSON"/>
 
   <source path='common'/>

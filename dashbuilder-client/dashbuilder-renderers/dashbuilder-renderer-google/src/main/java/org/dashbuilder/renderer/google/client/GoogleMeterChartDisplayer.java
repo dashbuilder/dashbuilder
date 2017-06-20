@@ -18,6 +18,7 @@ package org.dashbuilder.renderer.google.client;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.dashbuilder.common.client.widgets.FilterLabelSet;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
@@ -40,12 +41,9 @@ public class GoogleMeterChartDisplayer extends GoogleCategoriesDisplayer<GoogleM
 
     private View view;
 
-    public GoogleMeterChartDisplayer() {
-        this(new GoogleMeterChartDisplayerView());
-    }
-
     @Inject
-    public GoogleMeterChartDisplayer(View view) {
+    public GoogleMeterChartDisplayer(View view, FilterLabelSet filterLabelSet) {
+        super(filterLabelSet);
         this.view = view;
         this.view.init(this);
     }

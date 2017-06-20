@@ -19,12 +19,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.DataTable;
@@ -33,18 +29,20 @@ import com.googlecode.gwt.charts.client.format.DateFormatOptions;
 import com.googlecode.gwt.charts.client.format.NumberFormat;
 import com.googlecode.gwt.charts.client.format.NumberFormatOptions;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
+import org.dashbuilder.common.client.widgets.FilterLabelSet;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.displayer.client.AbstractGwtDisplayerView;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.renderer.google.client.resources.i18n.GoogleDisplayerConstants;
-import org.gwtbootstrap3.client.ui.Label;
+import org.jboss.errai.common.client.dom.HTMLElement;
+import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 
 public abstract class GoogleDisplayerView<P extends GoogleDisplayer>
         extends AbstractGwtDisplayerView<P>
         implements GoogleDisplayer.View<P> {
 
     private Panel container = new FlowPanel();
-    private Panel filterPanel = new HorizontalPanel();
+    private Panel filterPanel = new FlowPanel();
     private Panel displayerPanel = new FlowPanel();
     private HTML titleHtml = new HTML();
     private DataTable dataTable ;
@@ -152,26 +150,12 @@ public abstract class GoogleDisplayerView<P extends GoogleDisplayer>
     }
 
     @Override
-    public void clearFilterStatus() {
-        if (filterPanel != null) {
-            filterPanel.clear();
-        }
-    }
-
-    @Override
-    public void addFilterValue(String value) {
-        filterPanel.add(new Label(value));
-    }
-
-    @Override
-    public void addFilterReset() {
-        Anchor anchor = new Anchor(GoogleDisplayerConstants.INSTANCE.googleDisplayer_resetAnchor());
-        filterPanel.add(anchor);
-        anchor.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                getPresenter().onFilterResetClicked();
-            }
-        });
+    public void setFilterLabelSet(FilterLabelSet widget) {
+        HTMLElement element = widget.getElement();
+        element.getStyle().setProperty("position", "absolute");
+        element.getStyle().setProperty("z-index", "10");
+        filterPanel.clear();
+        filterPanel.add(ElementWrapperWidget.getWidget(element));
     }
 
     public com.googlecode.gwt.charts.client.ColumnType getColumnType(ColumnType type) {
