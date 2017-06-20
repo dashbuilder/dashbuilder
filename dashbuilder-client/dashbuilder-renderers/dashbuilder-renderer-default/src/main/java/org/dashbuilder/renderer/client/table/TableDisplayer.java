@@ -24,6 +24,8 @@ import javax.inject.Inject;
 
 import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.common.client.error.ClientRuntimeError;
+import org.dashbuilder.common.client.widgets.FilterLabel;
+import org.dashbuilder.common.client.widgets.FilterLabelSet;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
@@ -56,7 +58,7 @@ public class TableDisplayer extends AbstractGwtDisplayer<TableDisplayer.View> {
 
         void showTitle(String title);
 
-        void createTable(int pageSize);
+        void createTable(int pageSize, FilterLabelSet widget);
 
         void redrawTable();
 
@@ -75,12 +77,6 @@ public class TableDisplayer extends AbstractGwtDisplayer<TableDisplayer.View> {
         void setExportToXlsEnabled(boolean enabled);
 
         void addColumn(ColumnType columnType, String columnId, String columnName, int index, boolean selectEnabled, boolean sortEnabled);
-
-        void clearFilterStatus();
-
-        void addFilterValue(String value);
-
-        void addFilterReset();
 
         void gotoFirstPage();
 
@@ -101,16 +97,23 @@ public class TableDisplayer extends AbstractGwtDisplayer<TableDisplayer.View> {
     protected String selectedCellColumn = null;
     protected Integer selectedCellRow = null;
     protected int exportRowNumMax = 100000;
+    protected FilterLabelSet filterLabelSet;
 
     @Inject
-    public TableDisplayer(View view) {
+    public TableDisplayer(View view, FilterLabelSet filterLabelSet) {
         this.view = view;
         this.view.init(this);
+        this.filterLabelSet = filterLabelSet;
+        this.filterLabelSet.setOnClearAllCommand(this::onFilterClearAll);
     }
 
     @Override
     public View getView() {
         return view;
+    }
+
+    public FilterLabelSet getFilterLabelSet() {
+        return filterLabelSet;
     }
 
     public int getTotalRows() {
@@ -199,7 +202,7 @@ public class TableDisplayer extends AbstractGwtDisplayer<TableDisplayer.View> {
         List<DataColumn> dataColumns = dataSet.getColumns();
         int width = displayerSettings.getTableWidth();
 
-        view.createTable(displayerSettings.getTablePageSize());
+        view.createTable(displayerSettings.getTablePageSize(), filterLabelSet);
         view.setWidth(width == 0 ? dataColumns.size() * 100 + 40 : width);
         view.setSortEnabled(displayerSettings.isTableSortEnabled());
         view.setTotalRows(totalRows);
@@ -238,7 +241,7 @@ public class TableDisplayer extends AbstractGwtDisplayer<TableDisplayer.View> {
     }
 
     protected void updateFilterStatus() {
-        view.clearFilterStatus();
+        filterLabelSet.clear();
         Set<String> columnFilters = filterColumns();
         if (displayerSettings.isFilterEnabled() && !columnFilters.isEmpty()) {
 
@@ -247,10 +250,10 @@ public class TableDisplayer extends AbstractGwtDisplayer<TableDisplayer.View> {
                 DataColumn column = dataSet.getColumnById(columnId);
                 for (Interval interval : selectedValues) {
                     String formattedValue = formatInterval(interval, column);
-                    view.addFilterValue(formattedValue);
+                    FilterLabel filterLabel = filterLabelSet.addLabel(formattedValue);
+                    filterLabel.setOnRemoveCommand(() -> onFilterLabelRemoved(columnId, interval.getIndex()));
                 }
             }
-            view.addFilterReset();
         }
     }
 
@@ -290,7 +293,7 @@ public class TableDisplayer extends AbstractGwtDisplayer<TableDisplayer.View> {
     public void filterReset() {
         selectedCellColumn = null;
         selectedCellRow = null;
-        view.clearFilterStatus();
+        filterLabelSet.clear();
         super.filterReset();
     }
 
@@ -344,6 +347,28 @@ public class TableDisplayer extends AbstractGwtDisplayer<TableDisplayer.View> {
                 view.error(error);
             }
         });
+    }
+
+    // Filter label set component notifications
+
+    void onFilterLabelRemoved(String columnId, int row) {
+        super.filterUpdate(columnId, row);
+
+        // Update the displayer view in order to reflect the current selection
+        // (only if not has already been redrawn in the previous filterUpdate() call)
+        if (!displayerSettings.isFilterSelfApplyEnabled()) {
+            updateVisualization();
+        }
+    }
+
+    void onFilterClearAll() {
+        filterReset();
+
+        // Update the displayer view in order to reflect the current selection
+        // (only if not has already been redrawn in the previous filterUpdate() call)
+        if (!displayerSettings.isFilterSelfApplyEnabled()) {
+            updateVisualization();
+        }
     }
 
     // Reset the current navigation status on filter requests from external displayers

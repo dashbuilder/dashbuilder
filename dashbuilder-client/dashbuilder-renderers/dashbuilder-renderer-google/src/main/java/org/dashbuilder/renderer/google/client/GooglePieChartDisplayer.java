@@ -18,6 +18,7 @@ package org.dashbuilder.renderer.google.client;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.dashbuilder.common.client.widgets.FilterLabelSet;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.displayer.DisplayerAttributeDef;
@@ -33,12 +34,9 @@ public class GooglePieChartDisplayer extends GoogleCategoriesDisplayer<GooglePie
 
     private View view;
 
-    public GooglePieChartDisplayer() {
-        this(new GooglePieChartDisplayerView());
-    }
-
     @Inject
-    public GooglePieChartDisplayer(View view) {
+    public GooglePieChartDisplayer(View view, FilterLabelSet filterLabelSet) {
+        super(filterLabelSet);
         this.view = view;
         this.view.init(this);
     }

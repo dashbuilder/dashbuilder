@@ -17,6 +17,8 @@ package org.dashbuilder.renderer.google.client;
 
 import java.util.List;
 
+import org.dashbuilder.common.client.widgets.FilterLabelSet;
+
 public abstract class GoogleCategoriesDisplayer<V extends GoogleCategoriesDisplayer.View> extends GoogleChartDisplayer<V> {
 
     public interface View<P extends GoogleCategoriesDisplayer> extends GoogleChartDisplayer.View<P> {
@@ -53,6 +55,10 @@ public abstract class GoogleCategoriesDisplayer<V extends GoogleCategoriesDispla
             "#00659C", "#A30000", "#B35C00", "#B58100", "#6CA100", "#2D7623", "#005C66", "#008BAD", "#40199A"};
 
     public static final String COLOR_NOT_SELECTED = "#8B8D8F";
+
+    public GoogleCategoriesDisplayer(FilterLabelSet filterLabelSet) {
+        super(filterLabelSet);
+    }
 
     protected String[] createColorArray() {
         String[] colorArray = new String[dataSet.getRowCount()];

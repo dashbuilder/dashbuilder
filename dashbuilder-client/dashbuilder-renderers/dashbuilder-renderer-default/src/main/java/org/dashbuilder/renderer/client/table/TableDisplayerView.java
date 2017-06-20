@@ -28,20 +28,21 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
+import org.dashbuilder.common.client.widgets.FilterLabelSet;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.client.AbstractGwtDisplayerView;
 import org.dashbuilder.displayer.client.export.ExportFormat;
 import org.dashbuilder.renderer.client.resources.i18n.TableConstants;
 import org.gwtbootstrap3.client.ui.Button;
-import org.gwtbootstrap3.client.ui.Label;
 import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.jboss.errai.common.client.dom.HTMLElement;
+import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.uberfire.ext.widgets.common.client.tables.PagedTable;
 
 import static com.google.gwt.dom.client.BrowserEvents.*;
@@ -49,7 +50,6 @@ import static com.google.gwt.dom.client.BrowserEvents.*;
 public class TableDisplayerView extends AbstractGwtDisplayerView<TableDisplayer> implements TableDisplayer.View {
 
     protected HTML titleHtml = new HTML();
-    protected HorizontalPanel filterPanel;
     protected TableProvider tableProvider = new TableProvider();
     protected VerticalPanel rootPanel = new VerticalPanel();
     protected PagedTable<Integer> table;
@@ -79,11 +79,15 @@ public class TableDisplayerView extends AbstractGwtDisplayerView<TableDisplayer>
     }
 
     @Override
-    public void createTable(int pageSize) {
+    public void createTable(int pageSize, FilterLabelSet filterLabelSet) {
         table = new PagedTable<>(pageSize);
         table.pageSizesSelector.setVisible(false);
         table.setEmptyTableCaption(TableConstants.INSTANCE.tableDisplayer_noDataAvailable());
         tableProvider.addDataDisplay(table);
+
+        HTMLElement element = filterLabelSet.getElement();
+        element.getStyle().setProperty("margin-bottom", "5px");
+        table.getLeftToolbar().add(ElementWrapperWidget.getWidget(filterLabelSet.getElement()));
 
         exportToCsvButton = new Button("", IconType.FILE_TEXT, e -> getPresenter().export(ExportFormat.CSV));
         exportToXlsButton = new Button("", IconType.FILE_EXCEL_O, e -> getPresenter().export(ExportFormat.XLS));
@@ -151,31 +155,6 @@ public class TableDisplayerView extends AbstractGwtDisplayerView<TableDisplayer>
             column.setSortable(sortEnabled);
             table.addColumn(column, columnName);
         }
-    }
-
-    @Override
-    public void clearFilterStatus() {
-        if (filterPanel != null) {
-            table.getLeftToolbar().remove(filterPanel);
-            filterPanel = null;
-        }
-    }
-
-    @Override
-    public void addFilterValue(String value) {
-        if (filterPanel == null) {
-            filterPanel = new HorizontalPanel();
-            filterPanel.getElement().setAttribute("cellpadding", "2");
-            table.getLeftToolbar().add(filterPanel);
-        }
-        filterPanel.add(new Label(value));
-    }
-
-    @Override
-    public void addFilterReset() {
-        Anchor anchor = new Anchor(TableConstants.INSTANCE.tableDisplayer_reset());
-        filterPanel.add(anchor);
-        anchor.addClickHandler( event -> getPresenter().filterReset());
     }
 
     @Override

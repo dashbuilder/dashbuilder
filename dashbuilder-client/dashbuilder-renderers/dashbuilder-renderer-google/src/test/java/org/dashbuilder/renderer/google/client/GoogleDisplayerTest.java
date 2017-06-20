@@ -14,6 +14,7 @@
  */
 package org.dashbuilder.renderer.google.client;
 
+import org.dashbuilder.common.client.widgets.FilterLabelSet;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.client.AbstractDisplayerTest;
 
@@ -22,10 +23,10 @@ import static org.mockito.Mockito.*;
 public abstract class GoogleDisplayerTest extends AbstractDisplayerTest {
 
     public GoogleBarChartDisplayer createBarChartDisplayer(DisplayerSettings settings) {
-        return initDisplayer(new GoogleBarChartDisplayer(mock(GoogleBarChartDisplayer.View.class)), settings);
+        return initDisplayer(new GoogleBarChartDisplayer(mock(GoogleBarChartDisplayer.View.class), mock(FilterLabelSet.class)), settings);
     }
 
     public GoogleTableDisplayer createTableDisplayer(DisplayerSettings settings) {
-        return initDisplayer(new GoogleTableDisplayer(mock(GoogleTableDisplayer.View.class)), settings);
+        return initDisplayer(new GoogleTableDisplayer(mock(GoogleTableDisplayer.View.class), mock(FilterLabelSet.class)), settings);
     }
 }

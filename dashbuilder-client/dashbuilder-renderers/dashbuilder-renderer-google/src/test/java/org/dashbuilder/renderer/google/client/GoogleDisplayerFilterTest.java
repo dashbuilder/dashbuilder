@@ -14,12 +14,14 @@
  */
 package org.dashbuilder.renderer.google.client;
 
-import org.dashbuilder.dataset.ColumnType;
+import org.dashbuilder.common.client.widgets.FilterLabel;
+import org.dashbuilder.common.client.widgets.FilterLabelSet;
 import org.dashbuilder.dataset.sort.SortOrder;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerSettingsFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.dashbuilder.dataset.ExpenseReportsData.*;
@@ -38,6 +40,14 @@ public class GoogleDisplayerFilterTest extends GoogleDisplayerTest {
             .sort(COLUMN_DATE, SortOrder.ASCENDING)
             .buildSettings();
 
+    @Mock
+    FilterLabel filterLabel;
+
+    public void resetFilterLabelSet(FilterLabelSet filterLabelSet) {
+        reset(filterLabelSet);
+        doAnswer(invocationOnMock -> filterLabel).when(filterLabelSet).addLabel(anyString());
+    }
+
     @Test
     public void testFilter() {
 
@@ -45,32 +55,32 @@ public class GoogleDisplayerFilterTest extends GoogleDisplayerTest {
         // A ready() call needs to be executed in order to ignite the real chart display
         GoogleBarChartDisplayer barChart = createBarChartDisplayer(byYear);
         GoogleBarChartDisplayer.View barChartView = barChart.getView();
+        FilterLabelSet filterLabelSet = barChart.getFilterLabelSet();
         barChart.ready();
 
         // Select first bar
         reset(barChartView);
+        resetFilterLabelSet(filterLabelSet);
         barChart.onCategorySelected(COLUMN_DATE, 0);
-
-        verify(barChartView).clearFilterStatus();
-        verify(barChartView).addFilterValue("2012");
-        verify(barChartView).addFilterReset();
+        verify(filterLabelSet).clear();
+        verify(filterLabelSet).addLabel("2012");
         verify(barChartView).drawChart();
 
         // Select another bar
         reset(barChartView);
+        resetFilterLabelSet(filterLabelSet);
         barChart.onCategorySelected(COLUMN_DATE, 1);
-        verify(barChartView).clearFilterStatus();
-        verify(barChartView).addFilterValue("2012");
-        verify(barChartView).addFilterValue("2013");
-        verify(barChartView).addFilterReset();
+        verify(filterLabelSet).clear();
+        verify(filterLabelSet).addLabel("2012");
+        verify(filterLabelSet).addLabel("2013");
         verify(barChartView).drawChart();
 
         // Reset the filter
         reset(barChartView);
-        barChart.onFilterResetClicked();
-        verify(barChartView).clearFilterStatus();
-        verify(barChartView, never()).addFilterValue(anyString());
-        verify(barChartView, never()).addFilterReset();
+        resetFilterLabelSet(filterLabelSet);
+        barChart.onFilterClearAll();
+        verify(filterLabelSet).clear();
+        verify(filterLabelSet, never()).addLabel(anyString());
         verify(barChartView).drawChart();
     }
 }

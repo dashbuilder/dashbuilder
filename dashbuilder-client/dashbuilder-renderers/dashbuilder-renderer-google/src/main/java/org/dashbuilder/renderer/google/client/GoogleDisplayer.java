@@ -19,6 +19,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.dashbuilder.common.client.widgets.FilterLabel;
+import org.dashbuilder.common.client.widgets.FilterLabelSet;
 import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.group.Interval;
@@ -53,11 +55,18 @@ public abstract class GoogleDisplayer<V extends GoogleDisplayer.View> extends Ab
 
         void showTitle(String title);
 
-        void clearFilterStatus();
+        void setFilterLabelSet(FilterLabelSet widget);
+    }
 
-        void addFilterValue(String value);
+    private FilterLabelSet filterLabelSet;
 
-        void addFilterReset();
+    public GoogleDisplayer(FilterLabelSet filterLabelSet) {
+        this.filterLabelSet = filterLabelSet;
+        this.filterLabelSet.setOnClearAllCommand(this::onFilterClearAll);
+    }
+
+    public FilterLabelSet getFilterLabelSet() {
+        return filterLabelSet;
     }
 
     /**
@@ -75,16 +84,16 @@ public abstract class GoogleDisplayer<V extends GoogleDisplayer.View> extends Ab
         super.draw();
     }
 
-
     @Override
     protected void createVisualization() {
+        getView().setFilterLabelSet(filterLabelSet);
         if (displayerSettings.isTitleVisible()) {
             getView().showTitle(displayerSettings.getTitle());
         }
     }
 
     protected void updateFilterStatus() {
-        getView().clearFilterStatus();
+        filterLabelSet.clear();
         Set<String> columnFilters = filterColumns();
         if (displayerSettings.isFilterEnabled() && !columnFilters.isEmpty()) {
 
@@ -93,10 +102,10 @@ public abstract class GoogleDisplayer<V extends GoogleDisplayer.View> extends Ab
                 DataColumn column = dataSet.getColumnById(columnId);
                 for (Interval interval : selectedValues) {
                     String formattedValue = formatInterval(interval, column);
-                    getView().addFilterValue(formattedValue);
+                    FilterLabel filterLabel = filterLabelSet.addLabel(formattedValue);
+                    filterLabel.setOnRemoveCommand(() -> onFilterLabelRemoved(columnId, interval.getIndex()));
                 }
             }
-            getView().addFilterReset();
         }
     }
 
@@ -153,10 +162,20 @@ public abstract class GoogleDisplayer<V extends GoogleDisplayer.View> extends Ab
         }
     }
 
-    // View notifications
+    // Filter label set component notifications
 
-    void onFilterResetClicked() {
-        filterReset();
+    void onFilterLabelRemoved(String columnId, int row) {
+        super.filterUpdate(columnId, row);
+
+        // Update the displayer view in order to reflect the current selection
+        // (only if not has already been redrawn in the previous filterUpdate() call)
+        if (!displayerSettings.isFilterSelfApplyEnabled()) {
+            updateVisualization();
+        }
+    }
+
+    void onFilterClearAll() {
+        super.filterReset();
 
         // Update the displayer view in order to reflect the current selection
         // (only if not has already been redrawn in the previous filterUpdate() call)

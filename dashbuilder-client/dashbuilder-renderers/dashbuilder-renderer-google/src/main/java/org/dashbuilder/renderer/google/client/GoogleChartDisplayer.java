@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.renderer.google.client;
 
+import org.dashbuilder.common.client.widgets.FilterLabelSet;
 import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.Position;
 
@@ -40,6 +41,10 @@ public abstract class GoogleChartDisplayer<V extends GoogleChartDisplayer.View> 
         void setLegendPosition(Position position);
 
         void setSubType(DisplayerSubType subType);
+    }
+
+    public GoogleChartDisplayer(FilterLabelSet filterLabelSet) {
+        super(filterLabelSet);
     }
 
     @Override

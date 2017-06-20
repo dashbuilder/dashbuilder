@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
@@ -29,6 +30,7 @@ import org.dashbuilder.displayer.DisplayerSubType;
 import org.dashbuilder.displayer.DisplayerType;
 import org.dashbuilder.displayer.client.AbstractRendererLibrary;
 import org.dashbuilder.displayer.client.Displayer;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 
 import static org.dashbuilder.displayer.DisplayerType.*;
 import static org.dashbuilder.displayer.DisplayerSubType.*;
@@ -65,6 +67,10 @@ public class GoogleRenderer extends AbstractRendererLibrary {
             TABLE,
             MAP);
 
+    @Inject
+    protected SyncBeanManager beanManager;
+
+    @Override
     public String getUUID() {
         return UUID;
     }
@@ -110,48 +116,37 @@ public class GoogleRenderer extends AbstractRendererLibrary {
 
     public Displayer lookupDisplayer(DisplayerSettings displayerSettings) {
         DisplayerType displayerType = displayerSettings.getType();
-        if (BARCHART.equals(displayerType)) {
-            GoogleBarChartDisplayer displayer = new GoogleBarChartDisplayer();
-            ((GoogleBarChartDisplayerView) displayer.getView()).setRenderer(this);
-            return displayer;
+        GoogleDisplayer displayer;
+        switch (displayerType) {
+            case BARCHART:
+                displayer = beanManager.lookupBean(GoogleBarChartDisplayer.class).newInstance();
+                break;
+            case PIECHART:
+                displayer = beanManager.lookupBean(GooglePieChartDisplayer.class).newInstance();
+                break;
+            case AREACHART:
+                displayer = beanManager.lookupBean(GoogleAreaChartDisplayer.class).newInstance();
+                break;
+            case LINECHART:
+                displayer = beanManager.lookupBean(GoogleLineChartDisplayer.class).newInstance();
+                break;
+            case BUBBLECHART:
+                displayer = beanManager.lookupBean(GoogleBubbleChartDisplayer.class).newInstance();
+                break;
+            case METERCHART:
+                displayer = beanManager.lookupBean(GoogleMeterChartDisplayer.class).newInstance();
+                break;
+            case TABLE:
+                displayer = beanManager.lookupBean(GoogleTableDisplayer.class).newInstance();
+                break;
+            case MAP:
+                displayer = beanManager.lookupBean(GoogleMapDisplayer.class).newInstance();
+                break;
+            default:
+                return null;
         }
-        if (PIECHART.equals(displayerType)) {
-            GooglePieChartDisplayer displayer = new GooglePieChartDisplayer();
-            ((GooglePieChartDisplayerView) displayer.getView()).setRenderer(this);
-            return displayer;
-        }
-        if (AREACHART.equals(displayerType)) {
-            GoogleAreaChartDisplayer displayer = new GoogleAreaChartDisplayer();
-            ((GoogleAreaChartDisplayerView) displayer.getView()).setRenderer(this);
-            return displayer;
-        }
-        if (LINECHART.equals(displayerType)) {
-            GoogleLineChartDisplayer displayer = new GoogleLineChartDisplayer();
-            ((GoogleLineChartDisplayerView) displayer.getView()).setRenderer(this);
-            return displayer;
-        }
-        if (BUBBLECHART.equals(displayerType)) {
-            GoogleBubbleChartDisplayer displayer = new GoogleBubbleChartDisplayer();
-            ((GoogleBubbleChartDisplayerView) displayer.getView()).setRenderer(this);
-            return displayer;
-        }
-        if (METERCHART.equals(displayerType)) {
-            GoogleMeterChartDisplayer displayer = new GoogleMeterChartDisplayer();
-            ((GoogleMeterChartDisplayerView) displayer.getView()).setRenderer(this);
-            return displayer;
-        }
-        if (TABLE.equals(displayerType)) {
-            GoogleTableDisplayer displayer = new GoogleTableDisplayer();
-            ((GoogleTableDisplayerView) displayer.getView()).setRenderer(this);
-            return displayer;
-        }
-        if (MAP.equals(displayerType)) {
-            GoogleMapDisplayer displayer = new GoogleMapDisplayer();
-            ((GoogleMapDisplayerView) displayer.getView()).setRenderer(this);
-            return displayer;
-        }
-
-        return null;
+        ((GoogleDisplayerView) displayer.getView()).setRenderer(this);
+        return displayer;
     }
 
     /**
