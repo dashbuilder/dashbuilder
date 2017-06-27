@@ -15,11 +15,13 @@
  */
 package org.dashbuilder.client;
 
-import com.google.gwt.animation.client.Animation;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.RootPanel;
+import static org.uberfire.workbench.events.NotificationEvent.NotificationType.INFO;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+
 import org.dashbuilder.client.cms.resources.i18n.ContentManagerI18n;
 import org.dashbuilder.client.dashboard.DashboardManager;
 import org.dashbuilder.client.dashboard.DashboardPerspectiveActivity;
@@ -28,13 +30,11 @@ import org.dashbuilder.client.navigation.NavTreeDefinitions;
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.dashbuilder.client.security.PermissionTreeSetup;
-import org.dashbuilder.displayer.DisplayerAttributeDef;
 import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.NavTree;
 import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
 import org.dashbuilder.shared.dashboard.events.DashboardDeletedEvent;
 import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.security.shared.service.AuthenticationService;
 import org.uberfire.client.mvp.PlaceManager;
@@ -42,11 +42,11 @@ import org.uberfire.ext.security.management.client.ClientUserSystemManager;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.events.NotificationEvent;
 
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-
-import static org.uberfire.workbench.events.NotificationEvent.NotificationType.INFO;
+import com.google.gwt.animation.client.Animation;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * Entry-point for the Dashbuilder showcase
@@ -83,7 +83,7 @@ public class ShowcaseEntryPoint {
     @Inject
     private ContentManagerI18n contentManagerI18n;
 
-    @AfterInitialization
+    @PostConstruct
     public void startApp() {
         // OPTIONAL: Rename perspectives to dashboards in CMS
         //customizeCMSTexts();

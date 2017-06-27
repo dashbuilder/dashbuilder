@@ -15,16 +15,15 @@
  */
 package org.dashbuilder.client.cms.screen.explorer;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.cms.resources.i18n.ContentManagerI18n;
 import org.dashbuilder.client.cms.widget.PerspectivesExplorer;
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.widget.NavTreeEditor;
-import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -34,6 +33,8 @@ import org.uberfire.ext.plugin.client.widget.popup.NewPluginPopUp;
 import org.uberfire.ext.plugin.model.PluginType;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.events.NotificationEvent;
+
+import com.google.gwt.user.client.ui.IsWidget;
 
 @ApplicationScoped
 @WorkbenchScreen(identifier = ContentExplorerScreen.SCREEN_ID)
@@ -90,7 +91,7 @@ public class ContentExplorerScreen {
         this.view.init(this);
     }
 
-    @AfterInitialization
+    @PostConstruct
     private void init() {
         navTreeEditor.setLiteralPerspective(i18n.capitalizeFirst(i18n.getPerspectiveResourceName()));
         navTreeEditor.setNewGroupEnabled(true);
