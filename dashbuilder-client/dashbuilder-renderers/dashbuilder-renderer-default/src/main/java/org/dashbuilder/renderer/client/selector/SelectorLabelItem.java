@@ -27,11 +27,18 @@ public class SelectorLabelItem extends AbstractSelectorItemPresenter {
     }
 
     protected View view;
+    private int labelLength;
 
     @Inject
     public SelectorLabelItem(View view) {
         this.view = view;
         this.view.init(this);
+    }
+
+    @Override
+    public void init(int id, String value, String descr) {
+        super.init(id, value, descr);
+        labelLength = value.length();
     }
 
     @Override
@@ -43,5 +50,9 @@ public class SelectorLabelItem extends AbstractSelectorItemPresenter {
         if (percentage > 0 && percentage <= 100) {
             view.setWidth(percentage);
         }
+    }
+
+    public int getLabelLength() {
+        return labelLength;
     }
 }
