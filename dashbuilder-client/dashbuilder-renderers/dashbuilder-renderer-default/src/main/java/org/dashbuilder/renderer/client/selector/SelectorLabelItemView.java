@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import org.jboss.errai.common.client.dom.Button;
+import org.jboss.errai.common.client.dom.CSSStyleDeclaration;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -41,6 +42,8 @@ public class SelectorLabelItemView implements SelectorLabelItem.View, IsElement 
     @Override
     public void setValue(String value) {
         item.setTextContent(value);
+        // setTitle to make the whole value visible on mouse over when selector width is restricted and value is trimmed
+        item.setTitle(value);
     }
 
     @Override
@@ -50,7 +53,14 @@ public class SelectorLabelItemView implements SelectorLabelItem.View, IsElement 
 
     @Override
     public void setWidth(int percentage) {
-        item.getStyle().setProperty("width", percentage + "%");
+        CSSStyleDeclaration style = item.getStyle();
+        style.setProperty("width", percentage + "%");
+
+        // Labels too long to fit into the button width will be trimmed and ended with "..."
+        // Based on https://www.w3schools.com/cssref/css3_pr_text-overflow.asp
+        style.setProperty("white-space","nowrap");
+        style.setProperty("overflow","hidden");
+        style.setProperty("text-overflow","ellipsis");
     }
 
     @Override
