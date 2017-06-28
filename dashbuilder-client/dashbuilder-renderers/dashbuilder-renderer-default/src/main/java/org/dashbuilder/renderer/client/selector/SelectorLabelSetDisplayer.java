@@ -15,12 +15,6 @@
  */
 package org.dashbuilder.renderer.client.selector;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSetLookupConstraints;
 import org.dashbuilder.dataset.group.ColumnGroup;
@@ -34,6 +28,12 @@ import org.dashbuilder.displayer.DisplayerAttributeGroupDef;
 import org.dashbuilder.displayer.DisplayerConstraints;
 import org.dashbuilder.displayer.client.AbstractErraiDisplayer;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
+
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Dependent
 public class SelectorLabelSetDisplayer extends AbstractErraiDisplayer<SelectorLabelSetDisplayer.View> {
@@ -152,50 +152,64 @@ public class SelectorLabelSetDisplayer extends AbstractErraiDisplayer<SelectorLa
         clearItems();
         if (dataSet.getRowCount() == 0) {
             view.noData();
-        }
-        else {
+        } else {
             // Generate the list entries from the current data set
+            int sumOfItemLabelLengths = 0; // Accumulate item label lengths to set width percentage proportional to text length
             for (int i = 0; i < dataSet.getRowCount(); i++) {
-
                 Object obj = dataSet.getValueAt(i, 0);
                 if (obj == null) {
                     continue;
                 }
 
                 String value = super.formatValue(i, 0);
-                StringBuilder title = new StringBuilder();
+                String title = createTitle(i);
+                final SelectorLabelItem item = createItem(i, value, title);
 
-                int ncolumns = dataSet.getColumns().size();
-                if (ncolumns > 1) {
-                    for (int j = 1; j < ncolumns; j++) {
-                        DataColumn extraColumn = dataSet.getColumnByIndex(j);
-                        ColumnSettings columnSettings = displayerSettings.getColumnSettings(extraColumn);
-                        String extraColumnName = columnSettings.getColumnName();
-                        Object extraValue = dataSet.getValueAt(i, j);
-                        if (extraValue != null) {
-                            title.append(j > 1 ? " " : "");
-                            String formattedValue = super.formatValue(i, j);
-                            title.append(extraColumnName).append("=").append(formattedValue);
-                        }
-                    }
-                }
-                final SelectorLabelItem item = beanManager.lookupBean(SelectorLabelItem.class).newInstance();
-                item.init(i, value, title.toString());
-                item.setOnSelectCommand(() -> onItemSelected(item));
-                item.setOnResetCommand(() -> onItemReset(item));
                 view.addItem(item);
                 itemCollection.add(item);
+                sumOfItemLabelLengths += value.length();
             }
 
-            // Set both the global and each item width
+            // If size of displayer is restricted set both displayer view width and width of each item
+            // Each item's width percentage will be proportional to the length of it's label (DASHBUILDE-TODO)
+            // So that sum of all item's widths is 85% (the rest is spacing between buttons)
             if (displayerSettings.getSelectorWidth() > 0) {
-                view.setWidth(displayerSettings.getSelectorWidth() + 100);
-                int itemWidth = 85 / itemCollection.size();
+                view.setWidth(displayerSettings.getSelectorWidth());
                 for (SelectorLabelItem labelItem : itemCollection) {
+                    int itemWidth = 85 * labelItem.getLabelLength() / sumOfItemLabelLengths;
                     labelItem.setWidth(itemWidth);
                 }
             }
         }
+    }
+
+    /* Create item title of the form "col1=val1 col2=val2" that will appear on mouse hover */
+    private String createTitle(int rowIdx) {
+        StringBuilder title = new StringBuilder();
+
+        int ncolumns = dataSet.getColumns().size();
+        if (ncolumns > 1) {
+            for (int colIdx = 1; colIdx < ncolumns; colIdx++) {
+                DataColumn extraColumn = dataSet.getColumnByIndex(colIdx);
+                ColumnSettings columnSettings = displayerSettings.getColumnSettings(extraColumn);
+                String extraColumnName = columnSettings.getColumnName();
+                Object extraValue = dataSet.getValueAt(rowIdx, colIdx);
+                if (extraValue != null) {
+                    title.append(colIdx > 1 ? " " : "");
+                    String formattedValue = super.formatValue(rowIdx, colIdx);
+                    title.append(extraColumnName).append("=").append(formattedValue);
+                }
+            }
+        }
+        return title.toString();
+    }
+
+    private SelectorLabelItem createItem(int id, String value, String title) {
+        final SelectorLabelItem item = beanManager.lookupBean(SelectorLabelItem.class).newInstance();
+        item.init(id, value, title);
+        item.setOnSelectCommand(() -> onItemSelected(item));
+        item.setOnResetCommand(() -> onItemReset(item));
+        return item;
     }
 
     public String getFirstColumnId() {
