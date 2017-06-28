@@ -282,13 +282,13 @@ public class DataSetDef {
             if (pushEnabled != other.pushEnabled) {
                 return false;
             }
-            if (pushMaxSize != other.pushMaxSize) {
+            if (pushMaxSize != null && !pushMaxSize .equals(other.pushMaxSize )) {
                 return false;
             }
             if (cacheEnabled != other.cacheEnabled) {
                 return false;
             }
-            if (cacheMaxRows != other.cacheMaxRows) {
+            if (cacheMaxRows != null && !cacheMaxRows.equals(other.cacheMaxRows)) {
                 return false;
             }
             if (columns.size() != other.columns.size()) {
