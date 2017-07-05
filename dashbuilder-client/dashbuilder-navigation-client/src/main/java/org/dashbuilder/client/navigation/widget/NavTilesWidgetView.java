@@ -20,13 +20,14 @@ import javax.inject.Inject;
 
 import com.google.gwt.dom.client.AnchorElement;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.LIElement;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
+import org.dashbuilder.common.client.widgets.AlertBox;
 import org.jboss.errai.common.client.api.IsElement;
+import org.jboss.errai.common.client.dom.CSSStyleDeclaration;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.common.client.dom.Node;
@@ -57,6 +58,17 @@ public class NavTilesWidgetView extends BaseNavWidgetView<NavTilesWidget>
     OrderedList breadcrumb;
 
     NavTilesWidget presenter;
+    AlertBox alertBox;
+
+    @Inject
+    public NavTilesWidgetView(AlertBox alertBox) {
+        this.alertBox = alertBox;
+        alertBox.setLevel(AlertBox.Level.WARNING);
+        alertBox.setCloseEnabled(false);
+        CSSStyleDeclaration style = alertBox.getElement().getStyle();
+        style.setProperty("width", "30%");
+        style.setProperty("margin", "10px");
+    }
 
     @Override
     public void init(NavTilesWidget presenter) {
@@ -90,15 +102,15 @@ public class NavTilesWidgetView extends BaseNavWidgetView<NavTilesWidget>
     @Override
     public void errorNavItemsEmpty() {
         DOMUtil.removeAllChildren(mainDiv);
-        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navTilesDragComponentEmptyError());
-        mainDiv.appendChild((Node) errorEl);
+        alertBox.setMessage(NavigationConstants.INSTANCE.navTilesDragComponentEmptyError());
+        mainDiv.appendChild(alertBox.getElement());
     }
 
     @Override
     public void deadlockError() {
         DOMUtil.removeAllChildren(tilesDiv);
-        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navTilesDragComponentDeadlockError());
-        tilesDiv.appendChild((Node) errorEl);
+        alertBox.setMessage(NavigationConstants.INSTANCE.navTilesDragComponentDeadlockError());
+        tilesDiv.appendChild(alertBox.getElement());
     }
 
     @Override

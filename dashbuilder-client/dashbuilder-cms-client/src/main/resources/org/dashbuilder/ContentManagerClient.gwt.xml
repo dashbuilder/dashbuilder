@@ -5,6 +5,7 @@
 
   <inherits name="org.uberfire.UberfireClientAll"/>
   <inherits name="org.uberfire.ext.plugin.RuntimePluginClient"/>
+  <inherits name="org.dashbuilder.CommonClient"/>
   <inherits name="org.dashbuilder.NavigationClient"/>
   <inherits name="org.dashbuilder.ServicesAPI"/>
 

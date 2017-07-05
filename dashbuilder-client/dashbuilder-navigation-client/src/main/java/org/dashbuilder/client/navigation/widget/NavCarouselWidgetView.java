@@ -18,14 +18,12 @@ package org.dashbuilder.client.navigation.widget;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.dom.client.DivElement;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
+import org.dashbuilder.common.client.widgets.AlertBox;
+import org.jboss.errai.common.client.dom.CSSStyleDeclaration;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;
-import org.jboss.errai.common.client.dom.Node;
 import org.jboss.errai.common.client.dom.Window;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -48,6 +46,17 @@ public class NavCarouselWidgetView extends BaseNavWidgetView<NavCarouselWidget>
     Div slidesDiv;
 
     NavCarouselWidget presenter;
+    AlertBox alertBox;
+
+    @Inject
+    public NavCarouselWidgetView(AlertBox alertBox) {
+        this.alertBox = alertBox;
+        alertBox.setLevel(AlertBox.Level.WARNING);
+        alertBox.setCloseEnabled(false);
+        CSSStyleDeclaration style = alertBox.getElement().getStyle();
+        style.setProperty("width", "30%");
+        style.setProperty("margin", "10px");
+    }
 
     @Override
     public void init(NavCarouselWidget presenter) {
@@ -79,16 +88,16 @@ public class NavCarouselWidgetView extends BaseNavWidgetView<NavCarouselWidget>
     @Override
     public void errorNavItemsEmpty() {
         DOMUtil.removeAllChildren(mainDiv);
-        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navCarouselDragComponentEmptyError());
-        mainDiv.appendChild((Node) errorEl);
+        alertBox.setMessage(NavigationConstants.INSTANCE.navCarouselDragComponentEmptyError());
+        mainDiv.appendChild(alertBox.getElement());
     }
 
     @Override
     public void deadlockError() {
-        DivElement div = Document.get().createDivElement();
+        Div div = (Div) Window.getDocument().createElement("div");
         div.setClassName(slidesDiv.getChildNodes().getLength() == 0 ? "item active" : "item");
-        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navCarouselDragComponentDeadlockError());
-        div.appendChild(errorEl);
-        slidesDiv.appendChild((Node) div);
+        alertBox.setMessage(NavigationConstants.INSTANCE.navCarouselDragComponentDeadlockError());
+        div.appendChild(alertBox.getElement());
+        slidesDiv.appendChild(div);
     }
 }

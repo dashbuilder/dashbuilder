@@ -119,6 +119,10 @@ public class PerspectivePluginManager {
         return isRuntimePerspective ? resourceId : null;
     }
 
+    public boolean existsPerspectivePlugin(String perspectiveName) {
+        return perspectiveName != null && pluginMap.get(perspectiveName) != null;
+    }
+
     public void buildPerspectiveWidget(String perspectiveName, ParameterizedCommand<IsWidget> afterBuild, Command onDeadlock) {
         Plugin plugin = pluginMap.get(perspectiveName);
         pluginServices.call((LayoutTemplateInfo layoutInfo) -> {
