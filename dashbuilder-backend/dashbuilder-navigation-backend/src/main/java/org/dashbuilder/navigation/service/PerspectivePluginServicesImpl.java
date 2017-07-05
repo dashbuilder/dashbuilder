@@ -22,26 +22,26 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.jboss.errai.bus.server.annotations.Service;
-import org.uberfire.ext.layout.editor.api.LayoutServices;
 import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
+import org.uberfire.ext.layout.editor.impl.LayoutServicesImpl;
+import org.uberfire.ext.plugin.backend.PluginServicesImpl;
 import org.uberfire.ext.plugin.model.LayoutEditorModel;
 import org.uberfire.ext.plugin.model.Plugin;
 import org.uberfire.ext.plugin.model.PluginType;
-import org.uberfire.ext.plugin.service.PluginServices;
 
 @ApplicationScoped
 @Service
 public class PerspectivePluginServicesImpl implements PerspectivePluginServices {
 
-    private PluginServices pluginServices;
-    private LayoutServices layoutServices;
+    private PluginServicesImpl pluginServices;
+    private LayoutServicesImpl layoutServices;
     private LayoutTemplateAnalyzer layoutTemplateAnalyzer;
 
     public PerspectivePluginServicesImpl() {
     }
 
     @Inject
-    public PerspectivePluginServicesImpl(PluginServices pluginServices, LayoutServices layoutServices, LayoutTemplateAnalyzer layoutTemplateAnalyzer) {
+    public PerspectivePluginServicesImpl(PluginServicesImpl pluginServices, LayoutServicesImpl layoutServices, LayoutTemplateAnalyzer layoutTemplateAnalyzer) {
         this.pluginServices = pluginServices;
         this.layoutServices = layoutServices;
         this.layoutTemplateAnalyzer = layoutTemplateAnalyzer;

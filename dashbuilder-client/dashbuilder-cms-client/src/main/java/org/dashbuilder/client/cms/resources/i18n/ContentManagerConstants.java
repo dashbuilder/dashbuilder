@@ -45,4 +45,18 @@ public interface ContentManagerConstants extends Messages {
     String perspectives();
 
     String noPerspectives();
+
+    String perspectiveDragComponent();
+
+    String perspectiveDragComponentHeader();
+
+    String perspectiveDragComponentHelp();
+
+    String perspectiveDragSelectorHint();
+
+    String perspectiveDragSelectorLabel();
+
+    String perspectiveDragNotFoundError();
+
+    String perspectiveDragDeadlockError();
 }

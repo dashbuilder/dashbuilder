@@ -31,34 +31,58 @@ import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 @ApplicationScoped
 public class LayoutTemplateAnalyzer {
 
-    private PerspectivePluginServices pluginServices;
-    private NavigationServices navigationServices;
+    private PerspectivePluginServicesImpl pluginServices;
+    private NavigationServicesImpl navigationServices;
 
     public LayoutTemplateAnalyzer() {
     }
 
     @Inject
-    public LayoutTemplateAnalyzer(PerspectivePluginServices pluginServices, NavigationServices navigationServices) {
+    public LayoutTemplateAnalyzer(PerspectivePluginServicesImpl pluginServices, NavigationServicesImpl navigationServices) {
         this.pluginServices = pluginServices;
         this.navigationServices = navigationServices;
     }
 
     public boolean hasDeadlock(LayoutTemplate layoutTemplate, Set<String> ancestorSet) {
-        NavTree navTree = navigationServices.loadNavTree();
-
         for (LayoutRow row : layoutTemplate.getRows()) {
-            for (LayoutColumn column : row.getLayoutColumns()) {
-                for (LayoutComponent component : column.getLayoutComponents()) {
+            boolean deadlock = hasDeadlock(row, ancestorSet);
+            if (deadlock) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-                    // Any layout component linked to a nav group can potentially lead to a deadlock scenario.
-                    String navGroupId = component.getProperties().get("navGroupId");
-                    if (navGroupId != null) {
-                        NavGroup navGroup = (NavGroup) navTree.getItemById(navGroupId);
-                        boolean deadlock = hasDeadlock(navGroup, ancestorSet);
-                        if (deadlock) {
-                            return true;
-                        }
+    public boolean hasDeadlock(LayoutRow row, Set<String> ancestorSet) {
+        NavTree navTree = navigationServices.loadNavTree();
+        for (LayoutColumn column : row.getLayoutColumns()) {
+
+            for (LayoutComponent component : column.getLayoutComponents()) {
+
+                // Any layout component linked to a perspective can potentially lead to a deadlock scenario.
+                String perspectiveId = component.getProperties().get("perspectiveId");
+                if (perspectiveId != null) {
+                    boolean deadlock = hasDeadlock(perspectiveId, ancestorSet);
+                    if (deadlock) {
+                        return true;
                     }
+                }
+
+                // Any layout component linked to a nav group can potentially lead to a deadlock scenario.
+                String navGroupId = component.getProperties().get("navGroupId");
+                if (navGroupId != null) {
+                    NavGroup navGroup = (NavGroup) navTree.getItemById(navGroupId);
+                    boolean deadlock = hasDeadlock(navGroup, ancestorSet);
+                    if (deadlock) {
+                        return true;
+                    }
+                }
+            }
+
+            for (LayoutRow childRow : column.getRows()) {
+                boolean deadlock = hasDeadlock(childRow, ancestorSet);
+                if (deadlock) {
+                    return true;
                 }
             }
         }
@@ -71,25 +95,34 @@ public class LayoutTemplateAnalyzer {
         }
         for (NavItem navItem : navGroup.getChildren()) {
             NavWorkbenchCtx navCtx = NavWorkbenchCtx.get(navItem);
-            String perspectiveName = navCtx.getResourceId();
-            LayoutTemplate layoutTemplate = pluginServices.getLayoutTemplate(perspectiveName);
-            if (layoutTemplate != null) {
+            String perspectiveId = navCtx.getResourceId();
+            boolean hasDeadlock = hasDeadlock(perspectiveId, ancestorSet);
+            if (hasDeadlock) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-                // A deadlock occurs either when the nav item is linked to an already
-                // traversed perspective or when the layout itself is causing a deadlock.
+    public boolean hasDeadlock(String perspectiveId, Set<String> ancestorSet) {
+        LayoutTemplate layoutTemplate = pluginServices.getLayoutTemplate(perspectiveId);
+        if (layoutTemplate != null) {
 
-                if (ancestorSet.contains(perspectiveName)) {
-                    return true;
-                }
-                else {
-                    try {
-                        ancestorSet.add(perspectiveName);
-                        if (hasDeadlock(layoutTemplate, ancestorSet)) {
-                            return true;
-                        }
-                    } finally {
-                        ancestorSet.remove(perspectiveName);
+            // A deadlock occurs either when the perspective is linked to an already
+            // traversed perspective or when the layout itself is causing a deadlock.
+
+            if (ancestorSet.contains(perspectiveId)) {
+                return true;
+            }
+            else {
+                try {
+                    ancestorSet.add(perspectiveId);
+                    boolean hasDeadlock = hasDeadlock(layoutTemplate, ancestorSet);
+                    if (hasDeadlock) {
+                        return true;
                     }
+                } finally {
+                    ancestorSet.remove(perspectiveId);
                 }
             }
         }

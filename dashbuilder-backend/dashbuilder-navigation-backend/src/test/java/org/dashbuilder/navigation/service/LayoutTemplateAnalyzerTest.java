@@ -37,12 +37,13 @@ import static org.mockito.Mockito.*;
 public class LayoutTemplateAnalyzerTest {
 
     public static final String GROUP_ID = "navGroupId";
+    public static final String PERSPECTIVE_ID = "perspectiveId";
 
     @Mock
-    PerspectivePluginServices pluginServices;
+    PerspectivePluginServicesImpl pluginServices;
 
     @Mock
-    NavigationServices navigationServices;
+    NavigationServicesImpl navigationServices;
 
     @InjectMocks
     LayoutTemplateAnalyzer layoutTemplateAnalyzer;
@@ -50,12 +51,13 @@ public class LayoutTemplateAnalyzerTest {
     LayoutTemplate perspectiveA = new LayoutTemplate();
     LayoutTemplate perspectiveB = new LayoutTemplate();
     LayoutTemplate perspectiveC = new LayoutTemplate();
+    LayoutColumn layoutColumnA = new LayoutColumn("12");
+    LayoutColumn layoutColumnB = new LayoutColumn("12");
 
 
     @Before
     public void setUp() throws Exception {
         LayoutRow layoutRowA = new LayoutRow();
-        LayoutColumn layoutColumnA = new LayoutColumn("12");
         LayoutComponent layoutComponentA = new LayoutComponent();
         layoutComponentA.addProperty(GROUP_ID, "groupA");
         layoutRowA.add(layoutColumnA);
@@ -63,7 +65,6 @@ public class LayoutTemplateAnalyzerTest {
         perspectiveA.addRow(layoutRowA);
 
         LayoutRow layoutRowB = new LayoutRow();
-        LayoutColumn layoutColumnB = new LayoutColumn("12");
         LayoutComponent layoutComponentB = new LayoutComponent();
         layoutComponentB.addProperty(GROUP_ID, "groupB");
         layoutRowB.add(layoutColumnB);
@@ -120,6 +121,31 @@ public class LayoutTemplateAnalyzerTest {
                     .endGroup()
                 .build());
 
+        boolean isRecursive = layoutTemplateAnalyzer.hasDeadlock(perspectiveA, new HashSet<>());
+        assertTrue(isRecursive);
+    }
+
+    @Test
+    public void testPerspectiveComponent() throws Exception {
+        LayoutComponent layoutComponentB = new LayoutComponent();
+        layoutComponentB.addProperty(PERSPECTIVE_ID, "B");
+        layoutColumnA.add(layoutComponentB);
+
+        when(navigationServices.loadNavTree()).thenReturn(new NavTreeBuilder().build());
+        boolean isRecursive = layoutTemplateAnalyzer.hasDeadlock(perspectiveA, new HashSet<>());
+        assertFalse(isRecursive);
+    }
+
+    @Test
+    public void testPerspectiveDeadlock() throws Exception {
+        LayoutComponent layoutComponentB = new LayoutComponent();
+        layoutComponentB.addProperty(PERSPECTIVE_ID, "B");
+        layoutColumnA.add(layoutComponentB);
+        LayoutComponent layoutComponentA = new LayoutComponent();
+        layoutComponentB.addProperty(PERSPECTIVE_ID, "A");
+        layoutColumnB.add(layoutComponentA);
+
+        when(navigationServices.loadNavTree()).thenReturn(new NavTreeBuilder().build());
         boolean isRecursive = layoutTemplateAnalyzer.hasDeadlock(perspectiveA, new HashSet<>());
         assertTrue(isRecursive);
     }

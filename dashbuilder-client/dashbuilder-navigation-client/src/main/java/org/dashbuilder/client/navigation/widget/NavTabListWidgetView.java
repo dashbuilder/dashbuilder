@@ -18,12 +18,12 @@ package org.dashbuilder.client.navigation.widget;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
+import org.dashbuilder.common.client.widgets.AlertBox;
+import org.jboss.errai.common.client.dom.CSSStyleDeclaration;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;
-import org.jboss.errai.common.client.dom.Node;
 import org.jboss.errai.common.client.dom.UnorderedList;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -50,6 +50,17 @@ public class NavTabListWidgetView extends BaseNavWidgetView<NavTabListWidget>
     Div tabContent;
 
     NavTabListWidget presenter;
+    AlertBox alertBox;
+
+    @Inject
+    public NavTabListWidgetView(AlertBox alertBox) {
+        this.alertBox = alertBox;
+        alertBox.setLevel(AlertBox.Level.WARNING);
+        alertBox.setCloseEnabled(false);
+        CSSStyleDeclaration style = alertBox.getElement().getStyle();
+        style.setProperty("width", "30%");
+        style.setProperty("margin", "10px");
+    }
 
     @Override
     public void init(NavTabListWidget presenter) {
@@ -79,14 +90,14 @@ public class NavTabListWidgetView extends BaseNavWidgetView<NavTabListWidget>
     @Override
     public void errorNavItemsEmpty() {
         DOMUtil.removeAllChildren(mainDiv);
-        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navTabListDragComponentEmptyError());
-        mainDiv.appendChild((Node) errorEl);
+        alertBox.setMessage(NavigationConstants.INSTANCE.navTabListDragComponentEmptyError());
+        mainDiv.appendChild(alertBox.getElement());
     }
 
     @Override
     public void deadlockError() {
         DOMUtil.removeAllChildren(tabContent);
-        Element errorEl = super.createErrorWidget(NavigationConstants.INSTANCE.navTabListDragComponentDeadlockError());
-        tabContent.appendChild((Node) errorEl);
+        alertBox.setMessage(NavigationConstants.INSTANCE.navTabListDragComponentDeadlockError());
+        tabContent.appendChild(alertBox.getElement());
     }
 }
