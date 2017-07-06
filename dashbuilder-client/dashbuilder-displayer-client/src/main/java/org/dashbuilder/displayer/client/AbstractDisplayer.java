@@ -932,7 +932,9 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
         if (dataSetHandler == null) {
             callback.noData();
         } else {
-            dataSetHandler.exportCurrentDataSetLookup(format, maxRows, callback);
+            Map<String,String> columnNameMap = new HashMap<>();
+            displayerSettings.getColumnSettingsList().forEach(cs -> columnNameMap.put(cs.getColumnId(), cs.getColumnName()));
+            dataSetHandler.exportCurrentDataSetLookup(format, maxRows, callback, columnNameMap);
         }
     }
 }
