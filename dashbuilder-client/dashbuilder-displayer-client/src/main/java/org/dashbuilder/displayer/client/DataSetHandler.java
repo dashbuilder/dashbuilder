@@ -15,6 +15,8 @@
  */
 package org.dashbuilder.displayer.client;
 
+import java.util.Map;
+
 import org.dashbuilder.dataset.DataSet;
 import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.client.DataSetReadyCallback;
@@ -154,6 +156,7 @@ public interface DataSetHandler {
      * @param format The output format
      * @param maxRows Max rows to be exported.
      * @param callback The callback instance to be notified
+     * @param columnNameMap A map containing the column header names for every column in the data set lookup
      */
-    void exportCurrentDataSetLookup(ExportFormat format, int maxRows, ExportCallback callback);
+    void exportCurrentDataSetLookup(ExportFormat format, int maxRows, ExportCallback callback, Map<String,String> columnNameMap);
 }

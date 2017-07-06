@@ -247,7 +247,7 @@ public class DataSetHandlerImpl implements DataSetHandler {
     }
 
     @Override
-    public void exportCurrentDataSetLookup(ExportFormat format, int maxRows, ExportCallback callback) {
+    public void exportCurrentDataSetLookup(ExportFormat format, int maxRows, ExportCallback callback, Map<String,String> columnNameMap) {
 
         // Export an empty data set does not make sense
         if (lastLookedUpDataSet == null || lastLookedUpDataSet.getRowCount() == 0) {
@@ -279,6 +279,17 @@ public class DataSetHandlerImpl implements DataSetHandler {
             DataSetLookup exportLookup = getCurrentDataSetLookup().cloneInstance();
             exportLookup.setRowOffset(0);
             exportLookup.setNumberOfRows(maxRows);
+
+            // Make sure the column names are set as specified
+            if (exportLookup.getLastGroupOp() != null && columnNameMap != null) {
+                for (GroupFunction groupFunction : exportLookup.getLastGroupOp().getGroupFunctions()) {
+                    String columnId = groupFunction.getColumnId();
+                    if (columnNameMap.containsKey(columnId)) {
+                        String columnName = columnNameMap.get(columnId);
+                        groupFunction.setColumnId(columnName);
+                    }
+                }
+            }
 
             if (ExportFormat.XLS.equals(format)) {
                 clientServices.exportDataSetExcel(exportLookup, exportReadyCallback);
