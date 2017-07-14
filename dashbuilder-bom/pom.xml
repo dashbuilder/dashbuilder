@@ -14,7 +14,7 @@
 
   <groupId>org.dashbuilder</groupId>
   <artifactId>dashbuilder-bom</artifactId>
-  <version>0.7.0-SNAPSHOT</version>
+  <version>0.7.0.Final</version>
   <packaging>pom</packaging>
 
   <name>Dashbuilder BOM (Bill Of Materials)</name>

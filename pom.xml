@@ -13,7 +13,7 @@
 
   <groupId>org.dashbuilder</groupId>
   <artifactId>dashbuilder-parent</artifactId>
-  <version>0.7.0-SNAPSHOT</version>
+  <version>0.7.0.Final</version>
   <packaging>pom</packaging>
 
   <name>Dashbuilder Project</name>
@@ -33,8 +33,8 @@
   <properties>
     <version.com.ahome-it.lienzo-charts>1.0.241-RC1</version.com.ahome-it.lienzo-charts>
     <version.com.ahome-it.lienzo-core>2.0.241-RC1</version.com.ahome-it.lienzo-core>
-    <version.org.uberfire>1.1.0-SNAPSHOT</version.org.uberfire>
-    <version.org.jboss.errai>4.0.1-SNAPSHOT</version.org.jboss.errai>
+    <version.org.uberfire>1.1.0.Final</version.org.uberfire>
+    <version.org.jboss.errai>4.0.1.Beta2</version.org.jboss.errai>
     <!-- Version 1.1.0.Final which is coming from ip-bom is not compatible with GWT 2.8.0 -->
     <version.javax.validation>1.0.0.GA</version.javax.validation>
     <!-- Version 4.3.2.Final which is coming from ip-bom is not compatible with with GWT 2.8.0 -->
