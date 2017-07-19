@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 JBoss, by Red Hat, Inc
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.navigation.layout.editor;
+package org.dashbuilder.client.navigation.widget;
 
-import org.dashbuilder.client.navigation.widget.NavWidget;
-import org.uberfire.ext.layout.editor.client.api.HasModalConfiguration;
-import org.uberfire.ext.plugin.client.perspective.editor.api.PerspectiveEditorDragComponent;
+/**
+ * An identifier can be assigned to those {@link NavWidget} implementations supporting this interface. The main purpose
+ * of an identifier is to support references as a navigation source by other navigation widgets.
+ */
+public interface HasIdentifier {
 
-public interface NavDragComponent extends  PerspectiveEditorDragComponent, HasModalConfiguration {
+    String getIdentifier();
 
-    String getNavId();
-
-    String getNavPoint();
-
-    NavWidget getNavWidget();
-
-    String getDragComponentNavGroupHelp();
-
-    void dispose();
+    void setIdentifier(String id);
 }

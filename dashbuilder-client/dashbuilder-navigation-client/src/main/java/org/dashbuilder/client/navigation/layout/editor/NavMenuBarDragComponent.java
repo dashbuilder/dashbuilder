@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 JBoss, by Red Hat, Inc
+ * Copyright 2017 JBoss, by Red Hat, Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,37 +21,32 @@ import javax.inject.Inject;
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
 import org.dashbuilder.client.navigation.widget.NavComponentConfigModal;
-import org.dashbuilder.client.navigation.widget.NavTilesWidget;
+import org.dashbuilder.client.navigation.widget.NavMenuBarWidget;
 
 /**
- * A layout editor's navigation component that shows a navigation group structure using two tile types: folders
- * (for nav group items) and links to perspective items.
- * @see NavTilesWidget
+ * A layout editor's navigation component that displays the entries under a given nav tree node as a menu bar
  */
 @Dependent
-public class NavTilesDragComponent extends AbstractNavDragComponent {
+public class NavMenuBarDragComponent extends AbstractNavDragComponent {
 
     @Inject
-    public NavTilesDragComponent(NavigationManager navigationManager,
-                                 NavDragComponentRegistry navDragComponentRegistry,
-                                 NavComponentConfigModal navComponentConfigModal,
-                                 NavTilesWidget navWidget) {
+    public NavMenuBarDragComponent(NavigationManager navigationManager,
+                                   NavDragComponentRegistry navDragComponentRegistry,
+                                   NavComponentConfigModal navComponentConfigModal,
+                                   NavMenuBarWidget navWidget) {
         super(navigationManager,
                 navDragComponentRegistry,
                 navComponentConfigModal,
                 navWidget);
-
-        this.navWidget.setHideEmptyGroups(true);
-
     }
 
     @Override
     public String getDragComponentTitle() {
-        return NavigationConstants.INSTANCE.navTilesDragComponent();
+        return NavigationConstants.INSTANCE.navMenubarDragComponent();
     }
 
     @Override
     public String getDragComponentNavGroupHelp() {
-        return NavigationConstants.INSTANCE.navTilesDragComponentNavGroupHelp();
+        return NavigationConstants.INSTANCE.navMenubarDragComponentNavGroupHelp();
     }
 }

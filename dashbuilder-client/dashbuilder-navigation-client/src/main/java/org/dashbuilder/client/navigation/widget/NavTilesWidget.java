@@ -93,12 +93,15 @@ public class NavTilesWidget extends BaseNavWidget {
     }
 
     public void show(NavGroup navGroup, boolean clearBreadcrumb) {
+        NavGroup clone = (NavGroup) navGroup.cloneItem();
+        navGroup.setParent(null);
+
         if (clearBreadcrumb) {
             navItemStack.clear();
             updateBreadcrumb();
         }
         currentPerspectiveId = null;
-        super.show(navGroup);
+        super.show(clone);
     }
 
     @Override
@@ -148,15 +151,7 @@ public class NavTilesWidget extends BaseNavWidget {
 
     protected void openPerspective(String id) {
         currentPerspectiveId = id;
-        perspectivePluginManager.buildPerspectiveWidget(id , this::showWidget, this::deadlockError);
-    }
-
-    public void showWidget(IsWidget widget) {
-        view.showTileContent(widget);
-    }
-
-    private void deadlockError() {
-        view.deadlockError();
+        perspectivePluginManager.buildPerspectiveWidget(id , view::showTileContent, view::deadlockError);
     }
 
     protected void updateBreadcrumb() {

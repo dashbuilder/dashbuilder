@@ -152,11 +152,7 @@ public class TopMenuBar implements Header {
         if (navTree != null) {
             List<NavItem> navItems = navTree.searchItems(NavWorkbenchCtx.perspective(perspectiveId));
             if (!navItems.isEmpty()) {
-                NavItem rootItem = navItems.get(0);
-                while (rootItem.getParent() != null) {
-                    rootItem = rootItem.getParent();
-                }
-                menuBarWidget.setSelectedItem(rootItem.getId());
+                menuBarWidget.setSelectedItem(navItems.get(0).getId());
             }
         }
     }
@@ -198,7 +194,9 @@ public class TopMenuBar implements Header {
 
     public void setMenuBar(IsWidget widget) {
         DOMUtil.removeAllChildren(navTreeMenuBar);
-        navTreeMenuBar.appendChild((Node) widget.asWidget().getElement());
+        com.google.gwt.dom.client.Element el = widget.asWidget().getElement();
+        el.getStyle().setPropertyPx("borderTop", 0);
+        navTreeMenuBar.appendChild((Node) el);
     }
 
     public void clearRoles() {
@@ -250,7 +248,6 @@ public class TopMenuBar implements Header {
 
     private void onCurrentPerspectiveChanged(@Observes final PerspectiveChange event) {
         currentPerspectiveId = event.getIdentifier();
-        clearSelectedItem();
         setSelectedItem(currentPerspectiveId);
     }
 }
