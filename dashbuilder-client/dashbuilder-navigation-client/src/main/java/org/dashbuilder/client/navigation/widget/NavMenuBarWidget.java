@@ -24,7 +24,7 @@ import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.uberfire.client.mvp.PlaceManager;
 
 @Dependent
-public class NavMenuBarWidget extends TargetDivNavWidget implements HasMaxLevels {
+public class NavMenuBarWidget extends TargetDivNavWidget {
 
     public interface View extends TargetDivNavWidget.View<NavMenuBarWidget> {
 

@@ -69,7 +69,8 @@ public class NavPointList {
 
     private boolean isANavComponent(LayoutComponent layoutComponent) {
         return layoutComponent.getDragTypeName().equalsIgnoreCase(NavMenuBarDragComponent.class.getName()) ||
-        layoutComponent.getDragTypeName().equalsIgnoreCase(NavTilesDragComponent.class.getName());
+                layoutComponent.getDragTypeName().equalsIgnoreCase(NavTabListDragComponent.class.getName()) ||
+                layoutComponent.getDragTypeName().equalsIgnoreCase(NavTilesDragComponent.class.getName());
     }
 
     private boolean columnHasNestedRows(LayoutColumn layoutColumn) {

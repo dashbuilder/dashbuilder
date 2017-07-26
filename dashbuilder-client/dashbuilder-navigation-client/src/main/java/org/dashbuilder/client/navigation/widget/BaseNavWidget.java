@@ -86,7 +86,7 @@ public abstract class BaseNavWidget implements NavWidget {
     }
 
     public NavItem getItem(String id) {
-        if (navItemList == null) {
+        if (navItemList == null || id == null) {
             return null;
         }
         for (NavItem navItem : navItemList) {
@@ -145,6 +145,15 @@ public abstract class BaseNavWidget implements NavWidget {
         return maxLevels < 1 || getLevel() < maxLevels-1;
     }
 
+    protected NavWidget getSubgroupNavWidget(String groupId) {
+        for (NavWidget navWidget : navSubgroupList) {
+            if (navWidget.getNavGroup().getId().equals(groupId)) {
+                return navWidget;
+            }
+        }
+        return null;
+    }
+
     protected NavWidget lookupNavGroupWidget() {
         return null;
     }
@@ -152,6 +161,7 @@ public abstract class BaseNavWidget implements NavWidget {
     @Override
     public void hide() {
         view.clearItems();
+        navSubgroupList.forEach(NavWidget::hide);
     }
 
     @Override
@@ -167,6 +177,8 @@ public abstract class BaseNavWidget implements NavWidget {
 
     @Override
     public void show(List<NavItem> itemList) {
+        this.hide();
+
         this.navItemList = itemList;
         this.navSubgroupList.clear();
 
@@ -176,7 +188,6 @@ public abstract class BaseNavWidget implements NavWidget {
             navigationManager.secure(navItemList, hideEmptyGroups);
         }
 
-        view.clearItems();
         if (navItemList.isEmpty()) {
             view.errorNavItemsEmpty();
         }
@@ -267,6 +278,7 @@ public abstract class BaseNavWidget implements NavWidget {
 
         activeNavSubgroup = subGroup;
         view.clearSelectedItem();
+        view.setSelectedItem(subGroup.getNavGroup().getId());
         itemSelected = subGroup.getItemSelected();
 
         if (onItemSelectedCommand != null) {
@@ -296,6 +308,7 @@ public abstract class BaseNavWidget implements NavWidget {
     @Override
     public void dispose() {
         view.clearItems();
+        navSubgroupList.forEach(NavWidget::dispose);
     }
 
     // Listen to changes in the navigation tree
