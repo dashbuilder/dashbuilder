@@ -28,23 +28,23 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.client.mvp.PlaceManager;
 
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class NavMenuBarWidgetTest {
+public class NavTabListWidgetTest {
 
     @Mock
-    NavMenuBarWidget.View view;
+    NavTabListWidget.View view;
 
     @Mock
-    NavDropDownWidget.View viewAdmin;
+    NavTabListWidget.View viewAdmin;
 
     @Mock
-    NavDropDownWidget.View viewDashboards;
+    NavTabListWidget.View viewDashboards;
 
     @Mock
-    SyncBeanDef<NavDropDownWidget> dropDownBean;
+    SyncBeanDef<NavTabListWidget> tablistBean;
 
     @Mock
     PerspectivePluginManager pluginManager;
@@ -58,9 +58,9 @@ public class NavMenuBarWidgetTest {
     @Mock
     PlaceManager placeManager;
 
-    NavDropDownWidget dropDownAdmin;
-    NavDropDownWidget dropDownDashboards;
-    NavMenuBarWidget presenter;
+    NavTabListWidget tabsAdmin;
+    NavTabListWidget tabsDashboards;
+    NavTabListWidget presenter;
     NavTree tree;
 
     public static final String ITEM_ID_HOME = "home";
@@ -74,9 +74,9 @@ public class NavMenuBarWidgetTest {
 
     @Before
     public void setUp() throws Exception {
-        dropDownAdmin = new NavDropDownWidget(viewAdmin, beanManager, navigationManager);
-        dropDownDashboards = new NavDropDownWidget(viewDashboards, beanManager, navigationManager);
-        presenter = new NavMenuBarWidget(view, beanManager, pluginManager, placeManager, navigationManager);
+        tabsAdmin = new NavTabListWidget(viewAdmin, beanManager, pluginManager, placeManager, navigationManager);
+        tabsDashboards = new NavTabListWidget(viewDashboards, beanManager, pluginManager, placeManager, navigationManager);
+        presenter = new NavTabListWidget(view, beanManager, pluginManager, placeManager, navigationManager);
 
         tree = new NavTreeBuilder()
                 .item(ITEM_ID_HOME, "Home", null, false, NavWorkbenchCtx.perspective(ITEM_ID_HOME))
@@ -91,44 +91,49 @@ public class NavMenuBarWidgetTest {
                     .endGroup()
                 .build();
 
-        when(beanManager.lookupBean(NavDropDownWidget.class)).thenReturn(dropDownBean);
-        when(dropDownBean.newInstance()).thenReturn(dropDownAdmin, dropDownDashboards);
+        when(beanManager.lookupBean(NavTabListWidget.class)).thenReturn(tablistBean);
+        when(tablistBean.newInstance()).thenReturn(tabsAdmin, tabsDashboards);
     }
 
     @Test
-    public void testShowMenuBar() {
+    public void testShow() {
         presenter.show(tree);
+        assertEquals(presenter.getItemSelected(), tree.getItemById(ITEM_ID_HOME));
 
         verify(view).init(presenter);
-
-        verify(view, never()).setSelectedItem(anyString());
         verify(view).addItem(eq(ITEM_ID_HOME), anyString(), anyString(), any());
         verify(view).addItem(eq(ITEM_ID_GALLERY), anyString(), anyString(), any());
-        verify(view).addGroupItem(eq(ITEM_ID_ADMIN), anyString(), anyString(), eq(dropDownAdmin));
-        verify(view).addGroupItem(eq(ITEM_ID_DASHBOARDS), anyString(), anyString(), eq(dropDownDashboards));
+        verify(view).addGroupItem(eq(ITEM_ID_ADMIN), anyString(), anyString(), eq(tabsAdmin));
+        verify(view).addGroupItem(eq(ITEM_ID_DASHBOARDS), anyString(), anyString(), eq(tabsDashboards));
+        verify(view).setSelectedItem(ITEM_ID_HOME);
 
-        verify(viewAdmin).setDropDownName("Administration");
-        verify(viewAdmin, never()).setActive(true);
+        verify(viewAdmin).showAsSubmenu(true);
+        verify(viewAdmin, never()).showChildrenTabs(any());
         verify(viewAdmin).addItem(eq(ITEM_ID_DATASETS), anyString(), anyString(), any());
         verify(viewAdmin).addItem(eq(ITEM_ID_CONTENTMGMT), anyString(), anyString(), any());
 
-        verify(viewDashboards).setDropDownName("Dashboards");
-        verify(viewDashboards, never()).setActive(true);
+        verify(viewDashboards).showAsSubmenu(true);
+        verify(viewDashboards, never()).showChildrenTabs(any());
         verify(viewDashboards).addItem(eq(ITEM_ID_DASHBOARD1), anyString(), anyString(), any());
         verify(viewDashboards).addItem(eq(ITEM_ID_DASHBOARD2), anyString(), anyString(), any());
     }
 
     @Test
-    public void testSelectRootItem() {
+    public void testDefaultNestedItem() {
+        presenter.setDefaultNavItemId(ITEM_ID_DASHBOARD2);
         presenter.show(tree);
-        reset(view, viewAdmin, viewDashboards);
 
-        presenter.setSelectedItem(ITEM_ID_HOME);
+        assertEquals(presenter.getItemSelected(), tree.getItemById(ITEM_ID_DASHBOARD2));
+        assertEquals(tabsDashboards.getItemSelected(), tree.getItemById(ITEM_ID_DASHBOARD2));
+        assertNull(tabsAdmin.getItemSelected());
 
-        verify(view).setSelectedItem(ITEM_ID_HOME);
-        verify(viewAdmin, never()).setActive(true);
-        verify(viewDashboards, never()).setActive(true);
+        verify(view, atLeastOnce()).clearSelectedItem();
+        verify(view, atLeastOnce()).setSelectedItem(ITEM_ID_DASHBOARDS);
+        verify(view).showChildrenTabs(tabsDashboards);
+        verify(viewDashboards).setSelectedItem(ITEM_ID_DASHBOARD2);
+        verify(viewAdmin, never()).showChildrenTabs(any());
     }
+
 
     @Test
     public void testSelectNestedItem() {
@@ -137,13 +142,13 @@ public class NavMenuBarWidgetTest {
 
         presenter.setSelectedItem(ITEM_ID_CONTENTMGMT);
         assertEquals(presenter.getItemSelected(), tree.getItemById(ITEM_ID_CONTENTMGMT));
-        assertEquals(dropDownAdmin.getItemSelected(), tree.getItemById(ITEM_ID_CONTENTMGMT));
-        assertNull(dropDownDashboards.getItemSelected());
+        assertEquals(tabsAdmin.getItemSelected(), tree.getItemById(ITEM_ID_CONTENTMGMT));
+        assertNull(tabsDashboards.getItemSelected());
 
         verify(view).clearSelectedItem();
-        verify(viewAdmin).setActive(true);
+        verify(view).showChildrenTabs(any());
         verify(viewAdmin).setSelectedItem(ITEM_ID_CONTENTMGMT);
-        verify(viewDashboards, never()).setActive(true);
+        verify(viewDashboards, never()).showChildrenTabs(any());
     }
 
     @Test
@@ -154,12 +159,13 @@ public class NavMenuBarWidgetTest {
 
         presenter.onItemClicked(tree.getItemById(ITEM_ID_HOME));
         assertEquals(presenter.getItemSelected(), tree.getItemById(ITEM_ID_HOME));
-        assertNull(dropDownAdmin.getItemSelected());
-        assertNull(dropDownDashboards.getItemSelected());
+        assertNull(tabsAdmin.getItemSelected());
+        assertNull(tabsDashboards.getItemSelected());
 
         verify(view).clearSelectedItem();
         verify(view).setSelectedItem(ITEM_ID_HOME);
-        verify(viewAdmin).setActive(false);
-        verify(viewDashboards, never()).setActive(true);
+        verify(view, never()).showChildrenTabs(any());
+        verify(viewAdmin, never()).showChildrenTabs(any());
+        verify(viewDashboards, never()).showChildrenTabs(any());
     }
 }

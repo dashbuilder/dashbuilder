@@ -16,7 +16,6 @@
 package org.dashbuilder.client.navigation.widget;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
@@ -201,12 +200,14 @@ public class NavComponentConfigModal implements IsWidget {
             if (navItem instanceof NavDivider) {
                 continue;
             }
-            // Add the default item
-            String fullPath = calculateFullPath(navItem);
-            if (defaultItemId != null && navItem.getId().equals(defaultItemId)) {
-                view.setDefaultItemSelection(fullPath, () -> onDefaultItemSelected(null));
-            } else {
-                view.addDefaultItem(fullPath, () -> onDefaultItemSelected(navItem.getId()));
+            // Add the default item. Skip groups.
+            if (!(navItem instanceof NavGroup)) {
+                String fullPath = calculateFullPath(navItem);
+                if (defaultItemId != null && navItem.getId().equals(defaultItemId)) {
+                    view.setDefaultItemSelection(fullPath, () -> onDefaultItemSelected(null));
+                } else {
+                    view.addDefaultItem(fullPath, () -> onDefaultItemSelected(navItem.getId()));
+                }
             }
             // Append children
             if (navItem instanceof NavGroup) {

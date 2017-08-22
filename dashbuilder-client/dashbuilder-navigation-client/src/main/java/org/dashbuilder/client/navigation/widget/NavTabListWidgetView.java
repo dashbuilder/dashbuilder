@@ -19,9 +19,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
 import org.dashbuilder.common.client.widgets.AlertBox;
-import org.jboss.errai.common.client.dom.CSSStyleDeclaration;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.common.client.dom.UnorderedList;
@@ -30,7 +28,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 @Dependent
 @Templated
-public class NavTabListWidgetView extends BaseNavWidgetView<NavTabListWidget>
+public class NavTabListWidgetView extends TargetDivNavWidgetView<NavTabListWidget>
     implements NavTabListWidget.View {
 
     @Inject
@@ -47,19 +45,13 @@ public class NavTabListWidgetView extends BaseNavWidgetView<NavTabListWidget>
 
     @Inject
     @DataField
-    Div tabContent;
+    Div childrenDiv;
 
     NavTabListWidget presenter;
-    AlertBox alertBox;
 
     @Inject
     public NavTabListWidgetView(AlertBox alertBox) {
-        this.alertBox = alertBox;
-        alertBox.setLevel(AlertBox.Level.WARNING);
-        alertBox.setCloseEnabled(false);
-        CSSStyleDeclaration style = alertBox.getElement().getStyle();
-        style.setProperty("width", "30%");
-        style.setProperty("margin", "10px");
+        super(alertBox);
     }
 
     @Override
@@ -74,25 +66,26 @@ public class NavTabListWidgetView extends BaseNavWidgetView<NavTabListWidget>
     }
 
     @Override
-    public void showContent(IsWidget widget) {
-        DOMUtil.removeAllChildren(mainDiv);
-        mainDiv.appendChild(tabsDiv);
-
-        DOMUtil.removeAllChildren(tabContent);
-        super.appendWidgetToElement(tabContent, widget);
+    public void addGroupItem(String id, String name, String description, IsWidget widget) {
+        this.addItem(id, name, description, () -> presenter.onGroupTabClicked(id));
     }
 
     @Override
-    public void errorNavItemsEmpty() {
-        DOMUtil.removeAllChildren(mainDiv);
-        alertBox.setMessage(NavigationConstants.INSTANCE.navTabListDragComponentEmptyError());
-        mainDiv.appendChild(alertBox.getElement());
+    public void showAsSubmenu(boolean enabled) {
+        tabList.setClassName("nav nav-tabs" + (enabled ? " nav-tabs-pf" : ""));
     }
 
     @Override
-    public void deadlockError() {
-        DOMUtil.removeAllChildren(tabContent);
-        alertBox.setMessage(NavigationConstants.INSTANCE.navTabListDragComponentDeadlockError());
-        tabContent.appendChild(alertBox.getElement());
+    public void clearChildrenTabs() {
+        DOMUtil.removeAllChildren(childrenDiv);
+    }
+
+    @Override
+    public void showChildrenTabs(IsWidget tabListWidget) {
+        DOMUtil.removeAllChildren(childrenDiv);
+        super.appendWidgetToElement(childrenDiv, tabListWidget);
+        if (presenter.getLevel() == 0) {
+            childrenDiv.getStyle().setProperty("margin-left", "15px");
+        }
     }
 }

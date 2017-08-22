@@ -23,5 +23,5 @@ public interface HasDefaultNavItem {
 
     String getDefaultNavItemId();
 
-    void setDefaultNavItemId(String navItemIºd);
+    void setDefaultNavItemId(String navItemId);
 }

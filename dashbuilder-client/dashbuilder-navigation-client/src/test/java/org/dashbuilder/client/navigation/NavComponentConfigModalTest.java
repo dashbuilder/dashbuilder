@@ -105,7 +105,7 @@ public class NavComponentConfigModalTest {
         verify(view).clearDefaultItems();
         verify(view).addDefaultItem(eq("A>A1"), any());
         verify(view).addDefaultItem(eq("A>A2"), any());
-        verify(view).addDefaultItem(eq("A>B"), any());
+        verify(view, never()).addDefaultItem(eq("A>B"), any());
         verify(view, never()).addDefaultItem(eq("C"), any());
 
         reset(view);
