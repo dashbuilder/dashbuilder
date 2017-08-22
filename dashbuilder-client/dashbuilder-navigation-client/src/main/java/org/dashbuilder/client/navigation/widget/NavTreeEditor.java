@@ -77,6 +77,7 @@ public class NavTreeEditor implements IsWidget {
     String literalDivider = "Divider";
     Optional<NavItemEditor> currentlyEditedItem = Optional.empty();
     Map<String, Integer> navItemMaxLevelsMap = new HashMap<>();
+    Map<String, Boolean> navItemNewPerspectiveFlagMap = new HashMap<>();
 
     @Inject
     public NavTreeEditor(View view, SyncBeanManager beanManager, PerspectiveTreeProvider perspectiveTreeProvider) {
@@ -125,6 +126,18 @@ public class NavTreeEditor implements IsWidget {
 
     public boolean isNewPerspectiveEnabled() {
         return newPerspectiveEnabled;
+    }
+
+    public boolean isNewPerspectiveEnabled(String navItemId) {
+        if (navItemNewPerspectiveFlagMap.containsKey(navItemId)) {
+            return navItemNewPerspectiveFlagMap.get(navItemId);
+        } else {
+            return newPerspectiveEnabled;
+        }
+    }
+
+    public void setNewPerspectiveEnabled(String navItemId, boolean newPerspectiveEnabled) {
+        navItemNewPerspectiveFlagMap.put(navItemId, newPerspectiveEnabled);
     }
 
     public void setNewPerspectiveEnabled(boolean newPerspectiveEnabled) {
@@ -224,7 +237,7 @@ public class NavTreeEditor implements IsWidget {
         navItemEditor.setMoveDownEnabled(!isLast);
         navItemEditor.setNewGroupEnabled(newGroupEnabled && subGroupsAllowed);
         navItemEditor.setNewDividerEnabled(newDividerEnabled && childrenAllowed);
-        navItemEditor.setNewPerspectiveEnabled(newPerspectiveEnabled && childrenAllowed);
+        navItemEditor.setNewPerspectiveEnabled(isNewPerspectiveEnabled(navItem.getId()) && childrenAllowed);
         navItemEditor.setGotoPerspectiveEnabled(gotoPerspectiveEnabled);
         navItemEditor.setVisiblePerspectiveIds(getPerspectiveIds(true));
         navItemEditor.setHiddenPerspectiveIds(getPerspectiveIds(false));
