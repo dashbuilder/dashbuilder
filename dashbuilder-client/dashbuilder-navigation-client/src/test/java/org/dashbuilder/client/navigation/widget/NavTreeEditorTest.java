@@ -118,6 +118,16 @@ public class NavTreeEditorTest {
     }
 
     @Test
+    public void testNewPerspectiveDisabled() {
+        NavTreeEditor treeEditor = new NavTreeEditor(viewM, beanManagerM, perspectiveTreeProviderM);
+        treeEditor.setNewPerspectiveEnabled("level1a", false);
+        treeEditor.edit(NAV_TREE);
+
+        verify(navItemEditor, times(4)).setNewPerspectiveEnabled(true);
+        verify(navItemEditor, times(1)).setNewPerspectiveEnabled(false);
+    }
+
+    @Test
     public void testFinishEdition() {
         NavTreeEditor treeEditor = spy(new NavTreeEditor(viewM, beanManagerM, perspectiveTreeProviderM));
         treeEditor.edit(NAV_TREE);
