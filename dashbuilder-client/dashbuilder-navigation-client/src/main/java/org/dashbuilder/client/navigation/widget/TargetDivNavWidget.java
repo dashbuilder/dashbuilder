@@ -17,12 +17,17 @@ package org.dashbuilder.client.navigation.widget;
 
 import java.util.List;
 
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.ext.plugin.event.PluginSaved;
+import org.uberfire.ext.plugin.model.Plugin;
 
 /**
  * Base class for nav widgets that uses a target div to show a nav item's content once clicked.
@@ -44,6 +49,7 @@ public abstract class TargetDivNavWidget extends BaseNavWidget implements HasTar
     String targetDivId = null;
     String defaultNavItemId = null;
 
+    @Inject
     public TargetDivNavWidget(View view,
                               PerspectivePluginManager pluginManager,
                               PlaceManager placeManager,
@@ -77,15 +83,20 @@ public abstract class TargetDivNavWidget extends BaseNavWidget implements HasTar
     @Override
     public void show(List<NavItem> itemList) {
         super.show(itemList);
+        gotoDefaultItem();
+    }
 
-        if (defaultNavItemId != null) {
-            if (setSelectedItem(defaultNavItemId)) {
+    protected boolean gotoDefaultItem() {
+        if (getDefaultNavItemId() != null) {
+            if (setSelectedItem(getDefaultNavItemId())) {
                 gotoNavItem(true);
                 if (onItemSelectedCommand != null) {
                     onItemSelectedCommand.execute();
                 }
+                return true;
             }
         }
+        return false;
     }
 
     @Override
@@ -116,6 +127,17 @@ public abstract class TargetDivNavWidget extends BaseNavWidget implements HasTar
             } else {
                 view.clearContent(targetDivId);
             }
+        }
+    }
+
+    // Catch changes on runtime perspectives so as to display the most up to date changes
+
+    private void onPluginSaved(@Observes PluginSaved event) {
+        Plugin plugin = event.getPlugin();
+        String pluginName = plugin.getName();
+        String selectedPerspectiveId = pluginManager.getRuntimePerspectiveId(itemSelected);
+        if (selectedPerspectiveId != null && selectedPerspectiveId.equals(pluginName)) {
+            gotoNavItem(true);
         }
     }
 }
