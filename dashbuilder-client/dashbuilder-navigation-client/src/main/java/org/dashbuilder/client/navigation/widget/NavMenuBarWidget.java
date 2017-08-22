@@ -19,12 +19,14 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.dashbuilder.client.navigation.NavigationManager;
+import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
+import org.uberfire.client.mvp.PlaceManager;
 
 @Dependent
-public class NavMenuBarWidget extends BaseNavWidget {
+public class NavMenuBarWidget extends TargetDivNavWidget {
 
-    public interface View extends NavWidgetView<NavMenuBarWidget> {
+    public interface View extends TargetDivNavWidget.View<NavMenuBarWidget> {
 
     }
 
@@ -32,8 +34,12 @@ public class NavMenuBarWidget extends BaseNavWidget {
     SyncBeanManager beanManager;
 
     @Inject
-    public NavMenuBarWidget(View view, SyncBeanManager beanManager, NavigationManager navigationManager) {
-        super(view, navigationManager);
+    public NavMenuBarWidget(View view,
+                            SyncBeanManager beanManager,
+                            PerspectivePluginManager pluginManager,
+                            PlaceManager placeManager,
+                            NavigationManager navigationManager) {
+        super(view, pluginManager, placeManager, navigationManager);
         this.view = view;
         this.beanManager = beanManager;
     }

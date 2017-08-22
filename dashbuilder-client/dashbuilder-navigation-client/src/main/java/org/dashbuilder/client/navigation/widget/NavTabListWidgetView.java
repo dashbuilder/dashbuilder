@@ -69,11 +69,6 @@ public class NavTabListWidgetView extends BaseNavWidgetView<NavTabListWidget>
     }
 
     @Override
-    public void setActive(boolean active) {
-        // Useless in a tab list
-    }
-
-    @Override
     public void addDivider() {
         // Useless in a tab list
     }

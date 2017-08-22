@@ -77,11 +77,6 @@ public class NavTilesWidgetView extends BaseNavWidgetView<NavTilesWidget>
     }
 
     @Override
-    public void setActive(boolean active) {
-        // Useless in tile navigator
-    }
-
-    @Override
     public void addDivider() {
         // Useless in tile navigator
     }
