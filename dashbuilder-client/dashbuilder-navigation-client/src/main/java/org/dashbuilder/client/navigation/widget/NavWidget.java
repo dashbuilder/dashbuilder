@@ -28,6 +28,8 @@ import org.uberfire.mvp.Command;
  */
 public interface NavWidget extends IsWidget {
 
+    void hide();
+
     void show(NavTree navTree);
 
     void show(NavGroup navGroup);
@@ -56,13 +58,9 @@ public interface NavWidget extends IsWidget {
 
     NavItem getItemSelected();
 
-    void setSelectedItem(String id);
+    boolean setSelectedItem(String id);
 
     void clearSelectedItem();
-
-    void setActive(boolean active);
-
-    void clearSelections();
 
     void dispose();
 

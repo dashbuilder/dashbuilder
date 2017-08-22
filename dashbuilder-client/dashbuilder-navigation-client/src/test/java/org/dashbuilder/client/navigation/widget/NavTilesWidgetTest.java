@@ -12,11 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.navigation;
+package org.dashbuilder.client.navigation.widget;
 
+import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
-import org.dashbuilder.client.navigation.widget.NavItemTileWidget;
-import org.dashbuilder.client.navigation.widget.NavTilesWidget;
 import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.NavTree;
 import org.dashbuilder.navigation.impl.NavTreeBuilder;

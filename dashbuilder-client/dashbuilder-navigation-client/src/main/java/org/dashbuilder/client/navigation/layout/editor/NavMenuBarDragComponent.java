@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 JBoss, by Red Hat, Inc
+ * Copyright 2017 JBoss, by Red Hat, Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,19 +20,19 @@ import javax.inject.Inject;
 
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
-import org.dashbuilder.client.navigation.widget.NavCarouselWidget;
 import org.dashbuilder.client.navigation.widget.NavComponentConfigModal;
+import org.dashbuilder.client.navigation.widget.NavMenuBarWidget;
 
 /**
- * A layout editor's navigation component that a carousel of runtime perspectives
+ * A layout editor's navigation component that displays the entries under a given nav tree node as a menu bar
  */
 @Dependent
-public class NavCarouselDragComponent extends AbstractNavDragComponent {
+public class NavMenuBarDragComponent extends AbstractNavDragComponent {
 
     @Inject
-    public NavCarouselDragComponent(NavigationManager navigationManager,
-                                    NavComponentConfigModal navComponentConfigModal,
-                                    NavCarouselWidget navWidget) {
+    public NavMenuBarDragComponent(NavigationManager navigationManager,
+                                   NavComponentConfigModal navComponentConfigModal,
+                                   NavMenuBarWidget navWidget) {
         super(navigationManager,
                 navComponentConfigModal,
                 navWidget);
@@ -40,11 +40,11 @@ public class NavCarouselDragComponent extends AbstractNavDragComponent {
 
     @Override
     public String getDragComponentTitle() {
-        return NavigationConstants.INSTANCE.navCarouselDragComponent();
+        return NavigationConstants.INSTANCE.navMenubarDragComponent();
     }
 
     @Override
     public String getDragComponentNavGroupHelp() {
-        return NavigationConstants.INSTANCE.navCarouselDragComponentNavGroupHelp();
+        return NavigationConstants.INSTANCE.navMenubarDragComponentNavGroupHelp();
     }
 }

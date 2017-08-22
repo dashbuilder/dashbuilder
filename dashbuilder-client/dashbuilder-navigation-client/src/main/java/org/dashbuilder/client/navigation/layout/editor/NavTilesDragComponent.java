@@ -20,9 +20,8 @@ import javax.inject.Inject;
 
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
-import org.dashbuilder.client.navigation.widget.NavItemSelectionModal;
+import org.dashbuilder.client.navigation.widget.NavComponentConfigModal;
 import org.dashbuilder.client.navigation.widget.NavTilesWidget;
-import org.dashbuilder.navigation.NavGroup;
 
 /**
  * A layout editor's navigation component that shows a navigation group structure using two tile types: folders
@@ -34,12 +33,10 @@ public class NavTilesDragComponent extends AbstractNavDragComponent {
 
     @Inject
     public NavTilesDragComponent(NavigationManager navigationManager,
-                                 NavDragComponentRegistry navDragComponentRegistry,
-                                 NavItemSelectionModal navItemSelectionModal,
+                                 NavComponentConfigModal navComponentConfigModal,
                                  NavTilesWidget navWidget) {
         super(navigationManager,
-                navDragComponentRegistry,
-                navItemSelectionModal,
+                navComponentConfigModal,
                 navWidget);
 
         this.navWidget.setHideEmptyGroups(true);
@@ -52,17 +49,7 @@ public class NavTilesDragComponent extends AbstractNavDragComponent {
     }
 
     @Override
-    public String getDragComponentHelp() {
-        return NavigationConstants.INSTANCE.navTilesDragComponentHelp();
-    }
-
-    @Override
-    protected NavGroup fetchNavGroup() {
-        NavGroup navGroup = super.fetchNavGroup();
-        if (navGroup != null) {
-            navGroup = (NavGroup) navGroup.cloneItem();
-            navGroup.setParent(null);
-        }
-        return navGroup;
+    public String getDragComponentNavGroupHelp() {
+        return NavigationConstants.INSTANCE.navTilesDragComponentNavGroupHelp();
     }
 }

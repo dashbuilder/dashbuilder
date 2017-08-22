@@ -21,6 +21,7 @@ import javax.inject.Inject;
 
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.navigation.NavGroup;
+import org.dashbuilder.navigation.NavItem;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 
 @Dependent
@@ -31,6 +32,8 @@ public class NavDropDownWidget extends BaseNavWidget {
         void setDropDownName(String name);
 
         void showAsSubmenu(boolean enabled);
+
+        void setActive(boolean active);
     }
 
     View view;
@@ -53,5 +56,35 @@ public class NavDropDownWidget extends BaseNavWidget {
         view.setDropDownName(navGroup.getName());
         view.showAsSubmenu(getLevel() > 1);
         super.show(navGroup);
+    }
+
+    @Override
+    public void onItemClicked(NavItem navItem) {
+        super.onItemClicked(navItem);
+        setActive(true);
+    }
+
+    @Override
+    public void onSubGroupItemClicked(NavWidget subGroup) {
+        super.onSubGroupItemClicked(subGroup);
+        setActive(true);
+    }
+
+    @Override
+    public boolean setSelectedItem(String id) {
+        boolean enabled = super.setSelectedItem(id);
+        setActive(enabled);
+        return enabled;
+    }
+
+    @Override
+    public void clearSelectedItem() {
+        super.clearSelectedItem();
+        setActive(false);
+    }
+
+    private void setActive(boolean enabled) {
+        // Disable for subgroups, as it is not working well
+        view.setActive(enabled && getLevel() == 1);
     }
 }

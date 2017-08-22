@@ -28,7 +28,6 @@ import org.dashbuilder.navigation.NavDivider;
 import org.dashbuilder.navigation.NavGroup;
 import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.NavTree;
-import org.uberfire.client.workbench.events.PerspectiveChange;
 import org.uberfire.ext.security.management.client.widgets.management.events.SaveGroupEvent;
 import org.uberfire.ext.security.management.client.widgets.management.events.SaveRoleEvent;
 import org.uberfire.mvp.Command;
@@ -86,6 +85,9 @@ public abstract class BaseNavWidget implements NavWidget {
     }
 
     public NavItem getItem(String id) {
+        if (navItemList == null) {
+            return null;
+        }
         for (NavItem navItem : navItemList) {
             if (navItem.getId().equals(id)) {
                 return navItem;
@@ -131,11 +133,16 @@ public abstract class BaseNavWidget implements NavWidget {
     }
 
     public boolean areSubGroupsSupported() {
-        return maxLevels < 1 || getLevel() < maxLevels;
+        return maxLevels < 1 || getLevel() < maxLevels-1;
     }
 
     protected NavWidget lookupNavGroupWidget() {
         return null;
+    }
+
+    @Override
+    public void hide() {
+        view.clearItems();
     }
 
     @Override
@@ -173,6 +180,8 @@ public abstract class BaseNavWidget implements NavWidget {
                 // Ensure to not exceed the maximum number of levels
                 if (areSubGroupsSupported()) {
                     showGroup((NavGroup) navChild);
+                } else {
+                    showItem(navChild);
                 }
             }
             // A divider
@@ -212,57 +221,52 @@ public abstract class BaseNavWidget implements NavWidget {
     }
 
     @Override
-    public void setSelectedItem(String id) {
-        itemSelected = getItem(id);
-        view.setSelectedItem(id);
-        navSubgroupList.stream()
-                .filter(w -> w.getNavGroup() != null && w.getNavGroup().getId().equals(id))
-                .forEach(w -> w.setActive(true));
+    public boolean setSelectedItem(String id) {
+        clearSelectedItem();
+
+        NavItem navItem = getItem(id);
+        if (navItem != null) {
+            itemSelected = navItem;
+            view.setSelectedItem(navItem.getId());
+            return true;
+        }
+
+        for (NavWidget navWidget : navSubgroupList) {
+            if (navWidget.setSelectedItem(id)) {
+                itemSelected = navWidget.getItemSelected();
+                activeNavSubgroup = navWidget;
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void clearSelectedItem() {
         itemSelected = null;
         view.clearSelectedItem();
-        navSubgroupList.forEach(w -> w.setActive(false));
-    }
-
-    @Override
-    public void setActive(boolean active) {
-        view.setActive(active);
-        if (!active) {
-            navSubgroupList.forEach(NavWidget::clearSelections);
+        if (activeNavSubgroup != null) {
+            activeNavSubgroup.clearSelectedItem();
+            activeNavSubgroup = null;
         }
-    }
-
-    @Override
-    public void clearSelections() {
-        view.setActive(false);
-        view.clearSelectedItem();
     }
 
     public void onSubGroupItemClicked(NavWidget subGroup) {
         if (activeNavSubgroup != null && activeNavSubgroup != subGroup) {
-            activeNavSubgroup.setActive(false);
-            activeNavSubgroup.clearSelections();
+            activeNavSubgroup.clearSelectedItem();
         }
 
         activeNavSubgroup = subGroup;
-        subGroup.setActive(true);
         view.clearSelectedItem();
-
         itemSelected = subGroup.getItemSelected();
+
         if (onItemSelectedCommand != null) {
             onItemSelectedCommand.execute();
         }
     }
 
     public void onItemClicked(NavItem navItem) {
-        if (activeNavSubgroup != null) {
-            activeNavSubgroup.setActive(false);
-            activeNavSubgroup.clearSelections();
-            activeNavSubgroup = null;
-        }
+        clearSelectedItem();
 
         itemSelected = navItem;
         view.setSelectedItem(navItem.getId());

@@ -48,17 +48,21 @@ public interface NavigationConstants extends Messages {
 
     String cancel();
 
+    String navMenubarDragComponent();
+
     String navTabListDragComponent();
 
     String navTilesDragComponent();
 
     String navCarouselDragComponent();
 
-    String navTabListDragComponentHelp();
+    String navMenubarDragComponentNavGroupHelp();
 
-    String navTilesDragComponentHelp();
+    String navTabListDragComponentNavGroupHelp();
 
-    String navCarouselDragComponentHelp();
+    String navTilesDragComponentNavGroupHelp();
+
+    String navCarouselDragComponentNavGroupHelp();
 
     String navTabListDragComponentEmptyError();
 
@@ -72,21 +76,39 @@ public interface NavigationConstants extends Messages {
 
     String navCarouselDragComponentDeadlockError();
 
+    String targetDivIdPerspectiveDeadlockError();
+
     String navItemNotFound(String navItem);
 
     String navItemsEmpty();
-
-    String navItemSelectorHint();
-
-    String navItemSelectorHelp();
-
-    String navItemSelectorLabel();
-
-    String navItemSelectorHeader();
 
     String openNavItem(String itemName);
 
     String gotoNavItem(String itemName);
 
     String showNavItem(String itemName);
+
+    String navConfigHeader();
+
+    String navGroupLabel();
+
+    String navGroupHelp();
+
+    String navGroupSelectorHint();
+
+    String defaultItemLabel();
+
+    String defaultItemHelp();
+
+    String defaultItemSelectorHint();
+
+    String defaultItemsNotFound();
+
+    String targetDivLabel();
+
+    String targetDivHelp();
+
+    String targetDivSelectorHint();
+
+    String targetDivsNotFound();
 }

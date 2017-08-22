@@ -25,8 +25,6 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.cms.resources.i18n.ContentManagerConstants;
-import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
-import org.dashbuilder.client.navigation.widget.NavItemSelectionModal;
 import org.gwtbootstrap3.client.ui.Modal;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;

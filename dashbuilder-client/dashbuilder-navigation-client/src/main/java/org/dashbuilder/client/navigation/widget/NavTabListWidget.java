@@ -29,7 +29,7 @@ import org.uberfire.ext.plugin.event.PluginSaved;
 import org.uberfire.ext.plugin.model.Plugin;
 
 @Dependent
-public class NavTabListWidget extends BaseNavWidget {
+public class NavTabListWidget extends BaseNavWidget implements HasDefaultNavItem {
 
     public interface View extends NavWidgetView<NavTabListWidget> {
 
@@ -40,6 +40,7 @@ public class NavTabListWidget extends BaseNavWidget {
 
     View view;
     PerspectivePluginManager perspectivePluginManager;
+    String defaultNavItemId = null;
 
     @Inject
     public NavTabListWidget(View view, NavigationManager navigationManager, PerspectivePluginManager perspectivePluginManager) {
@@ -55,6 +56,16 @@ public class NavTabListWidget extends BaseNavWidget {
     }
 
     @Override
+    public String getDefaultNavItemId() {
+        return defaultNavItemId;
+    }
+
+    @Override
+    public void setDefaultNavItemId(String defaultNavItemId) {
+        this.defaultNavItemId = defaultNavItemId;
+    }
+
+    @Override
     public void show(List<NavItem> itemList) {
         // Discard everything but runtime perspectives
         List<NavItem> itemsFiltered = itemList.stream()
@@ -63,9 +74,9 @@ public class NavTabListWidget extends BaseNavWidget {
 
         super.show(itemsFiltered);
 
-        // Force the display of the first perspective available
-        if (!navItemList.isEmpty()) {
-            setSelectedItem(navItemList.get(0).getId());
+        // Force the display or either the default item configured or the first one available
+        if (defaultNavItemId != null || !navItemList.isEmpty()) {
+            setSelectedItem(defaultNavItemId != null ? defaultNavItemId : navItemList.get(0).getId());
         }
     }
 
@@ -78,23 +89,18 @@ public class NavTabListWidget extends BaseNavWidget {
     }
 
     public void showPerspective(String perspectiveId) {
-        perspectivePluginManager.buildPerspectiveWidget(perspectiveId, this::showWidget, this::deadlockError);
-    }
-
-    public void showWidget(IsWidget widget) {
-        view.showContent(widget);
-    }
-
-    private void deadlockError() {
-        view.deadlockError();
+        perspectivePluginManager.buildPerspectiveWidget(perspectiveId, view::showContent, view::deadlockError);
     }
 
     // When an tab is selected its perspective is shown right under the tab
 
     @Override
-    public void setSelectedItem(String id) {
-        super.setSelectedItem(id);
-        showPerspective(itemSelected);
+    public boolean setSelectedItem(String id) {
+        boolean selected = super.setSelectedItem(id);
+        if (selected) {
+            showPerspective(getItemSelected());
+        }
+        return selected;
     }
 
     @Override
@@ -105,7 +111,7 @@ public class NavTabListWidget extends BaseNavWidget {
 
     // Catch changes on runtime perspectives so as to display the most up to date changes
 
-    private void onPerspectiveChanged(@Observes PluginSaved event) {
+    private void onPluginSaved(@Observes PluginSaved event) {
         Plugin plugin = event.getPlugin();
         String pluginName = plugin.getName();
         String selectedPerspectiveId = perspectivePluginManager.getRuntimePerspectiveId(itemSelected);

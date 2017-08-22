@@ -1,0 +1,20 @@
+.navconfig-body {
+    margin: 15px;
+}
+.navconfig-selector-button {
+    min-width: 200px;
+    text-align: left;
+}
+.navconfig-selector-menu {
+    margin-left: 20px;
+    min-width: 200px;
+}
+.navconfig-selector-caret {
+    float: right;
+    margin-top: 5px;
+}
+.navconfig-disabled {
+    opacity: .5;
+    pointer-events: none;
+}
+

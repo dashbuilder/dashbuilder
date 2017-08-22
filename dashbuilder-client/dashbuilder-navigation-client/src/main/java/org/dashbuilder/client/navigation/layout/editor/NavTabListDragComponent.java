@@ -20,8 +20,7 @@ import javax.inject.Inject;
 
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
-import org.dashbuilder.client.navigation.widget.NavCarouselWidget;
-import org.dashbuilder.client.navigation.widget.NavItemSelectionModal;
+import org.dashbuilder.client.navigation.widget.NavComponentConfigModal;
 import org.dashbuilder.client.navigation.widget.NavTabListWidget;
 
 /**
@@ -32,12 +31,10 @@ public class NavTabListDragComponent extends AbstractNavDragComponent {
 
     @Inject
     public NavTabListDragComponent(NavigationManager navigationManager,
-                                   NavDragComponentRegistry navDragComponentRegistry,
-                                   NavItemSelectionModal navItemSelectionModal,
+                                   NavComponentConfigModal navComponentConfigModal,
                                    NavTabListWidget navWidget) {
         super(navigationManager,
-                navDragComponentRegistry,
-                navItemSelectionModal,
+                navComponentConfigModal,
                 navWidget);
     }
 
@@ -47,7 +44,7 @@ public class NavTabListDragComponent extends AbstractNavDragComponent {
     }
 
     @Override
-    public String getDragComponentHelp() {
-        return NavigationConstants.INSTANCE.navTabListDragComponentHelp();
+    public String getDragComponentNavGroupHelp() {
+        return NavigationConstants.INSTANCE.navTabListDragComponentNavGroupHelp();
     }
 }
