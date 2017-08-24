@@ -30,8 +30,12 @@
     border-width: 1px;
 }
 
+.navitem-edit-div {
+    margin-bottom: 10px;
+}
+
 .navitem-extra-div {
-    margin-left: 20px;
+    margin-left: 22px;
 }
 
 .navitem-extra-div .dropdown-menu:before,

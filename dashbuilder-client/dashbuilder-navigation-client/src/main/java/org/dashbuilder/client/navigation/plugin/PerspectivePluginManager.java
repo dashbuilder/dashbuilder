@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.event.PerspectivePluginsChangedEvent;
+import org.dashbuilder.navigation.NavGroup;
 import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.NavTree;
 import org.dashbuilder.navigation.service.LayoutTemplateInfo;
@@ -61,6 +63,7 @@ public class PerspectivePluginManager {
     private Event<PerspectivePluginsChangedEvent> perspectivesChangedEvent;
     private Map<String, Plugin> pluginMap = new HashMap<>();
     private boolean pluginsLoaded = false;
+    private Stack<NavGroup> navGroupStack = new Stack<>();
 
     @Inject
     public PerspectivePluginManager(ClientTypeRegistry clientTypeRegistry,
@@ -124,17 +127,40 @@ public class PerspectivePluginManager {
     }
 
     public void buildPerspectiveWidget(String perspectiveName, ParameterizedCommand<IsWidget> afterBuild, Command onDeadlock) {
+        buildPerspectiveWidget(perspectiveName, null, afterBuild, onDeadlock);
+    }
+
+    public void buildPerspectiveWidget(String perspectiveName, String navGroupId, ParameterizedCommand<IsWidget> afterBuild, Command onDeadlock) {
         Plugin plugin = pluginMap.get(perspectiveName);
         pluginServices.call((LayoutTemplateInfo layoutInfo) -> {
 
             if (layoutInfo.hasDeadlock()) {
                 onDeadlock.execute();
-            }
-            else {
-                IsWidget result = layoutGenerator.build(layoutInfo.getLayoutTemplate());
-                afterBuild.execute(result);
+            } else {
+                NavGroup navGroup = navGroupId != null ? (NavGroup) navigationManager.getNavTree().getItemById(navGroupId) : null;
+                try {
+                    if (navGroup != null) {
+                        navGroupStack.push(navGroup);
+                    }
+                    IsWidget result = layoutGenerator.build(layoutInfo.getLayoutTemplate());
+                    afterBuild.execute(result);
+                }
+                finally {
+                    if (navGroup != null) {
+                        navGroupStack.pop();
+                    }
+                }
             }
         }).getLayoutTemplateInfo(plugin);
+    }
+
+    /**
+     * Get the last nav group instance passed to the execution of a {@link #buildPerspectiveWidget(String, String, ParameterizedCommand, Command)} call.
+     *
+     * @return The {@link NavGroup} instance passed to the build method or null if none.
+     */
+    public NavGroup getLastBuildPerspectiveNavGroup() {
+        return navGroupStack.isEmpty() ? null : navGroupStack.peek();
     }
 
     // Sync up both the internals plugin & widget registry

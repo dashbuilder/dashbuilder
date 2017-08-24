@@ -111,4 +111,8 @@ public interface NavigationConstants extends Messages {
     String targetDivSelectorHint();
 
     String targetDivsNotFound();
+
+    String navItemEditorPerspectiveHelp();
+
+    String navItemEditorGroupHelp();
 }

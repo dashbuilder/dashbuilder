@@ -157,28 +157,22 @@ public class NavComponentConfigModal implements IsWidget {
     }
 
     private void updateNavGroups(List<NavItem> navItemList) {
-        for (NavItem navItem : navItemList) {
+        navItemList.stream()
+                .filter(navItem -> navItem instanceof NavGroup)
+                .forEach(this::addNavGroup);
+    }
 
-            // Divider N/A
-            if (navItem instanceof NavDivider) {
-                continue;
-            }
-            // Only groups
-            if (!(navItem instanceof NavGroup)) {
-                continue;
-            }
-            // Check if the group is already selected
-            String fullPath = calculateFullPath(navItem);
-            if (groupId == null || (groupId != null && navItem.getId().equals(groupId))) {
-                groupId = navItem.getId();
-                group = (NavGroup) navItem;
-                view.setNavGroupSelection(fullPath, () -> {});
-            } else {
-                view.addNavGroupItem(fullPath, () -> onGroupSelected(navItem.getId()));
-            }
-            // Add the children items
-            updateNavGroups(((NavGroup) navItem).getChildren());
+    private void addNavGroup(NavItem navItem) {
+        String fullPath = calculateFullPath(navItem);
+        if (groupId == null || navItem.getId().equals(groupId)) {
+            groupId = navItem.getId();
+            group = (NavGroup) navItem;
+            view.setNavGroupSelection(fullPath, () -> {});
+        } else {
+            view.addNavGroupItem(fullPath, () -> onGroupSelected(navItem.getId()));
         }
+        // Add the children items
+        updateNavGroups(((NavGroup) navItem).getChildren());
     }
 
     private void updateDefaultItems() {

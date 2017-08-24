@@ -1,0 +1,20 @@
+.tpe-selector-button {
+    width: 150px;
+    text-align: left;
+}
+.tpe-selector-menu {
+    margin-left: 37px;
+    width: 150px;
+    overflow: auto;
+    max-height: 250px;
+}
+.tpe-disabled {
+    opacity: .5;
+    pointer-events: none;
+}
+.tpe-help-icon {
+    position: absolute;
+    margin-left: 155px;
+    margin-top: -25px;
+}
+
