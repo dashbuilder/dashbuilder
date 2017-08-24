@@ -25,11 +25,11 @@ import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.navigation.NavDivider;
 import org.dashbuilder.navigation.NavGroup;
 import org.dashbuilder.navigation.NavItem;
+import org.dashbuilder.navigation.NavTree;
 import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
+import org.jboss.errai.common.client.api.IsElement;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.UberView;
-import org.uberfire.ext.widgets.common.client.dropdown.PerspectiveDropDown;
-import org.uberfire.ext.widgets.common.client.dropdown.PerspectiveNameProvider;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.ActivityResourceType;
 
@@ -69,7 +69,7 @@ public class NavItemEditor implements IsWidget {
 
         void finishItemEdition();
 
-        void setContextWidget(IsWidget widget);
+        void setContextWidget(IsElement widget);
 
         String i18nNewItem(String item);
 
@@ -88,7 +88,7 @@ public class NavItemEditor implements IsWidget {
 
     View view;
     PlaceManager placeManager;
-    PerspectiveDropDown perspectiveDropDown;
+    TargetPerspectiveEditor targetPerspectiveEditor;
     PerspectivePluginManager perspectivePluginManager;
     boolean newDividerEnabled = true;
     boolean newGroupEnabled = true;
@@ -101,7 +101,7 @@ public class NavItemEditor implements IsWidget {
     boolean deleteEnabled = false;
     Set<String> visiblePerspectiveIds = null;
     Set<String> hiddenPerspectiveIds = null;
-    PerspectiveNameProvider perspectiveNameProvider = null;
+    NavTree navTree = null;
     NavItem navItem = null;
     ItemType itemType = null;
     String perspectiveId = null;
@@ -124,10 +124,14 @@ public class NavItemEditor implements IsWidget {
     String dividerName = "--------------";
 
     @Inject
-    public NavItemEditor(View view, PlaceManager placeManager, PerspectiveDropDown perspectiveDropDown, PerspectivePluginManager perspectivePluginManager) {
+    public NavItemEditor(View view,
+                         PlaceManager placeManager,
+                         TargetPerspectiveEditor targetPerspectiveEditor,
+                         PerspectivePluginManager perspectivePluginManager) {
         this.view = view;
         this.placeManager = placeManager;
-        this.perspectiveDropDown = perspectiveDropDown;
+        this.targetPerspectiveEditor = targetPerspectiveEditor;
+        this.targetPerspectiveEditor.setOnUpdateCommand(this::onTargetPerspectiveUpdated);
         this.perspectivePluginManager = perspectivePluginManager;
         this.view.init(this);
     }
@@ -135,6 +139,10 @@ public class NavItemEditor implements IsWidget {
     @Override
     public Widget asWidget() {
         return view.asWidget();
+    }
+    public void setNavTree(NavTree navTree) {
+        this.navTree = navTree;
+        this.targetPerspectiveEditor.setNavTree(navTree);
     }
 
     public boolean isNewGroupEnabled() {
@@ -261,10 +269,6 @@ public class NavItemEditor implements IsWidget {
         this.hiddenPerspectiveIds = hiddenPerspectiveIds;
     }
 
-    public void setPerspectiveNameProvider(PerspectiveNameProvider perspectiveNameProvider) {
-        this.perspectiveNameProvider = perspectiveNameProvider;
-    }
-
     public void edit(NavItem navItem) {
         this.navItem = navItem.cloneItem();
 
@@ -297,6 +301,7 @@ public class NavItemEditor implements IsWidget {
 
             // Nav perspective item
             if (ActivityResourceType.PERSPECTIVE.equals(navCtx.getResourceType())) {
+
                 if (visiblePerspectiveIds == null || visiblePerspectiveIds.contains(navCtx.getResourceId())) {
                     perspectiveId = navCtx.getResourceId();
                 } else {
@@ -305,16 +310,18 @@ public class NavItemEditor implements IsWidget {
                     navItem.setContext(navCtx.toString());
                 }
                 if (hiddenPerspectiveIds != null) {
-                    perspectiveDropDown.setPerspectiveIdsExcluded(hiddenPerspectiveIds);
+                    targetPerspectiveEditor.setPerspectiveIdsExcluded(hiddenPerspectiveIds);
                 }
-                if (perspectiveNameProvider != null) {
-                    perspectiveDropDown.setPerspectiveNameProvider(perspectiveNameProvider);
-                }
-                perspectiveDropDown.setMaxItems(50);
-                perspectiveDropDown.setWidth(150);
-                perspectiveDropDown.setSelectedPerspective(perspectiveId);
-                view.setItemType(itemType = perspectivePluginManager.isRuntimePerspective(perspectiveId) ? ItemType.RUNTIME_PERSPECTIVE : ItemType.PERSPECTIVE);
-                view.setContextWidget(perspectiveDropDown);
+
+                boolean isRuntimePerspective = perspectivePluginManager.isRuntimePerspective(perspectiveId);
+                String selectedNavGroupId = navCtx.getNavGroupId();
+                targetPerspectiveEditor.setPerspectiveId(perspectiveId);
+                targetPerspectiveEditor.setNavGroupEnabled(isRuntimePerspective);
+                targetPerspectiveEditor.setNavGroupId(selectedNavGroupId);
+                targetPerspectiveEditor.show();
+
+                view.setItemType(itemType =  isRuntimePerspective ? ItemType.RUNTIME_PERSPECTIVE : ItemType.PERSPECTIVE);
+                view.setContextWidget(targetPerspectiveEditor);
             }
         }
         else {
@@ -398,16 +405,25 @@ public class NavItemEditor implements IsWidget {
 
         // Capture perspective changes
         if (ItemType.PERSPECTIVE.equals(itemType) || ItemType.RUNTIME_PERSPECTIVE.equals(itemType)) {
-            String perspectiveId = perspectiveDropDown.getSelectedPerspective().getIdentifier();
-            if (perspectiveId != null && !perspectiveId.trim().isEmpty()) {
-                NavWorkbenchCtx navCtx = NavWorkbenchCtx.get(navItem);
-                if (navCtx.getResourceId() != null && !navCtx.getResourceId().equals(perspectiveId)){
-                    NavWorkbenchCtx newCtx = NavWorkbenchCtx.perspective(perspectiveId);
-                    navItem.setContext(newCtx.toString());
+            NavWorkbenchCtx navCtx = NavWorkbenchCtx.get(navItem);
+            String oldPerspectiveId = navCtx.getResourceId();
+            String newPerspectiveId = targetPerspectiveEditor.getPerspectiveId();
+            if (newPerspectiveId != null && !newPerspectiveId.trim().isEmpty()) {
+                if (oldPerspectiveId != null && !oldPerspectiveId.equals(newPerspectiveId)){
+                    navCtx.setResourceId(newPerspectiveId);
+                    navItem.setContext(navCtx.toString());
                     update = true;
                 }
             } else {
                 error = true;
+            }
+            boolean isRuntimePerspective = perspectivePluginManager.isRuntimePerspective(newPerspectiveId);
+            String newGroupId =  isRuntimePerspective ? targetPerspectiveEditor.getNavGroupId() : null;
+            String oldGroupId = navCtx.getNavGroupId();
+            if ((oldGroupId == null && newGroupId != null) || oldGroupId != null && !oldGroupId.equals(newGroupId)) {
+                navCtx.setNavGroupId(newGroupId);
+                navItem.setContext(navCtx.toString());
+                update = true;
             }
         }
 
@@ -494,6 +510,12 @@ public class NavItemEditor implements IsWidget {
         }
     }
 
+    void onTargetPerspectiveUpdated() {
+        String perspectiveId = targetPerspectiveEditor.getPerspectiveId();
+        boolean isRuntimePerspective = perspectivePluginManager.isRuntimePerspective(perspectiveId);
+        targetPerspectiveEditor.setNavGroupEnabled(isRuntimePerspective);
+    }
+
     public void finishEditing() {
         view.finishItemEdition();
         onEditFinished();
@@ -503,7 +525,7 @@ public class NavItemEditor implements IsWidget {
         view.finishItemEdition();
         view.setItemName(navItem.getName());
         if (ItemType.PERSPECTIVE.equals(itemType) || ItemType.RUNTIME_PERSPECTIVE.equals(itemType)) {
-            perspectiveDropDown.setSelectedPerspective(perspectiveId);
+            targetPerspectiveEditor.setPerspectiveId(perspectiveId);
         }
         onEditCancelled();
     }

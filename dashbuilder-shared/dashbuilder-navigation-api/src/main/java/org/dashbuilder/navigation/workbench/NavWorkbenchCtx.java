@@ -35,6 +35,7 @@ public class NavWorkbenchCtx extends NavItemContextImpl {
     public static final String PERMISSIONS = "permissions";
     public static final String RESOURCE_ID = "resourceId";
     public static final String RESOURCE_TYPE = "resourceType";
+    public static final String NAV_GROUP_ID = "navGroupId";
 
     public static NavWorkbenchCtx get(NavItem navItem) {
         return navItem != null ? new NavWorkbenchCtx(navItem.getContext()): new NavWorkbenchCtx();
@@ -72,7 +73,11 @@ public class NavWorkbenchCtx extends NavItemContextImpl {
     }
 
     public NavWorkbenchCtx setResourceId(String resourceId) {
-        super.setProperty(RESOURCE_ID, resourceId);
+        if (resourceId == null) {
+            super.removeProperty(RESOURCE_ID);
+        } else {
+            super.setProperty(RESOURCE_ID, resourceId);
+        }
         return this;
     }
 
@@ -83,6 +88,19 @@ public class NavWorkbenchCtx extends NavItemContextImpl {
 
     public NavWorkbenchCtx setResourceType(ActivityResourceType resourceType) {
         super.setProperty(RESOURCE_TYPE, resourceType.getName().toUpperCase());
+        return this;
+    }
+
+    public String getNavGroupId() {
+        return super.getProperty(NAV_GROUP_ID);
+    }
+
+    public NavWorkbenchCtx setNavGroupId(String navGroupId) {
+        if (navGroupId == null) {
+            super.removeProperty(NAV_GROUP_ID);
+        } else {
+            super.setProperty(NAV_GROUP_ID, navGroupId);
+        }
         return this;
     }
 

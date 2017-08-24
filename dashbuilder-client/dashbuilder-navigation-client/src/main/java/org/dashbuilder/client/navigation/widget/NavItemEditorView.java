@@ -28,8 +28,8 @@ import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
+import org.jboss.errai.common.client.api.IsElement;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.common.client.dom.Input;
@@ -189,11 +189,9 @@ public class NavItemEditorView extends Composite
     }
 
     @Override
-    public void setContextWidget(IsWidget widget) {
+    public void setContextWidget(IsElement widget) {
         DOMUtil.removeAllChildren(extraDiv);
-        Element el = widget.asWidget().getElement();
-        el.getStyle().setWidth(150, Style.Unit.PX);
-        extraDiv.appendChild((Node) el);
+        extraDiv.appendChild(widget.getElement());
     }
 
     @Override

@@ -218,6 +218,7 @@ public class NavTreeEditor implements IsWidget {
 
     public NavItemEditor createNavItemEditor(NavItem navItem, boolean isFirst, boolean isLast, boolean childrenAllowed, boolean subGroupsAllowed) {
         NavItemEditor navItemEditor = beanManager.lookupBean(NavItemEditor.class).newInstance();
+        navItemEditor.setNavTree(navTreeBackup);
         navItemEditor.setLiteralGroup(literalGroup);
         navItemEditor.setLiteralPerspective(literalPerspective);
         navItemEditor.setLiteralDivider(literalDivider);
@@ -241,7 +242,6 @@ public class NavTreeEditor implements IsWidget {
         navItemEditor.setGotoPerspectiveEnabled(gotoPerspectiveEnabled);
         navItemEditor.setVisiblePerspectiveIds(getPerspectiveIds(true));
         navItemEditor.setHiddenPerspectiveIds(getPerspectiveIds(false));
-        navItemEditor.setPerspectiveNameProvider(perspectiveTreeProvider::getPerspectiveName);
         navItemEditor.edit(navItem);
         if (inCreationId != null && inCreationId.equals(navItem.getId())) {
             inCreationId = null;

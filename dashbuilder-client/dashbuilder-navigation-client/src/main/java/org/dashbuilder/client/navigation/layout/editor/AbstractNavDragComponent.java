@@ -20,6 +20,7 @@ import java.util.Map;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.NavigationManager;
+import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.client.navigation.widget.HasDefaultNavItem;
 import org.dashbuilder.client.navigation.widget.HasTargetDiv;
 import org.dashbuilder.client.navigation.widget.NavComponentConfigModal;
@@ -34,9 +35,10 @@ import org.uberfire.ext.layout.editor.client.api.RenderingContext;
 public abstract class AbstractNavDragComponent implements NavDragComponent {
 
     NavigationManager navigationManager;
+    PerspectivePluginManager pluginManager;
     NavComponentConfigModal navComponentConfigModal;
     NavWidget navWidget;
-    String navGroupId = null;
+    NavGroup navGroup = null;
 
     public static final String NAV_GROUP_ID = "navGroupId";
     public static final String NAV_DEFAULT_ID = "navDefaultId";
@@ -46,9 +48,11 @@ public abstract class AbstractNavDragComponent implements NavDragComponent {
     }
 
     public AbstractNavDragComponent(NavigationManager navigationManager,
+                                    PerspectivePluginManager pluginManager,
                                     NavComponentConfigModal navComponentConfigModal,
                                     NavWidget navWidget) {
         this.navigationManager = navigationManager;
+        this.pluginManager = pluginManager;
         this.navComponentConfigModal = navComponentConfigModal;
         this.navWidget = navWidget;
         this.navWidget.setOnStaleCommand(this::showNavWidget);
@@ -67,16 +71,21 @@ public abstract class AbstractNavDragComponent implements NavDragComponent {
     @Override
     public IsWidget getShowWidget(RenderingContext ctx) {
         Map<String, String> properties = ctx.getComponent().getProperties();
-        navGroupId = properties.get(NAV_GROUP_ID);
+
+        // Nav group settings
+        String navGroupId = properties.get(NAV_GROUP_ID);
+        navGroup = readNavGroup(navGroupId);
         navWidget.setHideEmptyGroups(true);
 
-        if (navWidget instanceof HasTargetDiv) {
-           String targetDivId = properties.get(TARGET_DIV_ID);
-            ((HasTargetDiv) navWidget).setTargetDivId(targetDivId);
-        }
+        // Default item settings
         if (navWidget instanceof HasDefaultNavItem) {
             String navItemId = properties.get(NAV_DEFAULT_ID);
             ((HasDefaultNavItem) navWidget).setDefaultNavItemId(navItemId);
+        }
+        // Target div settings
+        if (navWidget instanceof HasTargetDiv) {
+           String targetDivId = properties.get(TARGET_DIV_ID);
+            ((HasTargetDiv) navWidget).setTargetDivId(targetDivId);
         }
         this.showNavWidget();
         return navWidget;
@@ -85,26 +94,29 @@ public abstract class AbstractNavDragComponent implements NavDragComponent {
     @Override
     public Modal getConfigurationModal(ModalConfigurationContext ctx) {
         navComponentConfigModal.clear();
+        navComponentConfigModal.setLayoutTemplate(ctx.getCurrentLayoutTemplate());
 
+        // Nav group settings
         NavTree navTree = navigationManager.getNavTree();
         String groupId = ctx.getComponentProperty(NAV_GROUP_ID);
-        boolean supportsDefaultNavItem = navWidget instanceof HasDefaultNavItem;
-        boolean supportsTargetDiv = navWidget instanceof HasTargetDiv;
-        navComponentConfigModal.setLayoutTemplate(ctx.getCurrentLayoutTemplate());
-        navComponentConfigModal.setTargetDivSupported(supportsTargetDiv);
-        navComponentConfigModal.setDefaultNavItemSupported(supportsDefaultNavItem);
         navComponentConfigModal.setNavGroup(navTree.getRootItems(), groupId);
+        navComponentConfigModal.setNavGroupHelpHint(getDragComponentNavGroupHelp());
 
+        // Default item settings
+        boolean supportsDefaultNavItem = navWidget instanceof HasDefaultNavItem;
+        navComponentConfigModal.setDefaultNavItemSupported(supportsDefaultNavItem);
         if (supportsDefaultNavItem) {
             String navItemId = ctx.getComponentProperty(NAV_DEFAULT_ID);
             navComponentConfigModal.setDefaultNavItemId(navItemId);
         }
+        // Target div settings
+        boolean supportsTargetDiv = navWidget instanceof HasTargetDiv;
+        navComponentConfigModal.setTargetDivSupported(supportsTargetDiv);
         if (supportsTargetDiv) {
             String targetDivId = ctx.getComponentProperty(TARGET_DIV_ID);
             navComponentConfigModal.setTargetDiv(targetDivId);
         }
 
-        navComponentConfigModal.setNavGroupHelpHint(getDragComponentNavGroupHelp());
         navComponentConfigModal.setOnOk(() -> navConfigOk(ctx, supportsDefaultNavItem, supportsTargetDiv));
         navComponentConfigModal.setOnCancel(() -> navConfigCancel(ctx));
         navComponentConfigModal.show();
@@ -116,19 +128,25 @@ public abstract class AbstractNavDragComponent implements NavDragComponent {
         navWidget.dispose();
     }
 
+    protected NavGroup readNavGroup(String navGroupId) {
+        NavGroup navGroup = pluginManager.getLastBuildPerspectiveNavGroup();
+        if (navGroup == null) {
+            NavTree navTree = navigationManager.getNavTree();
+            navGroup = (NavGroup) navTree.getItemById(navGroupId);
+        }
+        return navGroup;
+    }
+
     protected void showNavWidget() {
-        NavTree navTree = navigationManager.getNavTree();
-        NavGroup navGroup = (NavGroup) navTree.getItemById(navGroupId);
         if (navGroup != null) {
             navWidget.show(navGroup);
         } else {
             navWidget.show(Collections.emptyList());
         }
     }
-
     protected void navConfigOk(ModalConfigurationContext ctx, boolean supportsDefaultNavItem, boolean supportsTargetDiv) {
 
-        navGroupId = navComponentConfigModal.getGroupId();
+        String navGroupId = navComponentConfigModal.getGroupId();
         if (navGroupId != null) {
             ctx.setComponentProperty(NAV_GROUP_ID, navGroupId);
         } else {

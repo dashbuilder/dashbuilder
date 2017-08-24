@@ -19,6 +19,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.dashbuilder.client.navigation.NavigationManager;
+import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
 import org.dashbuilder.client.navigation.widget.NavComponentConfigModal;
 import org.dashbuilder.client.navigation.widget.NavTilesWidget;
@@ -33,9 +34,11 @@ public class NavTilesDragComponent extends AbstractNavDragComponent {
 
     @Inject
     public NavTilesDragComponent(NavigationManager navigationManager,
+                                 PerspectivePluginManager pluginManager,
                                  NavComponentConfigModal navComponentConfigModal,
                                  NavTilesWidget navWidget) {
         super(navigationManager,
+                pluginManager,
                 navComponentConfigModal,
                 navWidget);
 

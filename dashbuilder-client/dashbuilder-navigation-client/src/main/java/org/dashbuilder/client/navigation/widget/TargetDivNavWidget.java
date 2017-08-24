@@ -115,9 +115,10 @@ public abstract class TargetDivNavWidget extends BaseNavWidget implements HasTar
         if (targetDivId != null) {
             NavWorkbenchCtx navCtx = NavWorkbenchCtx.get(getItemSelected());
             String resourceId = navCtx.getResourceId();
+            String navRootId = navCtx.getNavGroupId();
             if (resourceId != null) {
                 if (pluginManager.isRuntimePerspective(resourceId)) {
-                    pluginManager.buildPerspectiveWidget(resourceId,
+                    pluginManager.buildPerspectiveWidget(resourceId, navRootId,
                             w -> view.showContent(targetDivId, w),
                             () -> view.deadlockError(targetDivId));
                 }

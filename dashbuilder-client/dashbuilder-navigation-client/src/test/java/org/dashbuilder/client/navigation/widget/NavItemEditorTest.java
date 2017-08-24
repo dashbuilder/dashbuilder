@@ -15,7 +15,6 @@
 package org.dashbuilder.client.navigation.widget;
 
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
-import org.dashbuilder.client.navigation.widget.NavItemEditor;
 import org.dashbuilder.navigation.NavDivider;
 import org.dashbuilder.navigation.NavFactory;
 import org.dashbuilder.navigation.NavGroup;
@@ -26,9 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.ext.widgets.common.client.dropdown.PerspectiveDropDown;
 import org.uberfire.mvp.Command;
 
 import static org.mockito.Mockito.*;
@@ -44,7 +41,7 @@ public class NavItemEditorTest {
     PlaceManager placeManager;
 
     @Mock
-    PerspectiveDropDown perspectiveDropDown;
+    TargetPerspectiveEditor targetPerspectiveEditor;
 
     @Mock
     PerspectivePluginManager perspectivePluginManager;
@@ -58,15 +55,11 @@ public class NavItemEditorTest {
     @Mock
     Command errorCommand;
 
-    @Mock
-    PerspectiveActivity perspectiveActivity;
-
     NavItemEditor presenter;
 
     @Before
     public void setUp() throws Exception {
-        when(perspectiveDropDown.getSelectedPerspective()).thenReturn(perspectiveActivity);
-        presenter = new NavItemEditor(view, placeManager, perspectiveDropDown, perspectivePluginManager);
+        presenter = new NavItemEditor(view, placeManager, targetPerspectiveEditor, perspectivePluginManager);
     }
 
     @Test
@@ -136,7 +129,7 @@ public class NavItemEditorTest {
         reset(editFinishedCommand);
         reset(view);
         when(view.getItemName()).thenReturn("name");
-        when(perspectiveActivity.getIdentifier()).thenReturn("A");
+        when(targetPerspectiveEditor.getPerspectiveId()).thenReturn("A");
         presenter.confirmChanges();
         verify(view).finishItemEdition();
         verify(errorCommand, never()).execute();
@@ -151,7 +144,7 @@ public class NavItemEditorTest {
         reset(editFinishedCommand);
         reset(view);
         when(view.getItemName()).thenReturn("name");
-        when(perspectiveActivity.getIdentifier()).thenReturn("B");
+        when(targetPerspectiveEditor.getPerspectiveId()).thenReturn("B");
         presenter.confirmChanges();
         verify(view).finishItemEdition();
         verify(errorCommand, never()).execute();
@@ -166,14 +159,14 @@ public class NavItemEditorTest {
         reset(errorCommand);
         reset(updateCommand);
         reset(editFinishedCommand);
-        reset(perspectiveDropDown);
+        reset(targetPerspectiveEditor);
         reset(view);
         when(view.getItemName()).thenReturn("newName");
-        when(perspectiveActivity.getIdentifier()).thenReturn("B");
+        when(targetPerspectiveEditor.getPerspectiveId()).thenReturn("B");
         presenter.cancelEdition();
         verify(view).finishItemEdition();
         verify(view).setItemName("name");
-        verify(perspectiveDropDown).setSelectedPerspective("A");
+        verify(targetPerspectiveEditor).setPerspectiveId("A");
         verify(editFinishedCommand, never()).execute();
         assertEquals(presenter.getNavItem().getName(), "name");
         assertEquals(presenter.getNavItem().getContext(), navCtxA.toString());
@@ -231,7 +224,7 @@ public class NavItemEditorTest {
         verify(view).setItemType(NavItemEditor.ItemType.PERSPECTIVE);
         verify(view, atLeastOnce()).setCommandsEnabled(true);
         verify(view, atLeastOnce()).addCommand(any(), any());
-        verify(view).setContextWidget(perspectiveDropDown);
+        verify(view).setContextWidget(targetPerspectiveEditor);
     }
 
     @Test

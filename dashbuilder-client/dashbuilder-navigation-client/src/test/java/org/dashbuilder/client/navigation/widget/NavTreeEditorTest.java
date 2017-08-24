@@ -31,7 +31,7 @@ public class NavTreeEditorTest {
     @Mock
     private PlaceManager placeManagerM;
     @Mock
-    private PerspectiveDropDown perspectiveDropDownM;
+    private TargetPerspectiveEditor targetPerspectiveEditorM;
     @Mock
     private PerspectivePluginManager perspectivePluginManagerM;
     @Mock
@@ -57,7 +57,7 @@ public class NavTreeEditorTest {
 
     @Before
     public void setUp() {
-        navItemEditor = spy(new NavItemEditor(navItemEditorViewM, placeManagerM, perspectiveDropDownM, perspectivePluginManagerM));
+        navItemEditor = spy(new NavItemEditor(navItemEditorViewM, placeManagerM, targetPerspectiveEditorM, perspectivePluginManagerM));
         when(beanManagerM.lookupBean(NavItemEditor.class)).thenReturn(navItemEditorBeanDef);
         when(navItemEditorBeanDef.newInstance()).thenReturn(navItemEditor);
     }
