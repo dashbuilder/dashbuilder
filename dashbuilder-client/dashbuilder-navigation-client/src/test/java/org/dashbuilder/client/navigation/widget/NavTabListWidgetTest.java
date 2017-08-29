@@ -16,6 +16,7 @@ package org.dashbuilder.client.navigation.widget;
 
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
+import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.NavTree;
 import org.dashbuilder.navigation.impl.NavTreeBuilder;
 import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
@@ -77,6 +78,7 @@ public class NavTabListWidgetTest {
         tabsAdmin = new NavTabListWidget(viewAdmin, beanManager, pluginManager, placeManager, navigationManager);
         tabsDashboards = new NavTabListWidget(viewDashboards, beanManager, pluginManager, placeManager, navigationManager);
         presenter = new NavTabListWidget(view, beanManager, pluginManager, placeManager, navigationManager);
+        presenter.setGotoItemEnabled(true);
 
         tree = new NavTreeBuilder()
                 .item(ITEM_ID_HOME, "Home", null, false, NavWorkbenchCtx.perspective(ITEM_ID_HOME))
@@ -93,6 +95,7 @@ public class NavTabListWidgetTest {
 
         when(beanManager.lookupBean(NavTabListWidget.class)).thenReturn(tablistBean);
         when(tablistBean.newInstance()).thenReturn(tabsAdmin, tabsDashboards);
+        when(pluginManager.isRuntimePerspective(any(NavItem.class))).thenReturn(true);
     }
 
     @Test

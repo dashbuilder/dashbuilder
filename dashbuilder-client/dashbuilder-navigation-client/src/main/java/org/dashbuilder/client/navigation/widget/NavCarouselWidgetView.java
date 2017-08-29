@@ -53,9 +53,7 @@ public class NavCarouselWidgetView extends BaseNavWidgetView<NavCarouselWidget>
         this.alertBox = alertBox;
         alertBox.setLevel(AlertBox.Level.WARNING);
         alertBox.setCloseEnabled(false);
-        CSSStyleDeclaration style = alertBox.getElement().getStyle();
-        style.setProperty("width", "30%");
-        style.setProperty("margin", "10px");
+        alertBox.getElement().getStyle().setProperty("width", "96%");
     }
 
     @Override
@@ -88,10 +86,10 @@ public class NavCarouselWidgetView extends BaseNavWidgetView<NavCarouselWidget>
     }
 
     @Override
-    public void deadlockError() {
+    public void infiniteRecursionError(String cause) {
         Div div = (Div) Window.getDocument().createElement("div");
         div.setClassName(slidesDiv.getChildNodes().getLength() == 0 ? "item active" : "item");
-        alertBox.setMessage(NavigationConstants.INSTANCE.navCarouselDragComponentDeadlockError());
+        alertBox.setMessage(NavigationConstants.INSTANCE.navCarouselDragComponentInfiniteRecursion() + " " + cause);
         div.appendChild(alertBox.getElement());
         slidesDiv.appendChild(div);
     }

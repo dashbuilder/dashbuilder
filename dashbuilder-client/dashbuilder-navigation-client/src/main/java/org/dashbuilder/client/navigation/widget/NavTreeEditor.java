@@ -68,7 +68,7 @@ public class NavTreeEditor implements IsWidget {
     boolean newGroupEnabled = true;
     boolean newPerspectiveEnabled = true;
     boolean gotoPerspectiveEnabled = true;
-    boolean onlyRuntimePerspectives = false;
+    boolean onlyRuntimePerspectives = true;
     int maxLevels = -1;
     Command onChangeCommand;
     String inCreationId;
@@ -77,7 +77,39 @@ public class NavTreeEditor implements IsWidget {
     String literalDivider = "Divider";
     Optional<NavItemEditor> currentlyEditedItem = Optional.empty();
     Map<String, Integer> navItemMaxLevelsMap = new HashMap<>();
-    Map<String, Boolean> navItemNewPerspectiveFlagMap = new HashMap<>();
+    Map<String, NavItemFlags> navItemFlagsMap = new HashMap<>();
+
+    public class NavItemFlags {
+
+        public static final String NEW_PERSPECTIVE = "newPerspective";
+        public static final String NEW_DIVIDER = "newDivider";
+        public static final String ONLY_RUNTIME_PERSPECTIVES = "onlyRuntimePerspectives";
+        public static final String GOTO_PERSPECTIVE = "gotoPerspective";
+
+        Map<String, Boolean> flagMap = new HashMap<>();
+        Map<String, Boolean> recursiveMap = new HashMap<>();
+        String lastProp = null;
+
+        void setFlag(String prop, boolean enabled) {
+            flagMap.put(prop, enabled);
+            lastProp = prop;
+        }
+
+        boolean isEnabled(String prop) {
+            if (flagMap.containsKey(prop)) {
+                return flagMap.get(prop);
+            } else {
+                return false;
+            }
+        }
+
+        public void applyToAllChildren() {
+            if (lastProp != null) {
+                recursiveMap.put(lastProp, true);
+            }
+        }
+    }
+
 
     @Inject
     public NavTreeEditor(View view, SyncBeanManager beanManager, PerspectiveTreeProvider perspectiveTreeProvider) {
@@ -108,12 +140,33 @@ public class NavTreeEditor implements IsWidget {
         this.literalDivider = literalDivider;
     }
 
-    public boolean isNewDividerEnabled() {
-        return newDividerEnabled;
+    private NavItemFlags setNavItemPropertyEnabled(String navItemId, String prop, boolean enabled) {
+        NavItemFlags config = navItemFlagsMap.get(navItemId);
+        if (config == null) {
+            navItemFlagsMap.put(navItemId, config = new NavItemFlags());
+        }
+        config.setFlag(prop, enabled);
+        return config;
     }
 
-    public void setNewDividerEnabled(boolean newDividerEnabled) {
-        this.newDividerEnabled = newDividerEnabled;
+    private Boolean isNavItemPropertyEnabled(NavItem navItem, String prop) {
+        NavItemFlags config = navItemFlagsMap.get(navItem.getId());
+        if (config != null && config.flagMap.get(prop) != null) {
+            return config.flagMap.get(prop);
+        }
+        return isNavAncestorPropertyEnabled(navItem.getParent(), prop);
+    }
+
+    private Boolean isNavAncestorPropertyEnabled(NavItem navItem, String prop) {
+        if (navItem == null) {
+            return null;
+        }
+        NavItemFlags config = navItemFlagsMap.get(navItem.getId());
+        if (config != null && config.flagMap.get(prop) != null && config.recursiveMap.get(prop) != null && config.recursiveMap.get(prop)) {
+            return config.flagMap.get(prop);
+        } else {
+            return isNavAncestorPropertyEnabled(navItem.getParent(), prop);
+        }
     }
 
     public boolean isNewGroupEnabled() {
@@ -128,20 +181,43 @@ public class NavTreeEditor implements IsWidget {
         return newPerspectiveEnabled;
     }
 
-    public boolean isNewPerspectiveEnabled(String navItemId) {
-        if (navItemNewPerspectiveFlagMap.containsKey(navItemId)) {
-            return navItemNewPerspectiveFlagMap.get(navItemId);
-        } else {
-            return newPerspectiveEnabled;
-        }
-    }
-
-    public void setNewPerspectiveEnabled(String navItemId, boolean newPerspectiveEnabled) {
-        navItemNewPerspectiveFlagMap.put(navItemId, newPerspectiveEnabled);
-    }
-
     public void setNewPerspectiveEnabled(boolean newPerspectiveEnabled) {
         this.newPerspectiveEnabled = newPerspectiveEnabled;
+    }
+
+    public boolean isNewPerspectiveEnabled(NavItem navItem) {
+        Boolean enabled = isNavItemPropertyEnabled(navItem, NavItemFlags.NEW_PERSPECTIVE);
+        return enabled != null ? enabled : newPerspectiveEnabled;
+    }
+
+    public NavItemFlags setNewPerspectiveEnabled(String navItemId, boolean enabled) {
+        return setNavItemPropertyEnabled(navItemId, NavItemFlags.NEW_PERSPECTIVE, enabled);
+    }
+
+    public boolean isNewDividerEnabled() {
+        return newDividerEnabled;
+    }
+
+    public void setNewDividerEnabled(boolean newDividerEnabled) {
+        this.newDividerEnabled = newDividerEnabled;
+    }
+
+    public boolean isNewDividerEnabled(NavItem navItem) {
+        Boolean enabled = isNavItemPropertyEnabled(navItem, NavItemFlags.NEW_DIVIDER);
+        return enabled != null ? enabled : newDividerEnabled;
+    }
+
+    public NavItemFlags setNewDividerEnabled(String navItemId, boolean enabled) {
+        return setNavItemPropertyEnabled(navItemId, NavItemFlags.NEW_DIVIDER, enabled);
+    }
+
+    public boolean onlyRuntimePerspectives(NavItem navItem) {
+        Boolean enabled = isNavItemPropertyEnabled(navItem, NavItemFlags.ONLY_RUNTIME_PERSPECTIVES);
+        return enabled != null ? enabled : onlyRuntimePerspectives;
+    }
+
+    public NavItemFlags setOnlyRuntimePerspectives(String navItemId, boolean enabled) {
+        return setNavItemPropertyEnabled(navItemId, NavItemFlags.ONLY_RUNTIME_PERSPECTIVES, enabled);
     }
 
     public boolean isGotoPerspectiveEnabled() {
@@ -150,6 +226,15 @@ public class NavTreeEditor implements IsWidget {
 
     public void setGotoPerspectiveEnabled(boolean gotoPerspectiveEnabled) {
         this.gotoPerspectiveEnabled = gotoPerspectiveEnabled;
+    }
+
+    public boolean isGotoPerspectiveEnabled(NavItem navItem) {
+        Boolean enabled = isNavItemPropertyEnabled(navItem, NavItemFlags.GOTO_PERSPECTIVE);
+        return enabled != null ? enabled : gotoPerspectiveEnabled;
+    }
+
+    public NavItemFlags setGotoPerspectiveEnabled(String navItemId, boolean enabled) {
+        return setNavItemPropertyEnabled(navItemId, NavItemFlags.GOTO_PERSPECTIVE, enabled);
     }
 
     public int getMaxLevels() {
@@ -237,11 +322,11 @@ public class NavTreeEditor implements IsWidget {
         navItemEditor.setMoveUpEnabled(!isFirst);
         navItemEditor.setMoveDownEnabled(!isLast);
         navItemEditor.setNewGroupEnabled(newGroupEnabled && subGroupsAllowed);
-        navItemEditor.setNewDividerEnabled(newDividerEnabled && childrenAllowed);
-        navItemEditor.setNewPerspectiveEnabled(isNewPerspectiveEnabled(navItem.getId()) && childrenAllowed);
-        navItemEditor.setGotoPerspectiveEnabled(gotoPerspectiveEnabled);
-        navItemEditor.setVisiblePerspectiveIds(getPerspectiveIds(true));
-        navItemEditor.setHiddenPerspectiveIds(getPerspectiveIds(false));
+        navItemEditor.setNewDividerEnabled(isNewDividerEnabled(navItem) && childrenAllowed);
+        navItemEditor.setNewPerspectiveEnabled(isNewPerspectiveEnabled(navItem) && childrenAllowed);
+        navItemEditor.setGotoPerspectiveEnabled(isGotoPerspectiveEnabled(navItem));
+        navItemEditor.setVisiblePerspectiveIds(getPerspectiveIds(navItem, true));
+        navItemEditor.setHiddenPerspectiveIds(getPerspectiveIds(navItem, false));
         navItemEditor.edit(navItem);
         if (inCreationId != null && inCreationId.equals(navItem.getId())) {
             inCreationId = null;
@@ -254,8 +339,9 @@ public class NavTreeEditor implements IsWidget {
         return currentlyEditedItem.isPresent() ? currentlyEditedItem.get() : null;
     }
 
-    public Set<String> getPerspectiveIds(boolean visible) {
+    public Set<String> getPerspectiveIds(NavItem navItem, boolean visible) {
         Set<String> result = visible ? new HashSet<>() : new HashSet<>(perspectiveTreeProvider.getPerspectiveIdsExcluded());
+        boolean onlyRuntime = onlyRuntimePerspectives(navItem);
 
         for (SyncBeanDef<PerspectiveActivity> beanDef : beanManager.lookupBeans(PerspectiveActivity.class)) {
             PerspectiveActivity p = beanDef.getInstance();
@@ -263,12 +349,13 @@ public class NavTreeEditor implements IsWidget {
                 String id = p.getIdentifier();
                 boolean runtime = p instanceof PerspectiveEditorActivity;
 
+
                 if (visible && !perspectiveTreeProvider.getPerspectiveIdsExcluded().contains(id)) {
-                    if (!onlyRuntimePerspectives || (onlyRuntimePerspectives && runtime)) {
+                    if (!onlyRuntime || runtime) {
                         result.add(p.getIdentifier());
                     }
                 }
-                if (!visible && onlyRuntimePerspectives && !runtime) {
+                if (!visible && onlyRuntime && !runtime) {
                     result.add(p.getIdentifier());
                 }
             } finally {

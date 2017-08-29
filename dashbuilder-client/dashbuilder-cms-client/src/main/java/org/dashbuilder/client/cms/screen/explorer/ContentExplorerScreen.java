@@ -98,7 +98,7 @@ public class ContentExplorerScreen {
         navTreeEditor.setNewDividerEnabled(true);
         navTreeEditor.setNewPerspectiveEnabled(true);
         navTreeEditor.setMaxLevels(-1);
-        navTreeEditor.setOnlyRuntimePerspectives(false);
+        navTreeEditor.setOnlyRuntimePerspectives(true);
         navTreeEditor.setGotoPerspectiveEnabled(true);
         navTreeEditor.setOnChangeCommand(this::onNavTreeChanged);
 

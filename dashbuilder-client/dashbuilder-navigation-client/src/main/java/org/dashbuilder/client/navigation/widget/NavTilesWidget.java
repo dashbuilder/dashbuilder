@@ -26,6 +26,8 @@ import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.navigation.NavGroup;
 import org.dashbuilder.navigation.NavItem;
+import org.dashbuilder.navigation.layout.LayoutRecursionIssue;
+import org.dashbuilder.navigation.layout.LayoutRecursionIssueI18n;
 import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
 import org.jboss.errai.common.client.api.IsElement;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
@@ -42,7 +44,7 @@ import org.uberfire.workbench.model.ActivityResourceType;
 @Dependent
 public class NavTilesWidget extends BaseNavWidget {
 
-    public interface View extends NavWidgetView<NavTilesWidget> {
+    public interface View extends NavWidgetView<NavTilesWidget>, LayoutRecursionIssueI18n {
 
         void addTileWidget(IsElement tileWidget);
 
@@ -54,14 +56,14 @@ public class NavTilesWidget extends BaseNavWidget {
 
         void addBreadcrumbItem(String navItemName, Command onClicked);
 
-        void deadlockError();
+        void infiniteRecursionError(String cause);
     }
 
     View view;
     PerspectivePluginManager perspectivePluginManager;
     PlaceManager placeManager;
     SyncBeanManager beanManager;
-    String currentPerspectiveId = null;
+    NavItem currentPerspectiveNavItem = null;
     Stack<NavItem> navItemStack = new Stack<>();
 
     @Inject
@@ -88,19 +90,19 @@ public class NavTilesWidget extends BaseNavWidget {
 
     @Override
     public void show(List<NavItem> itemList) {
-        currentPerspectiveId = null;
+        currentPerspectiveNavItem = null;
         super.show(itemList);
     }
 
     public void show(NavGroup navGroup, boolean clearBreadcrumb) {
         NavGroup clone = (NavGroup) navGroup.cloneItem();
-        navGroup.setParent(null);
+        clone.setParent(null);
 
         if (clearBreadcrumb) {
             navItemStack.clear();
             updateBreadcrumb();
         }
-        currentPerspectiveId = null;
+        currentPerspectiveNavItem = null;
         super.show(clone);
     }
 
@@ -139,7 +141,7 @@ public class NavTilesWidget extends BaseNavWidget {
 
                 // Runtime perspectives are displayed inline
                 if (perspectivePluginManager.isRuntimePerspective(resourceId)) {
-                    openPerspective(resourceId);
+                    openPerspective(navItem);
                 }
                 // Classic UF perspectives take over the entire window
                 else {
@@ -149,9 +151,17 @@ public class NavTilesWidget extends BaseNavWidget {
         }
     }
 
-    protected void openPerspective(String id) {
-        currentPerspectiveId = id;
-        perspectivePluginManager.buildPerspectiveWidget(id , view::showTileContent, view::deadlockError);
+    protected void openPerspective(NavItem perspectiveItem) {
+        NavWorkbenchCtx navCtx = NavWorkbenchCtx.get(perspectiveItem);
+        String perspectiveId = navCtx.getResourceId();
+        String navRootId = navCtx.getNavGroupId();
+        currentPerspectiveNavItem = perspectiveItem;
+        perspectivePluginManager.buildPerspectiveWidget(perspectiveId, navRootId, view::showTileContent, this::onInfiniteRecursion);
+    }
+
+    public void onInfiniteRecursion(LayoutRecursionIssue issue) {
+        String cause = issue.printReport(navigationManager.getNavTree(), view);
+        view.infiniteRecursionError(cause);
     }
 
     protected void updateBreadcrumb() {
@@ -180,8 +190,12 @@ public class NavTilesWidget extends BaseNavWidget {
     // Catch changes on runtime perspectives so as to display the most up to date changes
 
     private void onPerspectiveChanged(@Observes PluginSaved event) {
-        if (currentPerspectiveId != null && event.getPlugin().getName().equals(currentPerspectiveId)) {
-            openPerspective(currentPerspectiveId);
+        if (currentPerspectiveNavItem != null) {
+            NavWorkbenchCtx navCtx = NavWorkbenchCtx.get(currentPerspectiveNavItem);
+            String perspectiveId = navCtx.getResourceId();
+            if (event.getPlugin().getName().equals(perspectiveId)) {
+                openPerspective(currentPerspectiveNavItem);
+            }
         }
     }
 }

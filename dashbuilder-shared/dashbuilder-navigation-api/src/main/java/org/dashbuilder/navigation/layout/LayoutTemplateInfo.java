@@ -13,36 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.navigation.service;
+package org.dashbuilder.navigation.layout;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 
 /**
  * Class containing a perspective's layout template plus additional information like if any of its components
- * is linked to another perspective causing a deadlock. For example, imagine a perspective A containing a tab list
- * component with a tab linked to perspective B. The deadlock might occur if perspective B contains
+ * is linked to another perspective causing an inifinite loop. For example, imagine a perspective A containing a tab list
+ * component with a tab linked to perspective B. The issue might occur if perspective B contains
  * a component linked to perspective A.
  */
 @Portable
 public class LayoutTemplateInfo {
 
     LayoutTemplate layoutTemplate;
-    boolean deadlock;
+    LayoutRecursionIssue recursionIssue;
 
     public LayoutTemplateInfo() {
     }
 
-    public LayoutTemplateInfo(LayoutTemplate layoutTemplate, boolean deadlock) {
+    public LayoutTemplateInfo(LayoutTemplate layoutTemplate, LayoutRecursionIssue recursionIssue) {
         this.layoutTemplate = layoutTemplate;
-        this.deadlock = deadlock;
+        this.recursionIssue = recursionIssue;
     }
 
     public LayoutTemplate getLayoutTemplate() {
         return layoutTemplate;
     }
 
-    public boolean hasDeadlock() {
-        return deadlock;
+    public LayoutRecursionIssue getRecursionIssue() {
+        return recursionIssue;
     }
 }

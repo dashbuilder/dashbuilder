@@ -22,9 +22,9 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
+import org.dashbuilder.navigation.layout.LayoutRecursionIssue;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.plugin.event.PluginDeleted;
-import org.uberfire.ext.plugin.event.PluginRenamed;
 import org.uberfire.ext.plugin.event.PluginSaved;
 import org.uberfire.ext.plugin.model.Plugin;
 
@@ -40,7 +40,7 @@ public class PerspectiveWidget implements IsWidget {
 
         void notFoundError();
 
-        void deadlockError();
+        void infiniteRecursionError();
 
     }
 
@@ -64,8 +64,12 @@ public class PerspectiveWidget implements IsWidget {
         if (id == null || !perspectivePluginManager.existsPerspectivePlugin(id)) {
             view.notFoundError();
         } else {
-            perspectivePluginManager.buildPerspectiveWidget(id, view::showContent, view::deadlockError);
+            perspectivePluginManager.buildPerspectiveWidget(id, view::showContent, this::onDeadlock);
         }
+    }
+
+    private void onDeadlock(LayoutRecursionIssue issue) {
+        view.infiniteRecursionError();
     }
 
     private void refreshPerspective(Plugin plugin) {

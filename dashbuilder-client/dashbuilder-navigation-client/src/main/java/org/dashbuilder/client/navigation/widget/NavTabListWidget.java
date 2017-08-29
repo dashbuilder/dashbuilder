@@ -58,16 +58,6 @@ public class NavTabListWidget extends TargetDivNavWidget {
     }
 
     @Override
-    protected boolean gotoDefaultItem() {
-        boolean gotoItem = super.gotoDefaultItem();
-        if (!gotoItem && !navItemList.isEmpty()) {
-            defaultNavItemId = navItemList.get(0).getId();
-            gotoItem = super.gotoDefaultItem();
-        }
-        return gotoItem;
-    }
-
-    @Override
     public boolean setSelectedItem(String id) {
         boolean selected = super.setSelectedItem(id);
         if (selected && activeNavSubgroup != null) {

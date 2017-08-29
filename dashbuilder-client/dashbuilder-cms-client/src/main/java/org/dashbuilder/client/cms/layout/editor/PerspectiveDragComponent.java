@@ -29,13 +29,13 @@ import org.uberfire.ext.layout.editor.client.api.RenderingContext;
 import org.uberfire.ext.plugin.client.perspective.editor.api.PerspectiveEditorDragComponent;
 import org.uberfire.ext.plugin.model.Plugin;
 
+import static org.dashbuilder.navigation.layout.NavDragComponentSettings.*;
+
 /**
  * Runtime perspective drag component.
  */
 @Dependent
 public class PerspectiveDragComponent implements PerspectiveEditorDragComponent, HasModalConfiguration {
-
-    public static final String PERSPECTIVE_ID = "perspectiveId";
 
     PerspectiveDragConfigModal perspectiveDragConfigModal;
     PerspectiveWidget perspectiveWidget;

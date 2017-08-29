@@ -18,10 +18,10 @@ package org.dashbuilder.client.navigation.widget;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
 import org.dashbuilder.common.client.widgets.AlertBox;
-import org.jboss.errai.common.client.dom.CSSStyleDeclaration;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.common.client.dom.Element;
+import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.common.client.dom.Window;
 
 public abstract class TargetDivNavWidgetView<T extends TargetDivNavWidget> extends BaseNavWidgetView<T>
@@ -33,14 +33,12 @@ public abstract class TargetDivNavWidgetView<T extends TargetDivNavWidget> exten
         this.alertBox = alertBox;
         alertBox.setLevel(AlertBox.Level.WARNING);
         alertBox.setCloseEnabled(false);
-        CSSStyleDeclaration style = alertBox.getElement().getStyle();
-        style.setProperty("width", "30%");
-        style.setProperty("margin", "10px");
+        alertBox.getElement().getStyle().setProperty("width", "96%");
     }
 
     @Override
     public void clearContent(String targetDivId) {
-        Element targetDiv = Window.getDocument().getElementById(targetDivId);
+        Element targetDiv = getTargetDiv(targetDivId);
         if (targetDiv != null) {
             DOMUtil.removeAllChildren(targetDiv);
         }
@@ -48,22 +46,58 @@ public abstract class TargetDivNavWidgetView<T extends TargetDivNavWidget> exten
 
     @Override
     public void showContent(String targetDivId, IsWidget content) {
-        Element targetDiv = Window.getDocument().getElementById(targetDivId);
+        Element targetDiv = getTargetDiv(targetDivId);
         if (targetDiv != null) {
             DOMUtil.removeAllChildren(targetDiv);
             Div container = (Div) Window.getDocument().createElement("div");
+            container.getStyle().setProperty("overflow", "hidden");
             targetDiv.appendChild(container);
             super.appendWidgetToElement(container, content);
+        }
+        else {
+            error(NavigationConstants.INSTANCE.navWidgetTargetDivMissing());
         }
     }
 
     @Override
-    public void deadlockError(String targetDivId) {
-        Element targetDiv = Window.getDocument().getElementById(targetDivId);
+    public void infiniteRecursionError(String targetDivId, String cause) {
+        Element targetDiv = getTargetDiv(targetDivId);
         if (targetDiv != null) {
             DOMUtil.removeAllChildren(targetDiv);
-            alertBox.setMessage(NavigationConstants.INSTANCE.targetDivIdPerspectiveDeadlockError());
+            String message = NavigationConstants.INSTANCE.targetDivIdPerspectiveInfiniteRecursion() + cause;
+            alertBox.setMessage(message);
             targetDiv.appendChild(alertBox.getElement());
+        } else {
+            error(NavigationConstants.INSTANCE.targetDivIdPerspectiveInfiniteRecursion());
         }
+    }
+
+    public void error(String message) {
+        DOMUtil.removeAllChildren(navWidget);
+        alertBox.setMessage(message);
+        navWidget.appendChild(alertBox.getElement());
+    }
+
+    protected Element getLayoutRootElement(Element el) {
+        if (el == null) {
+            return null;
+        }
+        String id = el.getAttribute("id");
+        if (id != null && (id.equals("mainContainer") || id.equals("layout"))) {
+            return el;
+        } else {
+            return getLayoutRootElement(el.getParentElement());
+        }
+    }
+
+    public HTMLElement getTargetDiv(String targetDivId) {
+        HTMLElement targetDiv = null;
+        if (targetDivId != null) {
+            Element layoutRoot = getLayoutRootElement(navWidget.getParentElement());
+            if (layoutRoot != null) {
+                targetDiv = (HTMLElement) layoutRoot.querySelector("#" + targetDivId);
+            }
+        }
+        return targetDiv;
     }
 }

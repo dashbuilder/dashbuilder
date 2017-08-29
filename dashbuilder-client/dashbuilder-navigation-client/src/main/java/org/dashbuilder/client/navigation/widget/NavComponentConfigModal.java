@@ -72,7 +72,6 @@ public class NavComponentConfigModal implements IsWidget {
     }
 
     View view;
-    LayoutTemplate layoutTemplate = null;
     String groupId = null;
     NavGroup group = null;
     String defaultItemId = null;
@@ -97,9 +96,8 @@ public class NavComponentConfigModal implements IsWidget {
         return view;
     }
 
-    public void setLayoutTemplate(LayoutTemplate layoutTemplate) {
-        this.layoutTemplate = layoutTemplate;
-        targetDivIdList = TargetDivList.list(layoutTemplate);
+    public void setTargetDivIdList(List<String> targetDivIdList) {
+        this.targetDivIdList = targetDivIdList;
     }
 
     public void setOnOk(Command onOk) {
@@ -217,7 +215,8 @@ public class NavComponentConfigModal implements IsWidget {
             view.targetDivsNotFound();
         } else {
             for (String divId : targetDivIdList) {
-                if (targetDivId != null && divId.equals(targetDivId)) {
+                if (targetDivId == null || !targetDivIdList.contains(targetDivId) || divId.equals(targetDivId)) {
+                    targetDivId = divId;
                     view.setTargetDivSelection(divId, () -> onTargetDivSelected(null));
                 } else {
                     view.addTargetDivItem(divId, () -> onTargetDivSelected(divId));

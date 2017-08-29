@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 JBoss, by Red Hat, Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.navigation.widget;
+package org.dashbuilder.navigation.layout;
 
-/**
- * Interface implemented for those {@link NavWidget} implementations that accept a target div as the location to
- * display the content of the nav items clicked by the user.
- */
-public interface HasTargetDiv {
+public interface NavDragComponentSettings {
 
-    String getTargetDivId();
-
-    void setTargetDivId(String targetDivId);
-
-    void setGotoItemEnabled(boolean gotoDefaultItem);
+    String NAV_GROUP_ID = "navGroupId";
+    String NAV_DEFAULT_ID = "navDefaultId";
+    String TARGET_DIV_ID = "targetDivId";
+    String PERSPECTIVE_ID = "perspectiveId";
 
 }

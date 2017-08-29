@@ -88,4 +88,18 @@ public class NavTabListWidgetView extends TargetDivNavWidgetView<NavTabListWidge
             childrenDiv.getStyle().setProperty("margin-left", "15px");
         }
     }
+
+    @Override
+    public void clearItems() {
+        super.clearItems();
+        DOMUtil.removeAllChildren(mainDiv);
+        mainDiv.appendChild(tabsDiv);
+    }
+
+    @Override
+    public void error(String message) {
+        DOMUtil.removeAllChildren(mainDiv);
+        alertBox.setMessage(message);
+        mainDiv.appendChild(alertBox.getElement());
+    }
 }
