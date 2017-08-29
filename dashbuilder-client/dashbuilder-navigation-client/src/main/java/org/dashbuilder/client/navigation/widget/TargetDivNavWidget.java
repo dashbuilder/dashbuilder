@@ -23,7 +23,10 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
+import org.dashbuilder.navigation.NavGroup;
 import org.dashbuilder.navigation.NavItem;
+import org.dashbuilder.navigation.layout.LayoutRecursionIssue;
+import org.dashbuilder.navigation.layout.LayoutRecursionIssueI18n;
 import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.ext.plugin.event.PluginSaved;
@@ -34,13 +37,13 @@ import org.uberfire.ext.plugin.model.Plugin;
  */
 public abstract class TargetDivNavWidget extends BaseNavWidget implements HasTargetDiv, HasDefaultNavItem {
 
-    public interface View<T extends TargetDivNavWidget> extends NavWidgetView<T> {
+    public interface View<T extends TargetDivNavWidget> extends NavWidgetView<T>, LayoutRecursionIssueI18n {
 
         void clearContent(String targetDivId);
 
         void showContent(String targetDivId, IsWidget content);
 
-        void deadlockError(String targetDivId);
+        void infiniteRecursionError(String targetDivId, String cause);
     }
 
     View view;
@@ -48,6 +51,7 @@ public abstract class TargetDivNavWidget extends BaseNavWidget implements HasTar
     PlaceManager placeManager;
     String targetDivId = null;
     String defaultNavItemId = null;
+    boolean gotoItemEnabled = false;
 
     @Inject
     public TargetDivNavWidget(View view,
@@ -58,6 +62,14 @@ public abstract class TargetDivNavWidget extends BaseNavWidget implements HasTar
         this.view = view;
         this.pluginManager = pluginManager;
         this.placeManager = placeManager;
+    }
+
+    public View getView() {
+        return view;
+    }
+
+    public void setGotoItemEnabled(boolean enabled) {
+        this.gotoItemEnabled = enabled;
     }
 
     @Override
@@ -83,20 +95,49 @@ public abstract class TargetDivNavWidget extends BaseNavWidget implements HasTar
     @Override
     public void show(List<NavItem> itemList) {
         super.show(itemList);
-        gotoDefaultItem();
+        if (parent == null && gotoItemEnabled) {
+            gotoDefaultItem();
+        }
     }
 
     protected boolean gotoDefaultItem() {
-        if (getDefaultNavItemId() != null) {
-            if (setSelectedItem(getDefaultNavItemId())) {
+        boolean gotoItem = _gotoDefaultItem();
+        if (!gotoItem) {
+            defaultNavItemId = getFirstRuntimePerspective(navItemList);
+            gotoItem = _gotoDefaultItem();
+        }
+        return gotoItem;
+    }
+
+    protected boolean _gotoDefaultItem() {
+        if (defaultNavItemId != null) {
+            if (setSelectedItem(defaultNavItemId)) {
                 gotoNavItem(true);
-                if (onItemSelectedCommand != null) {
+                if (parent != null && onItemSelectedCommand != null) {
                     onItemSelectedCommand.execute();
                 }
                 return true;
             }
         }
         return false;
+    }
+
+    protected String getFirstRuntimePerspective(List<NavItem> itemList) {
+        if (itemList.isEmpty()) {
+            return null;
+        }
+        for (NavItem navItem : itemList) {
+            if (pluginManager.isRuntimePerspective(navItem)) {
+                return navItem.getId();
+            }
+            if (navItem instanceof NavGroup) {
+                String result = getFirstRuntimePerspective(((NavGroup) navItem).getChildren());
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -112,7 +153,7 @@ public abstract class TargetDivNavWidget extends BaseNavWidget implements HasTar
     }
 
     protected void gotoNavItem(boolean onlyRuntimePerspectives) {
-        if (targetDivId != null) {
+        if (parent == null && gotoItemEnabled) {
             NavWorkbenchCtx navCtx = NavWorkbenchCtx.get(getItemSelected());
             String resourceId = navCtx.getResourceId();
             String navRootId = navCtx.getNavGroupId();
@@ -120,7 +161,7 @@ public abstract class TargetDivNavWidget extends BaseNavWidget implements HasTar
                 if (pluginManager.isRuntimePerspective(resourceId)) {
                     pluginManager.buildPerspectiveWidget(resourceId, navRootId,
                             w -> view.showContent(targetDivId, w),
-                            () -> view.deadlockError(targetDivId));
+                            this::onInfiniteRecursion);
                 }
                 else if (!onlyRuntimePerspectives) {
                     placeManager.goTo(resourceId);
@@ -129,6 +170,11 @@ public abstract class TargetDivNavWidget extends BaseNavWidget implements HasTar
                 view.clearContent(targetDivId);
             }
         }
+    }
+
+    public void onInfiniteRecursion(LayoutRecursionIssue issue) {
+        String cause = issue.printReport(navigationManager.getNavTree(), view);
+        view.infiniteRecursionError(targetDivId, cause);
     }
 
     // Catch changes on runtime perspectives so as to display the most up to date changes

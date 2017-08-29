@@ -65,8 +65,8 @@ public class PerspectiveWidgetView implements PerspectiveWidget.View, IsWidget {
     }
 
     @Override
-    public void deadlockError() {
-        alertBox.setMessage(ContentManagerConstants.INSTANCE.perspectiveDragDeadlockError());
+    public void infiniteRecursionError() {
+        alertBox.setMessage(ContentManagerConstants.INSTANCE.perspectiveInfiniteRecursionError());
         mainPanel.clear();
         mainPanel.add(ElementWrapperWidget.getWidget(alertBox.getElement()));
     }

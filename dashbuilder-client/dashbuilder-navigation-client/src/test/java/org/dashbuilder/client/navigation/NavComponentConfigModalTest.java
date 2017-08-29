@@ -14,6 +14,9 @@
  */
 package org.dashbuilder.client.navigation;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.dashbuilder.client.navigation.widget.NavComponentConfigModal;
 import org.dashbuilder.navigation.NavTree;
 import org.dashbuilder.navigation.impl.NavTreeBuilder;
@@ -113,5 +116,25 @@ public class NavComponentConfigModalTest {
         verify(view).setDefaultNavItemEnabled(true);
         verify(view).clearDefaultItems();
         verify(view, never()).addDefaultItem(anyString(), any());
+    }
+
+    @Test
+    public void testTargetDivList() {
+        List<String> targetDivIdList = Arrays.asList("div1", "div2");
+        presenter.setTargetDivIdList(targetDivIdList);
+        presenter.show();
+
+        verify(view).clearTargetDivItems();
+        verify(view).setTargetDivSelection(eq("div1"), any());
+        verify(view).addTargetDivItem(eq("div2"), any());
+        assertEquals(presenter.getTargetDivId(), "div1");
+
+        reset(view);
+        presenter.setTargetDiv("t");
+        presenter.show();
+        verify(view).clearTargetDivItems();
+        verify(view).setTargetDivSelection(eq("div1"), any());
+        verify(view).addTargetDivItem(eq("div2"), any());
+        assertEquals(presenter.getTargetDivId(), "div1");
     }
 }

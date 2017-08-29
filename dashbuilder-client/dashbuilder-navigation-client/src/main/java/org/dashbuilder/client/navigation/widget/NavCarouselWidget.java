@@ -26,17 +26,19 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.navigation.NavItem;
+import org.dashbuilder.navigation.layout.LayoutRecursionIssue;
+import org.dashbuilder.navigation.layout.LayoutRecursionIssueI18n;
 import org.uberfire.ext.plugin.event.PluginSaved;
 import org.uberfire.ext.plugin.model.Plugin;
 
 @Dependent
 public class NavCarouselWidget extends BaseNavWidget implements HasDefaultNavItem {
 
-    public interface View extends NavWidgetView<NavCarouselWidget> {
+    public interface View extends NavWidgetView<NavCarouselWidget>, LayoutRecursionIssueI18n {
 
         void addContentSlide(IsWidget widget);
 
-        void deadlockError();
+        void infiniteRecursionError(String cause);
     }
 
     View view;
@@ -99,8 +101,13 @@ public class NavCarouselWidget extends BaseNavWidget implements HasDefaultNavIte
         String perspectiveId = perspectivePluginManager.getRuntimePerspectiveId(navItem);
         if (perspectiveId != null) {
             perspectiveIds.add(perspectiveId);
-            perspectivePluginManager.buildPerspectiveWidget(perspectiveId, view::addContentSlide, view::deadlockError);
+            perspectivePluginManager.buildPerspectiveWidget(perspectiveId, view::addContentSlide, this::onInfiniteRecursion);
         }
+    }
+
+    public void onInfiniteRecursion(LayoutRecursionIssue issue) {
+        String cause = issue.printReport(navigationManager.getNavTree(), view);
+        view.infiniteRecursionError(cause);
     }
 
     // Catch changes on runtime perspectives so as to display the most up to date changes

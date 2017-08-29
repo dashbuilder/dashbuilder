@@ -65,9 +65,7 @@ public class NavTilesWidgetView extends BaseNavWidgetView<NavTilesWidget>
         this.alertBox = alertBox;
         alertBox.setLevel(AlertBox.Level.WARNING);
         alertBox.setCloseEnabled(false);
-        CSSStyleDeclaration style = alertBox.getElement().getStyle();
-        style.setProperty("width", "30%");
-        style.setProperty("margin", "10px");
+        alertBox.getElement().getStyle().setProperty("width", "96%");
     }
 
     @Override
@@ -102,9 +100,9 @@ public class NavTilesWidgetView extends BaseNavWidgetView<NavTilesWidget>
     }
 
     @Override
-    public void deadlockError() {
+    public void infiniteRecursionError(String cause) {
         DOMUtil.removeAllChildren(tilesDiv);
-        alertBox.setMessage(NavigationConstants.INSTANCE.navTilesDragComponentDeadlockError());
+        alertBox.setMessage(NavigationConstants.INSTANCE.navTilesDragComponentInfiniteRecursion() + cause);
         tilesDiv.appendChild(alertBox.getElement());
     }
 

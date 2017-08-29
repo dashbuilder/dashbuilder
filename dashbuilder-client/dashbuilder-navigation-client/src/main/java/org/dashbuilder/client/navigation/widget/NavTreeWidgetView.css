@@ -1,0 +1,22 @@
+.navtree-widget-icon {
+    font-size: larger;
+    margin-right: 5px;
+}
+
+.navtree-widget-non-clickable {
+    font-size: larger;
+    color: black;
+}
+
+.navtree-widget-non-clicked {
+    font-size: larger;
+    color: black;
+    cursor: pointer;
+}
+
+.navtree-widget-clicked {
+    font-size: larger;
+    color: black;
+    text-decoration: underline;
+}
+

@@ -19,6 +19,8 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.dashbuilder.common.client.widgets.AlertBox;
+import org.jboss.errai.common.client.dom.DOMUtil;
+import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.common.client.dom.UnorderedList;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -27,6 +29,10 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 @Templated
 public class NavMenuBarWidgetView extends TargetDivNavWidgetView<NavMenuBarWidget>
         implements NavMenuBarWidget.View {
+
+    @Inject
+    @DataField
+    Div mainDiv;
 
     @Inject
     @DataField
@@ -48,5 +54,19 @@ public class NavMenuBarWidgetView extends TargetDivNavWidgetView<NavMenuBarWidge
     @Override
     public void addDivider() {
         // Useless in a menu bar
+    }
+
+    @Override
+    public void clearItems() {
+        super.clearItems();
+        DOMUtil.removeAllChildren(mainDiv);
+        mainDiv.appendChild(navBar.getParentElement().getParentElement());
+    }
+
+    @Override
+    public void error(String message) {
+        DOMUtil.removeAllChildren(mainDiv);
+        alertBox.setMessage(message);
+        mainDiv.appendChild(alertBox.getElement());
     }
 }

@@ -16,21 +16,30 @@
 package org.dashbuilder.client.navigation.layout.editor;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+
+import javax.enterprise.event.Observes;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.NavigationManager;
+import org.dashbuilder.client.navigation.event.NavTreeChangedEvent;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.client.navigation.widget.HasDefaultNavItem;
 import org.dashbuilder.client.navigation.widget.HasTargetDiv;
 import org.dashbuilder.client.navigation.widget.NavComponentConfigModal;
 import org.dashbuilder.client.navigation.widget.NavComponentConfigModalView;
 import org.dashbuilder.client.navigation.widget.NavWidget;
+import org.dashbuilder.client.navigation.widget.TargetDivNavWidget;
 import org.dashbuilder.navigation.NavGroup;
 import org.dashbuilder.navigation.NavTree;
 import org.gwtbootstrap3.client.ui.Modal;
+import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 import org.uberfire.ext.layout.editor.client.api.ModalConfigurationContext;
 import org.uberfire.ext.layout.editor.client.api.RenderingContext;
+import org.uberfire.ext.plugin.client.perspective.editor.layout.editor.TargetDivList;
+
+import static org.dashbuilder.navigation.layout.NavDragComponentSettings.*;
 
 public abstract class AbstractNavDragComponent implements NavDragComponent {
 
@@ -38,11 +47,8 @@ public abstract class AbstractNavDragComponent implements NavDragComponent {
     PerspectivePluginManager pluginManager;
     NavComponentConfigModal navComponentConfigModal;
     NavWidget navWidget;
-    NavGroup navGroup = null;
-
-    public static final String NAV_GROUP_ID = "navGroupId";
-    public static final String NAV_DEFAULT_ID = "navDefaultId";
-    public static final String TARGET_DIV_ID = "targetDivId";
+    String navGroupId = null;
+    LayoutTemplate layoutTemplate;
 
     public AbstractNavDragComponent() {
     }
@@ -73,8 +79,8 @@ public abstract class AbstractNavDragComponent implements NavDragComponent {
         Map<String, String> properties = ctx.getComponent().getProperties();
 
         // Nav group settings
-        String navGroupId = properties.get(NAV_GROUP_ID);
-        navGroup = readNavGroup(navGroupId);
+        NavGroup navGroup = pluginManager.getLastBuildPerspectiveNavGroup();
+        navGroupId = navGroup != null ? navGroup.getId() : properties.get(NAV_GROUP_ID);
         navWidget.setHideEmptyGroups(true);
 
         // Default item settings
@@ -86,6 +92,7 @@ public abstract class AbstractNavDragComponent implements NavDragComponent {
         if (navWidget instanceof HasTargetDiv) {
            String targetDivId = properties.get(TARGET_DIV_ID);
             ((HasTargetDiv) navWidget).setTargetDivId(targetDivId);
+            ((HasTargetDiv) navWidget).setGotoItemEnabled(true);
         }
         this.showNavWidget();
         return navWidget;
@@ -93,8 +100,9 @@ public abstract class AbstractNavDragComponent implements NavDragComponent {
 
     @Override
     public Modal getConfigurationModal(ModalConfigurationContext ctx) {
+        List<String> targetDivIdList = TargetDivList.list(ctx.getCurrentLayoutTemplate());
         navComponentConfigModal.clear();
-        navComponentConfigModal.setLayoutTemplate(ctx.getCurrentLayoutTemplate());
+        navComponentConfigModal.setTargetDivIdList(targetDivIdList);
 
         // Nav group settings
         NavTree navTree = navigationManager.getNavTree();
@@ -115,6 +123,7 @@ public abstract class AbstractNavDragComponent implements NavDragComponent {
         if (supportsTargetDiv) {
             String targetDivId = ctx.getComponentProperty(TARGET_DIV_ID);
             navComponentConfigModal.setTargetDiv(targetDivId);
+            layoutTemplate = ctx.getCurrentLayoutTemplate();
         }
 
         navComponentConfigModal.setOnOk(() -> navConfigOk(ctx, supportsDefaultNavItem, supportsTargetDiv));
@@ -128,25 +137,18 @@ public abstract class AbstractNavDragComponent implements NavDragComponent {
         navWidget.dispose();
     }
 
-    protected NavGroup readNavGroup(String navGroupId) {
-        NavGroup navGroup = pluginManager.getLastBuildPerspectiveNavGroup();
-        if (navGroup == null) {
-            NavTree navTree = navigationManager.getNavTree();
-            navGroup = (NavGroup) navTree.getItemById(navGroupId);
-        }
-        return navGroup;
-    }
-
     protected void showNavWidget() {
-        if (navGroup != null) {
+        if (navGroupId != null) {
+            NavGroup navGroup = (NavGroup) navigationManager.getNavTree().getItemById(navGroupId);
             navWidget.show(navGroup);
         } else {
             navWidget.show(Collections.emptyList());
         }
     }
+
     protected void navConfigOk(ModalConfigurationContext ctx, boolean supportsDefaultNavItem, boolean supportsTargetDiv) {
 
-        String navGroupId = navComponentConfigModal.getGroupId();
+        navGroupId = navComponentConfigModal.getGroupId();
         if (navGroupId != null) {
             ctx.setComponentProperty(NAV_GROUP_ID, navGroupId);
         } else {
@@ -163,6 +165,7 @@ public abstract class AbstractNavDragComponent implements NavDragComponent {
         String targetDivId = navComponentConfigModal.getTargetDivId();
         if (supportsTargetDiv && targetDivId != null) {
             ctx.setComponentProperty(TARGET_DIV_ID, targetDivId);
+            checkLayoutTemplate();
         } else {
             ctx.removeComponentProperty(TARGET_DIV_ID);
         }
@@ -172,5 +175,22 @@ public abstract class AbstractNavDragComponent implements NavDragComponent {
 
     protected void navConfigCancel(ModalConfigurationContext ctx) {
         ctx.configurationCancelled();
+    }
+
+    protected void checkLayoutTemplate() {
+        if ((navWidget instanceof TargetDivNavWidget) && layoutTemplate != null) {
+            pluginManager.getLayoutTemplateInfo(layoutTemplate, layoutTemplateInfo -> {
+                if (!layoutTemplateInfo.getRecursionIssue().isEmpty()) {
+                    TargetDivNavWidget targetDivNavWidget = (TargetDivNavWidget) navWidget;
+                    targetDivNavWidget.onInfiniteRecursion(layoutTemplateInfo.getRecursionIssue());
+                }
+            });
+        }
+    }
+
+    // Check the layout template every time the navigation tree changes
+
+    public void onNavTreeChanged(@Observes final NavTreeChangedEvent event) {
+        checkLayoutTemplate();
     }
 }

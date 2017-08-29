@@ -52,6 +52,8 @@ public interface NavigationConstants extends Messages {
 
     String navTabListDragComponent();
 
+    String navTreeDragComponent();
+
     String navTilesDragComponent();
 
     String navCarouselDragComponent();
@@ -60,23 +62,23 @@ public interface NavigationConstants extends Messages {
 
     String navTabListDragComponentNavGroupHelp();
 
+    String navTreeDragComponentNavGroupHelp();
+
     String navTilesDragComponentNavGroupHelp();
 
     String navCarouselDragComponentNavGroupHelp();
-
-    String navTabListDragComponentEmptyError();
 
     String navTilesDragComponentEmptyError();
 
     String navCarouselDragComponentEmptyError();
 
-    String navTabListDragComponentDeadlockError();
+    String navTilesDragComponentInfiniteRecursion();
 
-    String navTilesDragComponentDeadlockError();
+    String navCarouselDragComponentInfiniteRecursion();
 
-    String navCarouselDragComponentDeadlockError();
+    String targetDivIdPerspectiveInfiniteRecursion();
 
-    String targetDivIdPerspectiveDeadlockError();
+    String navWidgetTargetDivMissing();
 
     String navItemNotFound(String navItem);
 
@@ -115,4 +117,24 @@ public interface NavigationConstants extends Messages {
     String navItemEditorPerspectiveHelp();
 
     String navItemEditorGroupHelp();
-}
+
+    String navRefPerspective(String name);
+
+    String navRefGroupDefined(String name);
+
+    String navRefGroupContext(String name);
+
+    String navRefPerspectiveFound(String name);
+
+    String navRefPerspectiveDefault(String name);
+
+    String navRefPerspectiveInGroup(String name);
+
+    String navRefComponent(String name);
+
+    String navRefDefaultItemDefined(String name);
+
+    String navRefDefaultItemFound(String name);
+
+    String navRefPerspectiveRecursionEnd();
+ }

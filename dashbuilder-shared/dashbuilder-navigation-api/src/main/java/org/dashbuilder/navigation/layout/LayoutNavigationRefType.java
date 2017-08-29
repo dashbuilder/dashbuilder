@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.navigation.widget;
+package org.dashbuilder.navigation.layout;
 
-/**
- * Interface implemented for those {@link NavWidget} implementations that accept a target div as the location to
- * display the content of the nav items clicked by the user.
- */
-public interface HasTargetDiv {
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-    String getTargetDivId();
+@Portable
+public enum LayoutNavigationRefType {
 
-    void setTargetDivId(String targetDivId);
-
-    void setGotoItemEnabled(boolean gotoDefaultItem);
-
+    PERSPECTIVE,
+    NAV_COMPONENT,
+    NAV_GROUP_CONTEXT,
+    NAV_GROUP_DEFINED,
+    DEFAULT_ITEM_DEFINED,
+    DEFAULT_ITEM_FOUND,
 }

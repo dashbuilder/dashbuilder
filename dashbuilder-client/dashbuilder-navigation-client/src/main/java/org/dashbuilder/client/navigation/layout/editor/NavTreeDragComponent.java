@@ -18,26 +18,20 @@ package org.dashbuilder.client.navigation.layout.editor;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
 import org.dashbuilder.client.navigation.widget.NavComponentConfigModal;
-import org.dashbuilder.client.navigation.widget.NavTabListWidget;
-import org.uberfire.ext.layout.editor.client.api.RenderingContext;
+import org.dashbuilder.client.navigation.widget.NavTreeWidget;
 
-/**
- * A layout editor's navigation component that shows a list of tabs providing links to workbench assets
- */
 @Dependent
-public class NavTabListDragComponent extends AbstractNavDragComponent {
+public class NavTreeDragComponent extends AbstractNavDragComponent {
 
     @Inject
-    public NavTabListDragComponent(NavigationManager navigationManager,
-                                   PerspectivePluginManager pluginManager,
-                                   NavComponentConfigModal navComponentConfigModal,
-                                   NavTabListWidget navWidget) {
+    public NavTreeDragComponent(NavigationManager navigationManager,
+                                PerspectivePluginManager pluginManager,
+                                NavComponentConfigModal navComponentConfigModal,
+                                NavTreeWidget navWidget) {
         super(navigationManager,
                 pluginManager,
                 navComponentConfigModal,
@@ -46,19 +40,11 @@ public class NavTabListDragComponent extends AbstractNavDragComponent {
 
     @Override
     public String getDragComponentTitle() {
-        return NavigationConstants.INSTANCE.navTabListDragComponent();
+        return NavigationConstants.INSTANCE.navTreeDragComponent();
     }
 
     @Override
     public String getDragComponentNavGroupHelp() {
-        return NavigationConstants.INSTANCE.navTabListDragComponentNavGroupHelp();
-    }
-
-    @Override
-    public IsWidget getPreviewWidget(RenderingContext ctx) {
-        IsWidget widget = super.getPreviewWidget(ctx);
-        widget.asWidget().getElement().getStyle().setPosition(Style.Position.ABSOLUTE);
-        widget.asWidget().getElement().getStyle().setWidth(96, Style.Unit.PCT);
-        return widget;
+        return NavigationConstants.INSTANCE.navTreeDragComponentNavGroupHelp();
     }
 }

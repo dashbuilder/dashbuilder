@@ -25,7 +25,6 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.LIElement;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -87,13 +86,22 @@ public abstract class BaseNavWidgetView<T> extends Composite implements NavWidge
         if (el != null) {
             clearSelectedItem();
             selectedItem = el;
-            el.setClassName("active");
+            setSelectedEnabled(true);
         }
     }
 
     @Override
     public void clearSelectedItem() {
         if (selectedItem != null) {
+            setSelectedEnabled(false);
+            selectedItem = null;
+        }
+    }
+
+    protected void setSelectedEnabled(boolean enabled) {
+        if (enabled) {
+            selectedItem.setClassName("active");
+        } else {
             selectedItem.setClassName("");
         }
     }
@@ -106,5 +114,68 @@ public abstract class BaseNavWidgetView<T> extends Composite implements NavWidge
     @Override
     public void errorNavItemsEmpty() {
         addItem("error", NavigationConstants.INSTANCE.navItemsEmpty(), null, () -> {});
+    }
+
+
+    // LayoutRecursionIssueI18n
+
+    public String navRefPerspectiveI18n(String name) {
+        return NavigationConstants.INSTANCE.navRefPerspective(name);
+    }
+
+    public String navRefPerspectiveFoundI18n(String name) {
+        return NavigationConstants.INSTANCE.navRefPerspectiveFound(name);
+    }
+
+    public String navRefPerspectiveDefaultI18n(String name) {
+        return NavigationConstants.INSTANCE.navRefPerspectiveDefault(name);
+    }
+
+    public String navRefPerspectiveInGroupI18n(String name) {
+        return NavigationConstants.INSTANCE.navRefPerspectiveInGroup(name);
+    }
+
+    public String navRefComponentI18n(String name) {
+        return NavigationConstants.INSTANCE.navRefComponent(name);
+    }
+
+    public String navRefGroupDefinedI18n(String name) {
+        return NavigationConstants.INSTANCE.navRefGroupDefined(name);
+    }
+
+    public String navRefGroupContextI18n(String name) {
+        return NavigationConstants.INSTANCE.navRefGroupContext(name);
+    }
+
+    public String navRefDefaultItemDefinedI18n(String name) {
+        return NavigationConstants.INSTANCE.navRefDefaultItemDefined(name);
+    }
+
+    public String navRefDefaultItemFoundI18n(String name) {
+        return NavigationConstants.INSTANCE.navRefDefaultItemFound(name);
+    }
+
+    public String navRefPerspectiveRecursionEndI18n() {
+        return NavigationConstants.INSTANCE.navRefPerspectiveRecursionEnd();
+    }
+
+    public String navMenubarDragComponentI18n() {
+        return NavigationConstants.INSTANCE.navMenubarDragComponent();
+    }
+
+    public String navTreeDragComponentI18n() {
+        return NavigationConstants.INSTANCE.navTreeDragComponent();
+    }
+
+    public String navTilesDragComponentI18n() {
+        return NavigationConstants.INSTANCE.navTilesDragComponent();
+    }
+
+    public String navTabListDragComponentI18n() {
+        return NavigationConstants.INSTANCE.navTabListDragComponent();
+    }
+
+    public String navCarouselDragComponentI18n() {
+        return NavigationConstants.INSTANCE.navCarouselDragComponent();
     }
 }

@@ -23,6 +23,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.dashbuilder.client.cms.resources.i18n.ContentManagerI18n;
+import org.dashbuilder.client.cms.screen.explorer.ContentExplorerScreen;
 import org.dashbuilder.client.dashboard.DashboardManager;
 import org.dashbuilder.client.dashboard.DashboardPerspectiveActivity;
 import org.dashbuilder.client.navbar.TopMenuBar;
@@ -78,6 +79,9 @@ public class ShowcaseEntryPoint {
     private PermissionTreeSetup permissionTreeSetup;
 
     @Inject
+    private ContentExplorerScreen contentExplorerScreen;
+
+    @Inject
     private TopMenuBar navBar;
 
     @Inject
@@ -107,6 +111,11 @@ public class ShowcaseEntryPoint {
     private void initNavBar() {
         // Set the dashbuilder's default nav tree
         navigationManager.setDefaultNavTree(NavTreeDefinitions.NAV_TREE_DEFAULT);
+
+        // Allow links to core perspectives under the "App" nav group
+        contentExplorerScreen.getNavTreeEditor()
+                .setOnlyRuntimePerspectives(NavTreeDefinitions.GROUP_APP, false)
+                .applyToAllChildren();
 
         // Attach old existing dashboards (created with versions prior to 0.7) under the "dashboards" group
         for (DashboardPerspectiveActivity activity : dashboardManager.getDashboards()) {

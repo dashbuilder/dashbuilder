@@ -32,13 +32,16 @@ import org.dashbuilder.client.navigation.event.PerspectivePluginsChangedEvent;
 import org.dashbuilder.navigation.NavGroup;
 import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.NavTree;
-import org.dashbuilder.navigation.service.LayoutTemplateInfo;
+import org.dashbuilder.navigation.layout.LayoutRecursionIssue;
+import org.dashbuilder.navigation.layout.LayoutTemplateInfo;
 import org.dashbuilder.navigation.service.PerspectivePluginServices;
 import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.uberfire.client.workbench.type.ClientResourceType;
 import org.uberfire.client.workbench.type.ClientTypeRegistry;
+import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 import org.uberfire.ext.layout.editor.client.generator.LayoutGenerator;
 import org.uberfire.ext.plugin.client.type.PerspectiveLayoutPluginResourceType;
 import org.uberfire.ext.plugin.event.PluginAdded;
@@ -46,7 +49,6 @@ import org.uberfire.ext.plugin.event.PluginDeleted;
 import org.uberfire.ext.plugin.event.PluginRenamed;
 import org.uberfire.ext.plugin.event.PluginSaved;
 import org.uberfire.ext.plugin.model.Plugin;
-import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.workbench.model.ActivityResourceType;
 
@@ -126,16 +128,20 @@ public class PerspectivePluginManager {
         return perspectiveName != null && pluginMap.get(perspectiveName) != null;
     }
 
-    public void buildPerspectiveWidget(String perspectiveName, ParameterizedCommand<IsWidget> afterBuild, Command onDeadlock) {
-        buildPerspectiveWidget(perspectiveName, null, afterBuild, onDeadlock);
+    public void buildPerspectiveWidget(String perspectiveName, ParameterizedCommand<IsWidget> afterBuild, ParameterizedCommand<LayoutRecursionIssue> onInfiniteRecursion) {
+        buildPerspectiveWidget(perspectiveName, null, afterBuild, onInfiniteRecursion);
     }
 
-    public void buildPerspectiveWidget(String perspectiveName, String navGroupId, ParameterizedCommand<IsWidget> afterBuild, Command onDeadlock) {
+    public void getLayoutTemplateInfo(LayoutTemplate layoutTemplate, ParameterizedCommand<LayoutTemplateInfo> callback) {
+        pluginServices.call((RemoteCallback<LayoutTemplateInfo>) callback::execute).getLayoutTemplateInfo(layoutTemplate);
+    }
+
+    public void buildPerspectiveWidget(String perspectiveName, String navGroupId, ParameterizedCommand<IsWidget> afterBuild, ParameterizedCommand<LayoutRecursionIssue> onInfiniteRecursion) {
         Plugin plugin = pluginMap.get(perspectiveName);
         pluginServices.call((LayoutTemplateInfo layoutInfo) -> {
 
-            if (layoutInfo.hasDeadlock()) {
-                onDeadlock.execute();
+            if (!layoutInfo.getRecursionIssue().isEmpty()) {
+                onInfiniteRecursion.execute(layoutInfo.getRecursionIssue());
             } else {
                 NavGroup navGroup = navGroupId != null ? (NavGroup) navigationManager.getNavTree().getItemById(navGroupId) : null;
                 try {
@@ -151,11 +157,11 @@ public class PerspectivePluginManager {
                     }
                 }
             }
-        }).getLayoutTemplateInfo(plugin);
+        }).getLayoutTemplateInfo(plugin, navGroupId);
     }
 
     /**
-     * Get the last nav group instance passed to the execution of a {@link #buildPerspectiveWidget(String, String, ParameterizedCommand, Command)} call.
+     * Get the last nav group instance passed to the execution of a {@link #buildPerspectiveWidget(String, String, ParameterizedCommand, ParameterizedCommand)} call.
      *
      * @return The {@link NavGroup} instance passed to the build method or null if none.
      */

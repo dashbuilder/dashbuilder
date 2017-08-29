@@ -16,11 +16,11 @@
 package org.dashbuilder.navigation.service;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.dashbuilder.navigation.layout.LayoutRecursionIssue;
+import org.dashbuilder.navigation.layout.LayoutTemplateInfo;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 import org.uberfire.ext.layout.editor.impl.LayoutServicesImpl;
@@ -78,11 +78,15 @@ public class PerspectivePluginServicesImpl implements PerspectivePluginServices 
     }
 
     @Override
-    public LayoutTemplateInfo getLayoutTemplateInfo(Plugin perspectivePlugin) {
+    public LayoutTemplateInfo getLayoutTemplateInfo(Plugin perspectivePlugin, String navGroupId) {
         LayoutTemplate layoutTemplate = getLayoutTemplate(perspectivePlugin);
-        Set<String> ancestorSet = new HashSet<>();
-        ancestorSet.add(perspectivePlugin.getName());
-        boolean deadlock = layoutTemplateAnalyzer.hasDeadlock(layoutTemplate, ancestorSet);
-        return new LayoutTemplateInfo(layoutTemplate, deadlock);
+        LayoutRecursionIssue recursiveIssue = layoutTemplateAnalyzer.analyzeRecursion(layoutTemplate, navGroupId);
+        return new LayoutTemplateInfo(layoutTemplate, recursiveIssue);
+    }
+
+    @Override
+    public LayoutTemplateInfo getLayoutTemplateInfo(LayoutTemplate layoutTemplate) {
+        LayoutRecursionIssue recursiveIssue = layoutTemplateAnalyzer.analyzeRecursion(layoutTemplate);
+        return new LayoutTemplateInfo(layoutTemplate, recursiveIssue);
     }
 }

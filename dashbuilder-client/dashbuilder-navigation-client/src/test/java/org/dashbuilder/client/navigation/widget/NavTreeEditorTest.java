@@ -13,8 +13,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.uberfire.client.authz.PerspectiveTreeProvider;
 import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.ext.widgets.common.client.dropdown.PerspectiveDropDown;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -61,6 +61,37 @@ public class NavTreeEditorTest {
         when(beanManagerM.lookupBean(NavItemEditor.class)).thenReturn(navItemEditorBeanDef);
         when(navItemEditorBeanDef.newInstance()).thenReturn(navItemEditor);
     }
+
+    @Test
+    public void testNewPerspectiveEnabled() {
+        NavTreeEditor treeEditor = new NavTreeEditor(viewM, beanManagerM, perspectiveTreeProviderM);
+        treeEditor.setNewPerspectiveEnabled(true);
+        assertTrue(treeEditor.isNewPerspectiveEnabled(NAV_TREE.getItemById("level1b")));
+
+        treeEditor.setNewPerspectiveEnabled("level1b", false);
+        assertFalse(treeEditor.isNewPerspectiveEnabled(NAV_TREE.getItemById("level1b")));
+        assertTrue(treeEditor.isNewPerspectiveEnabled(NAV_TREE.getItemById("level2b")));
+
+        treeEditor.setNewPerspectiveEnabled("level1b", false).applyToAllChildren();
+        assertFalse(treeEditor.isNewPerspectiveEnabled(NAV_TREE.getItemById("level1b")));
+        assertFalse(treeEditor.isNewPerspectiveEnabled(NAV_TREE.getItemById("level2b")));
+    }
+
+    @Test
+    public void testNewDividerEnabled() {
+        NavTreeEditor treeEditor = new NavTreeEditor(viewM, beanManagerM, perspectiveTreeProviderM);
+        treeEditor.setNewDividerEnabled(true);
+        assertTrue(treeEditor.isNewDividerEnabled(NAV_TREE.getItemById("level1b")));
+
+        treeEditor.setNewDividerEnabled("level1b", false);
+        assertFalse(treeEditor.isNewDividerEnabled(NAV_TREE.getItemById("level1b")));
+        assertTrue(treeEditor.isNewDividerEnabled(NAV_TREE.getItemById("level2b")));
+
+        treeEditor.setNewDividerEnabled("level1b", false).applyToAllChildren();
+        assertFalse(treeEditor.isNewDividerEnabled(NAV_TREE.getItemById("level1b")));
+        assertFalse(treeEditor.isNewDividerEnabled(NAV_TREE.getItemById("level2b")));
+    }
+
     @Test
     public void testAllSubgroupsAllowed() {
         NavTreeEditor treeEditor = spy(new NavTreeEditor(viewM, beanManagerM, perspectiveTreeProviderM));
@@ -152,6 +183,7 @@ public class NavTreeEditorTest {
 
         verify(first).cancelEdition();
     }
+
     @Test
     public void whenItemEditFinishedNavTreeEditorCleared() {
         NavTreeEditor treeEditor = new NavTreeEditor(viewM,

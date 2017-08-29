@@ -140,6 +140,7 @@ public class NavItemEditor implements IsWidget {
     public Widget asWidget() {
         return view.asWidget();
     }
+
     public void setNavTree(NavTree navTree) {
         this.navTree = navTree;
         this.targetPerspectiveEditor.setNavTree(navTree);

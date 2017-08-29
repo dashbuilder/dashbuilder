@@ -58,5 +58,5 @@ public interface ContentManagerConstants extends Messages {
 
     String perspectiveDragNotFoundError();
 
-    String perspectiveDragDeadlockError();
+    String perspectiveInfiniteRecursionError();
 }
