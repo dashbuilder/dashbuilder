@@ -19,6 +19,7 @@
   <properties>
     <!-- Add the absolute path for $JBOSS_HOME below to manage another instance -->
     <errai.jboss.home>${project.build.directory}/wildfly-${version.org.wildfly.gwt.sdm}</errai.jboss.home>
+    <gwt.compiler.skip>false</gwt.compiler.skip>
     <gwt.compiler.localWorkers>4</gwt.compiler.localWorkers>
   </properties>
 
@@ -787,6 +788,7 @@
                   <outputDirectory>${project.build.directory}</outputDirectory>
                 </artifactItem>
               </artifactItems>
+              <skip>${gwt.compiler.skip}</skip>
             </configuration>
           </execution>
         </executions>
