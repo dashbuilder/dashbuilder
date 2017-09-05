@@ -65,11 +65,6 @@ public class NavCarouselWidgetView extends BaseNavWidgetView<NavCarouselWidget>
     }
 
     @Override
-    public void setActive(boolean active) {
-        // Useless in a tab list
-    }
-
-    @Override
     public void addDivider() {
         // Useless in a tab list
     }

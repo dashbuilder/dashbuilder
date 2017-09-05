@@ -29,8 +29,6 @@ public interface NavWidgetView<T> extends UberView<T> {
 
     void addDivider();
 
-    void setActive(boolean active);
-
     void setSelectedItem(String id);
 
     void clearSelectedItem();

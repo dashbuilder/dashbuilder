@@ -94,12 +94,9 @@ public class NavDropDownWidgetView extends BaseNavWidgetView<NavDropDownWidget>
 
     @Override
     public void setActive(boolean active) {
-        // Disable for subgroups, as it is not working well
-        if (presenter.getLevel() == 1) {
-            this.active = active;
-            String className = calculateDropDownClassName();
-            dropDownItem.setClassName(className);
-        }
+        this.active = active;
+        String className = calculateDropDownClassName();
+        dropDownItem.setClassName(className);
     }
 
     @Override

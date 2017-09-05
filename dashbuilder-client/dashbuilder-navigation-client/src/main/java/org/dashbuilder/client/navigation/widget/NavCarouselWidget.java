@@ -30,7 +30,7 @@ import org.uberfire.ext.plugin.event.PluginSaved;
 import org.uberfire.ext.plugin.model.Plugin;
 
 @Dependent
-public class NavCarouselWidget extends BaseNavWidget {
+public class NavCarouselWidget extends BaseNavWidget implements HasDefaultNavItem {
 
     public interface View extends NavWidgetView<NavCarouselWidget> {
 
@@ -42,6 +42,7 @@ public class NavCarouselWidget extends BaseNavWidget {
     View view;
     PerspectivePluginManager perspectivePluginManager;
     List<String> perspectiveIds = new ArrayList<>();
+    String defaultNavItemId = null;
 
     @Inject
     public NavCarouselWidget(View view, NavigationManager navigationManager, PerspectivePluginManager perspectivePluginManager) {
@@ -57,11 +58,36 @@ public class NavCarouselWidget extends BaseNavWidget {
     }
 
     @Override
+    public String getDefaultNavItemId() {
+        return defaultNavItemId;
+    }
+
+    @Override
+    public void setDefaultNavItemId(String defaultNavItemId) {
+        this.defaultNavItemId = defaultNavItemId;
+    }
+
+    @Override
     public void show(List<NavItem> itemList) {
         // Discard everything but runtime perspectives
         List<NavItem> itemsFiltered = itemList.stream()
                 .filter(perspectivePluginManager::isRuntimePerspective)
                 .collect(Collectors.toList());
+
+        // Get the default item configured (if any)
+        NavItem defaultNavItem = null;
+        if (defaultNavItemId != null) {
+            for (NavItem navItem : itemsFiltered) {
+                if (defaultNavItemId.equals(navItem.getId())) {
+                    defaultNavItem = navItem;
+                }
+            }
+        }
+        // Place the default item at the beginning of the carousel
+        if (defaultNavItem != null) {
+            itemsFiltered.remove(defaultNavItem);
+            itemsFiltered.add(0, defaultNavItem);
+        }
 
         perspectiveIds.clear();
         super.show(itemsFiltered);
@@ -73,16 +99,8 @@ public class NavCarouselWidget extends BaseNavWidget {
         String perspectiveId = perspectivePluginManager.getRuntimePerspectiveId(navItem);
         if (perspectiveId != null) {
             perspectiveIds.add(perspectiveId);
-            perspectivePluginManager.buildPerspectiveWidget(perspectiveId, this::showWidget, this::deadlockError);
+            perspectivePluginManager.buildPerspectiveWidget(perspectiveId, view::addContentSlide, view::deadlockError);
         }
-    }
-
-    public void showWidget(IsWidget widget) {
-        view.addContentSlide(widget);
-    }
-
-    private void deadlockError() {
-        view.deadlockError();
     }
 
     // Catch changes on runtime perspectives so as to display the most up to date changes

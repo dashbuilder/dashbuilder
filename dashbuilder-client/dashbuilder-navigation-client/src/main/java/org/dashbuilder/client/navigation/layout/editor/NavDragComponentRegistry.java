@@ -16,8 +16,11 @@
 package org.dashbuilder.client.navigation.layout.editor;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -30,6 +33,7 @@ public class NavDragComponentRegistry {
 
     SyncBeanManager beanManager;
     List<NavDragComponent> dragComponentList = new ArrayList<>();
+    Map<String,NavPointDescriptor> navPointsMap = new HashMap<>();
 
     @Inject
     public NavDragComponentRegistry(SyncBeanManager beanManager) {
@@ -37,10 +41,25 @@ public class NavDragComponentRegistry {
     }
 
     public void checkIn(NavDragComponent dragComponent) {
-        dragComponentList.add(dragComponent);
+        if (!dragComponentList.contains(dragComponent)) {
+            dragComponentList.add(dragComponent);
+            if (dragComponent.getNavId() != null) {
+                NavPointDescriptor navPointDescriptor = lookupNavPoint(dragComponent.getNavId());
+                navPointDescriptor.setSource(dragComponent);
+            }
+            if (dragComponent.getNavPoint() != null) {
+                NavPointDescriptor navPointDescriptor = lookupNavPoint(dragComponent.getNavPoint());
+                navPointDescriptor.addSubscriber(dragComponent);
+            }
+        }
+    }
+
+    public Collection<NavPointDescriptor> getAll() {
+        return navPointsMap.values();
     }
 
     public void clearAll() {
+        navPointsMap.clear();
         Iterator<NavDragComponent> it = dragComponentList.iterator();
         while (it.hasNext()) {
             NavDragComponent component = it.next();
@@ -48,6 +67,13 @@ public class NavDragComponentRegistry {
             component.dispose();
             beanManager.destroyBean(component);
         }
+    }
+
+    public NavPointDescriptor lookupNavPoint(String id) {
+        if (!navPointsMap.containsKey(id)) {
+            navPointsMap.put(id, new NavPointDescriptor());
+        }
+        return navPointsMap.get(id);
     }
 
     // Make sure the nav components are disposed when the current perspective changes

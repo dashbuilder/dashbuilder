@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
 import org.dashbuilder.client.navigation.widget.NavCarouselWidget;
-import org.dashbuilder.client.navigation.widget.NavItemSelectionModal;
+import org.dashbuilder.client.navigation.widget.NavComponentConfigModal;
 
 /**
  * A layout editor's navigation component that a carousel of runtime perspectives
@@ -32,11 +32,11 @@ public class NavCarouselDragComponent extends AbstractNavDragComponent {
     @Inject
     public NavCarouselDragComponent(NavigationManager navigationManager,
                                     NavDragComponentRegistry navDragComponentRegistry,
-                                    NavItemSelectionModal navItemSelectionModal,
+                                    NavComponentConfigModal navComponentConfigModal,
                                     NavCarouselWidget navWidget) {
         super(navigationManager,
                 navDragComponentRegistry,
-                navItemSelectionModal,
+                navComponentConfigModal,
                 navWidget);
     }
 
@@ -46,7 +46,7 @@ public class NavCarouselDragComponent extends AbstractNavDragComponent {
     }
 
     @Override
-    public String getDragComponentHelp() {
-        return NavigationConstants.INSTANCE.navCarouselDragComponentHelp();
+    public String getDragComponentNavGroupHelp() {
+        return NavigationConstants.INSTANCE.navCarouselDragComponentNavGroupHelp();
     }
 }

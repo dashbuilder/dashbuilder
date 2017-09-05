@@ -16,101 +16,87 @@
 package org.dashbuilder.client.navigation.widget;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.navigation.NavItem;
-import org.uberfire.ext.plugin.event.PluginSaved;
-import org.uberfire.ext.plugin.model.Plugin;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
+import org.uberfire.client.mvp.PlaceManager;
 
 @Dependent
-public class NavTabListWidget extends BaseNavWidget {
+public class NavTabListWidget extends TargetDivNavWidget {
 
-    public interface View extends NavWidgetView<NavTabListWidget> {
+    public interface View extends TargetDivNavWidget.View<NavTabListWidget> {
 
-        void showContent(IsWidget widget);
+        void clearChildrenTabs();
 
-        void deadlockError();
+        void showChildrenTabs(IsWidget tabListWidget);
+
+        void showAsSubmenu(boolean enabled);
     }
 
     View view;
-    PerspectivePluginManager perspectivePluginManager;
+    SyncBeanManager beanManager;
 
     @Inject
-    public NavTabListWidget(View view, NavigationManager navigationManager, PerspectivePluginManager perspectivePluginManager) {
-        super(view, navigationManager);
+    public NavTabListWidget(View view,
+                            SyncBeanManager beanManager,
+                            PerspectivePluginManager pluginManager,
+                            PlaceManager placeManager,
+                            NavigationManager navigationManager) {
+        super(view, pluginManager, placeManager, navigationManager);
         this.view = view;
-        this.perspectivePluginManager = perspectivePluginManager;
-        super.setMaxLevels(1);
+        this.beanManager = beanManager;
     }
 
     @Override
-    public boolean areSubGroupsSupported() {
-        return false;
+    protected NavWidget lookupNavGroupWidget() {
+        return beanManager.lookupBean(NavTabListWidget.class).newInstance();
+    }
+
+    @Override
+    protected boolean gotoDefaultItem() {
+        boolean gotoItem = super.gotoDefaultItem();
+        if (!gotoItem && !navItemList.isEmpty()) {
+            defaultNavItemId = navItemList.get(0).getId();
+            gotoItem = super.gotoDefaultItem();
+        }
+        return gotoItem;
+    }
+
+    @Override
+    public boolean setSelectedItem(String id) {
+        boolean selected = super.setSelectedItem(id);
+        if (selected && activeNavSubgroup != null) {
+            view.setSelectedItem(activeNavSubgroup.getNavGroup().getId());
+            view.showChildrenTabs(activeNavSubgroup);
+        }
+        return selected;
     }
 
     @Override
     public void show(List<NavItem> itemList) {
-        // Discard everything but runtime perspectives
-        List<NavItem> itemsFiltered = itemList.stream()
-                .filter(perspectivePluginManager::isRuntimePerspective)
-                .collect(Collectors.toList());
-
-        super.show(itemsFiltered);
-
-        // Force the display of the first perspective available
-        if (!navItemList.isEmpty()) {
-            setSelectedItem(navItemList.get(0).getId());
-        }
-    }
-
-    public void showPerspective(NavItem navItem) {
-        // Only runtime perspectives can be displayed under the selected tab
-        String perspectiveId = perspectivePluginManager.getRuntimePerspectiveId(navItem);
-        if (perspectiveId != null) {
-            showPerspective(perspectiveId);
-        }
-    }
-
-    public void showPerspective(String perspectiveId) {
-        perspectivePluginManager.buildPerspectiveWidget(perspectiveId, this::showWidget, this::deadlockError);
-    }
-
-    public void showWidget(IsWidget widget) {
-        view.showContent(widget);
-    }
-
-    private void deadlockError() {
-        view.deadlockError();
-    }
-
-    // When an tab is selected its perspective is shown right under the tab
-
-    @Override
-    public void setSelectedItem(String id) {
-        super.setSelectedItem(id);
-        showPerspective(itemSelected);
+        view.showAsSubmenu(getLevel() > 0);
+        super.show(itemList);
     }
 
     @Override
     public void onItemClicked(NavItem navItem) {
+        view.clearChildrenTabs();
         super.onItemClicked(navItem);
-        showPerspective(navItem);
     }
 
-    // Catch changes on runtime perspectives so as to display the most up to date changes
+    // View callbacks
 
-    private void onPerspectiveChanged(@Observes PluginSaved event) {
-        Plugin plugin = event.getPlugin();
-        String pluginName = plugin.getName();
-        String selectedPerspectiveId = perspectivePluginManager.getRuntimePerspectiveId(itemSelected);
-        if (selectedPerspectiveId != null && selectedPerspectiveId.equals(pluginName)) {
-            showPerspective(itemSelected);
+    void onGroupTabClicked(String id) {
+        TargetDivNavWidget navGroupWidget = (TargetDivNavWidget) super.getSubgroupNavWidget(id);
+        if (navGroupWidget != null) {
+            super.onItemClicked(navGroupWidget.getNavGroup());
+            view.showChildrenTabs(navGroupWidget);
+            navGroupWidget.gotoDefaultItem();
         }
     }
 }

@@ -18,13 +18,14 @@ package org.dashbuilder.client.navigation.widget;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.dashbuilder.common.client.widgets.AlertBox;
 import org.jboss.errai.common.client.dom.UnorderedList;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 @Dependent
 @Templated
-public class NavMenuBarWidgetView extends BaseNavWidgetView<NavMenuBarWidget>
+public class NavMenuBarWidgetView extends TargetDivNavWidgetView<NavMenuBarWidget>
         implements NavMenuBarWidget.View {
 
     @Inject
@@ -32,6 +33,11 @@ public class NavMenuBarWidgetView extends BaseNavWidgetView<NavMenuBarWidget>
     UnorderedList navBar;
 
     NavMenuBarWidget presenter;
+
+    @Inject
+    public NavMenuBarWidgetView(AlertBox alertBox) {
+        super(alertBox);
+    }
 
     @Override
     public void init(NavMenuBarWidget presenter) {
@@ -41,11 +47,6 @@ public class NavMenuBarWidgetView extends BaseNavWidgetView<NavMenuBarWidget>
 
     @Override
     public void addDivider() {
-        // Useless in a menu bar
-    }
-
-    @Override
-    public void setActive(boolean active) {
         // Useless in a menu bar
     }
 }

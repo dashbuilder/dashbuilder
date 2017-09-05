@@ -20,11 +20,14 @@ import java.util.Map;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.NavigationManager;
-import org.dashbuilder.client.navigation.widget.NavItemSelectionModal;
-import org.dashbuilder.client.navigation.widget.NavItemSelectionModalView;
+import org.dashbuilder.client.navigation.widget.HasDefaultNavItem;
+import org.dashbuilder.client.navigation.widget.HasIdentifier;
+import org.dashbuilder.client.navigation.widget.HasMaxLevels;
+import org.dashbuilder.client.navigation.widget.HasTargetDiv;
+import org.dashbuilder.client.navigation.widget.NavComponentConfigModal;
+import org.dashbuilder.client.navigation.widget.NavComponentConfigModalView;
 import org.dashbuilder.client.navigation.widget.NavWidget;
 import org.dashbuilder.navigation.NavGroup;
-import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.NavTree;
 import org.gwtbootstrap3.client.ui.Modal;
 import org.uberfire.ext.layout.editor.client.api.ModalConfigurationContext;
@@ -34,25 +37,46 @@ public abstract class AbstractNavDragComponent implements NavDragComponent {
 
     NavigationManager navigationManager;
     NavDragComponentRegistry navDragComponentRegistry;
-    NavItemSelectionModal navItemSelectionModal;
+    NavComponentConfigModal navComponentConfigModal;
     NavWidget navWidget;
+    String navId = null;
+    String navPoint = null;
     String navGroupId = null;
 
+    public static final String NAV_ID = "navComponentId";
+    public static final String NAV_POINT = "navPoint";
     public static final String NAV_GROUP_ID = "navGroupId";
+    public static final String TARGET_DIV_ID = "targetDivId";
+    public static final String NAV_ITEM_ID = "navItemId";
+    public static final String MAX_LEVELS = "maxLevels";
 
     public AbstractNavDragComponent() {
     }
 
     public AbstractNavDragComponent(NavigationManager navigationManager,
                                     NavDragComponentRegistry navDragComponentRegistry,
-                                    NavItemSelectionModal navItemSelectionModal,
+                                    NavComponentConfigModal navComponentConfigModal,
                                     NavWidget navWidget) {
         this.navigationManager = navigationManager;
         this.navDragComponentRegistry = navDragComponentRegistry;
-        this.navItemSelectionModal = navItemSelectionModal;
+        this.navComponentConfigModal = navComponentConfigModal;
         this.navWidget = navWidget;
         this.navWidget.setOnStaleCommand(this::showNavWidget);
-        this.navDragComponentRegistry.checkIn(this);
+    }
+
+    @Override
+    public String getNavId() {
+        return navId;
+    }
+
+    @Override
+    public String getNavPoint() {
+        return navPoint;
+    }
+
+    @Override
+    public NavWidget getNavWidget() {
+        return navWidget;
     }
 
     @Override
@@ -63,22 +87,72 @@ public abstract class AbstractNavDragComponent implements NavDragComponent {
     @Override
     public IsWidget getShowWidget(RenderingContext ctx) {
         Map<String, String> properties = ctx.getComponent().getProperties();
+        navId = properties.get(NAV_ID);
+        navPoint = properties.get(NAV_POINT);
         navGroupId = properties.get(NAV_GROUP_ID);
+
+        if (navWidget instanceof HasTargetDiv) {
+           String targetDivId = properties.get(TARGET_DIV_ID);
+            ((HasTargetDiv) navWidget).setTargetDivId(targetDivId);
+        }
+        if (navWidget instanceof HasDefaultNavItem) {
+            String navItemId = properties.get(NAV_ITEM_ID);
+            ((HasDefaultNavItem) navWidget).setDefaultNavItemId(navItemId);
+        }
+        if (navWidget instanceof HasMaxLevels) {
+            String maxLevels = properties.get(MAX_LEVELS);
+            navWidget.setMaxLevels(maxLevels != null ? Integer.parseInt(maxLevels) : -1);
+            navWidget.setHideEmptyGroups(false);
+        }
+        navDragComponentRegistry.checkIn(this);
         this.showNavWidget();
         return navWidget;
     }
 
     @Override
     public Modal getConfigurationModal(ModalConfigurationContext ctx) {
-        navItemSelectionModal.setHelpHint(getDragComponentHelp());
-        navItemSelectionModal.setOnlyGroups(true);
-        navItemSelectionModal.setOnOk(() -> navGroupSelectionOk(ctx));
-        navItemSelectionModal.setOnCancel(() -> navGroupSelectionCancel(ctx));
+        navComponentConfigModal.clear();
 
         NavTree navTree = navigationManager.getNavTree();
+        String navPoint = ctx.getComponentProperty(NAV_POINT);
         String groupId = ctx.getComponentProperty(NAV_GROUP_ID);
-        navItemSelectionModal.show(navTree.getRootItems(), groupId);
-        return ((NavItemSelectionModalView) navItemSelectionModal.getView()).getModal();
+        boolean supportsIdenfitier = navWidget instanceof HasIdentifier;
+        boolean supportsDefaultNavItem = navWidget instanceof HasDefaultNavItem;
+        boolean supportsTargetDiv = navWidget instanceof HasTargetDiv;
+        boolean supportsMaxLevels = navWidget instanceof HasMaxLevels;
+        navComponentConfigModal.setLayoutTemplate(ctx.getCurrentLayoutTemplate());
+        navComponentConfigModal.setNavIdSupported(supportsIdenfitier);
+        navComponentConfigModal.setNavPoint(navPoint);
+        navComponentConfigModal.setTargetDivSupported(supportsTargetDiv);
+        navComponentConfigModal.setDefaultNavItemSupported(supportsDefaultNavItem);
+        navComponentConfigModal.setMaxLevelsSupported(supportsMaxLevels);
+        navComponentConfigModal.setNavGroup(navTree.getRootItems(), groupId);
+
+        if (supportsIdenfitier) {
+            String navId = ctx.getComponentProperty(NAV_ID);
+            navComponentConfigModal.setNavId(navId);
+        }
+        if (supportsDefaultNavItem) {
+            String navItemId = ctx.getComponentProperty(NAV_ITEM_ID);
+            navComponentConfigModal.setDefaultNavItemId(navItemId);
+        }
+        if (supportsTargetDiv) {
+            String targetDivId = ctx.getComponentProperty(TARGET_DIV_ID);
+            navComponentConfigModal.setTargetDiv(targetDivId);
+        }
+        if (supportsMaxLevels) {
+            String maxLevels = ctx.getComponentProperty(MAX_LEVELS);
+            navComponentConfigModal.setMaxLevels(maxLevels != null ? Integer.parseInt(maxLevels) : -1);
+        }
+
+        navComponentConfigModal.setNavGroupHelpHint(getDragComponentNavGroupHelp());
+        navComponentConfigModal.setOnOk(() -> navGroupSelectionOk(ctx,
+                supportsDefaultNavItem,
+                supportsTargetDiv,
+                supportsMaxLevels));
+        navComponentConfigModal.setOnCancel(() -> navGroupSelectionCancel(ctx));
+        navComponentConfigModal.show();
+        return ((NavComponentConfigModalView) navComponentConfigModal.getView()).getModal();
     }
 
     @Override
@@ -86,23 +160,62 @@ public abstract class AbstractNavDragComponent implements NavDragComponent {
         navWidget.dispose();
     }
 
-    protected NavGroup fetchNavGroup() {
-        NavTree navTree = navigationManager.getNavTree();
-        return (NavGroup) navTree.getItemById(navGroupId);
-    }
-
     protected void showNavWidget() {
-        NavGroup navGroup = fetchNavGroup();
-        if (navGroup != null) {
-            navWidget.show(navGroup);
-        } else {
-            navWidget.show(Collections.emptyList());
+        if (navPoint == null) {
+            NavTree navTree = navigationManager.getNavTree();
+            NavGroup navGroup = (NavGroup) navTree.getItemById(navGroupId);
+            if (navGroup != null) {
+                navWidget.show(navGroup);
+            } else {
+                navWidget.show(Collections.emptyList());
+            }
         }
     }
 
-    protected void navGroupSelectionOk(ModalConfigurationContext ctx) {
-        NavItem navItem = navItemSelectionModal.getSelectedItem();
-        ctx.setComponentProperty(NAV_GROUP_ID, navItem.getId());
+    protected void navGroupSelectionOk(ModalConfigurationContext ctx,
+                                       boolean supportsDefaultNavItem,
+                                       boolean supportsTargetDiv,
+                                       boolean supportsNLevels) {
+
+        String navId = navComponentConfigModal.getNavId();
+        String navPoint = navComponentConfigModal.getNavPoint();
+        String groupId = navComponentConfigModal.getGroupId();
+        String defaultItemId = navComponentConfigModal.getDefaultItemId();
+        String targetDivId = navComponentConfigModal.getTargetDivId();
+        int maxLevels = navComponentConfigModal.getMaxLevels();
+
+        if (navId != null) {
+            ctx.setComponentProperty(NAV_ID, navId);
+        } else {
+            ctx.removeComponentProperty(NAV_ID);
+        }
+
+        if (navPoint != null) {
+            ctx.setComponentProperty(NAV_POINT, navPoint);
+            ctx.removeComponentProperty(NAV_GROUP_ID);
+        } else {
+            ctx.setComponentProperty(NAV_GROUP_ID, groupId);
+            ctx.removeComponentProperty(NAV_POINT);
+        }
+
+        if (supportsDefaultNavItem && defaultItemId != null) {
+            ctx.setComponentProperty(NAV_ITEM_ID, defaultItemId);
+        } else {
+            ctx.removeComponentProperty(NAV_ITEM_ID);
+        }
+
+        if (supportsTargetDiv && targetDivId != null) {
+            ctx.setComponentProperty(TARGET_DIV_ID, targetDivId);
+        } else {
+            ctx.removeComponentProperty(TARGET_DIV_ID);
+        }
+
+        if (supportsNLevels && maxLevels > 0) {
+            ctx.setComponentProperty(MAX_LEVELS, Integer.toString(maxLevels));
+        } else {
+            ctx.removeComponentProperty(MAX_LEVELS);
+        }
+
         ctx.configurationFinished();
     }
 
