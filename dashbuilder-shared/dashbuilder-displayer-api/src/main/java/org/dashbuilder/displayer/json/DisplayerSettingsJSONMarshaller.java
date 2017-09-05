@@ -46,6 +46,8 @@ public class DisplayerSettingsJSONMarshaller {
 
     private static DisplayerSettingsJSONMarshaller SINGLETON = new DisplayerSettingsJSONMarshaller();
 
+    private Map<String, String> dictionary = new HashMap<String, String>();
+
     public static DisplayerSettingsJSONMarshaller get() {
         return SINGLETON;
     }
@@ -55,6 +57,93 @@ public class DisplayerSettingsJSONMarshaller {
 
     public DisplayerSettingsJSONMarshaller() {
         this(DataSetJSONMarshaller.get(), DataSetLookupJSONMarshaller.get());
+
+        dictionary.put("uuid",              "0");
+        dictionary.put("dataSet",           "1");
+        dictionary.put("dataSetLookup",     "2");
+        dictionary.put("id",                "3");
+        
+        // Displayer attributes
+        dictionary.put("type",              "4");
+        dictionary.put("subtype",           "5");
+        dictionary.put("renderer",          "6");
+        dictionary.put("expression",        "7");
+        dictionary.put("pattern",           "8");
+        dictionary.put("empty",             "9");
+        dictionary.put("title",             "a");
+        dictionary.put("visible",           "b");
+        dictionary.put("allow_csv",         "c");
+        dictionary.put("allow_excel",       "d");
+        dictionary.put("staleData",         "e");
+        dictionary.put("interval",          "f");
+        dictionary.put("enabled",           "g");
+        dictionary.put("selfapply",         "h");
+        dictionary.put("notification",      "i");
+        dictionary.put("listening",         "j");
+        dictionary.put("width",             "k");
+        dictionary.put("height",            "l");
+        dictionary.put("resizable",         "m");
+        dictionary.put("maxWidth",          "n");
+        dictionary.put("maxHeight",         "o");
+        dictionary.put("bgColor",           "p");
+        dictionary.put("3d",                "q");
+        dictionary.put("top",               "r");
+        dictionary.put("bottom",            "s");
+        dictionary.put("left",              "t");
+        dictionary.put("right",             "u");
+        dictionary.put("show",              "v");
+        dictionary.put("position",          "w");
+        dictionary.put("pageSize",          "x");
+        dictionary.put("columnId",          "y");
+        dictionary.put("order",             "z");
+        dictionary.put("labels_show",       "A");
+        dictionary.put("start",             "B");
+        dictionary.put("warning",           "C");
+        dictionary.put("critical",          "D");
+        dictionary.put("end",               "E");
+        
+        // DataSetLookup
+        dictionary.put("dataSetUuid",       "F");
+        dictionary.put("rowCount",          "G");
+        dictionary.put("rowOffset",         "H");
+        dictionary.put("column",            "I");
+        dictionary.put("source",            "J");
+        dictionary.put("filterOps",         "K");
+        dictionary.put("function",          "L");
+        dictionary.put("args",              "M");
+        dictionary.put("groupOps",          "N");
+        dictionary.put("columnGroup",       "O");
+        dictionary.put("groupStrategy",     "P");
+        dictionary.put("maxIntervals",      "Q");
+        dictionary.put("intervalSize",      "R");
+        dictionary.put("emptyIntervals",    "S");
+        dictionary.put("asc",               "T");
+        dictionary.put("firstMonthOfYear",  "U");
+        dictionary.put("firstDayOfWeek",    "V");
+        dictionary.put("groupFunctions",    "W");
+        dictionary.put("selected",          "X");
+        dictionary.put("name",              "Y");
+        dictionary.put("index",             "Z");
+        dictionary.put("min",               "00");
+        dictionary.put("max",               "01");
+        dictionary.put("join",              "02");
+        dictionary.put("sortOps",           "03");
+        dictionary.put("sortOrder",         "04");
+
+        // Displayer attributes groups
+        dictionary.put("general",           "05");
+        dictionary.put("columns",           "06");
+        dictionary.put("refresh",           "07");
+        dictionary.put("filter",            "08");
+        dictionary.put("chart",             "09");
+        dictionary.put("table",             "0a");
+        dictionary.put("axis",              "0b");
+        dictionary.put("meter",             "0c");
+        dictionary.put("margin",            "0d");
+        dictionary.put("legend",            "0e");
+        dictionary.put("sort",              "0f");
+        dictionary.put("x",                 "0g");
+        dictionary.put("y",                 "0h");
     }
 
     public DisplayerSettingsJSONMarshaller(DataSetJSONMarshaller dataSetJsonMarshaller, DataSetLookupJSONMarshaller dataSetLookupJsonMarshaller) {
@@ -67,7 +156,7 @@ public class DisplayerSettingsJSONMarshaller {
 
         if (!isBlank(jsonString)) {
 
-            JsonObject parseResult = Json.parse(jsonString);
+            JsonObject parseResult = Json.parse(jsonDecode(jsonString));
 
             if ( parseResult != null ) {
 
@@ -114,7 +203,7 @@ public class DisplayerSettingsJSONMarshaller {
     }
 
     public String toJsonString(DisplayerSettings displayerSettings) {
-        return toJsonObject(displayerSettings).toString();
+        return jsonEncode(toJsonObject(displayerSettings).toString());
     }
 
     public JsonObject toJsonObject( DisplayerSettings displayerSettings ) {
@@ -254,5 +343,40 @@ public class DisplayerSettingsJSONMarshaller {
 
     private boolean isBlank(String str) {
         return str == null || str.trim().isEmpty();
+    }
+
+    private String jsonEncode(String source) {
+        String compressed = source;
+
+        for (Map.Entry<String, String> entry : dictionary.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            compressed = compressed.replaceAll("\\s*\\n\\s*\"" + key + "\":\\s", value + ":");
+        }
+
+        compressed = compressed.replaceAll("\\s*\\n\\s*", "");
+        compressed = compressed.replaceAll(":\"([a-zA-Z_0-9-]+)\"", ":$1");
+
+        return compressed;
+    }
+
+    private String jsonDecode(String source) {
+        String uncompressed = source;
+        String keys = "";
+
+        for (Map.Entry<String, String> entry : dictionary.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            uncompressed = uncompressed.replaceAll("," + value + ":", ",\"" + key + "\": ");
+            uncompressed = uncompressed.replaceAll("{" + value + ":", "{\"" + key + "\": ");
+            keys += key + "|";
+        }
+
+        keys = keys.substring(0, keys.length() - 1);
+        uncompressed = uncompressed.replaceAll("\"(" + keys + ")\": ([a-zA-Z_0-9-]+)", "\"$1\": \"$2\"");
+
+        return uncompressed;
     }
 }
