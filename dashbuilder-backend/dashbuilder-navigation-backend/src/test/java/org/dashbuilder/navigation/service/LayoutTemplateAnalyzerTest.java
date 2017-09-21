@@ -18,6 +18,7 @@ package org.dashbuilder.navigation.service;
 import org.dashbuilder.navigation.impl.NavTreeBuilder;
 import org.dashbuilder.navigation.layout.LayoutNavigationRef;
 import org.dashbuilder.navigation.layout.LayoutRecursionIssue;
+import org.dashbuilder.navigation.layout.LayoutTemplateContext;
 import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,10 +49,11 @@ public class LayoutTemplateAnalyzerTest {
     @InjectMocks
     LayoutTemplateAnalyzer layoutTemplateAnalyzer;
 
-    LayoutTemplate perspectiveA = new LayoutTemplate("A");
-    LayoutTemplate perspectiveB = new LayoutTemplate("B");
-    LayoutTemplate perspectiveC = new LayoutTemplate("C");
-    LayoutTemplate perspectiveD = new LayoutTemplate("D");
+    LayoutTemplate layoutA = new LayoutTemplate("A");
+    LayoutTemplate layoutB = new LayoutTemplate("B");
+    LayoutTemplate layoutC = new LayoutTemplate("C");
+    LayoutTemplate layoutD = new LayoutTemplate("D");
+    LayoutTemplate layoutE = new LayoutTemplate("D");
     LayoutColumn layoutColumnA = new LayoutColumn("12");
     LayoutColumn layoutColumnB = new LayoutColumn("12");
     LayoutColumn layoutColumnD = new LayoutColumn("12");
@@ -60,6 +62,7 @@ public class LayoutTemplateAnalyzerTest {
     LayoutComponent layoutComponentC1 = new LayoutComponent(TABLIST.getFQClassName());
     LayoutComponent layoutComponentC2 = new LayoutComponent(TABLIST.getFQClassName());
     LayoutComponent layoutComponentD = new LayoutComponent(TREE.getFQClassName());
+    LayoutComponent layoutComponentE = new LayoutComponent();
 
 
     @Before
@@ -68,13 +71,13 @@ public class LayoutTemplateAnalyzerTest {
         layoutComponentA.addProperty(NAV_GROUP_ID, "groupA");
         layoutRowA.add(layoutColumnA);
         layoutColumnA.add(layoutComponentA);
-        perspectiveA.addRow(layoutRowA);
+        layoutA.addRow(layoutRowA);
 
         LayoutRow layoutRowB = new LayoutRow();
         layoutComponentB.addProperty(NAV_GROUP_ID, "groupB");
         layoutRowB.add(layoutColumnB);
         layoutColumnB.add(layoutComponentB);
-        perspectiveB.addRow(layoutRowB);
+        layoutB.addRow(layoutRowB);
 
         LayoutRow layoutRowC = new LayoutRow();
         LayoutColumn layoutColumnC1 = new LayoutColumn("6");
@@ -85,18 +88,25 @@ public class LayoutTemplateAnalyzerTest {
         layoutRowC.add(layoutColumnC2);
         layoutColumnC1.add(layoutComponentC1);
         layoutColumnC2.add(layoutComponentC2);
-        perspectiveC.addRow(layoutRowC);
+        layoutC.addRow(layoutRowC);
 
         LayoutRow layoutRowD = new LayoutRow();
         layoutComponentD.addProperty(NAV_GROUP_ID, "groupD");
         layoutRowD.add(layoutColumnD);
         layoutColumnD.add(layoutComponentD);
-        perspectiveD.addRow(layoutRowD);
+        layoutD.addRow(layoutRowD);
 
-        when(pluginServices.getLayoutTemplate("A")).thenReturn(perspectiveA);
-        when(pluginServices.getLayoutTemplate("B")).thenReturn(perspectiveB);
-        when(pluginServices.getLayoutTemplate("C")).thenReturn(perspectiveC);
-        when(pluginServices.getLayoutTemplate("D")).thenReturn(perspectiveD);
+        LayoutRow layoutRowE = new LayoutRow();
+        LayoutColumn layoutColumnE = new LayoutColumn("12");
+        layoutRowE.add(layoutColumnE);
+        layoutColumnE.add(layoutComponentE);
+        layoutE.addRow(layoutRowE);
+
+        when(pluginServices.getLayoutTemplate("A")).thenReturn(layoutA);
+        when(pluginServices.getLayoutTemplate("B")).thenReturn(layoutB);
+        when(pluginServices.getLayoutTemplate("C")).thenReturn(layoutC);
+        when(pluginServices.getLayoutTemplate("D")).thenReturn(layoutD);
+        when(pluginServices.getLayoutTemplate("E")).thenReturn(layoutE);
     }
 
     @Test
@@ -107,7 +117,7 @@ public class LayoutTemplateAnalyzerTest {
                     .endGroup()
                 .build());
 
-        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(perspectiveA);
+        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(layoutA);
         assertTrue(info.isEmpty());
     }
 
@@ -119,7 +129,7 @@ public class LayoutTemplateAnalyzerTest {
                     .endGroup()
                 .build());
 
-        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(perspectiveC);
+        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(layoutC);
         assertTrue(info.isEmpty());
     }
 
@@ -131,7 +141,7 @@ public class LayoutTemplateAnalyzerTest {
                     .endGroup()
                 .build());
 
-        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(perspectiveA);
+        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(layoutA);
         assertEquals(info.getRefList().size(), 4);
         assertEquals(info.getRefList().get(0), new LayoutNavigationRef(PERSPECTIVE, "A"));
         assertEquals(info.getRefList().get(1), new LayoutNavigationRef(NAV_COMPONENT, CAROUSEL.getFQClassName()));
@@ -146,7 +156,7 @@ public class LayoutTemplateAnalyzerTest {
         layoutColumnA.add(layoutComponentB);
 
         when(navigationServices.loadNavTree()).thenReturn(new NavTreeBuilder().build());
-        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(perspectiveA);
+        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(layoutA);
         assertTrue(info.isEmpty());
     }
 
@@ -160,7 +170,7 @@ public class LayoutTemplateAnalyzerTest {
         layoutColumnB.add(layoutComponentA);
 
         when(navigationServices.loadNavTree()).thenReturn(new NavTreeBuilder().build());
-        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(perspectiveA);
+        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(layoutA);
         assertEquals(info.getRefList().size(), 3);
         assertEquals(info.getRefList().get(0), new LayoutNavigationRef(PERSPECTIVE, "A"));
         assertEquals(info.getRefList().get(1), new LayoutNavigationRef(NAV_COMPONENT, "PerspectiveDrag"));
@@ -178,7 +188,7 @@ public class LayoutTemplateAnalyzerTest {
                     .endGroup()
                 .build());
 
-        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(perspectiveA);
+        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(layoutA);
         assertEquals(info.getRefList().size(), 7);
         assertEquals(info.getRefList().get(0), new LayoutNavigationRef(PERSPECTIVE, "A"));
         assertEquals(info.getRefList().get(1), new LayoutNavigationRef(NAV_COMPONENT, CAROUSEL.getFQClassName()));
@@ -200,7 +210,7 @@ public class LayoutTemplateAnalyzerTest {
                 .endGroup()
                 .build());
 
-        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(perspectiveC);
+        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(layoutC);
         assertTrue(info.isEmpty());
     }
 
@@ -219,7 +229,7 @@ public class LayoutTemplateAnalyzerTest {
                 .endGroup()
                 .build());
 
-        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(perspectiveC);
+        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(layoutC);
         assertEquals(info.getRefList().size(), 9);
         assertEquals(info.getRefList().get(0), new LayoutNavigationRef(PERSPECTIVE, "C"));
         assertEquals(info.getRefList().get(1), new LayoutNavigationRef(NAV_COMPONENT, TABLIST.getFQClassName()));
@@ -243,7 +253,7 @@ public class LayoutTemplateAnalyzerTest {
                 .endGroup()
                 .build());
 
-        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(perspectiveC);
+        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(layoutC);
         assertEquals(info.getRefList().size(), 5);
         assertEquals(info.getRefList().get(0), new LayoutNavigationRef(PERSPECTIVE, "C"));
         assertEquals(info.getRefList().get(1), new LayoutNavigationRef(NAV_COMPONENT, TABLIST.getFQClassName()));
@@ -263,7 +273,7 @@ public class LayoutTemplateAnalyzerTest {
                 .endGroup()
                 .build());
 
-        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(perspectiveC);
+        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(layoutC);
         assertEquals(info.getRefList().size(), 8);
         assertEquals(info.getRefList().get(0), new LayoutNavigationRef(PERSPECTIVE, "C"));
         assertEquals(info.getRefList().get(1), new LayoutNavigationRef(NAV_COMPONENT, TABLIST.getFQClassName()));
@@ -286,12 +296,21 @@ public class LayoutTemplateAnalyzerTest {
                 .endGroup()
                 .build());
 
-        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(perspectiveC, "groupX");
+        LayoutRecursionIssue info = layoutTemplateAnalyzer.analyzeRecursion(layoutC, new LayoutTemplateContext("groupX"));
         assertEquals(info.getRefList().size(), 5);
         assertEquals(info.getRefList().get(0), new LayoutNavigationRef(PERSPECTIVE, "C"));
         assertEquals(info.getRefList().get(1), new LayoutNavigationRef(NAV_COMPONENT, TABLIST.getFQClassName()));
         assertEquals(info.getRefList().get(2), new LayoutNavigationRef(NAV_GROUP_CONTEXT, "groupX"));
         assertEquals(info.getRefList().get(3), new LayoutNavigationRef(DEFAULT_ITEM_FOUND, "item2"));
         assertEquals(info.getRefList().get(4), new LayoutNavigationRef(PERSPECTIVE, "C"));
+    }
+
+    @Test
+    public void testHasNavigationComponents() throws Exception {
+        assertTrue(layoutTemplateAnalyzer.hasNavigationComponents(layoutA));
+        assertTrue(layoutTemplateAnalyzer.hasNavigationComponents(layoutB));
+        assertTrue(layoutTemplateAnalyzer.hasNavigationComponents(layoutC));
+        assertTrue(layoutTemplateAnalyzer.hasNavigationComponents(layoutD));
+        assertFalse(layoutTemplateAnalyzer.hasNavigationComponents(layoutE));
     }
 }

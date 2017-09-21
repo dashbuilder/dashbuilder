@@ -93,6 +93,10 @@ public class TargetPerspectiveEditor implements IsElement {
         return perspectiveDropDown.getSelectedPerspective().getIdentifier();
     }
 
+    public String getPerspectiveName(String perspectiveId) {
+        return perspectiveTreeProvider.getPerspectiveName(perspectiveId);
+    }
+
     public void setNavGroupEnabled(boolean enabled) {
         view.setNavGroupEnabled(enabled);
     }

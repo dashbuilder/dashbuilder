@@ -17,10 +17,12 @@ package org.dashbuilder.client.navigation.widget;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.dashbuilder.common.client.widgets.AlertBox;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;
+import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.common.client.dom.UnorderedList;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -38,6 +40,11 @@ public class NavMenuBarWidgetView extends TargetDivNavWidgetView<NavMenuBarWidge
     @DataField
     UnorderedList navBar;
 
+    @Inject
+    @DataField
+    @Named("nav")
+    HTMLElement nav;
+
     NavMenuBarWidget presenter;
 
     @Inject
@@ -49,6 +56,7 @@ public class NavMenuBarWidgetView extends TargetDivNavWidgetView<NavMenuBarWidge
     public void init(NavMenuBarWidget presenter) {
         this.presenter = presenter;
         super.navWidget = navBar;
+        setNavHeaderVisible(true);
     }
 
     @Override
@@ -68,5 +76,10 @@ public class NavMenuBarWidgetView extends TargetDivNavWidgetView<NavMenuBarWidge
         DOMUtil.removeAllChildren(mainDiv);
         alertBox.setMessage(message);
         mainDiv.appendChild(alertBox.getElement());
+    }
+
+    @Override
+    public void setNavHeaderVisible(boolean visible) {
+        nav.setClassName(visible ? "navbar navbar-default navbar-pf" : "");
     }
 }

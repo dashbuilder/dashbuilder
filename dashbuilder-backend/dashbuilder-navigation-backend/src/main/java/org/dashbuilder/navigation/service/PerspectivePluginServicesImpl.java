@@ -20,6 +20,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.navigation.layout.LayoutRecursionIssue;
+import org.dashbuilder.navigation.layout.LayoutTemplateContext;
 import org.dashbuilder.navigation.layout.LayoutTemplateInfo;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
@@ -72,21 +73,29 @@ public class PerspectivePluginServicesImpl implements PerspectivePluginServices 
     }
 
     @Override
+    public LayoutTemplateInfo getLayoutTemplateInfo(String perspectiveName) {
+        LayoutTemplate layoutTemplate = getLayoutTemplate(perspectiveName);
+        return layoutTemplate != null ? getLayoutTemplateInfo(layoutTemplate) : null;
+    }
+
+    @Override
     public LayoutTemplate getLayoutTemplate(Plugin perspectivePlugin) {
         LayoutEditorModel layoutEditorModel = pluginServices.getLayoutEditor(perspectivePlugin.getPath(), PluginType.PERSPECTIVE_LAYOUT);
         return layoutServices.convertLayoutFromString(layoutEditorModel.getLayoutEditorModel());
     }
 
     @Override
-    public LayoutTemplateInfo getLayoutTemplateInfo(Plugin perspectivePlugin, String navGroupId) {
+    public LayoutTemplateInfo getLayoutTemplateInfo(Plugin perspectivePlugin, LayoutTemplateContext layoutCtx) {
         LayoutTemplate layoutTemplate = getLayoutTemplate(perspectivePlugin);
-        LayoutRecursionIssue recursiveIssue = layoutTemplateAnalyzer.analyzeRecursion(layoutTemplate, navGroupId);
-        return new LayoutTemplateInfo(layoutTemplate, recursiveIssue);
+        LayoutRecursionIssue recursiveIssue = layoutTemplateAnalyzer.analyzeRecursion(layoutTemplate, layoutCtx);
+        boolean hasNavComps = layoutTemplateAnalyzer.hasNavigationComponents(layoutTemplate);
+        return new LayoutTemplateInfo(layoutTemplate, hasNavComps, recursiveIssue);
     }
 
     @Override
     public LayoutTemplateInfo getLayoutTemplateInfo(LayoutTemplate layoutTemplate) {
         LayoutRecursionIssue recursiveIssue = layoutTemplateAnalyzer.analyzeRecursion(layoutTemplate);
-        return new LayoutTemplateInfo(layoutTemplate, recursiveIssue);
+        boolean hasNavComps = layoutTemplateAnalyzer.hasNavigationComponents(layoutTemplate);
+        return new LayoutTemplateInfo(layoutTemplate, hasNavComps, recursiveIssue);
     }
 }

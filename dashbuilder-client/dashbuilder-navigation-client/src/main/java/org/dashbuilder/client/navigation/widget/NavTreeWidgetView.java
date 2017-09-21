@@ -87,11 +87,11 @@ public class NavTreeWidgetView extends TargetDivNavWidgetView<NavTreeWidget>
     @Override
     protected void setSelectedEnabled(boolean enabled) {
         String cname = selectedItem.getClassName();
-        if (!cname.equals("navtree-widget-non-clickable")) {
+        if (!cname.equals("uf-navtree-widget-non-clickable")) {
             if (enabled) {
-                selectedItem.setClassName("navtree-widget-clicked");
+                selectedItem.setClassName("uf-navtree-widget-clicked");
             } else {
-                selectedItem.setClassName("navtree-widget-non-clicked");
+                selectedItem.setClassName("uf-navtree-widget-non-clicked");
             }
         }
     }
@@ -99,13 +99,13 @@ public class NavTreeWidgetView extends TargetDivNavWidgetView<NavTreeWidget>
     protected void addItem(String iconClass, String id, String name, String description, Command onClicked) {
         Element nameEl = onClicked != null ? Document.get().createAnchorElement() : Document.get().createSpanElement();
         nameEl.setInnerText(name);
-        nameEl.setClassName(onClicked != null ? "navtree-widget-non-clicked" : "navtree-widget-non-clickable");
+        nameEl.setClassName(onClicked != null ? "uf-navtree-widget-non-clicked" : "uf-navtree-widget-non-clickable");
         if (description != null && !description.equals(name)) {
             nameEl.setTitle(description);
         }
 
         SpanElement iconSpan = Document.get().createSpanElement();
-        iconSpan.setClassName("navtree-widget-icon " + iconClass);
+        iconSpan.setClassName("uf-navtree-widget-icon " + iconClass);
 
         DivElement div = Document.get().createDivElement();
         div.appendChild(iconSpan);

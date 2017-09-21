@@ -119,7 +119,7 @@ public class NavItemEditorView extends Composite
 
     @Override
     public void setItemNameError(boolean hasError) {
-        String classes = "navitem-name-input" + (hasError ? " navitem-name-error" : "");
+        String classes = "uf-navitem-name-input" + (hasError ? " uf-navitem-name-error" : " form-control");
         itemNameInput.setClassName(classes);
     }
 
@@ -190,6 +190,7 @@ public class NavItemEditorView extends Composite
 
     @Override
     public void setContextWidget(IsElement widget) {
+        extraDiv.getStyle().setProperty("display", "block");
         DOMUtil.removeAllChildren(extraDiv);
         extraDiv.appendChild(widget.getElement());
     }
@@ -215,6 +216,11 @@ public class NavItemEditorView extends Composite
     @Override
     public String i18nNewItem(String item) {
         return i18n.newItem(item);
+    }
+
+    @Override
+    public String i18nNewItemName(String item) {
+        return i18n.newItemName(item);
     }
 
     @Override
@@ -273,9 +279,11 @@ public class NavItemEditorView extends Composite
     }
 
     @EventHandler("itemNameInput")
-    public void onEnterPressedAfterEditingName(KeyPressEvent keyEvent) {
+    public void onItemNameChanged(KeyPressEvent keyEvent) {
         if (keyEvent.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
             presenter.confirmChanges();
+        } else {
+            presenter.onItemNameChanged();
         }
     }
 }

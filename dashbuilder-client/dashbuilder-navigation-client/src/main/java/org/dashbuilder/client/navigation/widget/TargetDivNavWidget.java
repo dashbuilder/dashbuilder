@@ -27,6 +27,7 @@ import org.dashbuilder.navigation.NavGroup;
 import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.layout.LayoutRecursionIssue;
 import org.dashbuilder.navigation.layout.LayoutRecursionIssueI18n;
+import org.dashbuilder.navigation.layout.LayoutTemplateContext;
 import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.ext.plugin.event.PluginSaved;
@@ -159,7 +160,8 @@ public abstract class TargetDivNavWidget extends BaseNavWidget implements HasTar
             String navRootId = navCtx.getNavGroupId();
             if (resourceId != null) {
                 if (pluginManager.isRuntimePerspective(resourceId)) {
-                    pluginManager.buildPerspectiveWidget(resourceId, navRootId,
+                    LayoutTemplateContext layoutCtx = new LayoutTemplateContext(navRootId);
+                    pluginManager.buildPerspectiveWidget(resourceId, layoutCtx,
                             w -> view.showContent(targetDivId, w),
                             this::onInfiniteRecursion);
                 }

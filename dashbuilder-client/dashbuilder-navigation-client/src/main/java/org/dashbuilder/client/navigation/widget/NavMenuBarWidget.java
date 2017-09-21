@@ -28,6 +28,7 @@ public class NavMenuBarWidget extends TargetDivNavWidget {
 
     public interface View extends TargetDivNavWidget.View<NavMenuBarWidget> {
 
+        void setNavHeaderVisible(boolean visible);
     }
 
     View view;
@@ -47,5 +48,9 @@ public class NavMenuBarWidget extends TargetDivNavWidget {
     @Override
     public NavWidget lookupNavGroupWidget() {
         return beanManager.lookupBean(NavDropDownWidget.class).newInstance();
+    }
+
+    public void setNavHeaderVisible(boolean visible) {
+        view.setNavHeaderVisible(visible);
     }
 }

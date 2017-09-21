@@ -28,13 +28,15 @@ import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 public class LayoutTemplateInfo {
 
     LayoutTemplate layoutTemplate;
+    boolean hasNavigationComponents;
     LayoutRecursionIssue recursionIssue;
 
     public LayoutTemplateInfo() {
     }
 
-    public LayoutTemplateInfo(LayoutTemplate layoutTemplate, LayoutRecursionIssue recursionIssue) {
+    public LayoutTemplateInfo(LayoutTemplate layoutTemplate, boolean hasNavigationComponents, LayoutRecursionIssue recursionIssue) {
         this.layoutTemplate = layoutTemplate;
+        this.hasNavigationComponents = hasNavigationComponents;
         this.recursionIssue = recursionIssue;
     }
 
@@ -44,5 +46,9 @@ public class LayoutTemplateInfo {
 
     public LayoutRecursionIssue getRecursionIssue() {
         return recursionIssue;
+    }
+
+    public boolean hasNavigationComponents() {
+        return hasNavigationComponents;
     }
 }

@@ -54,11 +54,11 @@ public class ContentExplorerScreenView extends Composite implements ContentExplo
 
     @Inject
     @DataField
-    ListItem menusTab;
+    ListItem navigationTab;
 
     @Inject
     @DataField
-    Anchor menusAnchor;
+    Anchor navigationAnchor;
 
     @Inject
     @DataField
@@ -87,22 +87,22 @@ public class ContentExplorerScreenView extends Composite implements ContentExplo
     @Override
     public void showPerspectives(IsWidget perspectivesExplorer) {
         perspectivesTab.setClassName("active");
-        menusTab.setClassName("");
+        navigationTab.setClassName("");
         DOMUtil.removeAllChildren(tabContent);
         tabContent.appendChild((Node) perspectivesExplorer.asWidget().getElement());
     }
 
     @Override
-    public void showMenus(IsWidget menusExplorer) {
-        menusTab.setClassName("active");
+    public void showNavigation(IsWidget menusExplorer) {
         perspectivesTab.setClassName("");
+        navigationTab.setClassName("active");
         DOMUtil.removeAllChildren(tabContent);
         tabContent.appendChild((Node) menusExplorer.asWidget().getElement());
     }
 
     @Override
-    public void setMenusName(String name) {
-        menusAnchor.setTextContent(name);
+    public void setNavigationName(String name) {
+        navigationAnchor.setTextContent(name);
     }
 
     @Override
@@ -142,8 +142,8 @@ public class ContentExplorerScreenView extends Composite implements ContentExplo
         presenter.gotoPerspectives();
     }
 
-    @EventHandler("menusAnchor")
-    public void onMenusAnchorClick(final ClickEvent event) {
-        presenter.gotoMenus();
+    @EventHandler("navigationAnchor")
+    public void onNavigationAnchorClick(final ClickEvent event) {
+        presenter.gotoNavigation();
     }
 }

@@ -17,6 +17,7 @@ package org.dashbuilder.navigation.service;
 
 import java.util.Collection;
 
+import org.dashbuilder.navigation.layout.LayoutTemplateContext;
 import org.dashbuilder.navigation.layout.LayoutTemplateInfo;
 import org.jboss.errai.bus.server.annotations.Remote;
 import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
@@ -36,7 +37,9 @@ public interface PerspectivePluginServices {
 
     LayoutTemplate getLayoutTemplate(Plugin perspectivePlugin);
 
-    LayoutTemplateInfo getLayoutTemplateInfo(Plugin perspectivePlugin, String navGroupId);
+    LayoutTemplateInfo getLayoutTemplateInfo(String perspectiveName);
+
+    LayoutTemplateInfo getLayoutTemplateInfo(Plugin perspectivePlugin, LayoutTemplateContext layoutCtx);
 
     LayoutTemplateInfo getLayoutTemplateInfo(LayoutTemplate layoutTemplate);
 }

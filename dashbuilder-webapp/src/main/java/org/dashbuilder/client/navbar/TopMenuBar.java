@@ -102,7 +102,7 @@ public class TopMenuBar implements Header {
 
         setNavHeaderHtml("banner/banner.html");
         setUserName(user.getIdentifier());
-        setMenuBar(menuBarWidget);
+        navTreeMenuBar.appendChild((Node) menuBarWidget.asWidget().getElement());
 
         clearRoles();
         for (Role role : user.getRoles()) {
@@ -141,6 +141,7 @@ public class TopMenuBar implements Header {
     public void show(String navItemId) {
         // Show the target subtree from the global nav tree
         navTree = menuBarWidget.getNavigationManager().getNavTree().getItemAsTree(navItemId);
+        menuBarWidget.setNavHeaderVisible(false);
         menuBarWidget.setOnStaleCommand(() -> show(navItemId));
         menuBarWidget.show(navTree);
 
@@ -190,13 +191,6 @@ public class TopMenuBar implements Header {
 
     public void setUserName(String name) {
         userNameSpan.setTextContent(name);
-    }
-
-    public void setMenuBar(IsWidget widget) {
-        DOMUtil.removeAllChildren(navTreeMenuBar);
-        com.google.gwt.dom.client.Element el = widget.asWidget().getElement();
-        el.getStyle().setPropertyPx("borderTop", 0);
-        navTreeMenuBar.appendChild((Node) el);
     }
 
     public void clearRoles() {

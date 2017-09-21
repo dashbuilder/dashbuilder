@@ -46,11 +46,11 @@ public class ContentExplorerScreen {
 
         void showPerspectives(IsWidget perspectivesExplorer);
 
-        void showMenus(IsWidget menusExplorer);
+        void showNavigation(IsWidget navTreeExplorer);
 
         void setPerspectivesName(String name);
 
-        void setMenusName(String name);
+        void setNavigationName(String name);
 
         void setCreateName(String name);
 
@@ -103,7 +103,7 @@ public class ContentExplorerScreen {
         navTreeEditor.setOnChangeCommand(this::onNavTreeChanged);
 
         view.setPerspectivesName(i18n.capitalizeFirst(i18n.getPerspectivesResourceName()));
-        view.setMenusName(i18n.getContentExplorerMenus());
+        view.setNavigationName(i18n.getContentExplorerMenus());
         view.setCreateName(i18n.getContentExplorerNew());
         view.setCreateMenuVisible(pluginController.canCreatePerspectives());
         view.addCreateMenuEntry(i18n.capitalizeFirst(i18n.getPerspectiveResourceName()), this::createNewPerspective);
@@ -135,9 +135,9 @@ public class ContentExplorerScreen {
         view.showPerspectives(perspectiveExplorer);
     }
 
-    public void gotoMenus() {
+    public void gotoNavigation() {
         navTreeEditor.edit(navigationManager.getNavTree());
-        view.showMenus(navTreeEditor);
+        view.showNavigation(navTreeEditor);
     }
 
     private void onNavTreeChanged() {

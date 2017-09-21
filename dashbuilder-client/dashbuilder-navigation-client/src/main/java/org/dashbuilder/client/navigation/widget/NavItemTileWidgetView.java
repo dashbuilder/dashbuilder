@@ -58,17 +58,17 @@ public class NavItemTileWidgetView implements NavItemTileWidget.View, IsElement 
         mainDiv.getStyle().setProperty("title", descr);
 
         if (ItemType.GROUP == type) {
-            mainDiv.setClassName("navitem-tile-body navitem-tile-group");
+            mainDiv.setClassName("uf-navitem-tile-body uf-navitem-tile-group");
             iconSpan.setClassName("pficon-folder-open");
             mainDiv.setTitle(NavigationConstants.INSTANCE.openNavItem(name));
         }
         else if (ItemType.PERSPECTIVE == type) {
-            mainDiv.setClassName("navitem-tile-body navitem-tile-perspective");
+            mainDiv.setClassName("uf-navitem-tile-body uf-navitem-tile-perspective");
             iconSpan.setClassName("pficon-screen");
             mainDiv.setTitle(NavigationConstants.INSTANCE.gotoNavItem(name));
         }
         else if (ItemType.RUNTIME_PERSPECTIVE == type) {
-            mainDiv.setClassName("navitem-tile-body navitem-tile-runtime-perspective");
+            mainDiv.setClassName("uf-navitem-tile-body uf-navitem-tile-runtime-perspective");
             iconSpan.setClassName("pficon-virtual-machine");
             mainDiv.setTitle(NavigationConstants.INSTANCE.showNavItem(name));
         }
