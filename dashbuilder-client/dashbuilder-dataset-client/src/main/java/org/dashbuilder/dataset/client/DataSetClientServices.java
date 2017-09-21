@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -48,7 +49,7 @@ import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.uberfire.backend.vfs.Path;
 
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
 /**
  * Data set services for clients.
@@ -123,6 +124,7 @@ public class DataSetClientServices {
 
     /**
      * Fetch the metadata instance for the specified data set.
+     *
      * @param uuid The UUID of the data set
      * @throws Exception It there is an unexpected error trying to execute the lookup request.
      */
@@ -160,6 +162,7 @@ public class DataSetClientServices {
 
     /**
      * Get the cached metadata instance for the specified data set.
+     *
      * @param uuid The UUID of the data set. Null if the metadata is not stored on client yet.
      */
     public DataSetMetadata getMetadata(String uuid) {
@@ -173,6 +176,7 @@ public class DataSetClientServices {
 
     /**
      * Export a data set, specified by a data set lookup request, to CSV format.
+     *
      * @param request The data set lookup request
      * @throws Exception It there is an unexpected error during the export.
      */
@@ -227,6 +231,7 @@ public class DataSetClientServices {
 
     /**
      * Export a data set, specified by a data set lookup request, to Excel format.
+     *
      * @param request The data set lookup request
      * @throws Exception It there is an unexpected error during the export.
      */
@@ -277,6 +282,7 @@ public class DataSetClientServices {
 
     /**
      * Creates a brand new data set definition for the provider type specified
+     *
      * @param type The provider type
      * @return A data set definition instance
      */
@@ -287,7 +293,8 @@ public class DataSetClientServices {
 
     /**
      * Process the specified data set lookup request for a given definition.
-     * @param def The data set definition
+     *
+     * @param def     The data set definition
      * @param request The data set lookup request
      * @throws Exception It there is an unexpected error trying to execute the lookup request.
      */
@@ -328,6 +335,7 @@ public class DataSetClientServices {
 
     /**
      * Process the specified data set lookup request.
+     *
      * @param request The data set lookup request
      * @throws Exception It there is an unexpected error trying to execute the lookup request.
      */
@@ -477,6 +485,7 @@ public class DataSetClientServices {
 
     /**
      * <p>Returns the download URL for a given file provided by a servlet method.</p>
+     *
      * @param path The path of the file.
      */
     public String getDownloadFileUrl(final Path path) {
@@ -485,6 +494,7 @@ public class DataSetClientServices {
 
     /**
      * <p>Returns the upload URL for a given file provided by a servlet method.</p>
+     *
      * @param path The path of the file.
      */
     public String getUploadFileUrl(String path) {

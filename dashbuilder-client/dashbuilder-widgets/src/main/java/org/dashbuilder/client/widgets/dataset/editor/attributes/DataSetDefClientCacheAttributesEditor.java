@@ -30,15 +30,16 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
 /**
  * <p>Data Set client cache attributes editor presenter.</p>
- * 
- * @since 0.4.0 
+ *
+ * @since 0.4.0
  */
 @Dependent
-public class DataSetDefClientCacheAttributesEditor implements IsWidget, org.dashbuilder.dataset.client.editor.DataSetDefClientCacheAttributesEditor {
+public class DataSetDefClientCacheAttributesEditor implements IsWidget,
+                                                              org.dashbuilder.dataset.client.editor.DataSetDefClientCacheAttributesEditor {
 
     ToggleSwitchEditor pushEnabled;
     ValueBoxEditor<Integer> pushMaxSize;
@@ -56,15 +57,19 @@ public class DataSetDefClientCacheAttributesEditor implements IsWidget, org.dash
     @PostConstruct
     public void init() {
         view.init(viewCallback);
-        view.init(DataSetEditorConstants.INSTANCE.clientCache(), DataSetEditorConstants.INSTANCE.bytes(), 
-                pushEnabled.asWidget(), pushMaxSize.view);
+        view.init(DataSetEditorConstants.INSTANCE.clientCache(),
+                  DataSetEditorConstants.INSTANCE.bytes(),
+                  pushEnabled.asWidget(),
+                  pushMaxSize.view);
         pushMaxSize.addHelpContent(DataSetEditorConstants.INSTANCE.attributeMaxBytes(),
-                DataSetEditorConstants.INSTANCE.attributeMaxBytes_description(),
-                Placement.BOTTOM);
+                                   DataSetEditorConstants.INSTANCE.attributeMaxBytes_description(),
+                                   Placement.BOTTOM);
     }
 
-    public void setRange(final Double min, final Double max) {
-        view.setRange(min, max);    
+    public void setRange(final Double min,
+                         final Double max) {
+        view.setRange(min,
+                      max);
     }
 
     @Override
@@ -72,9 +77,8 @@ public class DataSetDefClientCacheAttributesEditor implements IsWidget, org.dash
         return view.asWidget();
     }
 
-    
     /*************************************************************
-            ** GWT EDITOR CONTRACT METHODS **
+     ** GWT EDITOR CONTRACT METHODS **
      *************************************************************/
 
     @Override
@@ -137,7 +141,8 @@ public class DataSetDefClientCacheAttributesEditor implements IsWidget, org.dash
     }
 
     void onEnabledChangedEvent(@Observes ValueChangeEvent<Boolean> valueChangeEvent) {
-        checkNotNull("valueChangeEvent", valueChangeEvent);
+        checkNotNull("valueChangeEvent",
+                     valueChangeEvent);
         if (valueChangeEvent.getContext().equals(pushEnabled)) {
             if (valueChangeEvent.getValue()) {
                 enable();

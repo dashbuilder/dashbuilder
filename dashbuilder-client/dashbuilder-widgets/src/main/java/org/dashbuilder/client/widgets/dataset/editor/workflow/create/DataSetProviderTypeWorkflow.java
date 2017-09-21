@@ -34,8 +34,7 @@ import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.validations.DataSetValidatorProvider;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
-import org.uberfire.commons.validation.PortablePreconditions;
-
+import org.kie.soup.commons.validation.PortablePreconditions;
 
 /**
  * <p>Data Set Editor workflow presenter for creating a data set definition instance by selecting the provider type.</p>
@@ -58,8 +57,13 @@ public class DataSetProviderTypeWorkflow extends DataSetEditorWorkflow<DataSetDe
                                        final Event<TestDataSetRequestEvent> testDataSetEvent,
                                        final View view) {
 
-        super(clientServices, validatorProvider, beanManager,
-                saveRequestEvent, testDataSetEvent, cancelRequestEvent, view);
+        super(clientServices,
+              validatorProvider,
+              beanManager,
+              saveRequestEvent,
+              testDataSetEvent,
+              cancelRequestEvent,
+              view);
 
         this.providerTypeEditor = providerTypeEditor;
     }
@@ -94,7 +98,7 @@ public class DataSetProviderTypeWorkflow extends DataSetEditorWorkflow<DataSetDe
         };
 
         this.stepValidator = () -> {
-            Iterable<ConstraintViolation<?>> violations = validatorProvider.validateProviderType( getDataSetDef());
+            Iterable<ConstraintViolation<?>> violations = validatorProvider.validateProviderType(getDataSetDef());
             dataSetDefProviderTypeDriver.setConstraintViolations(violations);
             addViolations(violations);
         };
@@ -107,7 +111,8 @@ public class DataSetProviderTypeWorkflow extends DataSetEditorWorkflow<DataSetDe
     }
 
     void onProviderTypeSelected(@Observes DataSetDefCreationRequestEvent event) {
-        PortablePreconditions.checkNotNull("CreateDataSetDefRequestEvent", event);
+        PortablePreconditions.checkNotNull("CreateDataSetDefRequestEvent",
+                                           event);
         if (event.getContext().equals(providerTypeEditor)) {
             super.saveButtonCommand.execute();
         }

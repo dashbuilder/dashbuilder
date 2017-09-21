@@ -55,10 +55,11 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
 @WorkbenchScreen(identifier = "DataSetDefWizard")
 @Dependent
@@ -79,15 +80,15 @@ public class DataSetDefWizardScreen {
     SavePopUpPresenter savePopUpPresenter;
 
     @Inject
-    public DataSetDefWizardScreen( final SyncBeanManager beanManager,
-                                   final DataSetEditorWorkflowFactory workflowFactory,
-                                   final Caller<DataSetDefVfsServices> services,
-                                   final DataSetClientServices clientServices,
-                                   final Event<NotificationEvent> notification,
-                                   final PlaceManager placeManager,
-                                   final ErrorPopupPresenter errorPopupPresenter,
-                                   final SavePopUpPresenter savePopUpPresenter,
-                                   final DataSetDefScreenView view ) {
+    public DataSetDefWizardScreen(final SyncBeanManager beanManager,
+                                  final DataSetEditorWorkflowFactory workflowFactory,
+                                  final Caller<DataSetDefVfsServices> services,
+                                  final DataSetClientServices clientServices,
+                                  final Event<NotificationEvent> notification,
+                                  final PlaceManager placeManager,
+                                  final ErrorPopupPresenter errorPopupPresenter,
+                                  final SavePopUpPresenter savePopUpPresenter,
+                                  final DataSetDefScreenView view) {
         this.beanManager = beanManager;
         this.workflowFactory = workflowFactory;
         this.services = services;
@@ -114,7 +115,7 @@ public class DataSetDefWizardScreen {
         this.placeRequest = placeRequest;
         providerTypeEdition();
     }
-    
+
     @OnClose
     public void onClose() {
         disposeCurrentWorkflow();
@@ -129,16 +130,17 @@ public class DataSetDefWizardScreen {
         setCurrentWorkflow(providerTypeWorkflow);
         providerTypeWorkflow.edit(dataSetDef).providerTypeEdition();
     }
-    
+
     void onProviderTypeSelected(final DataSetProviderTypeWorkflow providerTypeWorkflow) {
         final DataSetProviderType selectedProviderType = providerTypeWorkflow.getProviderType();
         try {
-            clientServices.newDataSet(selectedProviderType, this::basicAttributesEdition);
+            clientServices.newDataSet(selectedProviderType,
+                                      this::basicAttributesEdition);
         } catch (final Exception e) {
             showError(e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
         }
     }
-    
+
     private void setCurrentWorkflow(final DataSetEditorWorkflow w) {
         this.currentWorkflow = w;
         view.setWidget(w);
@@ -157,13 +159,14 @@ public class DataSetDefWizardScreen {
         setCurrentWorkflow(basicAttributesWorkflow);
         basicAttributesWorkflow.edit(typedDataSetDef).basicAttributesEdition().showBackButton().showTestButton();
     }
-  
+
     private void testDataSet() {
         assert currentWorkflow != null;
         currentWorkflow.testDataSet(new DataSetEditorWorkflow.TestDataSetCallback() {
             @Override
             public void onSuccess(final DataSet dataSet) {
-                completeEdition(currentWorkflow.getDataSetDef(), dataSet);
+                completeEdition(currentWorkflow.getDataSetDef(),
+                                dataSet);
             }
 
             @Override
@@ -173,7 +176,8 @@ public class DataSetDefWizardScreen {
         });
     }
 
-    public void completeEdition(final DataSetDef dataSetDef, final DataSet dataset) {
+    public void completeEdition(final DataSetDef dataSetDef,
+                                final DataSet dataset) {
         if (dataset != null) {
             this.nextCommand = this::save;
             List<DataColumn> columns = dataset.getColumns();
@@ -182,40 +186,45 @@ public class DataSetDefWizardScreen {
                 // Obtain all data columns available from the resulting data set.
                 List<DataColumnDef> columnDefs = new ArrayList<>(columns.size());
                 for (final DataColumn column : columns) {
-                    columnDefs.add(new DataColumnDef(column.getId(), column.getColumnType()));
+                    columnDefs.add(new DataColumnDef(column.getId(),
+                                                     column.getColumnType()));
                 }
 
                 // Delegate edition to the dataSetEditWorkflow.
                 final DataSetProviderType type = dataSetDef.getProvider() != null ? dataSetDef.getProvider() : null;
-                final DataSetEditWorkflow  editWorkflow = workflowFactory.edit(type);
+                final DataSetEditWorkflow editWorkflow = workflowFactory.edit(type);
                 setCurrentWorkflow(editWorkflow);
-                editWorkflow.edit(dataSetDef, columnDefs)
+                editWorkflow.edit(dataSetDef,
+                                  columnDefs)
                         .showPreviewTab()
                         .showBackButton()
                         .showNextButton();
-
             } else {
                 showError("Data set has no columns");
             }
         } else {
             showError("Data set is empty.");
         }
-
     }
 
     protected void save() {
         final DataSetDef dataSetDef = currentWorkflow.getDataSetDef();
-        savePopUpPresenter.show(message -> onSave(dataSetDef, message));
+        savePopUpPresenter.show(message -> onSave(dataSetDef,
+                                                  message));
     }
-    
-    void onSave(final DataSetDef dataSetDef, final String message) {
+
+    void onSave(final DataSetDef dataSetDef,
+                final String message) {
         BusyPopup.showMessage(DataSetAuthoringConstants.INSTANCE.saving());
-        services.call(saveSuccessCallback, errorCallback).save(dataSetDef, message);
+        services.call(saveSuccessCallback,
+                      errorCallback).save(dataSetDef,
+                                          message);
         placeManager.goTo("DataSetAuthoringHome");
     }
 
     RemoteCallback<Path> saveSuccessCallback = new RemoteCallback<Path>() {
-        @Override public void callback(Path path) {
+        @Override
+        public void callback(Path path) {
             currentWorkflow.clear();
             BusyPopup.close();
             notification.fire(new NotificationEvent(DataSetAuthoringConstants.INSTANCE.savedOk()));
@@ -243,16 +252,18 @@ public class DataSetDefWizardScreen {
      *************************************************************/
 
     void onTestEvent(@Observes TestDataSetRequestEvent testDataSetRequestEvent) {
-        checkNotNull("testDataSetRequestEvent", testDataSetRequestEvent);
+        checkNotNull("testDataSetRequestEvent",
+                     testDataSetRequestEvent);
         if (testDataSetRequestEvent.getContext().equals(currentWorkflow)) {
             if (!currentWorkflow.hasErrors()) {
                 testDataSet();
             }
         }
     }
-    
+
     void onSaveEvent(@Observes SaveRequestEvent saveEvent) {
-        checkNotNull("saveEvent", saveEvent);
+        checkNotNull("saveEvent",
+                     saveEvent);
         if (saveEvent.getContext().equals(currentWorkflow)) {
             if (this.nextCommand != null && !currentWorkflow.hasErrors()) {
                 this.nextCommand.execute();
@@ -261,14 +272,16 @@ public class DataSetDefWizardScreen {
     }
 
     void onCancelEvent(@Observes CancelRequestEvent cancelEvent) {
-        checkNotNull("cancelEvent", cancelEvent);
+        checkNotNull("cancelEvent",
+                     cancelEvent);
         if (cancelEvent.getContext().equals(currentWorkflow)) {
             providerTypeEdition();
         }
     }
 
     void onErrorEvent(@Observes ErrorEvent errorEvent) {
-        checkNotNull("errorEvent", errorEvent);
+        checkNotNull("errorEvent",
+                     errorEvent);
         if (errorEvent.getClientRuntimeError() != null) {
             showError(errorEvent.getClientRuntimeError());
         } else if (errorEvent.getMessage() != null) {
@@ -277,10 +290,11 @@ public class DataSetDefWizardScreen {
     }
 
     void onTabChangedEvent(@Observes TabChangedEvent tabChangedEvent) {
-        checkNotNull("tabChangedEvent", tabChangedEvent);
+        checkNotNull("tabChangedEvent",
+                     tabChangedEvent);
         try {
             // This event should only be fired when worklow is an instance of the DataSetEditWorkflow, as it uses the main tabbed editor. 
-            if (tabChangedEvent.getContext().equals( ( (DataSetEditWorkflow) currentWorkflow).getEditor() )) {
+            if (tabChangedEvent.getContext().equals(((DataSetEditWorkflow) currentWorkflow).getEditor())) {
                 currentWorkflow.clearButtons();
                 String tabId = tabChangedEvent.getTabId();
                 if (tabId != null && DataSetEditor.TAB_CONFIGURATION.equals(tabId)) {
@@ -292,7 +306,5 @@ public class DataSetDefWizardScreen {
         } catch (final ClassCastException e) {
             // Skip event.
         }
-        
     }
-
 }

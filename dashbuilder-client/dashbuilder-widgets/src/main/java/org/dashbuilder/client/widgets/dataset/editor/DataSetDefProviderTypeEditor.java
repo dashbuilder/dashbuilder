@@ -27,14 +27,15 @@ import org.dashbuilder.common.client.editor.list.ImageListEditor;
 import org.dashbuilder.common.client.event.ValueChangeEvent;
 import org.dashbuilder.dataprovider.DataSetProviderType;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
+import org.kie.soup.commons.validation.PortablePreconditions;
 import org.uberfire.client.mvp.UberView;
-import org.uberfire.commons.validation.PortablePreconditions;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,23 +44,24 @@ import static org.dashbuilder.dataprovider.DataSetProviderType.*;
 
 /**
  * <p>Data Set provider type editor presenter.</p>
- * 
- * @since 0.4.0 
+ *
+ * @since 0.4.0
  */
 @Dependent
-public class DataSetDefProviderTypeEditor implements IsWidget, org.dashbuilder.dataset.client.editor.DataSetDefProviderTypeEditor  {
+public class DataSetDefProviderTypeEditor implements IsWidget,
+                                                     org.dashbuilder.dataset.client.editor.DataSetDefProviderTypeEditor {
 
     public interface View extends UberView<DataSetDefProviderTypeEditor> {
+
         /**
          * <p>Specify the views to use for each sub-editor before calling <code>initWidget</code>.</p>
          */
         void initWidgets(IsWidget listEditorView);
     }
-    
+
     HorizImageListEditor<DataSetProviderType> provider;
     Event<DataSetDefCreationRequestEvent> createEvent;
     public View view;
-
 
     @Inject
     public DataSetDefProviderTypeEditor(final HorizImageListEditor<DataSetProviderType> provider,
@@ -73,7 +75,7 @@ public class DataSetDefProviderTypeEditor implements IsWidget, org.dashbuilder.d
     @PostConstruct
     public void init() {
         view.init(this);
-        
+
         // Initialize the acceptable values for DataSetProviderType.
         final Collection<ImageListEditor<DataSetProviderType>.Entry> entries = getDefaultEntries();
         provider.setEntries(entries);
@@ -86,14 +88,16 @@ public class DataSetDefProviderTypeEditor implements IsWidget, org.dashbuilder.d
     }
 
     void onItemClicked(@Observes ValueChangeEvent<DataSetProviderType> event) {
-        PortablePreconditions.checkNotNull("ValueChangeEvent<DataSetProviderType>", event);
+        PortablePreconditions.checkNotNull("ValueChangeEvent<DataSetProviderType>",
+                                           event);
         if (event.getContext().equals(provider)) {
-            createEvent.fire(new DataSetDefCreationRequestEvent(this, event.getValue()));
+            createEvent.fire(new DataSetDefCreationRequestEvent(this,
+                                                                event.getValue()));
         }
     }
-    
+
     /*************************************************************
-            ** GWT EDITOR CONTRACT METHODS **
+     ** GWT EDITOR CONTRACT METHODS **
      *************************************************************/
 
     @Override
@@ -109,7 +113,7 @@ public class DataSetDefProviderTypeEditor implements IsWidget, org.dashbuilder.d
     /**
      * The provider types supported by this editor
      */
-    DataSetProviderType[] CORE_TYPES = new DataSetProviderType[] {BEAN, CSV, SQL, ELASTICSEARCH};
+    DataSetProviderType[] CORE_TYPES = new DataSetProviderType[]{BEAN, CSV, SQL, ELASTICSEARCH};
 
     protected Collection<ImageListEditor<DataSetProviderType>.Entry> getDefaultEntries() {
         final DataSetProviderType[] providerTypes = CORE_TYPES;
@@ -118,9 +122,10 @@ public class DataSetDefProviderTypeEditor implements IsWidget, org.dashbuilder.d
             final String title = getTypeSelectorTitle(type);
             final String text = getTypeSelectorText(type);
             final SafeUri uri = getTypeSelectorImageUri(type);
-            final ImageListEditor<DataSetProviderType>.Entry entry = provider.newEntry(type, uri,
-                    new SafeHtmlBuilder().appendEscaped(title). toSafeHtml(),
-                    new SafeHtmlBuilder().appendEscaped(text). toSafeHtml());
+            final ImageListEditor<DataSetProviderType>.Entry entry = provider.newEntry(type,
+                                                                                       uri,
+                                                                                       new SafeHtmlBuilder().appendEscaped(title).toSafeHtml(),
+                                                                                       new SafeHtmlBuilder().appendEscaped(text).toSafeHtml());
             entries.add(entry);
         }
         return entries;

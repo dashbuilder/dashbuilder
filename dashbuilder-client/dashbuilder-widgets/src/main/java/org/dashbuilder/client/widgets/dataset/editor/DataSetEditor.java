@@ -44,22 +44,24 @@ import org.uberfire.mvp.Command;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+
 import java.util.List;
 
 import static org.dashbuilder.dataprovider.DataSetProviderType.*;
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
 /**
  * <p>Data Set Editor presenter.</p>
- * 
- * @since 0.4.0 
+ *
+ * @since 0.4.0
  */
-public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, DataSetDefEditor<T> {
+public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget,
+                                                                     DataSetDefEditor<T> {
 
     public static final String TAB_CONFIGURATION = "configuration";
     public static final String TAB_PREVIEW = "preview";
     public static final String TAB_ADVANCED = "advanced";
-    
+
     public interface View extends UberView<DataSetEditor> {
 
         /**
@@ -74,11 +76,11 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
                          DataSetDefRefreshAttributesEditor.View refreshEditorView);
 
         void setConfigurationTabTitle(String title);
-        
+
         void showConfigurationTab();
 
         void addConfigurationTabItemClickHandler(final Command command);
-        
+
         void showPreviewTab();
 
         void addPreviewTabItemClickHandler(final Command command);
@@ -88,15 +90,14 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
         void addAdvancedTabItemClickHandler(final Command command);
 
         void openColumnsFilterPanel(String title);
-        
+
         void closeColumnsFilterPanel(String title);
 
         void showErrorNotification(final SafeHtml text);
 
         void clearErrorNotification();
-        
     }
-    
+
     protected DataSetDefBasicAttributesEditor basicAttributesEditor;
     protected IsWidget providerAttributesEditorView;
     protected DataSetDefColumnsFilterEditor columnsAndFilterEditor;
@@ -108,7 +109,7 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
     protected LoadingBox loadingBox;
     protected Event<ErrorEvent> errorEvent;
     protected Event<TabChangedEvent> tabChangedEvent;
-    
+
     /* The Data Set Editor view. */
     public View view;
     protected DataSetDef dataSetDef;
@@ -122,13 +123,13 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
                          final DataSetDefBackendCacheAttributesEditor backendCacheAttributesEditor,
                          final DataSetDefClientCacheAttributesEditor clientCacheAttributesEditor,
                          final DataSetDefRefreshAttributesEditor refreshEditor,
-                         final DataSetClientServices clientServices, 
+                         final DataSetClientServices clientServices,
                          final LoadingBox loadingBox,
                          final Event<ErrorEvent> errorEvent,
                          final Event<TabChangedEvent> tabChangedEvent,
                          final View view) {
         this.basicAttributesEditor = basicAttributesEditor;
-        this.providerAttributesEditorView =  providerAttributesEditorView;
+        this.providerAttributesEditorView = providerAttributesEditorView;
         this.columnsAndFilterEditor = columnsAndFilterEditor;
         this.previewTable = previewTable;
         this.backendCacheAttributesEditor = backendCacheAttributesEditor;
@@ -143,23 +144,27 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
 
     public void init() {
         view.init(this);
-        view.initWidgets(basicAttributesEditor.view, providerAttributesEditorView, 
-                        columnsAndFilterEditor.view, previewTable.view,
-                        backendCacheAttributesEditor.view,
-                        clientCacheAttributesEditor.view,
-                        refreshEditor.view);
+        view.initWidgets(basicAttributesEditor.view,
+                         providerAttributesEditorView,
+                         columnsAndFilterEditor.view,
+                         previewTable.view,
+                         backendCacheAttributesEditor.view,
+                         clientCacheAttributesEditor.view,
+                         refreshEditor.view);
         view.addConfigurationTabItemClickHandler(configurationTabItemClickHandler);
         view.addPreviewTabItemClickHandler(previewTabItemClickHandler);
         view.addAdvancedTabItemClickHandler(advancedTabItemClickHandler);
         columnsAndFilterEditor.setMaxHeight("400px");
-        backendCacheAttributesEditor.setRange(200d, 10000d);
-        clientCacheAttributesEditor.setRange(00d, 4096d);
+        backendCacheAttributesEditor.setRange(200d,
+                                              10000d);
+        clientCacheAttributesEditor.setRange(00d,
+                                             4096d);
     }
 
     /*************************************************************
      ** PUBLIC EDITOR METHODS **
      *************************************************************/
-    
+
     @Override
     public Widget asWidget() {
         return view.asWidget();
@@ -191,9 +196,9 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
             }
         };
     }
-    
+
     /*************************************************************
-            ** GWT EDITOR CONTRACT METHODS **
+     ** GWT EDITOR CONTRACT METHODS **
      *************************************************************/
 
     @Override
@@ -219,14 +224,14 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
         final DataSetProviderType type = value.getProvider() != null ? value.getProvider() : null;
         final String typeTitle = getTypeTitle(type);
         view.setConfigurationTabTitle(new StringBuffer(typeTitle).append(" ")
-                .append(DataSetEditorConstants.INSTANCE.tab_configguration()).toString());
-        
+                                              .append(DataSetEditorConstants.INSTANCE.tab_configguration()).toString());
+
         final boolean isBean = type != null && DataSetProviderType.BEAN.equals(type);
         if (isBean) {
             // Bean data sets do not support backend cache, its used by its own nature...
             backendCacheAttributesEditor = null;
         }
-        
+
         // Load the preview table and update filter editor when having the resulting data set.
         doPreview(true);
     }
@@ -235,7 +240,7 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
     public void setDelegate(final EditorDelegate<T> delegate) {
         // No delegation required.
     }
-    
+
     @Override
     public org.dashbuilder.dataset.client.editor.DataSetDefBasicAttributesEditor basicAttributesEditor() {
         return basicAttributesEditor;
@@ -264,7 +269,7 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
     /*************************************************************
      ** VIEW CALLBACK METHODS **
      *************************************************************/
-    
+
     void onOpenColumnsFilterPanel() {
         view.openColumnsFilterPanel(DataSetEditorConstants.INSTANCE.hideColumnsAndFilter());
     }
@@ -272,18 +277,20 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
     void onCloseColumnsFilterPanel() {
         view.closeColumnsFilterPanel(DataSetEditorConstants.INSTANCE.showColumnsAndFilter());
     }
-    
-    
+
     /*************************************************************
      ** PRIVATE EDITOR METHODS **
      *************************************************************/
 
     protected void doPreview(final boolean isUpdateFilter) {
         loadingBox.show();
-        previewTable.show(dataSetDef, dataSetDef.getColumns(), new DataSetEditorListener(isUpdateFilter));
+        previewTable.show(dataSetDef,
+                          dataSetDef.getColumns(),
+                          new DataSetEditorListener(isUpdateFilter));
     }
-    
-    protected void afterPreview(final DataSet dataSet, final boolean isUpdateFilter) {
+
+    protected void afterPreview(final DataSet dataSet,
+                                final boolean isUpdateFilter) {
         view.clearErrorNotification();
         if (isUpdateFilter) {
             columnsAndFilterEditor.dataSetFilter().init(dataSet.getMetadata());
@@ -294,7 +301,7 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
         }
         loadingBox.hide();
     }
-    
+
     private class DataSetEditorListener extends AbstractDisplayerListener {
 
         private boolean isUpdateFilter;
@@ -306,13 +313,15 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
         @Override
         public void onDraw(final Displayer displayer) {
             final DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
-            afterPreview(dataSet, isUpdateFilter);
+            afterPreview(dataSet,
+                         isUpdateFilter);
         }
 
         @Override
         public void onRedraw(final Displayer displayer) {
             final DataSet dataSet = displayer.getDataSetHandler().getLastDataSet();
-            afterPreview(dataSet, isUpdateFilter);
+            afterPreview(dataSet,
+                         isUpdateFilter);
         }
 
         @Override
@@ -321,17 +330,19 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
         }
 
         @Override
-        public void onError(final Displayer displayer, final ClientRuntimeError error) {
+        public void onError(final Displayer displayer,
+                            final ClientRuntimeError error) {
             showError(error);
         }
     }
-    
+
     protected void showError(final ClientRuntimeError error) {
         loadingBox.hide();
         final String message = error.getCause() != null ? error.getCause() : error.getMessage();
         view.showErrorNotification(new SafeHtmlBuilder().appendEscaped(message).toSafeHtml());
-        errorEvent.fire(new ErrorEvent(this, error));
-        
+        errorEvent.fire(new ErrorEvent(this,
+                                       error));
+
         if (afterPreviewCommand != null) {
             this.afterPreviewCommand.execute();
         }
@@ -352,30 +363,34 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
         }
         return "";
     }
-    
+
     protected final Command configurationTabItemClickHandler = new Command() {
         @Override
         public void execute() {
-            tabChangedEvent.fire(new TabChangedEvent(DataSetEditor.this, TAB_CONFIGURATION));
+            tabChangedEvent.fire(new TabChangedEvent(DataSetEditor.this,
+                                                     TAB_CONFIGURATION));
         }
     };
 
     protected final Command previewTabItemClickHandler = new Command() {
         @Override
         public void execute() {
-            tabChangedEvent.fire(new TabChangedEvent(DataSetEditor.this, TAB_PREVIEW));
+            tabChangedEvent.fire(new TabChangedEvent(DataSetEditor.this,
+                                                     TAB_PREVIEW));
         }
     };
 
     protected final Command advancedTabItemClickHandler = new Command() {
         @Override
         public void execute() {
-            tabChangedEvent.fire(new TabChangedEvent(DataSetEditor.this, TAB_ADVANCED));
+            tabChangedEvent.fire(new TabChangedEvent(DataSetEditor.this,
+                                                     TAB_ADVANCED));
         }
     };
-    
+
     void onColumnsChangedEvent(@Observes ColumnsChangedEvent columnsChangedEvent) {
-        checkNotNull("columnsChangedEvent", columnsChangedEvent);
+        checkNotNull("columnsChangedEvent",
+                     columnsChangedEvent);
         if (columnsChangedEvent.getContext().equals(columnsAndFilterEditor.columnListEditor().columns())) {
             final List<DataColumnDef> cols = columnsChangedEvent.getColumns();
             dataSetDef.setColumns(cols);
@@ -384,7 +399,8 @@ public abstract class DataSetEditor<T extends DataSetDef> implements IsWidget, D
     }
 
     void onFilterChangedEvent(@Observes FilterChangedEvent filterChangedEvent) {
-        checkNotNull("filterChangedEvent", filterChangedEvent);
+        checkNotNull("filterChangedEvent",
+                     filterChangedEvent);
         if (filterChangedEvent.getContext().equals(columnsAndFilterEditor.dataSetFilter())) {
             final DataSetFilter f = filterChangedEvent.getFilter();
             dataSetDef.setDataSetFilter(f);

@@ -45,7 +45,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
 /**
  * @since 0.3.0
@@ -54,7 +54,6 @@ import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull
 @Dependent
 public class DataSetDefExplorerScreen {
 
-    
     private Menus menu = null;
 
     @Inject
@@ -80,7 +79,7 @@ public class DataSetDefExplorerScreen {
 
     @OnClose
     public void onClose() {
-        
+
     }
 
     @WorkbenchPartTitle
@@ -113,7 +112,7 @@ public class DataSetDefExplorerScreen {
             }
         };
     }
-    
+
     void newDataSet() {
         placeManager.goTo("DataSetDefWizard");
     }
@@ -126,9 +125,10 @@ public class DataSetDefExplorerScreen {
     private void showError(final String message) {
         errorPopupPresenter.showMessage(message);
     }
-    
+
     void onEditDataSetEvent(@Observes EditDataSetEvent event) {
-        checkNotNull("event", event);
+        checkNotNull("event",
+                     event);
         services.call(new RemoteCallback<Path>() {
             public void callback(Path path) {
                 placeManager.goTo(new PathPlaceRequest(path));
@@ -137,11 +137,11 @@ public class DataSetDefExplorerScreen {
     }
 
     void onErrorEvent(@Observes ErrorEvent errorEvent) {
-        checkNotNull("errorEvent", errorEvent);
+        checkNotNull("errorEvent",
+                     errorEvent);
         if (errorEvent.getClientRuntimeError() != null) {
             showError(errorEvent.getClientRuntimeError());
-        }
-        else if (errorEvent.getMessage() != null) {
+        } else if (errorEvent.getMessage() != null) {
             showError(errorEvent.getMessage());
         }
     }
