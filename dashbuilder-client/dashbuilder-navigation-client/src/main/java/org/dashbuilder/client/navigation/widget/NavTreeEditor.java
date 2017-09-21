@@ -15,6 +15,7 @@
  */
 package org.dashbuilder.client.navigation.widget;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -68,6 +69,7 @@ public class NavTreeEditor implements IsWidget {
     boolean newGroupEnabled = true;
     boolean newPerspectiveEnabled = true;
     boolean gotoPerspectiveEnabled = true;
+    boolean perspectiveContextEnabled = true;
     boolean onlyRuntimePerspectives = true;
     int maxLevels = -1;
     Command onChangeCommand;
@@ -78,6 +80,7 @@ public class NavTreeEditor implements IsWidget {
     Optional<NavItemEditor> currentlyEditedItem = Optional.empty();
     Map<String, Integer> navItemMaxLevelsMap = new HashMap<>();
     Map<String, NavItemFlags> navItemFlagsMap = new HashMap<>();
+    List<String> navItemIdsExcluded = new ArrayList<>();
 
     public class NavItemFlags {
 
@@ -85,6 +88,7 @@ public class NavTreeEditor implements IsWidget {
         public static final String NEW_DIVIDER = "newDivider";
         public static final String ONLY_RUNTIME_PERSPECTIVES = "onlyRuntimePerspectives";
         public static final String GOTO_PERSPECTIVE = "gotoPerspective";
+        public static final String PERSPECTIVE_CONTEXT = "perspectiveContext";
 
         Map<String, Boolean> flagMap = new HashMap<>();
         Map<String, Boolean> recursiveMap = new HashMap<>();
@@ -110,7 +114,6 @@ public class NavTreeEditor implements IsWidget {
         }
     }
 
-
     @Inject
     public NavTreeEditor(View view, SyncBeanManager beanManager, PerspectiveTreeProvider perspectiveTreeProvider) {
         this.view = view;
@@ -126,6 +129,10 @@ public class NavTreeEditor implements IsWidget {
 
     public NavTree getNavTree() {
         return navTree;
+    }
+
+    public void setNavItemIdsExcluded(List<String> navItemIdsExcluded) {
+        this.navItemIdsExcluded = navItemIdsExcluded;
     }
 
     public void setLiteralGroup(String literalGroup) {
@@ -237,6 +244,23 @@ public class NavTreeEditor implements IsWidget {
         return setNavItemPropertyEnabled(navItemId, NavItemFlags.GOTO_PERSPECTIVE, enabled);
     }
 
+    public boolean isPerspectiveContextEnabled() {
+        return perspectiveContextEnabled;
+    }
+
+    public void setPerspectiveContextEnabled(boolean perspectiveContextEnabled) {
+        this.perspectiveContextEnabled = perspectiveContextEnabled;
+    }
+
+    public boolean isPerspectiveContextEnabled(NavItem navItem) {
+        Boolean enabled = isNavItemPropertyEnabled(navItem, NavItemFlags.PERSPECTIVE_CONTEXT);
+        return enabled != null ? enabled : perspectiveContextEnabled;
+    }
+
+    public NavItemFlags setPerspectiveContextEnabled(String navItemId, boolean enabled) {
+        return setNavItemPropertyEnabled(navItemId, NavItemFlags.PERSPECTIVE_CONTEXT, enabled);
+    }
+
     public int getMaxLevels() {
         return maxLevels;
     }
@@ -285,18 +309,20 @@ public class NavTreeEditor implements IsWidget {
     private void _edit(List<NavItem> navItems, int maxDefault) {
         for (int i=0; i<navItems.size(); i++) {
             NavItem navItem = navItems.get(i);
-            int max = getMaxLevels(navItem.getId());
-            max = max > 0 ? max : maxDefault;
+            if (!navItemIdsExcluded.contains(navItem.getId())) {
+                int max = getMaxLevels(navItem.getId());
+                max = max > 0 ? max : maxDefault;
 
-            NavItemEditor navItemEditor = createNavItemEditor(navItem, i==0, i==navItems.size()-1, max <=0 || max > 0, max <=0 || max > 1);
-            view.addItemEditor(navItemEditor);
+                NavItemEditor navItemEditor = createNavItemEditor(navItem, i == 0, i == navItems.size() - 1, max <= 0 || max > 0, max <= 0 || max > 1);
+                view.addItemEditor(navItemEditor);
 
-            // Recursively edit the tree subgroups
-            if (navItem instanceof NavGroup) {
-                NavGroup subGroup = (NavGroup) navItem;
-                view.goOneLevelDown();
-                _edit(subGroup.getChildren(), max == 1 ? 1 : max-1);
-                view.goOneLevelUp();
+                // Recursively edit the tree subgroups
+                if (navItem instanceof NavGroup) {
+                    NavGroup subGroup = (NavGroup) navItem;
+                    view.goOneLevelDown();
+                    _edit(subGroup.getChildren(), max == 1 ? 1 : max - 1);
+                    view.goOneLevelUp();
+                }
             }
         }
     }
@@ -325,6 +351,7 @@ public class NavTreeEditor implements IsWidget {
         navItemEditor.setNewDividerEnabled(isNewDividerEnabled(navItem) && childrenAllowed);
         navItemEditor.setNewPerspectiveEnabled(isNewPerspectiveEnabled(navItem) && childrenAllowed);
         navItemEditor.setGotoPerspectiveEnabled(isGotoPerspectiveEnabled(navItem));
+        navItemEditor.setPerspectiveContextEnabled(isPerspectiveContextEnabled(navItem));
         navItemEditor.setVisiblePerspectiveIds(getPerspectiveIds(navItem, true));
         navItemEditor.setHiddenPerspectiveIds(getPerspectiveIds(navItem, false));
         navItemEditor.edit(navItem);
@@ -369,6 +396,7 @@ public class NavTreeEditor implements IsWidget {
         inCreationId = "group_" + view.generateId();
         String name = i18n.newItemName(literalGroup);
         navTree.addGroup(inCreationId, name, null, navGroup.getId(), true);
+        navTree.moveItemFirst(inCreationId);
         showChanges();
     }
 
@@ -376,6 +404,7 @@ public class NavTreeEditor implements IsWidget {
         inCreationId = "perspective_" + view.generateId();
         String name = i18n.newItemName(literalPerspective);
         navTree.addItem(inCreationId, name, null, navGroup.getId(), true, NavWorkbenchCtx.perspective("HomePerspective").toString());
+        navTree.moveItemFirst(inCreationId);
         showChanges();
     }
 

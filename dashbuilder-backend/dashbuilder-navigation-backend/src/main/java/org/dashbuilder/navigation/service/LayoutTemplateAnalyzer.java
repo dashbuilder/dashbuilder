@@ -26,6 +26,7 @@ import org.dashbuilder.navigation.NavTree;
 import org.dashbuilder.navigation.layout.LayoutNavigationRef;
 import org.dashbuilder.navigation.layout.LayoutNavigationRefType;
 import org.dashbuilder.navigation.layout.LayoutRecursionIssue;
+import org.dashbuilder.navigation.layout.LayoutTemplateContext;
 import org.dashbuilder.navigation.layout.NavDragComponentType;
 import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
 import org.uberfire.ext.layout.editor.api.editor.LayoutColumn;
@@ -40,6 +41,10 @@ import static org.dashbuilder.navigation.layout.NavDragComponentType.*;
 
 @ApplicationScoped
 public class LayoutTemplateAnalyzer {
+
+    static final List<NavDragComponentType> ALL_NAV_GROUP_COMPONENTS = Arrays.asList(CAROUSEL, MENUBAR, TABLIST, TREE, TILES);
+    static final List<NavDragComponentType> SHOW_ENTIRE_NAV_GROUP_COMPONENTS = Arrays.asList(CAROUSEL);
+    static final List<NavDragComponentType> DEFAULT_ITEM_NAV_GROUP_COMPONENTS = Arrays.asList(MENUBAR, TABLIST, TREE);
 
     private PerspectivePluginServicesImpl pluginServices;
     private NavigationServicesImpl navigationServices;
@@ -57,19 +62,19 @@ public class LayoutTemplateAnalyzer {
         return analyzeRecursion(layoutTemplate, null);
     }
 
-    public LayoutRecursionIssue analyzeRecursion(LayoutTemplate layoutTemplate, String navGroupId) {
+    public LayoutRecursionIssue analyzeRecursion(LayoutTemplate layoutTemplate, LayoutTemplateContext layoutCtx) {
         LayoutRecursionIssue info = new LayoutRecursionIssue();
         info.push(new LayoutNavigationRef(PERSPECTIVE, layoutTemplate.getName()));
-        boolean hasIssue = analyzeRecursion(layoutTemplate, info, navGroupId);
+        boolean hasIssue = analyzeRecursion(layoutTemplate, info, layoutCtx);
         if (!hasIssue) {
             info.pop();
         }
         return info;
     }
 
-    public boolean analyzeRecursion(LayoutTemplate layoutTemplate, LayoutRecursionIssue issue, String navGroupId) {
+    public boolean analyzeRecursion(LayoutTemplate layoutTemplate, LayoutRecursionIssue issue, LayoutTemplateContext layoutCtx) {
         for (LayoutRow row : layoutTemplate.getRows()) {
-            boolean hasIssue = analyzeRecursion(row, issue, navGroupId);
+            boolean hasIssue = analyzeRecursion(row, issue, layoutCtx);
             if (hasIssue) {
                 return true;
             }
@@ -77,7 +82,7 @@ public class LayoutTemplateAnalyzer {
         return false;
     }
 
-    public boolean analyzeRecursion(LayoutRow row, LayoutRecursionIssue issue, String rootGroupId) {
+    public boolean analyzeRecursion(LayoutRow row, LayoutRecursionIssue issue, LayoutTemplateContext layoutCtx) {
         NavTree navTree = navigationServices.loadNavTree();
         for (LayoutColumn column : row.getLayoutColumns()) {
 
@@ -97,8 +102,8 @@ public class LayoutTemplateAnalyzer {
                 String navGroupId = component.getProperties().get(NAV_GROUP_ID);
                 String navDefaultId = component.getProperties().get(NAV_DEFAULT_ID);
                 LayoutNavigationRefType navGroupRefType = NAV_GROUP_DEFINED;
-                if (rootGroupId != null) {
-                    navGroupId = rootGroupId;
+                if (layoutCtx != null && layoutCtx.getNavGroupId() != null) {
+                    navGroupId = layoutCtx.getNavGroupId();
                     navDefaultId = null;
                     navGroupRefType = NAV_GROUP_CONTEXT;
                 }
@@ -161,7 +166,7 @@ public class LayoutTemplateAnalyzer {
             }
 
             for (LayoutRow childRow : column.getRows()) {
-                boolean hasIssue = analyzeRecursion(childRow, issue, rootGroupId);
+                boolean hasIssue = analyzeRecursion(childRow, issue, layoutCtx);
                 if (hasIssue) {
                     return true;
                 }
@@ -212,8 +217,35 @@ public class LayoutTemplateAnalyzer {
         return false;
     }
 
-    static final List<NavDragComponentType> SHOW_ENTIRE_NAV_GROUP_COMPONENTS = Arrays.asList(CAROUSEL);
-    static final List<NavDragComponentType> DEFAULT_ITEM_NAV_GROUP_COMPONENTS = Arrays.asList(MENUBAR, TABLIST, TREE);
+    public boolean hasNavigationComponents(LayoutTemplate layoutTemplate) {
+        for (LayoutRow row : layoutTemplate.getRows()) {
+            boolean hasNavComps = hasNavigationComponents(row);
+            if (hasNavComps) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasNavigationComponents(LayoutRow row) {
+        for (LayoutColumn column : row.getLayoutColumns()) {
+
+            for (LayoutComponent component : column.getLayoutComponents()) {
+                NavDragComponentType dragType = NavDragComponentType.getByClassName(component.getDragTypeName());
+                if (dragType != null && ALL_NAV_GROUP_COMPONENTS.contains(dragType)) {
+                    return true;
+                }
+            }
+
+            for (LayoutRow childRow : column.getRows()) {
+                boolean hasNavComps = hasNavigationComponents(childRow);
+                if (hasNavComps) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     protected boolean showEntireNavGroup(LayoutComponent component) {
         NavDragComponentType dragType = NavDragComponentType.getByClassName(component.getDragTypeName());

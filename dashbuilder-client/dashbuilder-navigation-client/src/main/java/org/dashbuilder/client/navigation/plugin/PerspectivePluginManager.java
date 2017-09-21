@@ -33,6 +33,7 @@ import org.dashbuilder.navigation.NavGroup;
 import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.NavTree;
 import org.dashbuilder.navigation.layout.LayoutRecursionIssue;
+import org.dashbuilder.navigation.layout.LayoutTemplateContext;
 import org.dashbuilder.navigation.layout.LayoutTemplateInfo;
 import org.dashbuilder.navigation.service.PerspectivePluginServices;
 import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
@@ -132,17 +133,22 @@ public class PerspectivePluginManager {
         buildPerspectiveWidget(perspectiveName, null, afterBuild, onInfiniteRecursion);
     }
 
+    public void getLayoutTemplateInfo(String perspectiveName, ParameterizedCommand<LayoutTemplateInfo> callback) {
+        pluginServices.call((RemoteCallback<LayoutTemplateInfo>) callback::execute).getLayoutTemplateInfo(perspectiveName);
+    }
+
     public void getLayoutTemplateInfo(LayoutTemplate layoutTemplate, ParameterizedCommand<LayoutTemplateInfo> callback) {
         pluginServices.call((RemoteCallback<LayoutTemplateInfo>) callback::execute).getLayoutTemplateInfo(layoutTemplate);
     }
 
-    public void buildPerspectiveWidget(String perspectiveName, String navGroupId, ParameterizedCommand<IsWidget> afterBuild, ParameterizedCommand<LayoutRecursionIssue> onInfiniteRecursion) {
+    public void buildPerspectiveWidget(String perspectiveName, LayoutTemplateContext layoutCtx, ParameterizedCommand<IsWidget> afterBuild, ParameterizedCommand<LayoutRecursionIssue> onInfiniteRecursion) {
         Plugin plugin = pluginMap.get(perspectiveName);
         pluginServices.call((LayoutTemplateInfo layoutInfo) -> {
 
             if (!layoutInfo.getRecursionIssue().isEmpty()) {
                 onInfiniteRecursion.execute(layoutInfo.getRecursionIssue());
             } else {
+                String navGroupId = layoutCtx != null && layoutCtx.getNavGroupId() != null ? layoutCtx.getNavGroupId() : null;
                 NavGroup navGroup = navGroupId != null ? (NavGroup) navigationManager.getNavTree().getItemById(navGroupId) : null;
                 try {
                     if (navGroup != null) {
@@ -157,11 +163,11 @@ public class PerspectivePluginManager {
                     }
                 }
             }
-        }).getLayoutTemplateInfo(plugin, navGroupId);
+        }).getLayoutTemplateInfo(plugin, layoutCtx);
     }
 
     /**
-     * Get the last nav group instance passed to the execution of a {@link #buildPerspectiveWidget(String, String, ParameterizedCommand, ParameterizedCommand)} call.
+     * Get the last nav group instance passed to the execution of a {@link #buildPerspectiveWidget(String, LayoutTemplateContext, ParameterizedCommand, ParameterizedCommand)} call.
      *
      * @return The {@link NavGroup} instance passed to the build method or null if none.
      */

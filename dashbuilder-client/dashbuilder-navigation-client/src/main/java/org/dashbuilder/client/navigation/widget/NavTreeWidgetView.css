@@ -1,20 +1,20 @@
-.navtree-widget-icon {
+.uf-navtree-widget-icon {
     font-size: larger;
     margin-right: 5px;
 }
 
-.navtree-widget-non-clickable {
+.uf-navtree-widget-non-clickable {
     font-size: larger;
     color: black;
 }
 
-.navtree-widget-non-clicked {
+.uf-navtree-widget-non-clicked {
     font-size: larger;
     color: black;
     cursor: pointer;
 }
 
-.navtree-widget-clicked {
+.uf-navtree-widget-clicked {
     font-size: larger;
     color: black;
     text-decoration: underline;

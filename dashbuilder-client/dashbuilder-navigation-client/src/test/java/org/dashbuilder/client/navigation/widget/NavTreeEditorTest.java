@@ -1,7 +1,10 @@
 package org.dashbuilder.client.navigation.widget;
 
+import java.util.Collections;
+
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
+import org.dashbuilder.navigation.NavFactory;
 import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.NavTree;
 import org.dashbuilder.navigation.impl.NavTreeBuilder;
@@ -175,8 +178,13 @@ public class NavTreeEditorTest {
                                                      beanManagerM,
                                                      perspectiveTreeProviderM);
 
+        NavTree tree = NavFactory.get().createNavTree();
+        treeEditor.edit(tree);
+
         NavItemEditor first = mock(NavItemEditor.class);
         NavItemEditor second = mock(NavItemEditor.class);
+        NavItem firstItem = mock(NavItem.class);
+        when(first.getNavItem()).thenReturn(firstItem);
 
         treeEditor.onItemEditStarted(first);
         treeEditor.onItemEditStarted(second);
@@ -208,5 +216,18 @@ public class NavTreeEditorTest {
         navItemEditor.finishEditing();
         verify(navItemEditorViewM).finishItemEdition();
         assertFalse(treeEditor.currentlyEditedItem.isPresent());
+    }
+
+    @Test
+    public void testExcludeNavItem() {
+        NavTreeEditor treeEditor = new NavTreeEditor(viewM, beanManagerM, perspectiveTreeProviderM);
+        treeEditor.setNavItemIdsExcluded(Collections.singletonList("level2a"));
+        treeEditor.edit(NAV_TREE);
+        verify(viewM, times(4)).addItemEditor(any());
+
+        reset(viewM);
+        treeEditor.setNavItemIdsExcluded(Collections.singletonList("level1a"));
+        treeEditor.edit(NAV_TREE);
+        verify(viewM, times(3)).addItemEditor(any());
     }
 }

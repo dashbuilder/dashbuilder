@@ -40,7 +40,7 @@ public interface NavTreeDefinitions {
 
     NavTree NAV_TREE_DEFAULT = new NavTreeBuilder()
             .group(GROUP_ROOT, "Root", "The navigation root node", false)
-                .group(GROUP_APP, "Main", "The application's main navigation tree", false)
+                .group(GROUP_APP, "Default (Top Menu)", "The items displayed by the application's top menu bar", false)
                     .item(ENTRY_HOME, "Home", "The home page", true, perspective(HOME))
                     .item(ENTRY_GALLERY, "Gallery", "The displayer gallery", true, perspective(GALLERY))
                     .group(GROUP_ADMIN, "Administration", "The administration tools", false)
@@ -53,5 +53,6 @@ public interface NavTreeDefinitions {
                         .item(ENTRY_SALES_REPORTS, "Sales reports", null, true, perspective(SALES_REPORTS))
                         .endGroup()
                 .endGroup()
-            .build();
+            .endGroup()
+        .build();
 }

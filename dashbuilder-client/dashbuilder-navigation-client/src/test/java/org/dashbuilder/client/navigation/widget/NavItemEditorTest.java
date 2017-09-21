@@ -56,10 +56,16 @@ public class NavItemEditorTest {
     Command errorCommand;
 
     NavItemEditor presenter;
+    static final String NEW_PERSPECTIVE_NAME = "- New Perspective - ";
 
     @Before
     public void setUp() throws Exception {
         presenter = new NavItemEditor(view, placeManager, targetPerspectiveEditor, perspectivePluginManager);
+
+        when(view.i18nNewItemName("Perspective")).thenReturn(NEW_PERSPECTIVE_NAME);
+        presenter.setLiteralPerspective("Perspective");
+        doAnswer(invocationOnMock -> invocationOnMock.getArguments()[0])
+                .when(targetPerspectiveEditor).getPerspectiveName(anyString());
     }
 
     @Test
@@ -288,5 +294,38 @@ public class NavItemEditorTest {
         reset(view);
         presenter.edit(navGroup);
         verify(view, atLeastOnce()).setCommandsEnabled(true);
+    }
+
+    @Test
+    public void testItemNameFromPerspective() {
+        NavItem navItem = NavFactory.get().createNavItem();
+        navItem.setId("id");
+        navItem.setName("name");
+        navItem.setModifiable(true);
+        navItem.setContext(NavWorkbenchCtx.perspective("A").toString());
+
+        // Existing item => The name does not changes on perspective change
+        presenter.edit(navItem);
+        presenter.onItemEdit();
+        verify(view).setItemName("name");
+        when(targetPerspectiveEditor.getPerspectiveId()).thenReturn("B");
+        presenter.onTargetPerspectiveUpdated();
+        verify(view, never()).setItemName("B");
+
+        // Newly created item => The name always matches the selected perspective
+        reset(view);
+        navItem.setName(NEW_PERSPECTIVE_NAME);
+        presenter.edit(navItem);
+        presenter.onItemEdit();
+        verify(view).setItemName("A");
+        when(targetPerspectiveEditor.getPerspectiveId()).thenReturn("B");
+        presenter.onTargetPerspectiveUpdated();
+        verify(view).setItemName("B");
+
+        // If user changes the name then the auto-matching is disabled
+        reset(view);
+        presenter.onItemNameChanged();
+        presenter.onTargetPerspectiveUpdated();
+        verify(view, never()).setItemName("B");
     }
 }

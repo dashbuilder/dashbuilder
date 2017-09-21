@@ -22,6 +22,8 @@ import javax.inject.Inject;
 import org.dashbuilder.client.cms.resources.i18n.ContentManagerI18n;
 import org.dashbuilder.client.resources.i18n.AppConstants;
 import org.uberfire.client.authz.PerspectiveTreeProvider;
+import org.uberfire.ext.preferences.client.admin.AdminPagePerspective;
+import org.uberfire.ext.preferences.client.central.PreferencesCentralPerspective;
 
 import static org.dashbuilder.perspectives.PerspectiveIds.*;
 
@@ -57,6 +59,8 @@ public class PermissionTreeSetup {
         perspectiveTreeProvider.excludePerspectiveId("StandaloneEditorPerspective"); /* uberfire */
         perspectiveTreeProvider.excludePerspectiveId(APPS); /* uberfire */
         perspectiveTreeProvider.excludePerspectiveId(PLUGINS); /* uberfire */
+        perspectiveTreeProvider.excludePerspectiveId(AdminPagePerspective.IDENTIFIER); /* uberfire */
+        perspectiveTreeProvider.excludePerspectiveId(PreferencesCentralPerspective.IDENTIFIER); /* uberfire */
 
         // Rename perspective to dashboard in CMS
         //perspectiveTreeProvider.setResourceName(cmsI18n.capitalizeFirst(cmsI18n.getPerspectiveResourceName()));

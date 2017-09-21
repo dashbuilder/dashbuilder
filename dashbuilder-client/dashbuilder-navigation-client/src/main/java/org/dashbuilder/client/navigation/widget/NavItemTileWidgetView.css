@@ -1,4 +1,4 @@
-.navitem-tile-body {
+.uf-navitem-tile-body {
     cursor: pointer;
     float: left;
     height: 160px;
@@ -9,20 +9,20 @@
     text-align: center;
     overflow: hidden;
 }
-.navitem-tile-icon {
+.uf-navitem-tile-icon {
     margin-top: 25px;
     font-size: 46px;
     color: #FFFFFF;
 }
-.navitem-tile-text {
+.uf-navitem-tile-text {
     color: #FFFFFF;
 }
-.navitem-tile-group {
+.uf-navitem-tile-group {
     background: rgba(76, 98, 154, 0.52);
 }
-.navitem-tile-perspective {
+.uf-navitem-tile-perspective {
     background: rgba(67, 154, 99, 0.60);
 }
-.navitem-tile-runtime-perspective {
+.uf-navitem-tile-runtime-perspective {
     background: rgba(67, 154, 99, 0.60);
 }

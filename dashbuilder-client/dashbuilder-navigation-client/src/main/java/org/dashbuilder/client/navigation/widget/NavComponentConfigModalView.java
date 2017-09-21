@@ -165,7 +165,7 @@ public class NavComponentConfigModalView implements NavComponentConfigModal.View
 
     @Override
     public void setNavGroupEnabled(boolean enabled) {
-        navGroupDiv.setClassName("form-group" + (enabled ? "" : " navconfig-disabled"));
+        navGroupDiv.setClassName("form-group" + (enabled ? "" : " uf-navconfig-disabled"));
     }
 
     @Override
@@ -197,7 +197,7 @@ public class NavComponentConfigModalView implements NavComponentConfigModal.View
 
     @Override
     public void setDefaultNavItemEnabled(boolean enabled) {
-        defaultItemDiv.setClassName("form-group" + (enabled ? "" : " navconfig-disabled"));
+        defaultItemDiv.setClassName("form-group" + (enabled ? "" : " uf-navconfig-disabled"));
     }
 
     @Override

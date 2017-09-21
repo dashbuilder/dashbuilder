@@ -26,6 +26,8 @@ public interface ContentManagerConstants extends Messages {
 
     String contentExplorerMenus();
 
+    String contentExplorerTopMenu();
+
     String contentManagerHome();
 
     String contentManagerHomeTitle();

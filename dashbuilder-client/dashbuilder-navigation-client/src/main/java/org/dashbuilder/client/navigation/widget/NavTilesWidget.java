@@ -28,6 +28,7 @@ import org.dashbuilder.navigation.NavGroup;
 import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.layout.LayoutRecursionIssue;
 import org.dashbuilder.navigation.layout.LayoutRecursionIssueI18n;
+import org.dashbuilder.navigation.layout.LayoutTemplateContext;
 import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
 import org.jboss.errai.common.client.api.IsElement;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
@@ -156,7 +157,8 @@ public class NavTilesWidget extends BaseNavWidget {
         String perspectiveId = navCtx.getResourceId();
         String navRootId = navCtx.getNavGroupId();
         currentPerspectiveNavItem = perspectiveItem;
-        perspectivePluginManager.buildPerspectiveWidget(perspectiveId, navRootId, view::showTileContent, this::onInfiniteRecursion);
+        LayoutTemplateContext layoutCtx = new LayoutTemplateContext(navRootId);
+        perspectivePluginManager.buildPerspectiveWidget(perspectiveId, layoutCtx, view::showTileContent, this::onInfiniteRecursion);
     }
 
     public void onInfiniteRecursion(LayoutRecursionIssue issue) {

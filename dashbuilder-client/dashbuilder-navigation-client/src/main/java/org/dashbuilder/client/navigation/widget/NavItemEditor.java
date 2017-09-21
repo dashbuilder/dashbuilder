@@ -73,6 +73,8 @@ public class NavItemEditor implements IsWidget {
 
         String i18nNewItem(String item);
 
+        String i18nNewItemName(String item);
+
         String i18nGotoItem(String item);
 
         String i18nDeleteItem();
@@ -96,9 +98,11 @@ public class NavItemEditor implements IsWidget {
     boolean creationEnabled = false;
     boolean moveUpEnabled = true;
     boolean moveDownEnabled = true;
+    boolean perspectiveContextEnabled = false;
     boolean gotoPerspectiveEnabled = false;
     boolean editEnabled = false;
     boolean deleteEnabled = false;
+    boolean itemNameFromPerspective = false;
     Set<String> visiblePerspectiveIds = null;
     Set<String> hiddenPerspectiveIds = null;
     NavTree navTree = null;
@@ -122,6 +126,7 @@ public class NavItemEditor implements IsWidget {
     String literalPerspective = "Perspective";
     String literalDivider = "Divider";
     String dividerName = "--------------";
+    String newPerspectiveI18n = "- New Perspective -";
 
     @Inject
     public NavItemEditor(View view,
@@ -134,6 +139,7 @@ public class NavItemEditor implements IsWidget {
         this.targetPerspectiveEditor.setOnUpdateCommand(this::onTargetPerspectiveUpdated);
         this.perspectivePluginManager = perspectivePluginManager;
         this.view.init(this);
+
     }
 
     @Override
@@ -184,6 +190,14 @@ public class NavItemEditor implements IsWidget {
 
     public void setMoveDownEnabled(boolean moveDownEnabled) {
         this.moveDownEnabled = moveDownEnabled;
+    }
+
+    public boolean isPerspectiveContextEnabled() {
+        return perspectiveContextEnabled;
+    }
+
+    public void setPerspectiveContextEnabled(boolean perspectiveContextEnabled) {
+        this.perspectiveContextEnabled = perspectiveContextEnabled;
     }
 
     public boolean isGotoPerspectiveEnabled() {
@@ -256,6 +270,8 @@ public class NavItemEditor implements IsWidget {
 
     public void setLiteralPerspective(String literalPerspective) {
         this.literalPerspective = literalPerspective;
+        String newItemName = view.i18nNewItemName(literalPerspective);
+        this.newPerspectiveI18n = newItemName != null ? newItemName : newPerspectiveI18n;
     }
 
     public void setLiteralDivider(String literalDivider) {
@@ -276,6 +292,7 @@ public class NavItemEditor implements IsWidget {
         NavWorkbenchCtx navCtx = NavWorkbenchCtx.get(navItem);
         if (navItem.getName() != null) {
             view.setItemName(navItem.getName());
+            itemNameFromPerspective = newPerspectiveI18n.equals(navItem.getName());
         } else {
             view.setItemName(dividerName);
         }
@@ -317,7 +334,6 @@ public class NavItemEditor implements IsWidget {
                 boolean isRuntimePerspective = perspectivePluginManager.isRuntimePerspective(perspectiveId);
                 String selectedNavGroupId = navCtx.getNavGroupId();
                 targetPerspectiveEditor.setPerspectiveId(perspectiveId);
-                targetPerspectiveEditor.setNavGroupEnabled(isRuntimePerspective);
                 targetPerspectiveEditor.setNavGroupId(selectedNavGroupId);
                 targetPerspectiveEditor.show();
 
@@ -382,8 +398,21 @@ public class NavItemEditor implements IsWidget {
 
     public void onItemEdit() {
         if (editEnabled) {
-            view.startItemEdition();
-            onEditStarted();
+            if (itemNameFromPerspective) {
+                String perspectiveName = targetPerspectiveEditor.getPerspectiveName(perspectiveId);
+                view.setItemName(perspectiveName);
+            }
+            if (perspectiveContextEnabled) {
+                perspectivePluginManager.getLayoutTemplateInfo(perspectiveId, info -> {
+                    targetPerspectiveEditor.setNavGroupEnabled(info != null && info.hasNavigationComponents());
+                    view.startItemEdition();
+                    onEditStarted();
+                });
+            } else {
+                targetPerspectiveEditor.setNavGroupEnabled(false);
+                view.startItemEdition();
+                onEditStarted();
+            }
         }
     }
 
@@ -397,6 +426,7 @@ public class NavItemEditor implements IsWidget {
             if (!name.equals(navItem.getName())) {
                 navItem.setName(name);
                 view.setItemName(name);
+                itemNameFromPerspective = newPerspectiveI18n.equals(name);
                 update = true;
             }
         } else {
@@ -411,7 +441,7 @@ public class NavItemEditor implements IsWidget {
             String newPerspectiveId = targetPerspectiveEditor.getPerspectiveId();
             if (newPerspectiveId != null && !newPerspectiveId.trim().isEmpty()) {
                 if (oldPerspectiveId != null && !oldPerspectiveId.equals(newPerspectiveId)){
-                    navCtx.setResourceId(newPerspectiveId);
+                    navCtx.setResourceId(perspectiveId = newPerspectiveId);
                     navItem.setContext(navCtx.toString());
                     update = true;
                 }
@@ -511,10 +541,21 @@ public class NavItemEditor implements IsWidget {
         }
     }
 
+    void onItemNameChanged() {
+        itemNameFromPerspective = false;
+    }
+
     void onTargetPerspectiveUpdated() {
         String perspectiveId = targetPerspectiveEditor.getPerspectiveId();
-        boolean isRuntimePerspective = perspectivePluginManager.isRuntimePerspective(perspectiveId);
-        targetPerspectiveEditor.setNavGroupEnabled(isRuntimePerspective);
+        if (itemNameFromPerspective) {
+            String perspectiveName = targetPerspectiveEditor.getPerspectiveName(perspectiveId);
+            view.setItemName(perspectiveName);
+        }
+        if (perspectiveContextEnabled) {
+            perspectivePluginManager.getLayoutTemplateInfo(perspectiveId, info -> {
+                targetPerspectiveEditor.setNavGroupEnabled(info != null && info.hasNavigationComponents());
+            });
+        }
     }
 
     public void finishEditing() {

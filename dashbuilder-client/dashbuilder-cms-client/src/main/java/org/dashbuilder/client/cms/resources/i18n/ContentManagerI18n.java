@@ -22,6 +22,7 @@ public class ContentManagerI18n {
 
     String contentExplorerNew = ContentManagerConstants.INSTANCE.contentExplorerNew();
     String contentExplorerMenus = ContentManagerConstants.INSTANCE.contentExplorerMenus();
+    String contentExplorerTopMenu = ContentManagerConstants.INSTANCE.contentExplorerTopMenu();
     String contentManagerHome = ContentManagerConstants.INSTANCE.contentManagerHome();
     String contentManagerHomeTitle = ContentManagerConstants.INSTANCE.contentManagerHomeTitle();
     String contentManagerHomeWelcome = ContentManagerConstants.INSTANCE.contentManagerHomeWelcome();
@@ -46,6 +47,14 @@ public class ContentManagerI18n {
 
     public void setContentExplorerMenus(String contentExplorerMenus) {
         this.contentExplorerMenus = contentExplorerMenus;
+    }
+
+    public String getContentExplorerTopMenu() {
+        return contentExplorerTopMenu;
+    }
+
+    public void setContentExplorerTopMenu(String contentExplorerTopMenu) {
+        this.contentExplorerTopMenu = contentExplorerTopMenu;
     }
 
     public String getContentExplorerNew() {

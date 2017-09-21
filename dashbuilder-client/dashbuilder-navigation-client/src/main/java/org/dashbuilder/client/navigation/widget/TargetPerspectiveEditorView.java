@@ -85,7 +85,13 @@ public class TargetPerspectiveEditorView implements TargetPerspectiveEditor.View
 
     @Override
     public void setNavGroupEnabled(boolean enabled) {
-        groupSelectorDiv.setClassName(enabled ? "" : " tpe-disabled");
+        if (enabled) {
+            groupSelectorDiv.getStyle().removeProperty("display");
+            navGroupSelectorHelp.getStyle().removeProperty("display");
+        } else {
+            groupSelectorDiv.getStyle().setProperty("display", "none");
+            navGroupSelectorHelp.getStyle().setProperty("display", "none");
+        }
     }
 
     @Override

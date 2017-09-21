@@ -1,15 +1,15 @@
-.pdc-selector-body {
+.uf-pdc-selector-body {
     margin: 15px;
 }
-.pdc-selector-button {
+.uf-pdc-selector-button {
     min-width: 200px;
     text-align: left;
 }
-.pdc-selector-menu {
+.uf-pdc-selector-menu {
     margin-left: 20px;
     min-width: 200px;
 }
-.pdc-selector-caret {
+.uf-pdc-selector-caret {
     float: right;
     margin-top: 5px;
 }
