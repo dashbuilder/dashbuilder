@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.event.NavItemGotoEvent;
 import org.dashbuilder.client.navigation.event.NavTreeChangedEvent;
+import org.dashbuilder.client.navigation.event.NavTreeLoadedEvent;
 import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.NavTree;
 import org.dashbuilder.navigation.service.NavigationServices;
@@ -35,6 +36,7 @@ public class NavigationManagerImpl implements NavigationManager {
 
     private Caller<NavigationServices> navServices;
     private Event<NavItemGotoEvent> navItemGotoEvent;
+    private Event<NavTreeLoadedEvent> navTreeLoadedEvent;
     private Event<NavTreeChangedEvent> navTreeChangedEvent;
     private NavSecurityController navController;
     private NavTree navTree;
@@ -43,10 +45,12 @@ public class NavigationManagerImpl implements NavigationManager {
     @Inject
     public NavigationManagerImpl(Caller<NavigationServices> navServices,
                                  NavSecurityController navController,
+                                 Event<NavTreeLoadedEvent> navTreeLoadedEvent,
                                  Event<NavTreeChangedEvent> navTreeChangedEvent,
                                  Event<NavItemGotoEvent> navItemGotoEvent) {
         this.navServices = navServices;
         this.navController = navController;
+        this.navTreeLoadedEvent = navTreeLoadedEvent;
         this.navTreeChangedEvent = navTreeChangedEvent;
         this.navItemGotoEvent = navItemGotoEvent;
     }
@@ -58,6 +62,7 @@ public class NavigationManagerImpl implements NavigationManager {
             if (afterInit != null) {
                 afterInit.execute();
             }
+            navTreeLoadedEvent.fire(new NavTreeLoadedEvent(getNavTree()));
         }).loadNavTree();
     }
 

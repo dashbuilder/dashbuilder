@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.navigation.widget;
+package org.dashbuilder.client.navigation.widget.editor;
 
 import java.util.List;
 import java.util.Set;
@@ -48,10 +48,10 @@ public class TargetPerspectiveEditor implements IsElement {
     }
 
     View view;
-    NavTree navTree;
     String navGroupId;
     PerspectiveDropDown perspectiveDropDown;
     PerspectiveTreeProvider perspectiveTreeProvider;
+    List<NavItem> navItemList;
     Command onUpdateCommand;
 
     @Inject
@@ -73,8 +73,8 @@ public class TargetPerspectiveEditor implements IsElement {
         return view.getElement();
     }
 
-    public void setNavTree(NavTree navTree) {
-        this.navTree = navTree;
+    public void setNavItemList(List<NavItem> navItemList) {
+        this.navItemList = navItemList;
     }
 
     public void setOnUpdateCommand(Command onUpdateCommand) {
@@ -122,8 +122,8 @@ public class TargetPerspectiveEditor implements IsElement {
 
     private void updateNavGroups() {
         view.clearNavGroupItems();
-        if (navTree != null) {
-            updateNavGroups(navTree.getRootItems());
+        if (navItemList != null) {
+            updateNavGroups(navItemList);
         }
     }
 

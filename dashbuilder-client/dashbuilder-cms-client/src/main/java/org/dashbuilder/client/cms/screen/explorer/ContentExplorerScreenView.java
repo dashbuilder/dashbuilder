@@ -17,60 +17,23 @@ package org.dashbuilder.client.cms.screen.explorer;
 
 import javax.inject.Inject;
 
-import com.google.gwt.dom.client.AnchorElement;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.LIElement;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.IsWidget;
-import org.jboss.errai.common.client.dom.Anchor;
+import org.jboss.errai.common.client.api.IsElement;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;
-import org.jboss.errai.common.client.dom.ListItem;
-import org.jboss.errai.common.client.dom.Node;
-import org.jboss.errai.common.client.dom.Span;
-import org.jboss.errai.common.client.dom.UnorderedList;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
-import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.uberfire.mvp.Command;
 
 @Templated
 public class ContentExplorerScreenView extends Composite implements ContentExplorerScreen.View {
 
     @Inject
     @DataField
-    Div tabContent;
+    Div perspectivesDiv;
 
     @Inject
     @DataField
-    ListItem perspectivesTab;
-
-    @Inject
-    @DataField
-    Anchor perspectivesAnchor;
-
-    @Inject
-    @DataField
-    ListItem navigationTab;
-
-    @Inject
-    @DataField
-    Anchor navigationAnchor;
-
-    @Inject
-    @DataField
-    Div createDiv;
-
-    @Inject
-    @DataField
-    Span createText;
-
-    @Inject
-    @DataField
-    UnorderedList createMenu;
+    Div navigationDiv;
 
     ContentExplorerScreen presenter;
 
@@ -80,70 +43,10 @@ public class ContentExplorerScreenView extends Composite implements ContentExplo
     }
 
     @Override
-    public void setPerspectivesName(String name) {
-        perspectivesAnchor.setTextContent(name);
-    }
-
-    @Override
-    public void showPerspectives(IsWidget perspectivesExplorer) {
-        perspectivesTab.setClassName("active");
-        navigationTab.setClassName("");
-        DOMUtil.removeAllChildren(tabContent);
-        tabContent.appendChild((Node) perspectivesExplorer.asWidget().getElement());
-    }
-
-    @Override
-    public void showNavigation(IsWidget menusExplorer) {
-        perspectivesTab.setClassName("");
-        navigationTab.setClassName("active");
-        DOMUtil.removeAllChildren(tabContent);
-        tabContent.appendChild((Node) menusExplorer.asWidget().getElement());
-    }
-
-    @Override
-    public void setNavigationName(String name) {
-        navigationAnchor.setTextContent(name);
-    }
-
-    @Override
-    public void setCreateName(String name) {
-        createText.setTextContent(name);
-    }
-
-    @Override
-    public void setCreateMenuVisible(boolean visible) {
-        if (visible) {
-            createDiv.getStyle().removeProperty("display");
-        } else {
-            createDiv.getStyle().setProperty("display", "none");
-        }
-    }
-
-    @Override
-    public void addCreateMenuEntry(String name, Command onClick) {
-        AnchorElement anchor = Document.get().createAnchorElement();
-        anchor.getStyle().setCursor(Style.Cursor.POINTER);
-        anchor.setInnerText(name);
-
-        LIElement li = Document.get().createLIElement();
-        li.appendChild(anchor);
-        createMenu.appendChild((Node) li);
-
-        Event.sinkEvents(anchor, Event.ONCLICK);
-        Event.setEventListener(anchor, event -> {
-            if(Event.ONCLICK == event.getTypeInt()) {
-                onClick.execute();
-            }
-        });
-    }
-
-    @EventHandler("perspectivesAnchor")
-    public void onPerspectivesAnchorClick(final ClickEvent event) {
-        presenter.gotoPerspectives();
-    }
-
-    @EventHandler("navigationAnchor")
-    public void onNavigationAnchorClick(final ClickEvent event) {
-        presenter.gotoNavigation();
+    public void show(IsElement perspectivesExplorer, IsElement navExplorer) {
+        DOMUtil.removeAllChildren(perspectivesDiv);
+        DOMUtil.removeAllChildren(navigationDiv);
+        perspectivesDiv.appendChild(perspectivesExplorer.getElement());
+        navigationDiv.appendChild(navExplorer.getElement());
     }
 }

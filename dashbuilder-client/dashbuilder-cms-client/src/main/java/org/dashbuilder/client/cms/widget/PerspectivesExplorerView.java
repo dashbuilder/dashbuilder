@@ -23,21 +23,45 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.Composite;
+import org.jboss.errai.common.client.dom.Anchor;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.common.client.dom.Node;
+import org.jboss.errai.common.client.dom.Span;
+import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.uberfire.mvp.Command;
 
 @Templated
-public class PerspectivesExplorerView extends Composite implements PerspectivesExplorer.View {
+public class PerspectivesExplorerView implements IsElement, PerspectivesExplorer.View {
 
     @Inject
     @DataField
-    Div mainDiv;
+    Span expandIcon;
+
+    @Inject
+    @DataField
+    Span titleSpan;
+
+    @Inject
+    @DataField
+    Div createDiv;
+
+    @Inject
+    @DataField
+    Span createSpan;
+
+    @Inject
+    @DataField
+    Anchor newPerspectiveAnchor;
+
+    @Inject
+    @DataField
+    Div perspectivesDiv;
 
     PerspectivesExplorer presenter;
 
@@ -48,7 +72,38 @@ public class PerspectivesExplorerView extends Composite implements PerspectivesE
 
     @Override
     public void clear() {
-        DOMUtil.removeAllChildren(mainDiv);
+        DOMUtil.removeAllChildren(perspectivesDiv);
+    }
+
+    @Override
+    public void setExpanded(boolean expanded) {
+        perspectivesDiv.setHidden(!expanded);
+        expandIcon.setClassName("uf-cms-expand-icon " + (expanded ? "fa fa-angle-down" : "fa fa-angle-right"));
+    }
+
+    @Override
+    public void setMaximized(boolean maximized) {
+        perspectivesDiv.setClassName("list-group list-view-pf " + (maximized ? "uf-cms-perspectives-maximized" : "uf-cms-perspectives-panel"));
+    }
+
+    @Override
+    public void setTitle(String text) {
+        titleSpan.setTextContent(text);
+    }
+
+    @Override
+    public void setNewMenuVisible(boolean visible) {
+        createDiv.setHidden(!visible);
+    }
+
+    @Override
+    public void setNewMenuName(String text) {
+        createSpan.setTextContent(text);
+    }
+
+    @Override
+    public void setPerspectiveName(String text) {
+        newPerspectiveAnchor.setTextContent(text);
     }
 
     private DivElement createItemDiv(Element[] items) {
@@ -83,11 +138,11 @@ public class PerspectivesExplorerView extends Composite implements PerspectivesE
 
         SpanElement icon = Document.get().createSpanElement();
         icon.getStyle().setMarginRight(10, Style.Unit.PX);
-        icon.setClassName("pficon-screen");
-        icon.getStyle().setProperty("fontSize", "large");
+        icon.setClassName("pficon-virtual-machine");
+        icon.getStyle().setProperty("fontSize", "larger");
 
         DivElement gi = createItemDiv(new Element[] {icon, anchor});
-        mainDiv.appendChild((Node) gi);
+        perspectivesDiv.appendChild((Node) gi);
     }
 
     @Override
@@ -95,6 +150,21 @@ public class PerspectivesExplorerView extends Composite implements PerspectivesE
         SpanElement span = Document.get().createSpanElement();
         span.setInnerText(message);
         DivElement gi = createItemDiv(new Element[] {span});
-        mainDiv.appendChild((Node) gi);
+        perspectivesDiv.appendChild((Node) gi);
+    }
+
+    @EventHandler("expandIcon")
+    public void onExpandClick(final ClickEvent event) {
+        presenter.expandOrCollapse();
+    }
+
+    @EventHandler("titleSpan")
+    public void onTitleClick(final ClickEvent event) {
+        presenter.expandOrCollapse();
+    }
+
+    @EventHandler("newPerspectiveAnchor")
+    public void onNewPerspectiveClick(final ClickEvent event) {
+        presenter.createNewPerspective();
     }
 }

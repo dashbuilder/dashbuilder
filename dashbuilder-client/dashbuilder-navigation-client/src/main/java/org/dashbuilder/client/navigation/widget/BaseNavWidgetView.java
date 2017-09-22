@@ -116,7 +116,6 @@ public abstract class BaseNavWidgetView<T> extends Composite implements NavWidge
         addItem("error", NavigationConstants.INSTANCE.navItemsEmpty(), null, () -> {});
     }
 
-
     // LayoutRecursionIssueI18n
 
     public String navRefPerspectiveI18n(String name) {

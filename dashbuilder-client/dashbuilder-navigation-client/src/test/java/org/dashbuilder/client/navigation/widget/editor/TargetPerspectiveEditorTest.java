@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.navigation.widget;
+package org.dashbuilder.client.navigation.widget.editor;
 
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.navigation.NavFactory;
@@ -59,7 +59,7 @@ public class TargetPerspectiveEditorTest {
     @Before
     public void setUp() throws Exception {
         presenter = new TargetPerspectiveEditor(view, perspectiveDropDown, perspectiveTreeProvider);
-        presenter.setNavTree(NAV_TREE);
+        presenter.setNavItemList(NAV_TREE.getRootItems());
         presenter.setPerspectiveId("A");
         presenter.setNavGroupId("level1a");
         presenter.setOnUpdateCommand(updateCommand);

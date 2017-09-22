@@ -49,8 +49,8 @@ public class ContentManagerPerspective {
         perspective.setName(ContentManagerConstants.INSTANCE.contentManagerHome());
         perspective.getRoot().addPart(ContentManagerHomeScreen.SCREEN_ID);
         final PanelDefinition west = new PanelDefinitionImpl(StaticWorkbenchPanelPresenter.class.getName());
-        west.setWidth(400);
-        west.setMinWidth(250);
+        west.setWidth(330);
+        west.setMinWidth(330);
         west.addPart(ContentExplorerScreen.SCREEN_ID);
         perspective.getRoot().insertChild(CompassPosition.WEST, west);
         return perspective;

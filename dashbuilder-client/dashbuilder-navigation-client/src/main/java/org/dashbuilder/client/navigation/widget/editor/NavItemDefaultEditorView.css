@@ -22,7 +22,6 @@
 
 .uf-navitem-name-div {
     float: left;
-    background-color: lightcyan;
 }
 
 .uf-navitem-name-input {
@@ -56,9 +55,9 @@
     margin-left: 15px;
 }
 
-.uf-navitem-view-div:hover {
+.uf-navitem-view-div:hover,
+.uf-navitem-edit-div:hover {
     background-color: lightcyan;
-    margin-left: -20px;
 }
 
 .uf-navitem-view-div:hover .uf-navitem-cog-icon,
@@ -75,4 +74,12 @@
 
 .uf-navitem-delete-icon:hover {
     color: #990000;
+}
+
+.uf-navitem-children {
+    margin-left: 15px;
+}
+
+.uf-navitem-command-menu {
+    margin-left: 30px;
 }

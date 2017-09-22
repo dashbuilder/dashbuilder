@@ -89,7 +89,7 @@ public abstract class BaseNavWidget implements NavWidget {
             return null;
         }
         for (NavItem navItem : navItemList) {
-            if (navItem.getId().equals(id)) {
+            if (id.equals(navItem.getId())) {
                 return navItem;
             }
         }
