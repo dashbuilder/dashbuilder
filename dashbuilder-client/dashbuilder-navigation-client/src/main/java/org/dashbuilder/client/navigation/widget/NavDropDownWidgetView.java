@@ -107,7 +107,7 @@ public class NavDropDownWidgetView extends BaseNavWidgetView<NavDropDownWidget>
     }
 
     @Override
-    public void errorNavItemNotFound(String navItemId) {
-        setDropDownName("Not found: " + navItemId);
+    public void errorNavGroupNotFound() {
+        setDropDownName("ERROR: Nav group not found");
     }
 }

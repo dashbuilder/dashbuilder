@@ -107,8 +107,8 @@ public abstract class BaseNavWidgetView<T> extends Composite implements NavWidge
     }
 
     @Override
-    public void errorNavItemNotFound(String navItemId) {
-        addItem(navItemId, NavigationConstants.INSTANCE.navItemNotFound(navItemId), null, () -> {});
+    public void errorNavGroupNotFound() {
+        addItem("error", NavigationConstants.INSTANCE.navGroupNotFound(), null, () -> {});
     }
 
     @Override

@@ -158,12 +158,20 @@ public abstract class BaseNavWidget implements NavWidget {
     @Override
     public void show(NavGroup navGroup) {
         this.navGroup = navGroup;
-        this.show(navGroup.getChildren());
+        if (navGroup == null) {
+            view.errorNavGroupNotFound();
+        } else {
+            this.show(navGroup.getChildren());
+        }
     }
 
     @Override
     public void show(NavTree navTree) {
-        this.show(navTree.getRootItems());
+        if (navTree == null) {
+            view.errorNavItemsEmpty();
+        } else {
+            this.show(navTree.getRootItems());
+        }
     }
 
     @Override

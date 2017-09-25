@@ -100,6 +100,13 @@ public class NavTilesWidgetView extends BaseNavWidgetView<NavTilesWidget>
     }
 
     @Override
+    public void errorNavGroupNotFound() {
+        DOMUtil.removeAllChildren(mainDiv);
+        alertBox.setMessage(NavigationConstants.INSTANCE.navGroupNotFound());
+        mainDiv.appendChild(alertBox.getElement());
+    }
+
+    @Override
     public void infiniteRecursionError(String cause) {
         DOMUtil.removeAllChildren(tilesDiv);
         alertBox.setMessage(NavigationConstants.INSTANCE.navTilesDragComponentInfiniteRecursion() + cause);

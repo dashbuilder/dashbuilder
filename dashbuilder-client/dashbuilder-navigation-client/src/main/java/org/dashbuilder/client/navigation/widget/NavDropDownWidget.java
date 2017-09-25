@@ -53,9 +53,13 @@ public class NavDropDownWidget extends BaseNavWidget {
 
     @Override
     public void show(NavGroup navGroup) {
-        view.setDropDownName(navGroup.getName());
-        view.showAsSubmenu(getLevel() > 1);
-        super.show(navGroup);
+        if (navGroup == null) {
+            view.errorNavGroupNotFound();
+        } else {
+            view.setDropDownName(navGroup.getName());
+            view.showAsSubmenu(getLevel() > 1);
+            super.show(navGroup);
+        }
     }
 
     @Override

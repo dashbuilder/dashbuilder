@@ -33,7 +33,7 @@ public interface NavWidgetView<T> extends UberView<T> {
 
     void clearSelectedItem();
 
-    void errorNavItemNotFound(String navItemId);
+    void errorNavGroupNotFound();
 
     void errorNavItemsEmpty();
 }

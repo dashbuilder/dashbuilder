@@ -80,7 +80,7 @@ public interface NavigationConstants extends Messages {
 
     String navWidgetTargetDivMissing();
 
-    String navItemNotFound(String navItem);
+    String navGroupNotFound();
 
     String navItemsEmpty();
 
