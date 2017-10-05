@@ -167,8 +167,6 @@ public class SelectorSliderDisplayer extends AbstractGwtDisplayer<SelectorSlider
         ColumnType columnType = minColumn.getColumnType();
         dataColumnMin = new DataColumnImpl(minColumnId, columnType);
         dataColumnMax = new DataColumnImpl(maxColumnId, columnType);
-        selectedMin = -1;
-        selectedMax = -1;
 
         int inputsWidth = displayerSettings.getSelectorWidth();
         inputsWidth = inputsWidth > 0 ? (inputsWidth/2) - 10  : -1;
@@ -180,7 +178,10 @@ public class SelectorSliderDisplayer extends AbstractGwtDisplayer<SelectorSlider
         else if (ColumnType.DATE.equals(columnType)) {
             rangeMin = ((Date) minValue).getTime();
             rangeMax = ((Date) maxValue).getTime() + 1;
-            view.showSlider(rangeMin, rangeMax, 1, rangeMin, rangeMax);
+            selectedMin = selectedMin == -1 ? rangeMin : selectedMin;
+            selectedMax = selectedMax == -1 ? rangeMax : selectedMax;
+            view.showSlider(rangeMin, rangeMax, 1, selectedMin, selectedMax);
+
             if (displayerSettings.isSelectorInputsEnabled()) {
                 minDateEditor.setValue((Date) minValue);
                 maxDateEditor.setValue((Date) maxValue);
@@ -193,7 +194,10 @@ public class SelectorSliderDisplayer extends AbstractGwtDisplayer<SelectorSlider
             // Round to integer
             rangeMin = ((Number) minValue).intValue();
             rangeMax = ((Number) maxValue).intValue() + 1;
-            view.showSlider(rangeMin, rangeMax, 1, rangeMin, rangeMax);
+            selectedMin = selectedMin == -1 ? rangeMin : selectedMin;
+            selectedMax = selectedMax == -1 ? rangeMax : selectedMax;
+            view.showSlider(rangeMin, rangeMax, 1, selectedMin, selectedMax);
+
             if (displayerSettings.isSelectorInputsEnabled()) {
                 minNumberEditor.setValue((Number) minValue);
                 maxNumberEditor.setValue((Number) maxValue);
@@ -204,6 +208,36 @@ public class SelectorSliderDisplayer extends AbstractGwtDisplayer<SelectorSlider
         }
         else {
             view.textColumnsNotSupported();
+        }
+    }
+
+    public Object getSelectedMin() {
+        if (selectedMin == -1) {
+            return new Date((long) rangeMin);
+        }
+        if (ColumnType.DATE.equals(dataColumnMin.getColumnType())) {
+            return new Date((long) selectedMin);
+        }
+        else if (ColumnType.NUMBER.equals(dataColumnMin.getColumnType())) {
+            return (long) selectedMin;
+        }
+        else {
+            return null;
+        }
+    }
+
+    public Object getSelectedMax() {
+        if (selectedMax == -1) {
+            return new Date((long) rangeMax);
+        }
+        if (ColumnType.DATE.equals(dataColumnMax.getColumnType())) {
+            return new Date((long) selectedMax);
+        }
+        else if (ColumnType.NUMBER.equals(dataColumnMax.getColumnType())) {
+            return (long) selectedMax;
+        }
+        else {
+            return null;
         }
     }
 
