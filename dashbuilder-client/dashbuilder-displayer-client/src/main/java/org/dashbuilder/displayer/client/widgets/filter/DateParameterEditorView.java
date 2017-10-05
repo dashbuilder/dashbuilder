@@ -61,7 +61,6 @@ public class DateParameterEditorView extends Composite implements DateParameterE
             show = true;
         });
         input.addHideHandler(e -> {
-            presenter.onFocus();
             show = false;
         });
         icon.addClickHandler(e -> {

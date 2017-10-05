@@ -16,6 +16,7 @@
 package org.dashbuilder.renderer.client.selector;
 
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.StyleInjector;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -43,6 +44,9 @@ public class SelectorSliderDisplayerView extends AbstractGwtDisplayerView<Select
     public void init(SelectorSliderDisplayer presenter) {
         super.setPresenter(presenter);
         super.setVisualization(container);
+
+        // Enlarge the tooltip max width
+        StyleInjector.inject(".slider .tooltip-inner { max-width: 900px; }");
 
         header.setVisible(false);
         slider.setHandle(HandleType.ROUND);

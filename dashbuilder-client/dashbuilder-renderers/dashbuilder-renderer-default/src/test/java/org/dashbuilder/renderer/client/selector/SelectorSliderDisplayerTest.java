@@ -274,4 +274,38 @@ public class SelectorSliderDisplayerTest extends AbstractDisplayerTest {
         presenter.draw();
         verify(presenter.getView()).noData();
     }
+
+    @Test
+    public void testOnMinDateEditorChanged() {
+        SelectorSliderDisplayer presenter = createSelectorDisplayer(dateSelectorSettings);
+        SelectorSliderDisplayer.View view = presenter.getView();
+        presenter.draw();
+
+        reset(view);
+        presenter.onMinDateInputFocus();
+        verify(view).setSliderEnabled(false);
+
+        reset(view);
+        when(minDateInputEditor.getValue()).thenReturn(new Date());
+        presenter.onMinDateInputChange();
+        verify(view).showSlider(anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble());
+        verify(view).setSliderEnabled(true);
+    }
+
+    @Test
+    public void testOnMaxDateEditorChanged() {
+        SelectorSliderDisplayer presenter = createSelectorDisplayer(dateSelectorSettings);
+        SelectorSliderDisplayer.View view = presenter.getView();
+        presenter.draw();
+
+        reset(view);
+        presenter.onMaxDateInputFocus();
+        verify(view).setSliderEnabled(false);
+
+        reset(view);
+        when(maxDateInputEditor.getValue()).thenReturn(new Date());
+        presenter.onMaxDateInputChange();
+        verify(view).showSlider(anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble());
+        verify(view).setSliderEnabled(true);
+    }
 }
