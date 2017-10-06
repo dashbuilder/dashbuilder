@@ -538,7 +538,9 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
      */
     public List<Interval> filterIntervals(String columnId) {
         List<Interval> selected = columnSelectionMap.get(columnId);
-        if (selected == null) return new ArrayList<Interval>();
+        if (selected == null) {
+            return new ArrayList<>();
+        }
         return selected;
     }
 
@@ -549,10 +551,11 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
      * @return A list of interval indexes
      */
     public List<Integer> filterIndexes(String columnId) {
-        List<Integer> result = new ArrayList<Integer>();
+        List<Integer> result = new ArrayList<>();
         List<Interval> selected = columnSelectionMap.get(columnId);
-        if (selected == null) return result;
-
+        if (selected == null) {
+            return result;
+        }
         for (Interval interval : selected) {
             result.add(interval.getIndex());
         }
