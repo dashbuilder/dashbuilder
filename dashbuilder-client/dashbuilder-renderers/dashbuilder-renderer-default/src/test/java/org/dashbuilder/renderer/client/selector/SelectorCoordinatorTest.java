@@ -55,7 +55,7 @@ public class SelectorCoordinatorTest extends AbstractDisplayerTest {
     DisplayerSettings dateSlider = DisplayerSettingsFactory.newSelectorSettings()
             .dataset(EXPENSES)
             .column(COLUMN_DATE)
-            .filterOn(false, true, false)
+            .filterOn(false, true, true)
             .subtype(DisplayerSubType.SELECTOR_SLIDER)
             .buildSettings();
 
@@ -197,7 +197,7 @@ public class SelectorCoordinatorTest extends AbstractDisplayerTest {
         yearLabelDisplayer.onItemSelected(labelItem);
         reset(listener);
 
-        // Select 2012year on slider
+        // Select 2012 year on slider
         when(labelItem.getId()).thenReturn(0);
         Date min = new Date(112, 0, 1);
         Date max = new Date(112, 11, 31);
@@ -208,6 +208,33 @@ public class SelectorCoordinatorTest extends AbstractDisplayerTest {
         assertEquals(dataSet.getRowCount(), 13);
         verify(listener).onDataLookup(allRowsDisplayer);
         verify(listener).onRedraw(allRowsDisplayer);
+    }
+
+    @Test
+    public void testSliderDateKeepsSelection() {
+        displayerCoordinator.drawAll();
+        Date min = (Date) dateSliderDisplayer.getSelectedMin();
+        Date max = (Date) dateSliderDisplayer.getSelectedMax();
+
+        // Select the first year label (2012)
+        when(labelItem.getId()).thenReturn(0);
+        yearLabelDisplayer.onItemSelected(labelItem);
+        Date min2012 = (Date) dateSliderDisplayer.getSelectedMin();
+        Date max2012 = (Date) dateSliderDisplayer.getSelectedMax();
+        verify(sliderView).showSlider(min2012.getTime(), max2012.getTime(), 1, min2012.getTime(), max2012.getTime());
+
+        // Shorten the slider
+        Date newMin = new Date(112, 3, 3);
+        dateSliderDisplayer.onSliderChange(newMin.getTime(), max.getTime());
+        assertEquals(dateSliderDisplayer.getSelectedMin(), newMin);
+        assertEquals(dateSliderDisplayer.getSelectedMax(), max);
+
+        // Reset the label filter and check the slider keeps its latest selection
+        reset(sliderView);
+        yearLabelDisplayer.filterReset();
+        assertEquals(dateSliderDisplayer.getSelectedMin(), newMin);
+        assertEquals(dateSliderDisplayer.getSelectedMax(), max);
+        verify(sliderView).showSlider(min.getTime(), max.getTime(), 1, newMin.getTime(), max.getTime());
     }
 
     @Test
