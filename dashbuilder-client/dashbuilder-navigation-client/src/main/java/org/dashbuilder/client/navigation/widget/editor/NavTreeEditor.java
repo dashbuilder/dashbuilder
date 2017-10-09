@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.event.NavItemEditCancelledEvent;
 import org.dashbuilder.client.navigation.event.NavItemEditStartedEvent;
+import org.dashbuilder.client.navigation.event.NavTreeChangedEvent;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
 import org.dashbuilder.navigation.NavFactory;
@@ -101,6 +102,7 @@ public class NavTreeEditor extends NavItemEditor {
     public void edit(NavTree navTree) {
         this.navTree = navTree.cloneTree();
         this.currentlyEditedItem = Optional.empty();
+        view.setChangedFlag(false);
 
         NavGroup rootGroup = NavFactory.get().createNavGroup(navTree);
         rootGroup.setId(ROOT_GROUP_ID);
@@ -156,6 +158,12 @@ public class NavTreeEditor extends NavItemEditor {
 
     NavItemEditor getCurrentlyEditedItem() {
         return currentlyEditedItem.isPresent() ? currentlyEditedItem.get() : null;
+    }
+
+    // SMake sure the editor is always up to date with the latest changes
+
+    void onNavTreeChanged(@Observes NavTreeChangedEvent event) {
+        edit(event.getNavTree());
     }
 
     // NavItemEditorSettings proxy methods

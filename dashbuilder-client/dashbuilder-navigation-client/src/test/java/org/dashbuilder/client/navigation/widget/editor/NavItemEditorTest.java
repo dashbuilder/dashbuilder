@@ -170,6 +170,8 @@ public class NavItemEditorTest {
         navGroup.setModifiable(false);
         presenter.edit(navGroup);
 
+        verify(view, atLeastOnce()).clearChildren();
+        verify(view, atLeastOnce()).clearCommands();
         verify(view).setItemName("name");
         verify(view).setItemDescription("description");
         verify(view).setItemEditable(false);
@@ -188,6 +190,8 @@ public class NavItemEditorTest {
         divider.setModifiable(true);
         presenter.edit(divider);
 
+        verify(view, atLeastOnce()).clearChildren();
+        verify(view, atLeastOnce()).clearCommands();
         verify(view).setItemName("name");
         verify(view).setItemDescription("description");
         verify(view).setItemEditable(false);
@@ -208,6 +212,8 @@ public class NavItemEditorTest {
         navItem.setContext(NavWorkbenchCtx.perspective("p1").toString());
         presenter.edit(navItem);
 
+        verify(view, atLeastOnce()).clearChildren();
+        verify(view, atLeastOnce()).clearCommands();
         verify(view).setItemEditable(false);
         verify(view).setItemType(NavItemEditor.ItemType.PERSPECTIVE);
         verify(view, atLeastOnce()).setCommandsEnabled(true);

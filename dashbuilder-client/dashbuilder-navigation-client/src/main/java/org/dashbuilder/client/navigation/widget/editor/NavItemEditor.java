@@ -467,6 +467,7 @@ public abstract class NavItemEditor implements IsElement {
         navItem = null;
         perspectiveId = null;
         view.clearChildren();
+        view.clearCommands();
     }
 
     public boolean areChildrenAllowed() {

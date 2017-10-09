@@ -211,7 +211,6 @@ public class PerspectivePluginManager {
         }
     }
 
-
     public void onPlugInDeleted(@Observes final PluginDeleted event) {
         String pluginName = event.getPluginName();
         pluginMap.remove(pluginName);

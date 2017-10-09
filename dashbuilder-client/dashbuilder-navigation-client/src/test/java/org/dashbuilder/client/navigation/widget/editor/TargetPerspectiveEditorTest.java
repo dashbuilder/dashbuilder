@@ -38,6 +38,9 @@ public class TargetPerspectiveEditorTest {
     TargetPerspectiveEditor.View view;
 
     @Mock
+    PerspectivePluginManager perspectivePluginManager;
+
+    @Mock
     PerspectiveDropDown perspectiveDropDown;
 
     @Mock
@@ -58,7 +61,7 @@ public class TargetPerspectiveEditorTest {
 
     @Before
     public void setUp() throws Exception {
-        presenter = new TargetPerspectiveEditor(view, perspectiveDropDown, perspectiveTreeProvider);
+        presenter = new TargetPerspectiveEditor(view, perspectiveDropDown,perspectivePluginManager, perspectiveTreeProvider);
         presenter.setNavItemList(NAV_TREE.getRootItems());
         presenter.setPerspectiveId("A");
         presenter.setNavGroupId("level1a");
@@ -89,5 +92,14 @@ public class TargetPerspectiveEditorTest {
         verify(view, never()).addNavGroupItem(eq("root>level1b"), any());
 
         verify(updateCommand).execute();
+    }
+
+    @Test
+    public void testPerspectiveName() {
+        when(perspectivePluginManager.isRuntimePerspective("A.1")).thenReturn(true);
+        when(perspectiveTreeProvider.getPerspectiveName("B.1")).thenReturn("Pretty");
+
+        assertEquals(presenter.getPerspectiveName("A.1"), "A.1");
+        assertEquals(presenter.getPerspectiveName("B.1"), "Pretty");
     }
 }
