@@ -16,16 +16,20 @@
 package org.dashbuilder.client.navigation.widget.editor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.enterprise.event.Event;
 
+import com.google.gwt.core.client.GWT;
 import org.dashbuilder.client.navigation.event.NavItemEditCancelledEvent;
 import org.dashbuilder.client.navigation.event.NavItemEditStartedEvent;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
+import org.dashbuilder.common.client.StringUtils;
 import org.dashbuilder.navigation.NavDivider;
 import org.dashbuilder.navigation.NavFactory;
 import org.dashbuilder.navigation.NavGroup;
@@ -36,10 +40,9 @@ import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.uberfire.client.authz.PerspectiveTreeProvider;
-import org.uberfire.client.mvp.PerspectiveActivity;
+import org.uberfire.client.mvp.AbstractWorkbenchPerspectiveActivity;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.UberElement;
-import org.uberfire.ext.plugin.client.perspective.editor.generator.PerspectiveEditorActivity;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.ActivityResourceType;
 
@@ -125,12 +128,10 @@ public abstract class NavItemEditor implements IsElement {
     boolean editEnabled = false;
     boolean deleteEnabled = false;
     boolean itemNameFromPerspective = false;
-    Set<String> visiblePerspectiveIds = null;
 
     private NavItemEditorSettings settings;
     private Class<? extends NavItemEditor> childEditorClass;
 
-    Set<String> hiddenPerspectiveIds = null;
     NavItemEditor parentEditor = null;
     List<NavItemEditor> childEditorList = new ArrayList<>();
     NavItem navItem = null;
@@ -245,7 +246,9 @@ public abstract class NavItemEditor implements IsElement {
     }
 
     public boolean isNewPerspectiveEnabled() {
-        return (settings == null || settings.isNewPerspectiveEnabled(navItem)) && areChildrenAllowed();
+        return (settings == null || settings.isNewPerspectiveEnabled(navItem))
+                && areChildrenAllowed()
+                && (!getPerspectiveIds(navItem, true).isEmpty());
     }
 
     public boolean isNewDividerEnabled() {
@@ -306,14 +309,6 @@ public abstract class NavItemEditor implements IsElement {
 
     public NavItem getNavItem() {
         return navItem;
-    }
-
-    public void setVisiblePerspectiveIds(Set<String> visiblePerspectiveIds) {
-        this.visiblePerspectiveIds = visiblePerspectiveIds;
-    }
-
-    public void setHiddenPerspectiveIds(Set<String> hiddenPerspectiveIds) {
-        this.hiddenPerspectiveIds = hiddenPerspectiveIds;
     }
 
     public void edit(NavItem navItem) {
@@ -428,34 +423,36 @@ public abstract class NavItemEditor implements IsElement {
             view.setItemName("--------------");
             editEnabled = false;
         }
-        else if (navCtx.getResourceId() != null) {
-
-            // Nav perspective item
-            if (ActivityResourceType.PERSPECTIVE.equals(navCtx.getResourceType())) {
-
-                if (visiblePerspectiveIds == null || visiblePerspectiveIds.contains(navCtx.getResourceId())) {
-                    perspectiveId = navCtx.getResourceId();
-                } else {
-                    perspectiveId = visiblePerspectiveIds.iterator().next();
-                    navCtx.setResourceId(perspectiveId);
-                    navItem.setContext(navCtx.toString());
-                }
-                if (hiddenPerspectiveIds != null) {
-                    targetPerspectiveEditor.setPerspectiveIdsExcluded(hiddenPerspectiveIds);
-                }
-
-                boolean isRuntimePerspective = perspectivePluginManager.isRuntimePerspective(perspectiveId);
-                String selectedNavGroupId = navCtx.getNavGroupId();
-                targetPerspectiveEditor.setPerspectiveId(perspectiveId);
-                targetPerspectiveEditor.setNavGroupId(selectedNavGroupId);
-                targetPerspectiveEditor.show();
-
-                view.setItemType(itemType =  isRuntimePerspective ? ItemType.RUNTIME_PERSPECTIVE : ItemType.PERSPECTIVE);
-                view.setContextWidget(targetPerspectiveEditor);
-            }
-        }
         else {
-            // Ignore non supported items
+            if (navCtx.getResourceId() != null) {
+
+                // Nav perspective item
+                if (ActivityResourceType.PERSPECTIVE.equals(navCtx.getResourceType())) {
+
+                    Set<String> visiblePerspectiveIds = getPerspectiveIds(navItem, true);
+                    if (visiblePerspectiveIds.isEmpty() || visiblePerspectiveIds.contains(navCtx.getResourceId())) {
+                        perspectiveId = navCtx.getResourceId();
+                    } else if (!visiblePerspectiveIds.isEmpty()) {
+                        perspectiveId = visiblePerspectiveIds.iterator().next();
+                        navCtx.setResourceId(perspectiveId);
+                        navItem.setContext(navCtx.toString());
+                    }
+
+                    Set<String> hiddenPerspectiveIds = getPerspectiveIds(navItem, false);
+                    boolean isRuntimePerspective = perspectivePluginManager.isRuntimePerspective(perspectiveId);
+                    String selectedNavGroupId = navCtx.getNavGroupId();
+                    targetPerspectiveEditor.clear();
+                    targetPerspectiveEditor.setPerspectiveId(perspectiveId);
+                    targetPerspectiveEditor.setNavGroupId(selectedNavGroupId);
+                    targetPerspectiveEditor.setPerspectiveIdsExcluded(hiddenPerspectiveIds);
+                    targetPerspectiveEditor.show();
+
+                    view.setItemType(itemType = isRuntimePerspective ? ItemType.RUNTIME_PERSPECTIVE : ItemType.PERSPECTIVE);
+                    view.setContextWidget(targetPerspectiveEditor);
+                }
+            } else {
+                // Ignore non supported items
+            }
         }
 
         view.setItemEditable(editEnabled);
@@ -501,10 +498,6 @@ public abstract class NavItemEditor implements IsElement {
         NavItemEditor navItemEditor = beanManager.lookupBean(childEditorClass).newInstance();
         navItemEditor.setParentEditor(this);
         navItemEditor.setSettings(settings);
-
-        navItemEditor.setVisiblePerspectiveIds(getPerspectiveIds(navItem, true));
-        navItemEditor.setHiddenPerspectiveIds(getPerspectiveIds(navItem, false));
-
         navItemEditor.setOnUpdateCommand(() -> onUpdateChild(navItem, navItemEditor));
         navItemEditor.setOnCancelCommand(() -> onCancelChild(navItem, navItemEditor));
         navItemEditor.setOnDeleteCommand(() -> onDeleteChild(navItemEditor));
@@ -516,30 +509,50 @@ public abstract class NavItemEditor implements IsElement {
     }
 
     public Set<String> getPerspectiveIds(NavItem navItem, boolean visible) {
-        Set<String> result = visible ? new HashSet<>() : new HashSet<>(perspectiveTreeProvider.getPerspectiveIdsExcluded());
         boolean onlyRuntime = settings == null || settings.onlyRuntimePerspectives(navItem);
+        Set<String> runtimeIds = getRuntimePerspectiveIds();
+        Set<String> hardCodedIds = getHardCodedPerspectiveIds();
+        Set<String> excludedIds = perspectiveTreeProvider.getPerspectiveIdsExcluded();
 
-        for (SyncBeanDef<PerspectiveActivity> beanDef : beanManager.lookupBeans(PerspectiveActivity.class)) {
-            PerspectiveActivity p = beanDef.getInstance();
-            try {
-                String id = p.getIdentifier();
-                boolean runtime = p instanceof PerspectiveEditorActivity;
-
-
-                if (visible && !perspectiveTreeProvider.getPerspectiveIdsExcluded().contains(id)) {
-                    if (!onlyRuntime || runtime) {
-                        result.add(p.getIdentifier());
-                    }
-                }
-                if (!visible && onlyRuntime && !runtime) {
-                    result.add(p.getIdentifier());
-                }
-            } finally {
-                beanManager.destroyBean(p);
+        if (visible) {
+            if (!onlyRuntime) {
+                runtimeIds.addAll(hardCodedIds);
             }
+            return runtimeIds.stream()
+                    .filter(id -> !excludedIds.contains(id))
+                    .collect(Collectors.toSet());
+        } else {
+            if (onlyRuntime) {
+                hardCodedIds.addAll(excludedIds);
+                return hardCodedIds;
+            }
+            return excludedIds;
         }
+    }
+
+    private Set<String> getRuntimePerspectiveIds() {
+        Set<String> result = new HashSet<>();
+        perspectivePluginManager.getPerspectivePlugins(plugins -> {
+            plugins.forEach(p -> {
+                String perspectiveId = p.getName();
+                result.add(perspectiveId);
+            });
+        });
         return result;
     }
+
+    private Set<String> getHardCodedPerspectiveIds() {
+        Set<String> result = new HashSet<>();
+        Collection<SyncBeanDef<AbstractWorkbenchPerspectiveActivity>> beanDefs =  beanManager.lookupBeans(AbstractWorkbenchPerspectiveActivity.class);
+        beanDefs.forEach(beanDef -> {
+            AbstractWorkbenchPerspectiveActivity bean = beanDef.getInstance();
+            String perspectiveId = bean.getIdentifier();
+            result.add(perspectiveId);
+            beanManager.destroyBean(bean);
+        });
+        return result;
+    }
+
 
     // Item commands
 
@@ -618,14 +631,17 @@ public abstract class NavItemEditor implements IsElement {
         NavGroup navGroup = (NavGroup) navItem;
         String id = "perspective_" + view.generateId();
         String name = i18n.newItemName(getPerspectiveLiteral());
-        String firstPerspective = getPerspectiveIds(navGroup, true).iterator().next();
-
         NavItem newItem = NavFactory.get().createNavItem();
         newItem.setParent(navGroup);
         newItem.setId(id);
         newItem.setName(name);
-        newItem.setContext(NavWorkbenchCtx.perspective(firstPerspective).toString());
         newItem.setModifiable(true);
+
+        Set<String> visiblePerspectiveIds = getPerspectiveIds(navGroup, true);
+        if (!visiblePerspectiveIds.isEmpty()) {
+            String firstPerspective = visiblePerspectiveIds.iterator().next();
+            newItem.setContext(NavWorkbenchCtx.perspective(firstPerspective).toString());
+        }
 
         NavItemEditor childEditor = registerChild(newItem);
         childEditor.startEdition();
@@ -643,6 +659,7 @@ public abstract class NavItemEditor implements IsElement {
 
         NavItemEditor childEditor = registerChild(newItem);
         this.onUpdateChild(newItem, childEditor);
+        this.expand();
         return childEditor;
     }
 
@@ -799,8 +816,6 @@ public abstract class NavItemEditor implements IsElement {
     }
 
     private void registerChildren(NavGroup navGroup) {
-        view.clearChildren();
-
         List<NavItemEditor> oldChildEditorList = new ArrayList<>(childEditorList);
         childEditorList.clear();
 
@@ -817,18 +832,15 @@ public abstract class NavItemEditor implements IsElement {
 
             NavItemEditor childEditor = result.isPresent() ? result.get() : createChildEditor(childItem);
             oldChildEditorList.remove(childEditor);
-
-            childEditor.setMoveUpEnabled(i > 0);
-            childEditor.setMoveDownEnabled(i < childList.size() - 1);
             childEditor.edit(childItem);
-
             childEditorList.add(childEditor);
-            view.addChild(childEditor);
-            view.setExpandEnabled(true);
         }
         // Destroy the remaining editors
         oldChildEditorList.forEach(beanManager::destroyBean);
         oldChildEditorList.clear();
+
+        // Refresh the children view
+        this.refreshChildren();
     }
 
     private NavItemEditor registerChild(NavItem item) {

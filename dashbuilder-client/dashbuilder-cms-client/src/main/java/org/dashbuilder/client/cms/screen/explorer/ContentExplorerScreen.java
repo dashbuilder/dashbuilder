@@ -23,8 +23,11 @@ import javax.inject.Inject;
 
 import org.dashbuilder.client.cms.resources.i18n.ContentManagerI18n;
 import org.dashbuilder.client.cms.widget.PerspectivesExplorer;
+import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.event.NavTreeLoadedEvent;
+import org.dashbuilder.client.navigation.event.PerspectivePluginsChangedEvent;
 import org.dashbuilder.client.navigation.widget.editor.NavTreeEditor;
+import org.dashbuilder.navigation.NavTree;
 import org.jboss.errai.common.client.api.IsElement;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -46,6 +49,7 @@ public class ContentExplorerScreen {
     }
 
     View view;
+    NavigationManager navigationManager;
     PerspectivesExplorer perspectiveExplorer;
     NavTreeEditor navTreeEditor;
     ContentManagerI18n i18n;
@@ -56,11 +60,13 @@ public class ContentExplorerScreen {
 
     @Inject
     public ContentExplorerScreen(View view,
+                                 NavigationManager navigationManager,
                                  PerspectivesExplorer perspectiveExplorer,
                                  NavTreeEditor navTreeEditor,
                                  ContentManagerI18n i18n,
                                  Event<NotificationEvent> workbenchNotification) {
         this.view = view;
+        this.navigationManager = navigationManager;
         this.perspectiveExplorer = perspectiveExplorer;
         this.navTreeEditor = navTreeEditor;
         this.i18n = i18n;
@@ -110,7 +116,13 @@ public class ContentExplorerScreen {
     }
 
     private void onNavTreeLoaded(@Observes NavTreeLoadedEvent event) {
-        navTreeEditor.edit(event.getNavTree());
+        NavTree navTree = navigationManager.getNavTree();
+        navTreeEditor.edit(navTree);
+    }
+
+    private void onPerspectivesChanged(@Observes PerspectivePluginsChangedEvent event) {
+        NavTree navTree = navigationManager.getNavTree();
+        navTreeEditor.edit(navTree);
     }
 
     private void onNavTreeSaved() {

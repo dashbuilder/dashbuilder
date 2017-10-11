@@ -1,6 +1,7 @@
 package org.dashbuilder.client.navigation.widget.editor;
 
-import java.util.Collections;
+import java.util.Collection;
+import java.util.HashSet;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.dashbuilder.client.navigation.NavigationManager;
@@ -25,12 +26,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.uberfire.client.authz.PerspectiveTreeProvider;
-import org.uberfire.client.mvp.PerspectiveActivity;
 import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.ext.plugin.client.perspective.editor.generator.PerspectiveEditorActivity;
+import org.uberfire.ext.plugin.model.Plugin;
 import org.uberfire.mocks.CallerMock;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
+import org.uberfire.mvp.ParameterizedCommand;
 
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.assertFalse;
@@ -94,6 +95,10 @@ public class NavTreeEditorTest {
     @Mock
     Command updateCommand;
 
+    @Mock
+    Plugin perspectivePlugin;
+
+    Collection<Plugin> perspectivePlugins = new HashSet<>();
     NavigationManager navigationManager;
     NavTreeEditor navTreeEditor;
     NavItemDefaultEditor navItemEditor;
@@ -137,10 +142,12 @@ public class NavTreeEditorTest {
         when(navItemEditorView.getItemName()).thenReturn("editor1");
         when(navRootNodeEditorView.getItemName()).thenReturn("editor2");
 
-        SyncBeanDef perspBeanDef = mock(SyncBeanDef.class);
-        PerspectiveEditorActivity perspActivity = mock(PerspectiveEditorActivity.class);
-        when(beanManager.lookupBeans(PerspectiveActivity.class)).thenReturn(Collections.singleton(perspBeanDef));
-        when(perspBeanDef.getInstance()).thenReturn(perspActivity);
+        perspectivePlugins.add(perspectivePlugin);
+        doAnswer(invocationOnMock -> {
+            ParameterizedCommand callback = (ParameterizedCommand) invocationOnMock.getArguments()[0];
+            callback.execute(perspectivePlugins);
+            return null;
+        }).when(perspectivePluginManager).getPerspectivePlugins(any());
     }
 
     @Test
@@ -314,6 +321,7 @@ public class NavTreeEditorTest {
 
         reset(view);
         navTreeEditor.newDivider();
+        assertTrue(navTreeEditor.isExpanded());
         assertEquals(((NavGroup) navTreeEditor.getNavItem()).getChildren().size(), 3);
         verify(view, times(3)).addChild(any());
         verify(updateCommand).execute();
@@ -328,5 +336,14 @@ public class NavTreeEditorTest {
 
         NavTree navTree = navTreeEditor.getNavTree();
         assertNotNull(navTree.getItemById(newEditor.getNavItem().getId()));
+    }
+
+    @Test
+    public void testNewPerspectiveActionAvailable() {
+        NavItemEditor navItemEditor = navTreeEditor.newGroup();
+        assertTrue(navItemEditor.isNewPerspectiveEnabled());
+
+        perspectivePlugins.clear();
+        assertFalse(navItemEditor.isNewPerspectiveEnabled());
     }
 }
