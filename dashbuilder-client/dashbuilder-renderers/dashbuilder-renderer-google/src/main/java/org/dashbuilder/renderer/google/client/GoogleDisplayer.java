@@ -80,7 +80,7 @@ public abstract class GoogleDisplayer<V extends GoogleDisplayer.View> extends Ab
     /**
      * Invoked asynchronously by the GoogleRenderer when the displayer is ready for display
      */
-    void ready() {
+    public void ready() {
         super.draw();
     }
 
