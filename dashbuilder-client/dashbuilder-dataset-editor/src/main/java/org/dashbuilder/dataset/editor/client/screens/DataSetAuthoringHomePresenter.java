@@ -23,12 +23,12 @@ import org.dashbuilder.dataset.client.DataSetClientServices;
 import org.dashbuilder.dataset.editor.client.resources.i18n.DataSetAuthoringConstants;
 import org.dashbuilder.dataset.events.DataSetDefRegisteredEvent;
 import org.dashbuilder.dataset.events.DataSetDefRemovedEvent;
+import org.kie.soup.commons.validation.PortablePreconditions;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.UberView;
-import org.uberfire.commons.validation.PortablePreconditions;
 import org.uberfire.lifecycle.OnStartup;
 
 @WorkbenchScreen(identifier = "DataSetAuthoringHome")
@@ -36,6 +36,7 @@ import org.uberfire.lifecycle.OnStartup;
 public class DataSetAuthoringHomePresenter {
 
     public interface View extends UberView<DataSetAuthoringHomePresenter> {
+
         void setDataSetCount(int n);
     }
 
@@ -45,8 +46,8 @@ public class DataSetAuthoringHomePresenter {
     int dataSetCount = 0;
 
     @Inject
-    public DataSetAuthoringHomePresenter(final View view, 
-                                         final PlaceManager placeManager, 
+    public DataSetAuthoringHomePresenter(final View view,
+                                         final PlaceManager placeManager,
                                          final DataSetClientServices clientServices) {
         this.view = view;
         this.placeManager = placeManager;
@@ -82,12 +83,14 @@ public class DataSetAuthoringHomePresenter {
     // Be aware of data set lifecycle events
 
     void onDataSetDefRegisteredEvent(@Observes DataSetDefRegisteredEvent event) {
-        PortablePreconditions.checkNotNull("DataSetDefRegisteredEvent", event);
+        PortablePreconditions.checkNotNull("DataSetDefRegisteredEvent",
+                                           event);
         view.setDataSetCount(++dataSetCount);
     }
 
     void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {
-        PortablePreconditions.checkNotNull("DataSetDefRemovedEvent", event);
+        PortablePreconditions.checkNotNull("DataSetDefRemovedEvent",
+                                           event);
         view.setDataSetCount(--dataSetCount);
     }
 }

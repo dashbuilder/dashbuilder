@@ -36,11 +36,14 @@ import org.gwtbootstrap3.client.ui.Icon;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
 public class ColumnFilterEditorView extends Composite implements ColumnFilterEditor.View {
 
-    interface Binder extends UiBinder<Widget, ColumnFilterEditorView> {}
+    interface Binder extends UiBinder<Widget, ColumnFilterEditorView> {
+
+    }
+
     private static Binder uiBinder = GWT.create(Binder.class);
 
     ColumnFilterEditor presenter;
@@ -61,19 +64,22 @@ public class ColumnFilterEditorView extends Composite implements ColumnFilterEdi
     // View interface
 
     public void init(ColumnFilterEditor presenter) {
-        this.presenter = checkNotNull( "presenter", presenter );
+        this.presenter = checkNotNull("presenter",
+                                      presenter);
         initWidget(uiBinder.createAndBindUi(this));
 
         filterExpandIcon.addDomHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                onExpandCollapseDetails();
-            }
-        }, ClickEvent.getType());
+                                           public void onClick(ClickEvent event) {
+                                               onExpandCollapseDetails();
+                                           }
+                                       },
+                                       ClickEvent.getType());
         filterDeleteIcon.addDomHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                onDeleteFilter();
-            }
-        }, ClickEvent.getType());
+                                           public void onClick(ClickEvent event) {
+                                               onDeleteFilter();
+                                           }
+                                       },
+                                       ClickEvent.getType());
     }
 
     @Override
@@ -91,7 +97,8 @@ public class ColumnFilterEditorView extends Composite implements ColumnFilterEdi
 
     @Override
     public void setFunctionSelected(String function) {
-        filterListBox.insertItem(function, 0);
+        filterListBox.insertItem(function,
+                                 0);
         filterListBox.setTitle(function);
         if (functionSelected) {
             filterListBox.removeItem(1);

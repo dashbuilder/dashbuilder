@@ -28,22 +28,24 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.client.resources.bundles.DataSetClientResources;
 import org.dashbuilder.dataset.def.DataColumnDef;
 import org.gwtbootstrap3.client.ui.constants.Placement;
-import org.uberfire.commons.validation.PortablePreconditions;
+import org.kie.soup.commons.validation.PortablePreconditions;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
  * <p>Data Set column  type editor presenter.</p>
- * 
- * @since 0.4.0 
+ *
+ * @since 0.4.0
  */
 @Dependent
-public class ColumnTypeEditor implements IsWidget, org.dashbuilder.dataset.client.editor.ColumnTypeEditor  {
+public class ColumnTypeEditor implements IsWidget,
+                                         org.dashbuilder.dataset.client.editor.ColumnTypeEditor {
 
     DropDownImageListEditor<ColumnType> columnType;
     ColumnType originalColumnType;
@@ -56,7 +58,8 @@ public class ColumnTypeEditor implements IsWidget, org.dashbuilder.dataset.clien
     @PostConstruct
     public void init() {
         final Collection<ImageListEditor<ColumnType>.Entry> entries = getDefaultEntries();
-        columnType.setImageSize("16px", "16px");
+        columnType.setImageSize("16px",
+                                "16px");
         columnType.setEntries(entries);
     }
 
@@ -65,8 +68,12 @@ public class ColumnTypeEditor implements IsWidget, org.dashbuilder.dataset.clien
         return columnType.asWidget();
     }
 
-    public void addHelpContent(final String title, final String content, final Placement placement) {
-        columnType.setHelpContent(title, content, placement);
+    public void addHelpContent(final String title,
+                               final String content,
+                               final Placement placement) {
+        columnType.setHelpContent(title,
+                                  content,
+                                  placement);
     }
 
     @Override
@@ -77,7 +84,7 @@ public class ColumnTypeEditor implements IsWidget, org.dashbuilder.dataset.clien
     }
 
     /*************************************************************
-            ** GWT EDITOR CONTRACT METHODS **
+     ** GWT EDITOR CONTRACT METHODS **
      *************************************************************/
 
     @Override
@@ -85,11 +92,9 @@ public class ColumnTypeEditor implements IsWidget, org.dashbuilder.dataset.clien
         return columnType;
     }
 
-    
-
     @Override
     public void flush() {
-        
+
     }
 
     @Override
@@ -99,13 +104,13 @@ public class ColumnTypeEditor implements IsWidget, org.dashbuilder.dataset.clien
 
     @Override
     public void setValue(final DataColumnDef value) {
-        final ColumnType ct = originalColumnType != null ? originalColumnType : ( value != null ? value.getColumnType() : null );
+        final ColumnType ct = originalColumnType != null ? originalColumnType : (value != null ? value.getColumnType() : null);
         String columnTypeDescr = getColumnTypeDescription(ct);
         final Collection<ImageListEditor<ColumnType>.Entry> acceptableEntries = getAcceptableEntries(ct);
         columnType.setEntries(acceptableEntries);
         columnType.setHelpContent(DataSetEditorConstants.INSTANCE.attributeColumnType(),
-                columnTypeDescr,
-                Placement.RIGHT);
+                                  columnTypeDescr,
+                                  Placement.RIGHT);
     }
 
     @Override
@@ -151,9 +156,10 @@ public class ColumnTypeEditor implements IsWidget, org.dashbuilder.dataset.clien
         final String name = type.name();
         final String descr = getColumnTypeDescription(type);
         final SafeUri uri = getImageUri(type);
-        return columnType.newEntry(type, uri,
-                new SafeHtmlBuilder().appendEscaped(name). toSafeHtml(),
-                new SafeHtmlBuilder().appendEscaped(descr). toSafeHtml());
+        return columnType.newEntry(type,
+                                   uri,
+                                   new SafeHtmlBuilder().appendEscaped(name).toSafeHtml(),
+                                   new SafeHtmlBuilder().appendEscaped(descr).toSafeHtml());
     }
 
     SafeUri getImageUri(final ColumnType type) {
@@ -198,14 +204,15 @@ public class ColumnTypeEditor implements IsWidget, org.dashbuilder.dataset.clien
     // Listen to changes in the column type
 
     void onColumnTypeChanged(@Observes ValueChangeEvent<ColumnType> event) {
-        PortablePreconditions.checkNotNull("ValueChangeEvent<ColumnType>", event);
+        PortablePreconditions.checkNotNull("ValueChangeEvent<ColumnType>",
+                                           event);
         if (event.getContext().equals(columnType)) {
 
             // Update the help tooltip when the column type changes
             String columnTypeDescr = getColumnTypeDescription(event.getValue());
             columnType.setHelpContent(DataSetEditorConstants.INSTANCE.attributeColumnType(),
-                    columnTypeDescr,
-                    Placement.RIGHT);
+                                      columnTypeDescr,
+                                      Placement.RIGHT);
         }
     }
 }

@@ -41,7 +41,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.INFO;
 
 @WorkbenchScreen(identifier = "GalleryWidgetScreen")
@@ -84,8 +84,9 @@ public class GalleryWidgetPresenter {
     }
 
     @OnStartup
-    public void onStartup( final PlaceRequest placeRequest) {
-        String widgetId = placeRequest.getParameter("widgetId", "");
+    public void onStartup(final PlaceRequest placeRequest) {
+        String widgetId = placeRequest.getParameter("widgetId",
+                                                    "");
         widget = getWidget(widgetId);
     }
 
@@ -113,7 +114,7 @@ public class GalleryWidgetPresenter {
         if ("clusterMetrics".equals(widgetId)) {
             return clusterMetricsDashboard;
         }
-        
+
         throw new IllegalArgumentException(AppConstants.INSTANCE.gallerywidget_unknown() + widgetId);
     }
 
@@ -122,7 +123,8 @@ public class GalleryWidgetPresenter {
     // - It's refresh rate is greater than 60 seconds (avoid tons of notifications in "real-time" scenarios)
 
     private void onDataSetModifiedEvent(@Observes DataSetModifiedEvent event) {
-        checkNotNull("event", event);
+        checkNotNull("event",
+                     event);
 
         DataSetDef def = event.getDataSetDef();
         String targetUUID = event.getDataSetDef().getUUID();
@@ -130,23 +132,27 @@ public class GalleryWidgetPresenter {
         boolean noRealTime = timeFrame == null || timeFrame.toMillis() > 60000;
 
         if ((!def.isRefreshAlways() || noRealTime) && widget != null && widget.feedsFrom(targetUUID)) {
-            workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.gallerywidget_dataset_modif(), INFO));
+            workbenchNotification.fire(new NotificationEvent(AppConstants.INSTANCE.gallerywidget_dataset_modif(),
+                                                             INFO));
             widget.redrawAll();
         }
     }
 
     private void onDataSetPushOkEvent(@Observes DataSetPushOkEvent event) {
-        checkNotNull("event", event);
-        checkNotNull("event", event.getDataSetMetadata());
+        checkNotNull("event",
+                     event);
+        checkNotNull("event",
+                     event.getDataSetMetadata());
 
         DataSetMetadata metadata = event.getDataSetMetadata();
         DataSetDef def = metadata.getDefinition();
         TimeAmount timeFrame = def.getRefreshTimeAmount();
         if (timeFrame == null || timeFrame.toMillis() > 60000) {
-            int estimazedSizeKbs = event.getDataSetMetadata().getEstimatedSize()/1000;
+            int estimazedSizeKbs = event.getDataSetMetadata().getEstimatedSize() / 1000;
             workbenchNotification.fire(new NotificationEvent(
                     AppConstants.INSTANCE.gallerywidget_dataset_loaded(def.getProvider().toString(),
-                            estimazedSizeKbs), INFO));
+                                                                       estimazedSizeKbs),
+                    INFO));
         }
     }
 }

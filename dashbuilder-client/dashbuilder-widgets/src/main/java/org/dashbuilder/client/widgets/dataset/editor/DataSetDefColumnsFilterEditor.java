@@ -30,20 +30,22 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
 /**
  * <p>Data Set columns and filter editor presenter.</p>
- * 
- * @since 0.4.0 
+ *
+ * @since 0.4.0
  */
 @Dependent
-public class DataSetDefColumnsFilterEditor implements IsWidget, org.dashbuilder.dataset.client.editor.DataSetDefColumnsFilterEditor {
+public class DataSetDefColumnsFilterEditor implements IsWidget,
+                                                      org.dashbuilder.dataset.client.editor.DataSetDefColumnsFilterEditor {
 
     public interface View extends UberView<DataSetDefColumnsFilterEditor> {
 
@@ -54,7 +56,6 @@ public class DataSetDefColumnsFilterEditor implements IsWidget, org.dashbuilder.
                          DataSetDefFilterEditor.View dataSetFilterEditorView);
 
         void setMaxHeight(final String maxHeight);
-        
     }
 
     DataSetDefColumnsEditor columnsEditor;
@@ -73,7 +74,8 @@ public class DataSetDefColumnsFilterEditor implements IsWidget, org.dashbuilder.
     @PostConstruct
     public void init() {
         view.init(this);
-        view.initWidgets(columnsEditor.asWidget(), dataSetFilterEditor.view);
+        view.initWidgets(columnsEditor.asWidget(),
+                         dataSetFilterEditor.view);
     }
 
     @Override
@@ -117,7 +119,8 @@ public class DataSetDefColumnsFilterEditor implements IsWidget, org.dashbuilder.
     @Override
     public void setValue(final DataSetDef value) {
         if (value != null && value.getDataSetFilter() != null) {
-            updateColumnsRestrictedByFilter(null, value.getDataSetFilter());
+            updateColumnsRestrictedByFilter(null,
+                                            value.getDataSetFilter());
         }
     }
 
@@ -125,11 +128,12 @@ public class DataSetDefColumnsFilterEditor implements IsWidget, org.dashbuilder.
     public void setDelegate(final EditorDelegate<DataSetDef> delegate) {
 
     }
-    
-    private void updateColumnsRestrictedByFilter(final DataSetFilter oldFilter, final DataSetFilter f) {
+
+    private void updateColumnsRestrictedByFilter(final DataSetFilter oldFilter,
+                                                 final DataSetFilter f) {
         final List<String> oldFilterColumns = getFilterColumnIds(oldFilter);
         final List<String> newFilterColumns = getFilterColumnIds(f);
-        
+
         // Check columns removed from filter.
         if (!oldFilterColumns.isEmpty()) {
             for (final String oldFilterColumn : oldFilterColumns) {
@@ -147,8 +151,8 @@ public class DataSetDefColumnsFilterEditor implements IsWidget, org.dashbuilder.
             }
         }
     }
-    
-    private List<String> getFilterColumnIds(final DataSetFilter filter)  {
+
+    private List<String> getFilterColumnIds(final DataSetFilter filter) {
         final List<String> result = new ArrayList<String>();
         if (filter != null) {
             List<ColumnFilter> columnFilters = filter.getColumnFilterList();
@@ -161,17 +165,19 @@ public class DataSetDefColumnsFilterEditor implements IsWidget, org.dashbuilder.
         return result;
     }
 
-
     /**
      * Listen to filter changed event in order to restrict or enable again columns used in it.
+     *
      * @param filterChangedEvent The event.
      */
     void onFilterChangedEvent(@Observes FilterChangedEvent filterChangedEvent) {
-        checkNotNull("filterChangedEvent", filterChangedEvent);
+        checkNotNull("filterChangedEvent",
+                     filterChangedEvent);
         if (filterChangedEvent.getContext().equals(dataSetFilterEditor)) {
             final DataSetFilter old = filterChangedEvent.getOldFilter();
             final DataSetFilter f = filterChangedEvent.getFilter();
-            updateColumnsRestrictedByFilter(old, f);
+            updateColumnsRestrictedByFilter(old,
+                                            f);
         }
     }
 }

@@ -30,29 +30,33 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 import static org.dashbuilder.dataprovider.DataSetProviderType.*;
 
 /**
  * <p>Data Set Explorer widget.</p>
- * 
- * @since 0.3.0 
+ *
+ * @since 0.3.0
  */
 @Dependent
 public class DataSetExplorer implements IsWidget {
 
     public interface View extends UberView<DataSetExplorer> {
-        
+
         View addPanel(final DataSetPanel.View panelView);
-        
+
         View clear();
     }
-    
-    List<DataSetProviderType> SUPPORTED_TYPES = Arrays.asList(BEAN, CSV, ELASTICSEARCH, SQL);
+
+    List<DataSetProviderType> SUPPORTED_TYPES = Arrays.asList(BEAN,
+                                                              CSV,
+                                                              ELASTICSEARCH,
+                                                              SQL);
 
     Instance<DataSetPanel> panelInstances;
     DataSetClientServices clientServices;
@@ -80,7 +84,7 @@ public class DataSetExplorer implements IsWidget {
 
     public void show() {
         clear();
-        
+
         clientServices.getPublicDataSetDefs(dataSetDefs -> {
             if (dataSetDefs != null && !dataSetDefs.isEmpty()) {
                 dataSetDefs.stream()
@@ -100,15 +104,17 @@ public class DataSetExplorer implements IsWidget {
         if (getDataSetPanel(def.getUUID()) == null) {
             final DataSetPanel panel = panelInstances.get();
             panels.add(panel);
-            panel.show(def, "dataSetsExplorerPanelGroup");
+            panel.show(def,
+                       "dataSetsExplorerPanelGroup");
             view.addPanel(panel.view);
         }
     }
 
     private void updateDataSetDef(final DataSetDef def) {
-        DataSetPanel panel = getDataSetPanel(def.getUUID()); 
+        DataSetPanel panel = getDataSetPanel(def.getUUID());
         if (panel != null) {
-            panel.show(def, "dataSetsExplorerPanelGroup");
+            panel.show(def,
+                       "dataSetsExplorerPanelGroup");
             panel.close();
         }
     }
@@ -128,11 +134,12 @@ public class DataSetExplorer implements IsWidget {
         panels.clear();
         view.clear();
     }
-    
+
     // Be aware of data set lifecycle events
 
     void onDataSetDefRegisteredEvent(@Observes DataSetDefRegisteredEvent event) {
-        checkNotNull("event", event);
+        checkNotNull("event",
+                     event);
 
         final DataSetDef def = event.getDataSetDef();
         if (def != null && def.isPublic() && isSupported(def)) {
@@ -142,7 +149,8 @@ public class DataSetExplorer implements IsWidget {
     }
 
     void onDataSetDefModifiedEvent(@Observes DataSetDefModifiedEvent event) {
-        checkNotNull("event", event);
+        checkNotNull("event",
+                     event);
 
         final DataSetDef def = event.getNewDataSetDef();
         if (def != null && def.isPublic()) {
@@ -151,12 +159,12 @@ public class DataSetExplorer implements IsWidget {
     }
 
     void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {
-        checkNotNull("event", event);
+        checkNotNull("event",
+                     event);
         final DataSetDef def = event.getDataSetDef();
         if (def != null && def.isPublic()) {
             // Reload the whole data set panels list.
             show();
         }
     }
-    
 }

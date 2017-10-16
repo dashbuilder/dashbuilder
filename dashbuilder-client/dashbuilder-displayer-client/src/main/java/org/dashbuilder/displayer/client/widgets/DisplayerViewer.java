@@ -28,7 +28,7 @@ import org.dashbuilder.displayer.client.DisplayerListener;
 import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.uberfire.mvp.Command;
 
-import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
 @Dependent
 public class DisplayerViewer extends Composite {
@@ -49,18 +49,22 @@ public class DisplayerViewer extends Composite {
                 show();
             }
         }
+
         public void onRedraw(Displayer displayer) {
             if (error) {
                 show();
             }
         }
-        public void onError(Displayer displayer, ClientRuntimeError error) {
+
+        public void onError(Displayer displayer,
+                            ClientRuntimeError error) {
             error(error);
         }
     };
 
     @Inject
-    public DisplayerViewer(DisplayerLocator displayerLocator, RendererSelector rendererSelector) {
+    public DisplayerViewer(DisplayerLocator displayerLocator,
+                           RendererSelector rendererSelector) {
         this.displayerLocator = displayerLocator;
         this.rendererSelector = rendererSelector;
         initWidget(container);
@@ -81,15 +85,15 @@ public class DisplayerViewer extends Composite {
     public void init(DisplayerSettings displayerSettings) {
         try {
             // Lookup the displayer
-            checkNotNull("displayerSettings", displayerSettings);
+            checkNotNull("displayerSettings",
+                         displayerSettings);
             this.displayerSettings = displayerSettings;
             this.displayer = displayerLocator.lookupDisplayer(displayerSettings);
             this.displayer.addListener(displayerListener);
 
             // Make the displayer visible
             show();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             error(new ClientRuntimeError(e));
         }
     }
@@ -102,16 +106,19 @@ public class DisplayerViewer extends Composite {
 
         // Add the renderer selector (if enabled)
         if (isShowRendererSelector) {
-            rendererSelector.init(displayerSettings, RendererSelector.SelectorType.TAB, 300, new Command() {
-                public void execute() {
-                    displayerSettings.setRenderer(rendererSelector.getRendererLibrary().getUUID());
-                    displayer = displayerLocator.lookupDisplayer(displayerSettings);
-                    displayer.draw();
+            rendererSelector.init(displayerSettings,
+                                  RendererSelector.SelectorType.TAB,
+                                  300,
+                                  new Command() {
+                                      public void execute() {
+                                          displayerSettings.setRenderer(rendererSelector.getRendererLibrary().getUUID());
+                                          displayer = displayerLocator.lookupDisplayer(displayerSettings);
+                                          displayer.draw();
 
-                    displayerContainer.clear();
-                    displayerContainer.add(displayer);
-                }
-            });
+                                          displayerContainer.clear();
+                                          displayerContainer.add(displayer);
+                                      }
+                                  });
             container.add(rendererSelector);
         }
         container.add(displayerContainer);
@@ -122,8 +129,7 @@ public class DisplayerViewer extends Composite {
         try {
             // Draw the displayer
             displayer.draw();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             error(new ClientRuntimeError(e));
         }
         return displayer;
@@ -131,8 +137,10 @@ public class DisplayerViewer extends Composite {
 
     public Displayer redraw() {
         try {
-            checkNotNull("displayerSettings", displayerSettings);
-            checkNotNull("displayer", displayer);
+            checkNotNull("displayerSettings",
+                         displayerSettings);
+            checkNotNull("displayer",
+                         displayer);
 
             displayer.setDisplayerSettings(displayerSettings);
             displayer.redraw();
@@ -145,9 +153,11 @@ public class DisplayerViewer extends Composite {
     public void error(ClientRuntimeError e) {
         container.clear();
         container.add(errorWidget);
-        errorWidget.show(e.getMessage(), e.getCause());
+        errorWidget.show(e.getMessage(),
+                         e.getCause());
 
         error = true;
-        GWT.log(e.getMessage(), e.getThrowable());
+        GWT.log(e.getMessage(),
+                e.getThrowable());
     }
 }

@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -56,7 +57,7 @@ import org.uberfire.java.nio.file.SimpleFileVisitor;
 import org.uberfire.java.nio.file.StandardDeleteOption;
 import org.uberfire.java.nio.file.attribute.BasicFileAttributes;
 
-import static org.uberfire.commons.validation.PortablePreconditions.*;
+import static org.kie.soup.commons.validation.PortablePreconditions.*;
 import static org.uberfire.java.nio.file.Files.*;
 
 /**
@@ -97,7 +98,8 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
                                  Event<DataSetDefRemovedEvent> dataSetDefRemovedEvent,
                                  Event<DataSetStaleEvent> dataSetStaleEvent) {
 
-        super(dataSetProviderRegistry, scheduler);
+        super(dataSetProviderRegistry,
+              scheduler);
         this.uuidGenerator = DataSetCore.get().getUuidGenerator();
         this.maxCsvLength = maxCsvLength;
         this.ioService = ioService;
@@ -123,8 +125,10 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
         dataSetStaleEvent.fire(new DataSetStaleEvent(def));
     }
 
-    protected void onDataSetDefModified(DataSetDef olDef, DataSetDef newDef) {
-        dataSetDefModifiedEvent.fire(new DataSetDefModifiedEvent(olDef, newDef));
+    protected void onDataSetDefModified(DataSetDef olDef,
+                                        DataSetDef newDef) {
+        dataSetDefModifiedEvent.fire(new DataSetDefModifiedEvent(olDef,
+                                                                 newDef));
     }
 
     protected void onDataSetDefRegistered(DataSetDef newDef) {
@@ -138,11 +142,13 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
     protected void initFileSystem() {
         try {
             fileSystem = ioService.newFileSystem(URI.create("default://datasets"),
-                    new HashMap<String, Object>() {{
-                        put( "init", Boolean.TRUE );
-                        put( "internal", Boolean.TRUE );
-                    }});
-        } catch ( FileSystemAlreadyExistsException e ) {
+                                                 new HashMap<String, Object>() {{
+                                                     put("init",
+                                                         Boolean.TRUE);
+                                                     put("internal",
+                                                         Boolean.TRUE);
+                                                 }});
+        } catch (FileSystemAlreadyExistsException e) {
             fileSystem = ioService.getFileSystem(URI.create("default://datasets"));
         }
         this.root = fileSystem.getRootDirectories().iterator().next();
@@ -150,7 +156,8 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
 
     protected void registerDataSetDefs() {
         for (DataSetDef def : listDataSetDefs()) {
-            super.dataSetDefMap.put(def.getUUID(), new DataSetDefEntry(def));
+            super.dataSetDefMap.put(def.getUUID(),
+                                    new DataSetDefEntry(def));
         }
     }
 
@@ -163,7 +170,9 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
     }
 
     @Override
-    public void registerDataSetDef(DataSetDef def, String subjectId, String message) {
+    public void registerDataSetDef(DataSetDef def,
+                                   String subjectId,
+                                   String message) {
 
         if (def.getUUID() == null) {
             final String uuid = uuidGenerator.newUuid();
@@ -173,56 +182,73 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
         if (subjectId == null || message == null) {
             ioService.startBatch(fileSystem);
         } else {
-            ioService.startBatch(fileSystem, new CommentedOption(subjectId, message));
+            ioService.startBatch(fileSystem,
+                                 new CommentedOption(subjectId,
+                                                     message));
         }
 
         try {
             String defJson = getDataSetDefJsonMarshaller().toJsonString(def);
             Path defPath = resolveNioPath(def);
-            ioService.write(defPath, defJson);
+            ioService.write(defPath,
+                            defJson);
 
             // CSV specific
             if (def instanceof CSVDataSetDef) {
                 saveCSVFile((CSVDataSetDef) def);
             }
-            super.registerDataSetDef(def, subjectId, message);
-        }
-        catch (Exception e) {
+            super.registerDataSetDef(def,
+                                     subjectId,
+                                     message);
+        } catch (Exception e) {
             throw exceptionManager.handleException(
-                    new Exception("Can't register the data set definition\n" + def, e));
-        }
-        finally {
+                    new Exception("Can't register the data set definition\n" + def,
+                                  e));
+        } finally {
             ioService.endBatch();
         }
     }
 
     @Override
-    public DataSetDef removeDataSetDef(String uuid, String subjectId, String message) {
+    public DataSetDef removeDataSetDef(String uuid,
+                                       String subjectId,
+                                       String message) {
         DataSetDef def = getDataSetDef(uuid);
         if (def == null) {
             return null;
         }
-        return removeDataSetDef(def, subjectId, message);
+        return removeDataSetDef(def,
+                                subjectId,
+                                message);
     }
 
-    public void removeDataSetDef(org.uberfire.backend.vfs.Path path, String subjectId, String comment) {
+    public void removeDataSetDef(org.uberfire.backend.vfs.Path path,
+                                 String subjectId,
+                                 String comment) {
         DataSetDef def = loadDataSetDef(path);
         if (def != null) {
-            removeDataSetDef(def, subjectId, comment);
+            removeDataSetDef(def,
+                             subjectId,
+                             comment);
         }
     }
 
-    public DataSetDef removeDataSetDef(DataSetDef def, String subjectId, String message) {
+    public DataSetDef removeDataSetDef(DataSetDef def,
+                                       String subjectId,
+                                       String message) {
         Path defPath = resolveNioPath(def);
 
         if (ioService.exists(defPath)) {
             if (subjectId == null || message == null) {
                 ioService.startBatch(fileSystem);
             } else {
-                ioService.startBatch(fileSystem, new CommentedOption(subjectId, message));
+                ioService.startBatch(fileSystem,
+                                     new CommentedOption(subjectId,
+                                                         message));
             }
             try {
-                ioService.deleteIfExists(defPath, StandardDeleteOption.NON_EMPTY_DIRECTORIES);
+                ioService.deleteIfExists(defPath,
+                                         StandardDeleteOption.NON_EMPTY_DIRECTORIES);
 
                 // CSV specific
                 if (def instanceof CSVDataSetDef) {
@@ -232,33 +258,40 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
                 ioService.endBatch();
             }
         }
-        return super.removeDataSetDef(def.getUUID(), subjectId, message);
+        return super.removeDataSetDef(def.getUUID(),
+                                      subjectId,
+                                      message);
     }
 
     public Collection<DataSetDef> listDataSetDefs() {
         final Collection<DataSetDef> result = new ArrayList<DataSetDef>();
 
         if (ioService.exists(root)) {
-            walkFileTree(checkNotNull("root", root),
-                    new SimpleFileVisitor<Path>() {
-                        @Override
-                        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-                            try {
-                                checkNotNull("file", file);
-                                checkNotNull("attrs", attrs);
+            walkFileTree(checkNotNull("root",
+                                      root),
+                         new SimpleFileVisitor<Path>() {
+                             @Override
+                             public FileVisitResult visitFile(final Path file,
+                                                              final BasicFileAttributes attrs) throws IOException {
+                                 try {
+                                     checkNotNull("file",
+                                                  file);
+                                     checkNotNull("attrs",
+                                                  attrs);
 
-                                if (file.getFileName().toString().endsWith(DATASET_EXT) && attrs.isRegularFile()) {
-                                    String json = ioService.readAllString(file);
-                                    DataSetDef def = getDataSetDefJsonMarshaller().fromJson(json);
-                                    result.add(def);
-                                }
-                            } catch (final Exception e) {
-                                log.error("Data set definition read error: " + file.getFileName(), e);
-                                return FileVisitResult.TERMINATE;
-                            }
-                            return FileVisitResult.CONTINUE;
-                        }
-                });
+                                     if (file.getFileName().toString().endsWith(DATASET_EXT) && attrs.isRegularFile()) {
+                                         String json = ioService.readAllString(file);
+                                         DataSetDef def = getDataSetDefJsonMarshaller().fromJson(json);
+                                         result.add(def);
+                                     }
+                                 } catch (final Exception e) {
+                                     log.error("Data set definition read error: " + file.getFileName(),
+                                               e);
+                                     return FileVisitResult.TERMINATE;
+                                 }
+                                 return FileVisitResult.CONTINUE;
+                             }
+                         });
         }
         return result;
     }
@@ -272,13 +305,17 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
                 return def;
             } catch (Exception e) {
                 String msg = "Error parsing data set JSON definition: " + path.getFileName();
-                throw exceptionManager.handleException(new Exception(msg, e));
+                throw exceptionManager.handleException(new Exception(msg,
+                                                                     e));
             }
         }
         return null;
     }
 
-    public DataSetDef copyDataSetDef(DataSetDef def, String newName, String subjectId, String message) {
+    public DataSetDef copyDataSetDef(DataSetDef def,
+                                     String newName,
+                                     String subjectId,
+                                     String message) {
         DataSetDef clone = def.clone();
         clone.setUUID(uuidGenerator.newUuid());
         clone.setName(newName);
@@ -286,7 +323,9 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
         if (subjectId == null || message == null) {
             ioService.startBatch(fileSystem);
         } else {
-            ioService.startBatch(fileSystem, new CommentedOption(subjectId, message));
+            ioService.startBatch(fileSystem,
+                                 new CommentedOption(subjectId,
+                                                     message));
         }
         try {
             // CSV specific
@@ -295,21 +334,24 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
                 CSVDataSetDef csvCloneDef = (CSVDataSetDef) clone;
                 Path csvPath = resolveCsvPath(csvDef);
                 Path cloneCsvPath = resolveCsvPath(csvCloneDef);
-                ioService.copy(csvPath, cloneCsvPath);
+                ioService.copy(csvPath,
+                               cloneCsvPath);
                 csvCloneDef.setFilePath(convert(cloneCsvPath).toURI());
             }
             String defJson = getDataSetDefJsonMarshaller().toJsonString(clone);
             Path clonePath = resolveNioPath(clone);
-            ioService.write(clonePath, defJson);
+            ioService.write(clonePath,
+                            defJson);
 
-            super.registerDataSetDef(clone, subjectId, message);
+            super.registerDataSetDef(clone,
+                                     subjectId,
+                                     message);
             return clone;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw exceptionManager.handleException(
-                    new Exception("Can't register the data set definition\n" + def, e));
-        }
-        finally {
+                    new Exception("Can't register the data set definition\n" + def,
+                                  e));
+        } finally {
             ioService.endBatch();
         }
     }
@@ -322,23 +364,27 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
     public void deleteTempFiles() {
         Path tempPath = getTempPath();
         if (ioService.exists(tempPath)) {
-            ioService.startBatch(fileSystem, new CommentedOption("system", "Delete temporal files"));
+            ioService.startBatch(fileSystem,
+                                 new CommentedOption("system",
+                                                     "Delete temporal files"));
             try {
                 walkFileTree(tempPath,
-                    new SimpleFileVisitor<Path>() {
+                             new SimpleFileVisitor<Path>() {
 
-                        @Override
-                        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                            Files.delete(dir);
-                            return FileVisitResult.CONTINUE;
-                        }
+                                 @Override
+                                 public FileVisitResult postVisitDirectory(Path dir,
+                                                                           IOException exc) throws IOException {
+                                     Files.delete(dir);
+                                     return FileVisitResult.CONTINUE;
+                                 }
 
-                        @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                            Files.delete(file);
-                            return FileVisitResult.CONTINUE;
-                        }
-                    });
+                                 @Override
+                                 public FileVisitResult visitFile(Path file,
+                                                                  BasicFileAttributes attrs) throws IOException {
+                                     Files.delete(file);
+                                     return FileVisitResult.CONTINUE;
+                                 }
+                             });
             } finally {
                 ioService.endBatch();
             }
@@ -398,7 +444,8 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
         Path csvPath = resolveCsvPath(def);
 
         if (ioService.exists(csvPath)) {
-            ioService.deleteIfExists(csvPath, StandardDeleteOption.NON_EMPTY_DIRECTORIES);
+            ioService.deleteIfExists(csvPath,
+                                     StandardDeleteOption.NON_EMPTY_DIRECTORIES);
         }
     }
 
@@ -417,7 +464,8 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
                 // Avoid FileAlreadyExistsException on call to move (see below)
                 ioService.delete(csvPath);
             }
-            ioService.move(csvTempPath, csvPath);
+            ioService.move(csvTempPath,
+                           csvPath);
             return;
         }
         // The CSV was registered or deployed via API => Copy the file contents to the definitions directory
@@ -431,10 +479,12 @@ public class DataSetDefRegistryCDI extends DataSetDefRegistryImpl implements CSV
             try {
                 Path defPath = resolveCsvPath(def);
                 String csvContent = FileUtils.readFileToString(csvFile);
-                ioService.write(defPath, csvContent);
+                ioService.write(defPath,
+                                csvContent);
             } catch (Exception e) {
                 String msg = "Error saving CSV file: " + csvFile;
-                throw exceptionManager.handleException(new Exception(msg, e));
+                throw exceptionManager.handleException(new Exception(msg,
+                                                                     e));
             }
         }
     }
