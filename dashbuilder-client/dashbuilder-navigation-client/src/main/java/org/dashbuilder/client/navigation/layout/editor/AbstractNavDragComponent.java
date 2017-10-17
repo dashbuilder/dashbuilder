@@ -107,7 +107,7 @@ public abstract class AbstractNavDragComponent implements NavDragComponent {
         // Nav group settings
         NavTree navTree = navigationManager.getNavTree();
         String groupId = ctx.getComponentProperty(NAV_GROUP_ID);
-        navComponentConfigModal.setNavGroup(navTree.getRootItems(), groupId);
+        navComponentConfigModal.setNavGroup(navTree.getRootItems(), navTree.getItemById(groupId) != null ? groupId : null);
         navComponentConfigModal.setNavGroupHelpHint(getDragComponentNavGroupHelp());
 
         // Default item settings

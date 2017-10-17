@@ -138,10 +138,6 @@ public class NavTreeJSONMarshaller {
             navItem = NavFactory.get().createNavItem();
         }
         String id = json.getString(NAV_ITEM_ID);
-        if (id  == null) {
-            throw new RuntimeException("Nav item id not specified");
-        }
-
         String name = json.getString(NAV_ITEM_NAME);
         String desc = json.getString(NAV_ITEM_DESC);
         String modif = json.getString(NAV_ITEM_MODIF);

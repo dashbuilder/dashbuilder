@@ -16,6 +16,7 @@ package org.dashbuilder.client.navigation.widget;
 
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
+import org.dashbuilder.navigation.NavGroup;
 import org.dashbuilder.navigation.NavTree;
 import org.dashbuilder.navigation.impl.NavTreeBuilder;
 import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
@@ -161,5 +162,17 @@ public class NavMenuBarWidgetTest {
         verify(view).setSelectedItem(ITEM_ID_HOME);
         verify(viewAdmin).setActive(false);
         verify(viewDashboards, never()).setActive(true);
+    }
+
+    @Test
+    public void testNullNavGroup() {
+        presenter.show((NavGroup) null);
+        verify(view).errorNavGroupNotFound();
+    }
+
+    @Test
+    public void testNullNavTree() {
+        presenter.show((NavTree) null);
+        verify(view).errorNavItemsEmpty();
     }
 }

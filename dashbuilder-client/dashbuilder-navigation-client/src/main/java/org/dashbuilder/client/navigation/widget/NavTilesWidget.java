@@ -96,15 +96,20 @@ public class NavTilesWidget extends BaseNavWidget {
     }
 
     public void show(NavGroup navGroup, boolean clearBreadcrumb) {
-        NavGroup clone = (NavGroup) navGroup.cloneItem();
-        clone.setParent(null);
-
-        if (clearBreadcrumb) {
-            navItemStack.clear();
-            updateBreadcrumb();
+        if (navGroup == null) {
+            view.errorNavGroupNotFound();
         }
-        currentPerspectiveNavItem = null;
-        super.show(clone);
+        else {
+            NavGroup clone = (NavGroup) navGroup.cloneItem();
+            clone.setParent(null);
+
+            if (clearBreadcrumb) {
+                navItemStack.clear();
+                updateBreadcrumb();
+            }
+            currentPerspectiveNavItem = null;
+            super.show(clone);
+        }
     }
 
     @Override

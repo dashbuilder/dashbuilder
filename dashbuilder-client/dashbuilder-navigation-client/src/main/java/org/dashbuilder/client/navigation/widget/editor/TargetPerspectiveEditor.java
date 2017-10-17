@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.navigation.widget;
+package org.dashbuilder.client.navigation.widget.editor;
 
 import java.util.List;
 import java.util.Set;
@@ -21,6 +21,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.navigation.NavGroup;
 import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.NavTree;
@@ -29,10 +30,11 @@ import org.jboss.errai.common.client.dom.HTMLElement;
 import org.uberfire.client.authz.PerspectiveTreeProvider;
 import org.uberfire.client.mvp.UberElement;
 import org.uberfire.ext.widgets.common.client.dropdown.PerspectiveDropDown;
+import org.uberfire.ext.widgets.common.client.dropdown.PerspectiveNameProvider;
 import org.uberfire.mvp.Command;
 
 @Dependent
-public class TargetPerspectiveEditor implements IsElement {
+public class TargetPerspectiveEditor implements IsElement, PerspectiveNameProvider {
 
     public interface View extends UberElement<TargetPerspectiveEditor> {
 
@@ -48,20 +50,23 @@ public class TargetPerspectiveEditor implements IsElement {
     }
 
     View view;
-    NavTree navTree;
     String navGroupId;
     PerspectiveDropDown perspectiveDropDown;
+    PerspectivePluginManager perspectivePluginManager;
     PerspectiveTreeProvider perspectiveTreeProvider;
+    List<NavItem> navItemList;
     Command onUpdateCommand;
 
     @Inject
     public TargetPerspectiveEditor(View view,
                                    PerspectiveDropDown perspectiveDropDown,
+                                   PerspectivePluginManager perspectivePluginManager,
                                    PerspectiveTreeProvider perspectiveTreeProvider) {
         this.view = view;
         this.perspectiveDropDown = perspectiveDropDown;
+        this.perspectivePluginManager = perspectivePluginManager;
         this.perspectiveTreeProvider = perspectiveTreeProvider;
-        this.perspectiveDropDown.setPerspectiveNameProvider(perspectiveTreeProvider::getPerspectiveName);
+        this.perspectiveDropDown.setPerspectiveNameProvider(this);
         this.perspectiveDropDown.setMaxItems(50);
         this.perspectiveDropDown.setWidth(150);
         this.perspectiveDropDown.setOnChange(this::onPerspectiveChanged);
@@ -73,8 +78,8 @@ public class TargetPerspectiveEditor implements IsElement {
         return view.getElement();
     }
 
-    public void setNavTree(NavTree navTree) {
-        this.navTree = navTree;
+    public void setNavItemList(List<NavItem> navItemList) {
+        this.navItemList = navItemList;
     }
 
     public void setOnUpdateCommand(Command onUpdateCommand) {
@@ -93,7 +98,11 @@ public class TargetPerspectiveEditor implements IsElement {
         return perspectiveDropDown.getSelectedPerspective().getIdentifier();
     }
 
+    @Override
     public String getPerspectiveName(String perspectiveId) {
+        if (perspectivePluginManager.isRuntimePerspective(perspectiveId)) {
+            return perspectiveId;
+        }
         return perspectiveTreeProvider.getPerspectiveName(perspectiveId);
     }
 
@@ -122,8 +131,8 @@ public class TargetPerspectiveEditor implements IsElement {
 
     private void updateNavGroups() {
         view.clearNavGroupItems();
-        if (navTree != null) {
-            updateNavGroups(navTree.getRootItems());
+        if (navItemList != null) {
+            updateNavGroups(navItemList);
         }
     }
 

@@ -124,6 +124,7 @@ public class NavItemImpl implements NavItem {
     public NavItem cloneItem() {
         NavItemImpl clone = new NavItemImpl();
         clone.id = this.id;
+        clone.parent = this.parent;
         clone.name = this.name;
         clone.description = this.description;
         clone.modifiable = this.modifiable;

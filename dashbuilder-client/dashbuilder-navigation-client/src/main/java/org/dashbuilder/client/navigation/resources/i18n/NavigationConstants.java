@@ -22,6 +22,12 @@ public interface NavigationConstants extends Messages {
 
     NavigationConstants INSTANCE = GWT.create(NavigationConstants.class);
 
+    String navigationTitle();
+
+    String treeItem();
+
+    String newMenu();
+
     String newItem(String itemName);
 
     String newItemName(String itemName);
@@ -31,6 +37,10 @@ public interface NavigationConstants extends Messages {
     String editItem();
 
     String deleteItem();
+
+    String pageIconTitle();
+
+    String perspectiveIconTitle();
 
     String moveUp();
 
@@ -68,7 +78,7 @@ public interface NavigationConstants extends Messages {
 
     String navCarouselDragComponentNavGroupHelp();
 
-    String navTilesDragComponentEmptyError();
+    String navGroupEmptyError();
 
     String navCarouselDragComponentEmptyError();
 
@@ -80,7 +90,7 @@ public interface NavigationConstants extends Messages {
 
     String navWidgetTargetDivMissing();
 
-    String navItemNotFound(String navItem);
+    String navGroupNotFound();
 
     String navItemsEmpty();
 

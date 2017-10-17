@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.navigation.widget;
+package org.dashbuilder.client.navigation.widget.editor;
 
 import javax.inject.Inject;
 

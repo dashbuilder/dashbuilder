@@ -79,6 +79,13 @@ public class NavCarouselWidgetView extends BaseNavWidgetView<NavCarouselWidget>
     }
 
     @Override
+    public void errorNavGroupNotFound() {
+        DOMUtil.removeAllChildren(mainDiv);
+        alertBox.setMessage(NavigationConstants.INSTANCE.navGroupNotFound());
+        mainDiv.appendChild(alertBox.getElement());
+    }
+
+    @Override
     public void errorNavItemsEmpty() {
         DOMUtil.removeAllChildren(mainDiv);
         alertBox.setMessage(NavigationConstants.INSTANCE.navCarouselDragComponentEmptyError());

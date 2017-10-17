@@ -12,30 +12,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dashbuilder.client.navigation.widget;
+package org.dashbuilder.client.navigation.widget.editor;
 
+import com.google.gwtmockito.GwtMockitoTestRunner;
+import org.dashbuilder.client.navigation.event.NavItemEditCancelledEvent;
+import org.dashbuilder.client.navigation.event.NavItemEditStartedEvent;
 import org.dashbuilder.client.navigation.plugin.PerspectivePluginManager;
 import org.dashbuilder.navigation.NavDivider;
 import org.dashbuilder.navigation.NavFactory;
 import org.dashbuilder.navigation.NavGroup;
 import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.uberfire.client.authz.PerspectiveTreeProvider;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(GwtMockitoTestRunner.class)
 public class NavItemEditorTest {
 
     @Mock
-    NavItemEditor.View view;
+    NavItemDefaultEditorView view;
+
+    @Mock
+    SyncBeanManager beanManager;
+
+    @Mock
+    PerspectiveTreeProvider perspectiveTreeProvider;
+
+    @Mock
+    EventSourceMock<NavItemEditStartedEvent> navItemEditStartedEvent;
+
+    @Mock
+    EventSourceMock<NavItemEditCancelledEvent> navItemEditCancelledEvent;
 
     @Mock
     PlaceManager placeManager;
@@ -49,21 +66,18 @@ public class NavItemEditorTest {
     @Mock
     Command updateCommand;
 
-    @Mock
-    Command editFinishedCommand;
-
-    @Mock
-    Command errorCommand;
-
     NavItemEditor presenter;
-    static final String NEW_PERSPECTIVE_NAME = "- New Perspective - ";
+    static final String NEW_PERSPECTIVE_NAME = "- New Perspective -";
 
     @Before
     public void setUp() throws Exception {
-        presenter = new NavItemEditor(view, placeManager, targetPerspectiveEditor, perspectivePluginManager);
+        presenter = new NavItemDefaultEditor(view, beanManager,
+                placeManager, perspectiveTreeProvider, targetPerspectiveEditor,
+                perspectivePluginManager, navItemEditStartedEvent, navItemEditCancelledEvent);
 
         when(view.i18nNewItemName("Perspective")).thenReturn(NEW_PERSPECTIVE_NAME);
-        presenter.setLiteralPerspective("Perspective");
+        presenter.getSettings().setLiteralPerspective("Perspective");
+
         doAnswer(invocationOnMock -> invocationOnMock.getArguments()[0])
                 .when(targetPerspectiveEditor).getPerspectiveName(anyString());
     }
@@ -76,34 +90,28 @@ public class NavItemEditorTest {
         navGroup.setDescription("description");
         navGroup.setModifiable(true);
         presenter.setOnUpdateCommand(updateCommand);
-        presenter.setOnEditFinishedCommand(editFinishedCommand);
         presenter.edit(navGroup);
 
         when(view.getItemName()).thenReturn("name");
-        presenter.confirmChanges();
-        verify(view).finishItemEdition();
-        verify(updateCommand, never()).execute();
-        verify(editFinishedCommand).execute();
-        assertEquals(presenter.getNavItem().getName(), "name");
-
-        reset(updateCommand);
-        reset(editFinishedCommand);
-        reset(view);
-        when(view.getItemName()).thenReturn("  \t   ");
-        presenter.confirmChanges();
-        verify(view, never()).finishItemEdition();
-        verify(updateCommand, never()).execute();
-        verify(editFinishedCommand, never()).execute();
-        assertEquals(presenter.getNavItem().getName(), "name");
-
-        reset(updateCommand);
-        reset(editFinishedCommand);
-        reset(view);
-        when(view.getItemName()).thenReturn("newName");
-        presenter.confirmChanges();
+        presenter.onChangesOk();
         verify(view).finishItemEdition();
         verify(updateCommand).execute();
-        verify(editFinishedCommand).execute();
+        assertEquals(presenter.getNavItem().getName(), "name");
+
+        reset(updateCommand);
+        reset(view);
+        when(view.getItemName()).thenReturn("  \t   ");
+        presenter.onChangesOk();
+        verify(view, never()).finishItemEdition();
+        verify(updateCommand, never()).execute();
+        assertEquals(presenter.getNavItem().getName(), "name");
+
+        reset(updateCommand);
+        reset(view);
+        when(view.getItemName()).thenReturn("newName");
+        presenter.onChangesOk();
+        verify(view).finishItemEdition();
+        verify(updateCommand).execute();
         assertEquals(presenter.getNavItem().getName(), "newName");
     }
 
@@ -118,53 +126,29 @@ public class NavItemEditorTest {
         navItem.setName("name");
         navItem.setDescription("description");
         navItem.setModifiable(true);
-        presenter.setOnErrorCommand(errorCommand);
         presenter.setOnUpdateCommand(updateCommand);
-        presenter.setOnEditFinishedCommand(editFinishedCommand);
         presenter.edit(navItem);
 
         // Empty perspective
         when(view.getItemName()).thenReturn("name");
-        presenter.confirmChanges();
+        presenter.onChangesOk();
         verify(view, never()).finishItemEdition();
-        verify(errorCommand).execute();
-
-        // No perspective changes
-        reset(errorCommand);
-        reset(updateCommand);
-        reset(editFinishedCommand);
-        reset(view);
-        when(view.getItemName()).thenReturn("name");
-        when(targetPerspectiveEditor.getPerspectiveId()).thenReturn("A");
-        presenter.confirmChanges();
-        verify(view).finishItemEdition();
-        verify(errorCommand, never()).execute();
-        verify(updateCommand, never()).execute();
-        verify(editFinishedCommand).execute();
-        assertEquals(presenter.getNavItem().getName(), "name");
-        assertEquals(presenter.getNavItem().getContext(), navCtxA.toString());
 
         // Perspective changes
-        reset(errorCommand);
         reset(updateCommand);
-        reset(editFinishedCommand);
         reset(view);
         when(view.getItemName()).thenReturn("name");
         when(targetPerspectiveEditor.getPerspectiveId()).thenReturn("B");
-        presenter.confirmChanges();
+        presenter.onChangesOk();
         verify(view).finishItemEdition();
-        verify(errorCommand, never()).execute();
         verify(updateCommand).execute();
-        verify(editFinishedCommand).execute();
         assertEquals(presenter.getNavItem().getName(), "name");
         assertEquals(presenter.getNavItem().getContext(), navCtxB.toString());
 
         // Cancel changes
         navItem.setContext(navCtxA.toString());
         presenter.edit(navItem);
-        reset(errorCommand);
         reset(updateCommand);
-        reset(editFinishedCommand);
         reset(targetPerspectiveEditor);
         reset(view);
         when(view.getItemName()).thenReturn("newName");
@@ -173,7 +157,6 @@ public class NavItemEditorTest {
         verify(view).finishItemEdition();
         verify(view).setItemName("name");
         verify(targetPerspectiveEditor).setPerspectiveId("A");
-        verify(editFinishedCommand, never()).execute();
         assertEquals(presenter.getNavItem().getName(), "name");
         assertEquals(presenter.getNavItem().getContext(), navCtxA.toString());
     }
@@ -187,6 +170,8 @@ public class NavItemEditorTest {
         navGroup.setModifiable(false);
         presenter.edit(navGroup);
 
+        verify(view, atLeastOnce()).clearChildren();
+        verify(view, atLeastOnce()).clearCommands();
         verify(view).setItemName("name");
         verify(view).setItemDescription("description");
         verify(view).setItemEditable(false);
@@ -205,6 +190,8 @@ public class NavItemEditorTest {
         divider.setModifiable(true);
         presenter.edit(divider);
 
+        verify(view, atLeastOnce()).clearChildren();
+        verify(view, atLeastOnce()).clearCommands();
         verify(view).setItemName("name");
         verify(view).setItemDescription("description");
         verify(view).setItemEditable(false);
@@ -214,7 +201,7 @@ public class NavItemEditorTest {
         verify(view, never()).setContextWidget(any());
 
         reset(view);
-        presenter.onItemEdit();
+        presenter.startEdition();
         verify(view, never()).startItemEdition();
     }
 
@@ -225,7 +212,8 @@ public class NavItemEditorTest {
         navItem.setContext(NavWorkbenchCtx.perspective("p1").toString());
         presenter.edit(navItem);
 
-        verify(view).setItemName("--------------");
+        verify(view, atLeastOnce()).clearChildren();
+        verify(view, atLeastOnce()).clearCommands();
         verify(view).setItemEditable(false);
         verify(view).setItemType(NavItemEditor.ItemType.PERSPECTIVE);
         verify(view, atLeastOnce()).setCommandsEnabled(true);
@@ -306,7 +294,7 @@ public class NavItemEditorTest {
 
         // Existing item => The name does not changes on perspective change
         presenter.edit(navItem);
-        presenter.onItemEdit();
+        presenter.startEdition();
         verify(view).setItemName("name");
         when(targetPerspectiveEditor.getPerspectiveId()).thenReturn("B");
         presenter.onTargetPerspectiveUpdated();
@@ -316,7 +304,7 @@ public class NavItemEditorTest {
         reset(view);
         navItem.setName(NEW_PERSPECTIVE_NAME);
         presenter.edit(navItem);
-        presenter.onItemEdit();
+        presenter.startEdition();
         verify(view).setItemName("A");
         when(targetPerspectiveEditor.getPerspectiveId()).thenReturn("B");
         presenter.onTargetPerspectiveUpdated();

@@ -38,6 +38,8 @@ public interface NavFactory {
 
     NavGroup createNavGroup();
 
+    NavGroup createNavGroup(NavTree navTree);
+
     NavItem createNavItem();
 
     NavDivider createDivider();

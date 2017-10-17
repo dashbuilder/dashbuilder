@@ -27,7 +27,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.dashbuilder.client.navigation.resources.i18n.NavigationConstants;
 import org.dashbuilder.common.client.widgets.AlertBox;
 import org.jboss.errai.common.client.api.IsElement;
-import org.jboss.errai.common.client.dom.CSSStyleDeclaration;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.common.client.dom.Node;
@@ -95,7 +94,14 @@ public class NavTilesWidgetView extends BaseNavWidgetView<NavTilesWidget>
     @Override
     public void errorNavItemsEmpty() {
         DOMUtil.removeAllChildren(mainDiv);
-        alertBox.setMessage(NavigationConstants.INSTANCE.navTilesDragComponentEmptyError());
+        alertBox.setMessage(NavigationConstants.INSTANCE.navGroupEmptyError());
+        mainDiv.appendChild(alertBox.getElement());
+    }
+
+    @Override
+    public void errorNavGroupNotFound() {
+        DOMUtil.removeAllChildren(mainDiv);
+        alertBox.setMessage(NavigationConstants.INSTANCE.navGroupNotFound());
         mainDiv.appendChild(alertBox.getElement());
     }
 

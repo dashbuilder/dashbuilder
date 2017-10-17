@@ -60,6 +60,16 @@ public abstract class TargetDivNavWidgetView<T extends TargetDivNavWidget> exten
     }
 
     @Override
+    public void errorNavGroupNotFound() {
+        error(NavigationConstants.INSTANCE.navGroupNotFound());
+    }
+
+    @Override
+    public void errorNavItemsEmpty() {
+        error(NavigationConstants.INSTANCE.navGroupEmptyError());
+    }
+
+    @Override
     public void infiniteRecursionError(String targetDivId, String cause) {
         Element targetDiv = getTargetDiv(targetDivId);
         if (targetDiv != null) {

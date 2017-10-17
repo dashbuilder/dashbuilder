@@ -26,7 +26,6 @@ import static org.dashbuilder.perspectives.PerspectiveIds.*;
  */
 public interface NavTreeDefinitions {
 
-    String GROUP_ROOT = "root";
     String GROUP_APP = "app";
     String ENTRY_HOME = "app_home";
     String ENTRY_GALLERY = "app_gallery";
@@ -39,20 +38,18 @@ public interface NavTreeDefinitions {
     String ENTRY_SALES_REPORTS = "app_salesReports";
 
     NavTree NAV_TREE_DEFAULT = new NavTreeBuilder()
-            .group(GROUP_ROOT, "Root", "The navigation root node", false)
-                .group(GROUP_APP, "Default (Top Menu)", "The items displayed by the application's top menu bar", false)
-                    .item(ENTRY_HOME, "Home", "The home page", true, perspective(HOME))
-                    .item(ENTRY_GALLERY, "Gallery", "The displayer gallery", true, perspective(GALLERY))
-                    .group(GROUP_ADMIN, "Administration", "The administration tools", false)
-                        .item(ENTRY_DATASETS, "Datasets", "The dataset authoring tool", false, perspective(DATA_SETS))
-                        .item(ENTRY_SECURITY, "Security", "The security configuration tool", false, perspective(SECURITY))
-                        .item(ENTRY_CONTENT_MGR, "Content manager", "The content manager tool", false, perspective(CONTENT_MANAGER))
-                        .endGroup()
-                    .group(GROUP_DASHBOARDS, "Dashboards", "The default location for dashboard items", false)
-                        .item(ENTRY_SALES_DASHBOARD, "Sales dashboard", null, true, perspective(SALES_DASHBOARD))
-                        .item(ENTRY_SALES_REPORTS, "Sales reports", null, true, perspective(SALES_REPORTS))
-                        .endGroup()
-                .endGroup()
+            .group(GROUP_APP, "Default (Top Menu)", "The items displayed by the application's top menu bar", false)
+                .item(ENTRY_HOME, "Home", "The home page", true, perspective(HOME))
+                .item(ENTRY_GALLERY, "Gallery", "The displayer gallery", true, perspective(GALLERY))
+                .group(GROUP_ADMIN, "Administration", "The administration tools", false)
+                    .item(ENTRY_DATASETS, "Datasets", "The dataset authoring tool", false, perspective(DATA_SETS))
+                    .item(ENTRY_SECURITY, "Security", "The security configuration tool", false, perspective(SECURITY))
+                    .item(ENTRY_CONTENT_MGR, "Content manager", "The content manager tool", false, perspective(CONTENT_MANAGER))
+                    .endGroup()
+                .group(GROUP_DASHBOARDS, "Dashboards", "The default location for dashboard items", false)
+                    .item(ENTRY_SALES_DASHBOARD, "Sales dashboard", null, true, perspective(SALES_DASHBOARD))
+                    .item(ENTRY_SALES_REPORTS, "Sales reports", null, true, perspective(SALES_REPORTS))
+                    .endGroup()
             .endGroup()
         .build();
 }

@@ -112,9 +112,14 @@ public class ShowcaseEntryPoint {
         // Set the dashbuilder's default nav tree
         navigationManager.setDefaultNavTree(NavTreeDefinitions.NAV_TREE_DEFAULT);
 
-        // Allow links to core perspectives under the "App" nav group
+        // Allow links to core perspectives only under the top menu's nav group
         contentExplorerScreen.getNavTreeEditor()
                 .setOnlyRuntimePerspectives(NavTreeDefinitions.GROUP_APP, false)
+                .applyToAllChildren();
+
+        // Disable perspective context setup under the top menu nav's group
+        contentExplorerScreen.getNavTreeEditor()
+                .setPerspectiveContextEnabled(NavTreeDefinitions.GROUP_APP, false)
                 .applyToAllChildren();
 
         // Attach old existing dashboards (created with versions prior to 0.7) under the "dashboards" group

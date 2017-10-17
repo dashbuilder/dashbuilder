@@ -18,20 +18,21 @@ package org.dashbuilder.client.cms.screen.explorer;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.dashbuilder.client.cms.resources.i18n.ContentManagerI18n;
 import org.dashbuilder.client.cms.widget.PerspectivesExplorer;
 import org.dashbuilder.client.navigation.NavigationManager;
-import org.dashbuilder.client.navigation.widget.NavTreeEditor;
+import org.dashbuilder.client.navigation.event.NavTreeLoadedEvent;
+import org.dashbuilder.client.navigation.event.PerspectivePluginsChangedEvent;
+import org.dashbuilder.client.navigation.widget.editor.NavTreeEditor;
+import org.dashbuilder.navigation.NavTree;
+import org.jboss.errai.common.client.api.IsElement;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.UberView;
-import org.uberfire.ext.plugin.client.security.PluginController;
-import org.uberfire.ext.plugin.client.widget.popup.NewPluginPopUp;
-import org.uberfire.ext.plugin.model.PluginType;
-import org.uberfire.mvp.Command;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import com.google.gwt.user.client.ui.IsWidget;
@@ -44,27 +45,13 @@ public class ContentExplorerScreen {
 
     public interface View extends UberView<ContentExplorerScreen> {
 
-        void showPerspectives(IsWidget perspectivesExplorer);
-
-        void showNavigation(IsWidget navTreeExplorer);
-
-        void setPerspectivesName(String name);
-
-        void setNavigationName(String name);
-
-        void setCreateName(String name);
-
-        void setCreateMenuVisible(boolean visible);
-
-        void addCreateMenuEntry(String name, Command onClick);
+        void show(IsElement perspectivesExplorer, IsElement navExplorer);
     }
 
     View view;
     NavigationManager navigationManager;
     PerspectivesExplorer perspectiveExplorer;
     NavTreeEditor navTreeEditor;
-    NewPluginPopUp newPluginPopUp;
-    PluginController pluginController;
     ContentManagerI18n i18n;
     Event<NotificationEvent> workbenchNotification;
 
@@ -76,16 +63,12 @@ public class ContentExplorerScreen {
                                  NavigationManager navigationManager,
                                  PerspectivesExplorer perspectiveExplorer,
                                  NavTreeEditor navTreeEditor,
-                                 NewPluginPopUp newPluginPopUp,
-                                 PluginController pluginController,
                                  ContentManagerI18n i18n,
                                  Event<NotificationEvent> workbenchNotification) {
         this.view = view;
         this.navigationManager = navigationManager;
         this.perspectiveExplorer = perspectiveExplorer;
         this.navTreeEditor = navTreeEditor;
-        this.newPluginPopUp = newPluginPopUp;
-        this.pluginController = pluginController;
         this.i18n = i18n;
         this.workbenchNotification = workbenchNotification;
         this.view.init(this);
@@ -93,21 +76,15 @@ public class ContentExplorerScreen {
 
     @PostConstruct
     private void init() {
-        navTreeEditor.setLiteralPerspective(i18n.capitalizeFirst(i18n.getPerspectiveResourceName()));
-        navTreeEditor.setNewGroupEnabled(true);
-        navTreeEditor.setNewDividerEnabled(true);
-        navTreeEditor.setNewPerspectiveEnabled(true);
-        navTreeEditor.setMaxLevels(-1);
-        navTreeEditor.setOnlyRuntimePerspectives(true);
-        navTreeEditor.setGotoPerspectiveEnabled(true);
-        navTreeEditor.setOnChangeCommand(this::onNavTreeChanged);
+        perspectiveExplorer.setOnExpandCommand(this::onPerspectivesExpanded);
+        perspectiveExplorer.show();
 
-        view.setPerspectivesName(i18n.capitalizeFirst(i18n.getPerspectivesResourceName()));
-        view.setNavigationName(i18n.getContentExplorerMenus());
-        view.setCreateName(i18n.getContentExplorerNew());
-        view.setCreateMenuVisible(pluginController.canCreatePerspectives());
-        view.addCreateMenuEntry(i18n.capitalizeFirst(i18n.getPerspectiveResourceName()), this::createNewPerspective);
-        gotoPerspectives();
+        navTreeEditor.setOnExpandCommand(this::onNavTreeExpanded);
+        navTreeEditor.setOnSaveCommand(this::onNavTreeSaved);
+        navTreeEditor.getSettings().setLiteralPerspective(i18n.capitalizeFirst(i18n.getPerspectiveResourceName()));
+        navTreeEditor.getSettings().setGotoPerspectiveEnabled(true);
+
+        view.show(perspectiveExplorer, navTreeEditor);
     }
 
     @WorkbenchPartTitle
@@ -125,24 +102,30 @@ public class ContentExplorerScreen {
     }
 
     public void createNewPerspective() {
-        // TODO: customize new perpsective popup title
-        // newPluginPopUp.show(PluginType.PERSPECTIVE_LAYOUT, i18n.getContentManagerHomeNewPerspectiveButton());
-        newPluginPopUp.show(PluginType.PERSPECTIVE_LAYOUT);
+        perspectiveExplorer.createNewPerspective();
     }
 
-    public void gotoPerspectives() {
-        perspectiveExplorer.show();
-        view.showPerspectives(perspectiveExplorer);
+    private void onPerspectivesExpanded() {
+        perspectiveExplorer.setMaximized(perspectiveExplorer.isExpanded() && !navTreeEditor.isExpanded());
+        navTreeEditor.setMaximized(!perspectiveExplorer.isExpanded() && navTreeEditor.isExpanded());
     }
 
-    public void gotoNavigation() {
-        navTreeEditor.edit(navigationManager.getNavTree());
-        view.showNavigation(navTreeEditor);
+    private void onNavTreeExpanded() {
+        perspectiveExplorer.setMaximized(perspectiveExplorer.isExpanded() && !navTreeEditor.isExpanded());
+        navTreeEditor.setMaximized(!perspectiveExplorer.isExpanded() && navTreeEditor.isExpanded());
     }
 
-    private void onNavTreeChanged() {
-        navigationManager.saveNavTree(navTreeEditor.getNavTree(), () -> {
-            workbenchNotification.fire(new NotificationEvent(i18n.getContentManagerNavigationChanged(), NotificationEvent.NotificationType.SUCCESS));
-        });
+    private void onNavTreeLoaded(@Observes NavTreeLoadedEvent event) {
+        NavTree navTree = navigationManager.getNavTree();
+        navTreeEditor.edit(navTree);
+    }
+
+    private void onPerspectivesChanged(@Observes PerspectivePluginsChangedEvent event) {
+        NavTree navTree = navigationManager.getNavTree();
+        navTreeEditor.edit(navTree);
+    }
+
+    private void onNavTreeSaved() {
+        workbenchNotification.fire(new NotificationEvent(i18n.getContentManagerNavigationChanged(), NotificationEvent.NotificationType.SUCCESS));
     }
 }

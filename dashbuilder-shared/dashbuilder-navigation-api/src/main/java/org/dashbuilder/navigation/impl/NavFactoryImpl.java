@@ -27,6 +27,7 @@ public class NavFactoryImpl implements NavFactory {
     public NavTree createNavTree(NavItem navItem) {
         if (navItem instanceof NavGroup) {
             NavGroup root = (NavGroup) navItem.cloneItem();
+            root.setParent(null);
             root.getChildren().forEach(e -> e.setParent(null));
             return new NavTreeImpl(root);
         }
@@ -47,6 +48,14 @@ public class NavFactoryImpl implements NavFactory {
     @Override
     public NavGroup createNavGroup() {
         return new NavGroupImpl();
+    }
+
+    @Override
+    public NavGroup createNavGroup(NavTree navTree) {
+        NavGroup navGroup = createNavGroup();
+        navGroup.setChildren(navTree.cloneTree().getRootItems());
+        navGroup.getChildren().forEach(child -> child.setParent(navGroup));
+        return navGroup;
     }
 
     @Override
