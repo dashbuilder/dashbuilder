@@ -33,7 +33,7 @@
   <properties>
     <version.com.ahome-it.lienzo-charts>1.0.241-RC1</version.com.ahome-it.lienzo-charts>
     <version.com.ahome-it.lienzo-core>2.0.241-RC1</version.com.ahome-it.lienzo-core>
-    <version.org.kie.soup>8.0.0-SNAPSHOT</version.org.kie.soup>
+    <version.org.kie.soup>7.5.0-SNAPSHOT</version.org.kie.soup>
     <version.org.uberfire>2.0.0-SNAPSHOT</version.org.uberfire>
     <version.org.jboss.errai>4.1.0-SNAPSHOT</version.org.jboss.errai>
     <!-- Version 1.1.0.Final which is coming from ip-bom is not compatible with GWT 2.8.0 -->
