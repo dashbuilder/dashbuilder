@@ -143,7 +143,6 @@ public abstract class GoogleCategoriesDisplayerView<P extends GoogleCategoriesDi
                 for (int i = 0; i < selections.length(); i++) {
                     Selection selection = selections.get(i);
                     int row = selection.getRow();
-                    GWT.log("Selection column=" + getDataTable().getColumnId(0) + " Row=" + row);
                     getPresenter().onCategorySelected(getDataTable().getColumnId(0), row);
                 }
             }

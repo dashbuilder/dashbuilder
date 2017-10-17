@@ -105,9 +105,9 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
     protected DataSetHandler dataSetHandler;
     protected DisplayerSettings displayerSettings;
     protected DisplayerConstraints displayerConstraints;
-    protected List<DisplayerListener> listenerList = new ArrayList<DisplayerListener>();
-    protected Map<String,List<Interval>> columnSelectionMap = new HashMap<String,List<Interval>>();
-    protected Map<String,ValueFormatter> formatterMap = new HashMap<String, ValueFormatter>();
+    protected List<DisplayerListener> listenerList = new ArrayList<>();
+    protected Map<String,List<Interval>> columnSelectionMap = new HashMap<>();
+    protected Map<String,ValueFormatter> formatterMap = new HashMap<>();
     protected Formatter formatter = null;
     protected ExpressionEval evaluator = null;
     protected DataSetFilter currentFilter = null;
@@ -178,7 +178,6 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
     public void setDataSetHandler(DataSetHandler dataSetHandler) {
         this.dataSetHandler = dataSetHandler;
     }
-
 
     public Formatter getFormatter() {
         if (formatter == null) {
@@ -545,6 +544,25 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
     }
 
     /**
+     * Get the current filter interval matching the specified index
+     *
+     * @param columnId The column identifier.
+     * @param idx The index of the interval
+     * @return The target interval matching the specified parameters or null if it does not exist.
+     */
+    public Interval filterInterval(String columnId, int idx) {
+        List<Interval> selected = columnSelectionMap.get(columnId);
+        if (selected != null && !selected.isEmpty()) {
+            for (Interval interval : selected) {
+                if (interval.getIndex() == idx) {
+                    return interval;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Get the current filter selected interval indexes for the given data set column.
      *
      * @param columnId The column identifier.
@@ -582,35 +600,41 @@ public abstract class AbstractDisplayer<V extends AbstractDisplayer.View> implem
     public void filterUpdate(String columnId, int row, Integer maxSelections) {
         if (displayerSettings.isFilterEnabled()) {
 
-            Interval intervalSelected = dataSetHandler.getInterval(columnId, row);
-            if (intervalSelected != null) {
+            List<Interval> selectedIntervals = columnSelectionMap.get(columnId);
+            Interval intervalFiltered = filterInterval(columnId, row);
 
-                List<Interval> selectedIntervals = columnSelectionMap.get(columnId);
-                if (selectedIntervals == null) {
-                    selectedIntervals = new ArrayList<Interval>();
+            // Existing interval reset
+            if (intervalFiltered != null) {
+                selectedIntervals.remove(intervalFiltered);
+                if (!selectedIntervals.isEmpty()) {
+                    filterApply(columnId, selectedIntervals);
+                }
+                else {
+                    filterReset(columnId);
+                }
+            }
+            // No current filter => Add the selected interval
+            else if (selectedIntervals == null) {
+                Interval intervalSelected = dataSetHandler.getInterval(columnId, row);
+                if (intervalSelected != null) {
+                    selectedIntervals = new ArrayList<>();
                     selectedIntervals.add(intervalSelected);
                     columnSelectionMap.put(columnId, selectedIntervals);
                     filterApply(columnId, selectedIntervals);
                 }
-                else if (selectedIntervals.contains(intervalSelected)) {
-                    selectedIntervals.remove(intervalSelected);
-                    if (!selectedIntervals.isEmpty()) {
-                        filterApply(columnId, selectedIntervals);
-                    }
-                    else {
-                        filterReset(columnId);
-                    }
-                }
-                else {
+            }
+            // Extra interval added to an already filtered column
+            else {
+                Interval intervalSelected = dataSetHandler.getInterval(columnId, row);
+                if (intervalSelected != null) {
                     if (displayerSettings.isFilterSelfApplyEnabled()) {
-                        selectedIntervals = new ArrayList<Interval>();
+                        selectedIntervals = new ArrayList<>();
                         columnSelectionMap.put(columnId, selectedIntervals);
                     }
                     selectedIntervals.add(intervalSelected);
                     if (maxSelections != null && maxSelections > 0 && selectedIntervals.size() >= maxSelections) {
                         filterReset(columnId);
-                    }
-                    else {
+                    } else {
                         filterApply(columnId, selectedIntervals);
                     }
                 }
