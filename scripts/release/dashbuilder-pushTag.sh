@@ -8,11 +8,11 @@ fi
 
 commitMsg="Tagging $tag"
 cd $WORKSPACE/dashbuilder
-# pushes the TAG to github.com:jboss-integration or github.com:dashbuilder [IMPORTANT: "push -n" (--dryrun) should be replaced by "push" when script is ready]
+# pushes the TAG to gerrit ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com/dashbuilder [IMPORTANT: "push -n" (--dryrun) should be replaced by "push" when script is ready]
 if [ "$target" == "productized" ]; then
    git tag -a $tag -m "$commitMsg"
-   git remote add upstream git@github.com:jboss-integration/dashbuilder.git
-   git push upstream $tag
+   git remote add gerrit ssh://jb-ip-tooling-jenkins@code.engineering.redhat.com/dashbuilder
+   git push gerrit $tag
 else
    git tag -a $tag -m "$commitMsg"
    git push origin $tag
