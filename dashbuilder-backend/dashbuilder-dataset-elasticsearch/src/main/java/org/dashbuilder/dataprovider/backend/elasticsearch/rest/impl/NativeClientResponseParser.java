@@ -31,6 +31,7 @@ import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.InternalMultiBucketAggregation;
 import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
@@ -44,10 +45,8 @@ import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import java.text.ParseException;
 import java.util.*;
 
-
 /**
  * Helper class for the ELS native client that parses the response from the ELS server and builds the resulting data set.
- *
  * @since 0.5.0
  */
 public class NativeClientResponseParser {
@@ -59,11 +58,11 @@ public class NativeClientResponseParser {
     }
 
     public SearchResponse parse(DataSetMetadata metadata,
-                                               org.elasticsearch.action.search.SearchResponse response,
-                                               List<DataColumn> columns ) throws ParseException {
+                                org.elasticsearch.action.search.SearchResponse response,
+                                List<DataColumn> columns) throws ParseException {
         // Convert to rest client model.
         long tookInMilis = response.getTookInMillis();
-        int responseCode = ElasticSearchUtils.getResponseCode(response);
+        int responseCode = response.status().getStatus();
         long totalHits = response.getHits().getTotalHits();
         float maxScore = response.getHits().getMaxScore();
         int totalShards = response.getTotalShards();
@@ -74,7 +73,15 @@ public class NativeClientResponseParser {
         boolean existAggregations = aggregations != null && !aggregations.asList().isEmpty();
 
         // No results.
-        if (hitCount == 0 && !existAggregations) return new EmptySearchResponse(tookInMilis, responseCode, totalHits, maxScore, totalShards, successfulShards, shardFailures);
+        if (hitCount == 0 && !existAggregations) {
+            return new EmptySearchResponse(tookInMilis,
+                                           responseCode,
+                                           totalHits,
+                                           maxScore,
+                                           totalShards,
+                                           successfulShards,
+                                           shardFailures);
+        }
 
         // There are results. Build the resulting dataset columns & values.
         List<SearchHitResponse> hits = new LinkedList<SearchHitResponse>();
@@ -82,36 +89,50 @@ public class NativeClientResponseParser {
         if (existAggregations) {
 
             // Build the response using the aggregated results.
-            parseAggregationsResponse( metadata, hits, aggregations, columns );
-
+            parseAggregationsResponse(metadata,
+                                      hits,
+                                      aggregations,
+                                      columns);
         } else {
 
             // Build the response using original dataset columns, as no aggregation is present.
-            parseHitsResponse( metadata, hits, response.getHits(), columns );
-
+            parseHitsResponse(metadata,
+                              hits,
+                              response.getHits(),
+                              columns);
         }
 
         // Build the response model object.
-        if ( hits.isEmpty() ) {
+        if (hits.isEmpty()) {
 
-            return  new EmptySearchResponse(tookInMilis, responseCode, totalHits, maxScore, totalShards, successfulShards, shardFailures);
-
+            return new EmptySearchResponse(tookInMilis,
+                                           responseCode,
+                                           totalHits,
+                                           maxScore,
+                                           totalShards,
+                                           successfulShards,
+                                           shardFailures);
         } else {
 
-            return new SearchResponse(tookInMilis, responseCode, totalHits, maxScore, totalShards, successfulShards, shardFailures, hits.toArray(new SearchHitResponse[hits.size()]));
-
+            return new SearchResponse(tookInMilis,
+                                      responseCode,
+                                      totalHits,
+                                      maxScore,
+                                      totalShards,
+                                      successfulShards,
+                                      shardFailures,
+                                      hits.toArray(new SearchHitResponse[hits.size()]));
         }
-
     }
 
-    private void parseHitsResponse( DataSetMetadata metadata,
-                                    List<SearchHitResponse> hits,
-                                    SearchHits responseHits,
-                                    List<DataColumn> columns ) throws ParseException {
+    private void parseHitsResponse(DataSetMetadata metadata,
+                                   List<SearchHitResponse> hits,
+                                   SearchHits responseHits,
+                                   List<DataColumn> columns) throws ParseException {
 
         final SearchHit[] resultHits = responseHits.getHits();
 
-        if ( null != resultHits ) {
+        if (null != resultHits) {
 
             for (SearchHit searchHit : resultHits) {
 
@@ -135,10 +156,10 @@ public class NativeClientResponseParser {
                             Object fieldValue = hitValue.getValue();
 
                             // Fill the values map.
-                            fields.put(fieldName, fieldValue);
+                            fields.put(fieldName,
+                                       fieldValue);
                         }
                     }
-
                 } else if (null != sourceAsMap && !sourceAsMap.isEmpty()) {
 
                     // If there are no "fields" defined by user in the data set provider, obtain all fields, use sourceAsMap to obtain the values.
@@ -147,17 +168,22 @@ public class NativeClientResponseParser {
                         Object fieldValue = entry.getValue();
 
                         // Fill the values map.
-                        fields.put(fieldName, fieldValue);
+                        fields.put(fieldName,
+                                   fieldValue);
                     }
                 }
 
-                SearchHitResponse hit = new SearchHitResponse(score, index, id, type, version, orderAndParseFields(metadata, fields, columns));
+                SearchHitResponse hit = new SearchHitResponse(score,
+                                                              index,
+                                                              id,
+                                                              type,
+                                                              version,
+                                                              orderAndParseFields(metadata,
+                                                                                  fields,
+                                                                                  columns));
                 hits.add(hit);
-
             }
-
         }
-
     }
 
     private void parseAggregationsResponse(DataSetMetadata metadata,
@@ -165,8 +191,11 @@ public class NativeClientResponseParser {
                                            Aggregations aggregations,
                                            List<DataColumn> columns) throws ParseException {
 
-        parseAggregationsResponse( metadata, hits, aggregations, null, columns );
-
+        parseAggregationsResponse(metadata,
+                                  hits,
+                                  aggregations,
+                                  null,
+                                  columns);
     }
 
     private void parseAggregationsResponse(DataSetMetadata metadata,
@@ -175,15 +204,13 @@ public class NativeClientResponseParser {
                                            SearchHitResponse sourceHit,
                                            List<DataColumn> columns) throws ParseException {
 
-
         Map<String, Aggregation> aggregationMap = aggregations.asMap();
 
-        if ( null != aggregationMap && !aggregationMap.isEmpty() ) {
+        if (null != aggregationMap && !aggregationMap.isEmpty()) {
 
             Map<String, Object> fields = new HashMap<String, Object>();
 
-            if ( null != sourceHit && null != sourceHit.getFields() ) {
-
+            if (null != sourceHit && null != sourceHit.getFields()) {
 
                 fields = sourceHit.getFields();
             }
@@ -197,152 +224,151 @@ public class NativeClientResponseParser {
 
                     StringTerms agg = (StringTerms) aggregation;
 
-                    Collection<Terms.Bucket> buckets = agg.getBuckets();
-                    if ( buckets != null && !buckets.isEmpty() ) {
+                    List<StringTerms.Bucket> buckets = agg.getBuckets();
+                    if (buckets != null && !buckets.isEmpty()) {
 
                         // Each bucket becomes a dataset's row.
-                        for ( Terms.Bucket bucket : buckets ) {
+                        for (Terms.Bucket bucket : buckets) {
 
                             String aggValue = bucket.getKeyAsString();
                             Map<String, Object> bucketFields = new HashMap<String, Object>();
-                            bucketFields.put( agg.getName() , aggValue );
+                            bucketFields.put(agg.getName(),
+                                             aggValue);
 
                             SearchHitResponse hit = new SearchHitResponse(bucketFields);
 
                             Aggregations bucketAggregations = bucket.getAggregations();
 
-                            if ( null != bucketAggregations && !bucketAggregations.asList().isEmpty() ) {
+                            if (null != bucketAggregations && !bucketAggregations.asList().isEmpty()) {
 
-                                parseAggregationsResponse( metadata, hits, bucketAggregations, hit, columns );
-
+                                parseAggregationsResponse(metadata,
+                                                          hits,
+                                                          bucketAggregations,
+                                                          hit,
+                                                          columns);
                             }
-
                         }
-
-
                     }
-
                 } else {
 
-                    if ( null == sourceHit ) {
+                    if (null == sourceHit) {
 
                         sourceHit = new SearchHitResponse(fields);
-
                     }
 
                     if (aggregation instanceof ValueCount) {
 
                         ValueCount agg = (ValueCount) aggregation;
                         value = agg.getValue();
-
                     } else if (aggregation instanceof Sum) {
 
                         Sum agg = (Sum) aggregation;
                         value = agg.getValue();
-
                     } else if (aggregation instanceof Min) {
 
                         Min agg = (Min) aggregation;
                         value = agg.getValue();
-
                     } else if (aggregation instanceof Max) {
 
                         Max agg = (Max) aggregation;
                         value = agg.getValue();
-
                     } else if (aggregation instanceof Avg) {
 
                         Avg agg = (Avg) aggregation;
                         value = agg.getValue();
-
                     } else if (aggregation instanceof Cardinality) {
 
                         Cardinality agg = (Cardinality) aggregation;
                         value = agg.getValue();
+                    } else if (aggregation instanceof InternalMultiBucketAggregation) {
 
-                    } else if ( aggregation instanceof InternalHistogram) {
-
-                        InternalHistogram agg = (InternalHistogram) aggregation;
+                        InternalMultiBucketAggregation agg = (InternalMultiBucketAggregation) aggregation;
 
                         List buckets = agg.getBuckets();
 
-                        if ( null != buckets && !buckets.isEmpty() ) {
+                        if (null != buckets && !buckets.isEmpty()) {
 
-                            for ( Object oBucket : buckets ) {
+                            for (Object oBucket : buckets) {
 
-                                if ( oBucket instanceof InternalHistogram.Bucket ) {
+                                if (oBucket instanceof InternalMultiBucketAggregation.Bucket) {
 
-                                    InternalHistogram.Bucket bucket = (InternalHistogram.Bucket) oBucket;
+                                    InternalMultiBucketAggregation.Bucket bucket = (InternalMultiBucketAggregation.Bucket) oBucket;
 
                                     String aggValue = bucket.getKeyAsString();
                                     Map<String, Object> bucketFields = new HashMap<String, Object>();
-                                    bucketFields.put( agg.getName() , aggValue );
+                                    bucketFields.put(agg.getName(),
+                                                     aggValue);
 
                                     SearchHitResponse hit = new SearchHitResponse(bucketFields);
 
                                     Aggregations bucketAggregations = bucket.getAggregations();
 
-                                    if ( null != bucketAggregations && !bucketAggregations.asList().isEmpty() ) {
+                                    if (null != bucketAggregations && !bucketAggregations.asList().isEmpty()) {
 
-                                        parseAggregationsResponse( metadata, hits, bucketAggregations, hit, columns );
-
+                                        parseAggregationsResponse(metadata,
+                                                                  hits,
+                                                                  bucketAggregations,
+                                                                  hit,
+                                                                  columns);
                                     }
                                 }
                             }
-
                         }
-
                     }
-
                 }
 
                 String aggName = aggregation.getName();
 
-                if ( null != value ) {
+                if (null != value) {
 
-                    fields.put( aggName, value );
-
+                    fields.put(aggName,
+                               value);
                 }
-
             }
-
         }
 
-        if ( null != sourceHit &&
+        if (null != sourceHit &&
                 null != sourceHit.getFields() &&
-                !sourceHit.getFields().isEmpty() ) {
+                !sourceHit.getFields().isEmpty()) {
 
+            SearchHitResponse result = new SearchHitResponse(sourceHit.getScore(),
+                                                             sourceHit.getIndex(),
+                                                             sourceHit.getId(),
+                                                             sourceHit.getType(),
+                                                             sourceHit.getVersion(),
+                                                             orderAndParseFields(metadata,
+                                                                                 sourceHit.getFields(),
+                                                                                 columns));
 
-            SearchHitResponse result = new SearchHitResponse( sourceHit.getScore(),
-                    sourceHit.getIndex(), sourceHit.getId(), sourceHit.getType(),
-                    sourceHit.getVersion(), orderAndParseFields( metadata, sourceHit.getFields(), columns ) );
-
-            hits.add( result );
-
+            hits.add(result);
         }
-
     }
 
     private Map<String, Object> orderAndParseFields(DataSetMetadata metadata,
                                                     Map<String, Object> fields,
-                                                    List<DataColumn> columns ) throws ParseException {
-        if (fields == null) return null;
-        if (columns == null) return new LinkedHashMap<String, Object>(fields);
+                                                    List<DataColumn> columns) throws ParseException {
+        if (fields == null) {
+            return null;
+        }
+        if (columns == null) {
+            return new LinkedHashMap<String, Object>(fields);
+        }
 
         Map<String, Object> result = new LinkedHashMap<String, Object>();
-        for ( DataColumn column : columns ) {
+        for (DataColumn column : columns) {
 
             String columnId = column.getId();
 
-            if ( fields.containsKey( columnId ) ) {
+            if (fields.containsKey(columnId)) {
 
-                Object value = fields.get( columnId );
-                Object parsedValue = parseValue( metadata, column, value );
+                Object value = fields.get(columnId);
+                Object parsedValue = parseValue(metadata,
+                                                column,
+                                                value);
 
-                result.put(columnId, parsedValue);
-
+                result.put(columnId,
+                           parsedValue);
             }
-
         }
 
         return result;
@@ -350,61 +376,61 @@ public class NativeClientResponseParser {
 
     /**
      * Parses a given value returned by the JSON response from EL server.
-     *
-     * @param column       The data column definition.
-     * @param value        The value to parse.
-     * @return             The parsed value for the given column type.
+     * @param column The data column definition.
+     * @param value The value to parse.
+     * @return The parsed value for the given column type.
      */
-    private Object parseValue( DataSetMetadata metadata,
+    private Object parseValue(DataSetMetadata metadata,
                               DataColumn column,
-                              Object value ) throws ParseException {
+                              Object value) throws ParseException {
 
-        if ( null != metadata && null != column && null != value ) {
+        if (null != metadata && null != column && null != value) {
 
             String valueStr = value.toString();
             ElasticSearchDataSetDef def = (ElasticSearchDataSetDef) metadata.getDefinition();
             ColumnType columnType = column.getColumnType();
 
-            if ( ColumnType.TEXT.equals( columnType ) ) {
+            if (ColumnType.TEXT.equals(columnType)) {
 
-                return valueTypeMapper.parseText(def, column.getId(), valueStr );
-
-            } else if ( ColumnType.LABEL.equals( columnType ) ) {
+                return valueTypeMapper.parseText(def,
+                                                 column.getId(),
+                                                 valueStr);
+            } else if (ColumnType.LABEL.equals(columnType)) {
 
                 boolean isColumnGroup = column.getColumnGroup() != null && column.getColumnGroup().getStrategy().equals(GroupStrategy.FIXED);
 
-                return valueTypeMapper.parseLabel( def, column.getId(), valueStr, isColumnGroup );
+                return valueTypeMapper.parseLabel(def,
+                                                  column.getId(),
+                                                  valueStr,
+                                                  isColumnGroup);
+            } else if (ColumnType.NUMBER.equals(columnType)) {
 
-            } else if ( ColumnType.NUMBER.equals( columnType ) ) {
-
-                return valueTypeMapper.parseNumeric( def, column.getId(), valueStr );
-
+                return valueTypeMapper.parseNumeric(def,
+                                                    column.getId(),
+                                                    valueStr);
             } else if (ColumnType.DATE.equals(columnType)) {
 
                 // We can expect two return core types from EL server when handling dates:
                 // 1.- String type, using the field pattern defined in the index' mappings, when it's result of a query without aggregations.
                 // 2.- Numeric type, when it's result from a scalar function or a value pickup.
 
-                if ( value instanceof Number ) {
+                if (value instanceof Number) {
 
                     Number number = (Number) value;
-                    return valueTypeMapper.parseDate(def, column.getId(), number.longValue() );
-
-
+                    return valueTypeMapper.parseDate(def,
+                                                     column.getId(),
+                                                     number.longValue());
                 } else {
 
-                    return valueTypeMapper.parseDate( def, column.getId(), valueStr );
-
+                    return valueTypeMapper.parseDate(def,
+                                                     column.getId(),
+                                                     valueStr);
                 }
-
             }
 
             throw new UnsupportedOperationException("Cannot parse value for column with id [" + column.getId() + "] (Data Set UUID [" + def.getUUID() + "]). Value core type not supported. Expecting string or number or date core field types.");
-
         }
 
         return null;
     }
-
-   
 }

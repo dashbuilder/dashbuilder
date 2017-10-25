@@ -16,6 +16,13 @@
 
 package org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchClientFactory;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchClient;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.exception.ElasticSearchClientGenericException;
@@ -29,26 +36,28 @@ import org.dashbuilder.dataset.date.DayOfWeek;
 import org.dashbuilder.dataset.date.Month;
 import org.dashbuilder.dataset.def.DataSetDef;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
-import org.dashbuilder.dataset.group.*;
+import org.dashbuilder.dataset.group.AggregateFunctionType;
+import org.dashbuilder.dataset.group.ColumnGroup;
+import org.dashbuilder.dataset.group.DataSetGroup;
+import org.dashbuilder.dataset.group.DateIntervalPattern;
+import org.dashbuilder.dataset.group.DateIntervalType;
+import org.dashbuilder.dataset.group.GroupFunction;
+import org.dashbuilder.dataset.group.GroupStrategy;
 import org.elasticsearch.script.Script;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramBuilder;
+import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
 import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
-import org.elasticsearch.search.aggregations.bucket.histogram.HistogramBuilder;
+import org.elasticsearch.search.aggregations.bucket.histogram.HistogramAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
-import org.elasticsearch.search.aggregations.metrics.ValuesSourceMetricsAggregationBuilder;
-import org.elasticsearch.search.aggregations.metrics.min.MinBuilder;
-
-import java.text.MessageFormat;
-import java.util.*;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.min.MinAggregationBuilder;
+import org.elasticsearch.search.aggregations.support.ValuesSourceAggregationBuilder;
 
 /**
  * Helper class for the ELS native client that provides the different <code>AggregationBuilder</code>'s given a group operation.
- *
  * @since 0.5.0
  */
 public class NativeClientAggregationsBuilder {
@@ -57,9 +66,9 @@ public class NativeClientAggregationsBuilder {
     private final IntervalBuilderDynamicDate intervalBuilder;
     private final ElasticSearchUtils utils;
     private final DataSetMetadata metadata;
-    private final List<DataColumn> columns; 
+    private final List<DataColumn> columns;
     private final SearchRequest request;
-    
+
     public NativeClientAggregationsBuilder(ElasticSearchClientFactory clientFactory,
                                            IntervalBuilderDynamicDate intervalBuilder,
                                            ElasticSearchUtils utils,
@@ -74,7 +83,7 @@ public class NativeClientAggregationsBuilder {
         this.request = request;
     }
 
-    public List<AbstractAggregationBuilder> build( DataSetGroup groupOp ) throws ElasticSearchClientGenericException {
+    public List<AbstractAggregationBuilder> build(DataSetGroup groupOp) throws ElasticSearchClientGenericException {
 
         ColumnGroup columnGroup = groupOp.getColumnGroup();
         List<GroupFunction> groupFunctions = groupOp.getGroupFunctions();
@@ -83,116 +92,110 @@ public class NativeClientAggregationsBuilder {
 
         // Group functions.
         final List<AbstractAggregationBuilder> aggregationBuilders = new LinkedList<>();
-        
+
         if (groupFunctions != null && !groupFunctions.isEmpty()) {
-            
+
             for (GroupFunction groupFunction : groupFunctions) {
-                
+
                 // If not a "group" lookup operation (not the groupby column), seralize the core function.
                 if (groupFunction.getFunction() != null) {
 
-                    ValuesSourceMetricsAggregationBuilder b = serializeCoreFunction( groupFunction );
-                    
-                    if ( null != b ) {
-                        
-                        aggregationBuilders.add( b );
-                        
+                    ValuesSourceAggregationBuilder b = serializeCoreFunction(groupFunction);
+
+                    if (null != b) {
+
+                        aggregationBuilders.add(b);
                     }
-                    
                 } else {
-                    
+
                     columnPickUps.add(groupFunction);
-                    
                 }
             }
-            
         }
 
         // Group by columns.
         if (columnGroup != null) {
-            
+
             String columnId = columnGroup.getColumnId();
             String sourceId = columnGroup.getSourceId();
 
             // Check that all column pickups are also column groups.
             if (!columnPickUps.isEmpty()) {
-                
+
                 for (GroupFunction groupFunction : columnPickUps) {
-                    
+
                     if (groupFunction.getFunction() == null && sourceId.equals(groupFunction.getSourceId())) {
                         columnId = groupFunction.getColumnId();
-                        
-                        if ( !existColumnInMetadataDef( sourceId ) ) {
+
+                        if (!existColumnInMetadataDef(sourceId)) {
                             throw new RuntimeException("Aggregation by column [" + sourceId + "] failed. No column with the given id.");
                         }
                     }
-                    
                 }
-                
             }
 
-            AbstractAggregationBuilder b = serializeGroupByFunction( columnGroup, columnId, aggregationBuilders );
-            
-            if ( null != b ) {
-                
+            AbstractAggregationBuilder b = serializeGroupByFunction(columnGroup,
+                                                                    columnId,
+                                                                    aggregationBuilders);
+
+            if (null != b) {
+
                 return new ArrayList<AbstractAggregationBuilder>() {{
-                    add( b );
+                    add(b);
                 }};
-                
             }
-
         } else {
 
             // If there is no group function, cannot use column pickups.
-            if ( !columnPickUps.isEmpty() ) {
+            if (!columnPickUps.isEmpty()) {
                 throw new RuntimeException("Column [" + columnPickUps.get(0).getSourceId() + "] pickup  failed. " +
-                        "No grouping is set for this column.");
+                                                   "No grouping is set for this column.");
             }
-
         }
 
         return aggregationBuilders;
-        
     }
 
     /**
      * <p>Serializes a core function.</p>
      * <p>Example of SUM function serialization:</p>
      * <code>
-     *     "column_id" : {
-     *          "sum" : { "field" : "change" }
-     *     }
+     * "column_id" : {
+     * "sum" : { "field" : "change" }
+     * }
      * </code>
      * @return
      */
-    protected ValuesSourceMetricsAggregationBuilder serializeCoreFunction(GroupFunction groupFunction) {
+    protected ValuesSourceAggregationBuilder serializeCoreFunction(GroupFunction groupFunction) {
 
-        if ( null != groupFunction ) {
+        if (null != groupFunction) {
 
             String sourceId = groupFunction.getSourceId();
-            
-            if ( sourceId != null && !existColumnInMetadataDef( sourceId ) ) {
+
+            if (sourceId != null && !existColumnInMetadataDef(sourceId)) {
                 throw new RuntimeException("Aggregation by column [" + sourceId + "] failed. No column with the given id.");
             }
-            
+
             if (sourceId == null) {
                 sourceId = metadata.getColumnId(0);
             }
-            
+
             if (sourceId == null) {
                 throw new IllegalArgumentException("Aggregation from unknown column id.");
             }
-            
+
             String columnId = groupFunction.getColumnId();
-            if (columnId == null) columnId = sourceId;
+            if (columnId == null) {
+                columnId = sourceId;
+            }
 
             AggregateFunctionType type = groupFunction.getFunction();
             ColumnType sourceColumnType = metadata.getColumnType(sourceId);
             // ColumnType resultingColumnType = sourceColumnType.equals(ColumnType.DATE) ? ColumnType.DATE : ColumnType.NUMBER;
-            ValuesSourceMetricsAggregationBuilder result = null;
-            
+            ValuesSourceAggregationBuilder result = null;
+
             switch (type) {
-                
+
                 case COUNT:
                     result = AggregationBuilders.count(columnId).field(sourceId);
                     break;
@@ -211,11 +214,10 @@ public class NativeClientAggregationsBuilder {
                 case MAX:
                     result = AggregationBuilders.max(columnId).field(sourceId);
                     break;
-
             }
-            
-            if ( null == result ) {
-                throw new RuntimeException( "Core function not supported as an Elastic Search aggregation [type=" + type.name() + "]" );
+
+            if (null == result) {
+                throw new RuntimeException("Core function not supported as an Elastic Search aggregation [type=" + type.name() + "]");
             }
 
             return result;
@@ -224,16 +226,18 @@ public class NativeClientAggregationsBuilder {
         return null;
     }
 
-    protected AbstractAggregationBuilder serializeGroupByFunction( ColumnGroup columnGroup, 
-                                               String resultingColumnId,
-                                               List<AbstractAggregationBuilder> aggregationBuilders ) throws ElasticSearchClientGenericException {
+    protected AbstractAggregationBuilder serializeGroupByFunction(ColumnGroup columnGroup,
+                                                                  String resultingColumnId,
+                                                                  List<AbstractAggregationBuilder> aggregationBuilders) throws ElasticSearchClientGenericException {
         if (columnGroup == null || metadata == null) {
             return null;
         }
 
         DataSetDef dataSetDef = metadata.getDefinition();
         String sourceId = columnGroup.getSourceId();
-        if (resultingColumnId == null) resultingColumnId = sourceId;
+        if (resultingColumnId == null) {
+            resultingColumnId = sourceId;
+        }
         boolean asc = columnGroup.isAscendingOrder();
         ColumnType columnType = metadata.getColumnType(sourceId);
         GroupStrategy groupStrategy = columnGroup.getStrategy();
@@ -242,50 +246,58 @@ public class NativeClientAggregationsBuilder {
         int minDocCount = areEmptyIntervalsAllowed ? 0 : 1;
         // TODO: Support for maxIntervals.
         int maxIntervals = columnGroup.getMaxIntervals();
-        
-        AbstractAggregationBuilder theResult = null;
-        
-        if (ColumnType.LABEL.equals(columnType)) {
-            
-            // Translate into a TERMS aggregation.
-            TermsBuilder termsBuilder = new TermsBuilder( resultingColumnId )
-                    .field( sourceId )
-                    .size( 0 )
-                    .minDocCount( minDocCount )
-                    .order( Terms.Order.term(asc) );
 
-            addSubAggregations( termsBuilder, aggregationBuilders );
-            
+        AbstractAggregationBuilder theResult = null;
+
+        if (ColumnType.LABEL.equals(columnType)) {
+
+            // Translate into a TERMS aggregation.
+            TermsAggregationBuilder termsBuilder = AggregationBuilders.terms(resultingColumnId)
+                    .field(sourceId)
+                    .size(10000)
+                    .minDocCount(minDocCount)
+                    .order(Terms.Order.term(asc));
+
+            addSubAggregations(termsBuilder,
+                               aggregationBuilders);
+
             // Add the resulting data set column.
             if (columns != null) {
                 DataColumn column = getColumn(resultingColumnId);
-                column.setColumnGroup(new ColumnGroup(sourceId, resultingColumnId, columnGroup.getStrategy(), columnGroup.getMaxIntervals(), columnGroup.getIntervalSize()));
+                column.setColumnGroup(new ColumnGroup(sourceId,
+                                                      resultingColumnId,
+                                                      columnGroup.getStrategy(),
+                                                      columnGroup.getMaxIntervals(),
+                                                      columnGroup.getIntervalSize()));
             }
 
             theResult = termsBuilder;
-            
         } else if (ColumnType.NUMBER.equals(columnType)) {
-            
-            // Translate into a HISTOGRAM aggregation.
-            HistogramBuilder histogramBuilder = new HistogramBuilder( resultingColumnId )
-                    .field( sourceId )
-                    .minDocCount( minDocCount )
-                    .order( asc ? Histogram.Order.KEY_ASC : Histogram.Order.KEY_DESC );
 
-            if ( null != intervalSize ) {
-                histogramBuilder.interval( Long.parseLong(intervalSize) );
+            // Translate into a HISTOGRAM aggregation.
+            HistogramAggregationBuilder histogramBuilder = new HistogramAggregationBuilder(resultingColumnId)
+                    .field(sourceId)
+                    .minDocCount(minDocCount)
+                    .order(asc ? Histogram.Order.KEY_ASC : Histogram.Order.KEY_DESC);
+
+            if (null != intervalSize) {
+                histogramBuilder.interval(Long.parseLong(intervalSize));
             }
 
-            addSubAggregations( histogramBuilder, aggregationBuilders );
-            
+            addSubAggregations(histogramBuilder,
+                               aggregationBuilders);
+
             // Add the resulting dataset column.
             if (columns != null) {
                 DataColumn column = getColumn(resultingColumnId);
-                column.setColumnGroup(new ColumnGroup(sourceId, resultingColumnId, columnGroup.getStrategy(), columnGroup.getMaxIntervals(), columnGroup.getIntervalSize()));
+                column.setColumnGroup(new ColumnGroup(sourceId,
+                                                      resultingColumnId,
+                                                      columnGroup.getStrategy(),
+                                                      columnGroup.getMaxIntervals(),
+                                                      columnGroup.getIntervalSize()));
             }
-            
+
             theResult = histogramBuilder;
-            
         } else if (ColumnType.DATE.equals(columnType)) {
             DateIntervalType dateIntervalType = null;
 
@@ -301,64 +313,67 @@ public class NativeClientAggregationsBuilder {
                     throw new RuntimeException("Column [" + columnGroup.getColumnId() + "] is type Date and grouped using a fixed strategy, but the ate interval type is not specified. Please specify it.");
                 }
 
-                String[] scripts = buildIntervalExtractorScript(sourceId, columnGroup);
+                String[] scripts = buildIntervalExtractorScript(sourceId,
+                                                                columnGroup);
                 String valueScript = scripts[0];
                 String orderScript = scripts[1];
 
-                TermsBuilder termsBuilder = new TermsBuilder( resultingColumnId )
-                        .size( 0 )
-                        .minDocCount( minDocCount )
-                        .script( new Script( valueScript ) );
+                TermsAggregationBuilder termsBuilder = AggregationBuilders.terms(resultingColumnId)
+                        .size(10000)
+                        .minDocCount(minDocCount)
+                        .script(new Script(valueScript));
 
-                if ( null == orderScript ) {
-                    
-                    termsBuilder.order( Terms.Order.term(asc) );
-                    
+                if (null == orderScript) {
+
+                    termsBuilder.order(Terms.Order.term(asc));
                 } else {
-                    
-                    termsBuilder.order(  Terms.Order.aggregation( "_sortOrder", true) );
-                    
-                }
-                
-                addSubAggregations( termsBuilder, aggregationBuilders );
-                
-                if ( null != orderScript ) {
 
-                    MinBuilder orderAggBuilder = new MinBuilder( "_sortOrder" );
-                    orderAggBuilder.script( new Script( orderScript ) );
-                    
-                    termsBuilder.subAggregation( orderAggBuilder );
-                    
+                    termsBuilder.order(Terms.Order.aggregation("_sortOrder",
+                                                               true));
+                }
+
+                addSubAggregations(termsBuilder,
+                                   aggregationBuilders);
+
+                if (null != orderScript) {
+
+                    MinAggregationBuilder orderAggBuilder = AggregationBuilders.min("_sortOrder");
+                    orderAggBuilder.script(new Script(orderScript));
+
+                    termsBuilder.subAggregation(orderAggBuilder);
                 }
 
                 theResult = termsBuilder;
-               
             }
 
             // Dynamic grouping -> use date histograms.
             if (GroupStrategy.DYNAMIC.equals(columnGroup.getStrategy())) {
-                
+
                 if (intervalSize != null) {
 
                     // If interval size specified by the lookup group operation, use it.
                     dateIntervalType = DateIntervalType.valueOf(intervalSize);
-                    
                 } else {
 
                     // If interval size is not specified by the lookup group operation, calculate the current date limits for index document's date field and the interval size that fits..
                     try {
 
-                        ElasticSearchClient anotherClient = clientFactory.newClient( (ElasticSearchDataSetDef) metadata.getDefinition() );
-                                
-                        Date[] limits = utils.calculateDateLimits(anotherClient, metadata, columnGroup.getSourceId(), this.request != null ? this.request.getQuery() : null);
+                        ElasticSearchClient anotherClient = clientFactory.newClient((ElasticSearchDataSetDef) metadata.getDefinition());
+
+                        Date[] limits = utils.calculateDateLimits(anotherClient,
+                                                                  metadata,
+                                                                  columnGroup.getSourceId(),
+                                                                  this.request != null ? this.request.getQuery() : null);
                         if (limits != null) {
-                            dateIntervalType = intervalBuilder.calculateIntervalSize(limits[0], limits[1], columnGroup);
+                            dateIntervalType = intervalBuilder.calculateIntervalSize(limits[0],
+                                                                                     limits[1],
+                                                                                     columnGroup);
                         }
-                        
-                        anotherClient.close();
-                        
+
+//                        anotherClient.close();
                     } catch (Exception e) {
-                        throw new ElasticSearchClientGenericException("Cannot calculate date limits.", e);
+                        throw new ElasticSearchClientGenericException("Cannot calculate date limits.",
+                                                                      e);
                     }
                 }
 
@@ -368,53 +383,53 @@ public class NativeClientAggregationsBuilder {
                 }
 
                 String intervalPattern = DateIntervalPattern.getPattern(dateIntervalType);
-                
-                DateHistogramBuilder builder = new DateHistogramBuilder( resultingColumnId )
-                        .field( sourceId )
-                        .interval( getInterval( dateIntervalType ) )
-                        .format( intervalPattern )
-                        .minDocCount( minDocCount )
-                        .order( asc ? Histogram.Order.KEY_ASC : Histogram.Order.KEY_DESC );
 
-                addSubAggregations( builder, aggregationBuilders );
-                
+                DateHistogramAggregationBuilder builder = AggregationBuilders.dateHistogram(resultingColumnId)
+                        .field(sourceId)
+                        .dateHistogramInterval(getInterval(dateIntervalType))
+                        .format(intervalPattern)
+                        .minDocCount(minDocCount)
+                        .order(asc ? Histogram.Order.KEY_ASC : Histogram.Order.KEY_DESC);
+
+                addSubAggregations(builder,
+                                   aggregationBuilders);
+
                 theResult = builder;
             }
 
             // Add the resulting dataset column.
             if (columns != null) {
-                
+
                 DataColumn column = getColumn(resultingColumnId);
                 column.setColumnType(ColumnType.LABEL);
                 column.setIntervalType(dateIntervalType.name());
-                ColumnGroup cg = new ColumnGroup(sourceId, resultingColumnId, columnGroup.getStrategy(), columnGroup.getMaxIntervals(), columnGroup.getIntervalSize());
+                ColumnGroup cg = new ColumnGroup(sourceId,
+                                                 resultingColumnId,
+                                                 columnGroup.getStrategy(),
+                                                 columnGroup.getMaxIntervals(),
+                                                 columnGroup.getIntervalSize());
                 cg.setEmptyIntervalsAllowed(areEmptyIntervalsAllowed);
                 cg.setFirstMonthOfYear(columnGroup.getFirstMonthOfYear());
                 cg.setFirstDayOfWeek(columnGroup.getFirstDayOfWeek());
                 column.setColumnGroup(cg);
-                
             }
-            
         } else {
-            
+
             throw new RuntimeException("No translation supported for column group with sourceId [" + sourceId + "] and group strategy [" + groupStrategy.name() + "].");
-            
         }
-        
+
         return theResult;
     }
-    
-    private void addSubAggregations( AggregationBuilder parent, 
-                                     List<AbstractAggregationBuilder> aggregationBuilders ) {
-        
-        if ( null != aggregationBuilders && !aggregationBuilders.isEmpty() ) {
-            
-            for ( AbstractAggregationBuilder b : aggregationBuilders ) {
-                parent.subAggregation( b );
+
+    private void addSubAggregations(AggregationBuilder parent,
+                                    List<AbstractAggregationBuilder> aggregationBuilders) {
+
+        if (null != aggregationBuilders && !aggregationBuilders.isEmpty()) {
+
+            for (AbstractAggregationBuilder b : aggregationBuilders) {
+                parent.subAggregation(b);
             }
-            
         }
-        
     }
 
     protected DateHistogramInterval getInterval(DateIntervalType dateIntervalType) {
@@ -468,95 +483,103 @@ public class NativeClientAggregationsBuilder {
             default:
                 throw new RuntimeException("No interval mapping for date interval type [" + dateIntervalType.name() + "].");
         }
-        
-        return new DateHistogramInterval( intervalExpression );
+
+        return new DateHistogramInterval(intervalExpression);
     }
 
-    private String[] buildIntervalExtractorScript(String sourceId, ColumnGroup columnGroup) {
+    private String[] buildIntervalExtractorScript(String sourceId,
+                                                  ColumnGroup columnGroup) {
         DateIntervalType intervalType = DateIntervalType.getByName(columnGroup.getIntervalSize());
         Month firstMonth = columnGroup.getFirstMonthOfYear();
         DayOfWeek firstDayOfWeek = columnGroup.getFirstDayOfWeek();
 
-        String script = "new Date(doc[\"{0}\"].value).toCalendar().";
+        String script = "Instant.ofEpochMilli(new Date(doc[\"{0}\"].value).getTime()).atZone(ZoneId.systemDefault()).toLocalDate().";
         switch (intervalType) {
             case QUARTER:
                 // For quarters use this pseudocode script: <code>quarter = round-up(date.month / 3)</code>
-                script = "ceil( ( " + script + "get(Calendar.MONTH) + 1 ) / 3 ).toInteger()";
+                script = "Math.ceil((" + script + "getMonth().getValue()-1) / 3 ).intValue()+1";
                 break;
             case MONTH:
-                script = script + "get(Calendar.MONTH) + 1";
+                script = script + "getMonth().getValue()";
                 break;
             case DAY_OF_WEEK:
-                script = script + "get(Calendar.DAY_OF_WEEK)";
+                script = script + "getDayOfWeek().plus(1).getValue()";
                 break;
             case HOUR:
-                script = script + "get(Calendar.HOUR_OF_DAY)";
+                script = script + "getHour()";
                 break;
             case MINUTE:
-                script = script + "get(Calendar.MINUTE)";
+                script = script + "getMinute()";
                 break;
             case SECOND:
-                script = script + "get(Calendar.SECOND)";
+                script = script + "getSecond()";
                 break;
             default:
                 throw new UnsupportedOperationException("Fixed grouping strategy by interval type " + intervalType.name() + " is not supported.");
         }
 
-        String valueScript = MessageFormat.format( script, sourceId );
+        String valueScript = MessageFormat.format(script,
+                                                  sourceId);
 
         String orderScript = null;
 
         if (firstMonth != null && intervalType.equals(DateIntervalType.MONTH)) {
             int firstMonthIndex = firstMonth.getIndex();
-            int[] positions = buildPositionsArray(firstMonthIndex, 12, columnGroup.isAscendingOrder());
-            orderScript = "month="+valueScript+".toInteger(); list = "+Arrays.toString(positions)+"; list.indexOf(month)";
+            int[] positions = buildPositionsArray(firstMonthIndex,
+                                                  12,
+                                                  columnGroup.isAscendingOrder());
+            orderScript = "int month=" + valueScript + "; List list = " + Arrays.toString(positions) + "; list.indexOf(month)";
         }
 
-        if (firstDayOfWeek!= null && intervalType.equals(DateIntervalType.DAY_OF_WEEK)) {
+        if (firstDayOfWeek != null && intervalType.equals(DateIntervalType.DAY_OF_WEEK)) {
             int firstDayIndex = firstDayOfWeek.getIndex();
-            int[] positions = buildPositionsArray(firstDayIndex, 7, columnGroup.isAscendingOrder());
-            orderScript = "day="+valueScript+".toInteger(); list = "+Arrays.toString(positions)+"; list.indexOf(day)";
+            int[] positions = buildPositionsArray(firstDayIndex,
+                                                  7,
+                                                  columnGroup.isAscendingOrder());
+            orderScript = "int day=" + valueScript + "; List list = " + Arrays.toString(positions) + "; list.indexOf(day)";
         }
 
-        return new String[] { valueScript, orderScript};
+        return new String[]{valueScript, orderScript};
     }
 
-    private int[] buildPositionsArray( int firstElementIndex, 
-                                       int end, 
-                                       boolean asc) {
+    private int[] buildPositionsArray(int firstElementIndex,
+                                      int end,
+                                      boolean asc) {
         int[] positions = new int[end];
 
         for (int x = 0, month = firstElementIndex; x < end; x++) {
-            
-            if ( month > end ) {
+
+            if (month > end) {
                 month = 1;
             }
-            
-            if ( month < 1 ) {
+
+            if (month < 1) {
                 month = end;
             }
-            
+
             positions[x] = month;
-            
-            if ( asc ) {
-                month ++;
+
+            if (asc) {
+                month++;
             } else {
                 month--;
             }
-            
         }
 
         return positions;
-
     }
 
-    protected boolean existColumnInMetadataDef( String name ) {
-        if (name == null || metadata == null) return false;
+    protected boolean existColumnInMetadataDef(String name) {
+        if (name == null || metadata == null) {
+            return false;
+        }
 
         int cols = metadata.getNumberOfColumns();
         for (int x = 0; x < cols; x++) {
             String colName = metadata.getColumnId(x);
-            if (name.equals(colName)) return true;
+            if (name.equals(colName)) {
+                return true;
+            }
         }
         return false;
     }
@@ -564,11 +587,11 @@ public class NativeClientAggregationsBuilder {
     protected DataColumn getColumn(String columnId) {
         if (columns != null && columnId != null && !columns.isEmpty()) {
             for (DataColumn column : columns) {
-                if (columnId.equals(column.getId())) return column;
+                if (columnId.equals(column.getId())) {
+                    return column;
+                }
             }
         }
         return null;
     }
-
-
 }
