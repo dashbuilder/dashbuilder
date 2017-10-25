@@ -46,7 +46,8 @@
     <version.com.google.gwt>2.8.1</version.com.google.gwt>
     <version.com.googlecode.jsonsimple>1.1.1</version.com.googlecode.jsonsimple>
     <version.com.googlecode.jtype>0.1.1</version.com.googlecode.jtype>
-    <version.org.elasticsearch>2.1.2</version.org.elasticsearch>
+    <version.org.elasticsearch>5.6.1</version.org.elasticsearch>
+    <version.org.apache.lucene>6.6.1</version.org.apache.lucene>
 
     <version.org.eclipse.jgit>4.8.0.201706111038-r</version.org.eclipse.jgit>
     <!-- Custom Freemarker build with workaround for random concurrent access issue (annotation processors). See AF-600 for more info.-->
@@ -647,6 +648,18 @@
         <groupId>org.elasticsearch</groupId>
         <artifactId>elasticsearch</artifactId>
         <version>${version.org.elasticsearch}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.elasticsearch.client</groupId>
+        <artifactId>transport</artifactId>
+        <version>${version.org.elasticsearch}</version>
+        <exclusions>
+          <exclusion>
+            <artifactId>commons-logging</artifactId>
+            <groupId>commons-logging</groupId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>

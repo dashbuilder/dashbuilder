@@ -45,13 +45,13 @@ public class ElasticSearchUtils {
         this.valueTypeMapper = valueTypeMapper;
     }
 
-    public static int getResponseCode(ActionResponse response) {
-        if (response == null) return ElasticSearchClient.RESPONSE_CODE_NOT_FOUND;
-        String responseCode = response.getHeader( ElasticSearchClient.HEADER_RESPONSE_CODE );
-
-        if (responseCode == null) return ElasticSearchClient.RESPONSE_CODE_OK;
-        return Integer.decode(responseCode);
-    }
+//    public static int getResponseCode(ActionResponse response) {
+//        if (response == null) return ElasticSearchClient.RESPONSE_CODE_NOT_FOUND;
+////        String responseCode = response.getHeader( ElasticSearchClient.HEADER_RESPONSE_CODE );
+//
+//        if (responseCode == null) return ElasticSearchClient.RESPONSE_CODE_OK;
+//        return Integer.decode(responseCode);
+//    }
     
     /**
      * <p>Obtain the minimum date and maximum date values for the given column with identifier <code>dateColumnId</code>.</p>
