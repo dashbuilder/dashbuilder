@@ -16,38 +16,46 @@
 
 package org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl;
 
-import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.Query;
-import org.elasticsearch.index.query.*;
-
 import java.util.Collection;
 
+import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.Query;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.ExistsQueryBuilder;
+import org.elasticsearch.index.query.MatchAllQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
+import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.index.query.TermsQueryBuilder;
+import org.elasticsearch.index.query.WildcardQueryBuilder;
 
 /**
  * Helper class for the ELS native client that provides the different <code>QueryBuilder</code>'s given a query.
- *
  * @since 0.5.0
  */
 public class NativeClientQueryBuilder {
 
-    public NativeClientQueryBuilder( ) {
+    public NativeClientQueryBuilder() {
     }
 
-    public QueryBuilder build( Query query ) {
+    public QueryBuilder build(Query query) {
 
-        return translate( query );
-        
+        return translate(query);
     }
 
-    private QueryBuilder translate( Query query ) {
-        
-        if ( query == null ) {
+    private QueryBuilder translate(Query query) {
+
+        if (query == null) {
             return null;
         }
 
         Query.Type type = query.getType();
 
         switch (type) {
-            
+
             case BOOL:
                 return translateBool(query);
             case MATCH:
@@ -74,238 +82,265 @@ public class NativeClientQueryBuilder {
                 return translateTerms(query);
             case RANGE:
                 return translateRange(query);
-            
         }
 
         return null;
     }
 
-    
     private ExistsQueryBuilder translateExists(Query query) {
-        if (query == null) return null;
+        if (query == null) {
+            return null;
+        }
         String field = query.getField();
-        return new ExistsQueryBuilder( field );
+        return new ExistsQueryBuilder(field);
     }
 
     private TermQueryBuilder translateTerm(Query query) {
-        if (query == null) return null;
+        if (query == null) {
+            return null;
+        }
 
         String field = query.getField();
         Object value = query.getParam(Query.Parameter.VALUE.name());
 
-        return new TermQueryBuilder( field, value );
+        return new TermQueryBuilder(field,
+                                    value);
     }
-    
+
     private TermsQueryBuilder translateTerms(Query query) {
-        if (query == null) return null;
+        if (query == null) {
+            return null;
+        }
 
         String field = query.getField();
         Collection<String> terms = (Collection<String>) query.getParam(Query.Parameter.VALUE.name());
-        return new TermsQueryBuilder( field, terms);
+        return new TermsQueryBuilder(field,
+                                     terms);
     }
 
     private RangeQueryBuilder translateRange(Query query) {
-        if (query == null) return null;
+        if (query == null) {
+            return null;
+        }
 
         String field = query.getField();
 
-        RangeQueryBuilder builder = new RangeQueryBuilder( field );
-        
+        RangeQueryBuilder builder = new RangeQueryBuilder(field);
+
         Object lt = query.getParam(Query.Parameter.LT.name());
-        if ( null != lt ) {
-            builder.lt( lt );
+        if (null != lt) {
+            builder.lt(lt);
         }
         Object lte = query.getParam(Query.Parameter.LTE.name());
-        if ( null != lte ) {
-            builder.lte( lte );
+        if (null != lte) {
+            builder.lte(lte);
         }
         Object gt = query.getParam(Query.Parameter.GT.name());
-        if ( null != gt ) {
-            builder.gt( gt );
+        if (null != gt) {
+            builder.gt(gt);
         }
         Object gte = query.getParam(Query.Parameter.GTE.name());
-        if ( null != gte ) {
-            builder.gte( gte );
+        if (null != gte) {
+            builder.gte(gte);
         }
-       
+
         return builder;
     }
 
     private BoolQueryBuilder translateAnd(Query query) {
-        return translateLogical( query, 1  );
+        return translateLogical(query,
+                                1);
     }
 
     private BoolQueryBuilder translateOr(Query query) {
-        return translateLogical( query, 2  );
+        return translateLogical(query,
+                                2);
     }
 
     private BoolQueryBuilder translateNot(Query query) {
-        return translateBooleanQueries( new BoolQueryBuilder(), 3, query.getParam(Query.Parameter.FILTER.name()) );
+        return translateBooleanQueries(new BoolQueryBuilder(),
+                                       3,
+                                       query.getParam(Query.Parameter.FILTER.name()));
     }
 
-    private BoolQueryBuilder translateLogical( Query query, int op ) {
-        return translateBooleanQueries( new BoolQueryBuilder(), op, query.getParam(Query.Parameter.FILTERS.name()) );
+    private BoolQueryBuilder translateLogical(Query query,
+                                              int op) {
+        return translateBooleanQueries(new BoolQueryBuilder(),
+                                       op,
+                                       query.getParam(Query.Parameter.FILTERS.name()));
     }
-    
+
     @SuppressWarnings("unchecked")
-    private BoolQueryBuilder translateBooleanQueries( BoolQueryBuilder builder, int op, Object queryArguments ) {
+    private BoolQueryBuilder translateBooleanQueries(BoolQueryBuilder builder,
+                                                     int op,
+                                                     Object queryArguments) {
 
-        if ( op == 2 ) {
-            
-            builder.minimumNumberShouldMatch( 1 );
-            
+        if (op == 2) {
+
+            builder.minimumNumberShouldMatch(1);
         }
 
-        if ( null != queryArguments && queryArguments instanceof Collection ) {
+        if (null != queryArguments && queryArguments instanceof Collection) {
 
             Collection<Query> queries = (Collection<Query>) queryArguments;
-            for ( Query q : queries ) {
+            for (Query q : queries) {
 
-                QueryBuilder queryBuilder = translate( q );
-                applyLogicalOperator( builder, op, queryBuilder );
+                QueryBuilder queryBuilder = translate(q);
+                applyLogicalOperator(builder,
+                                     op,
+                                     queryBuilder);
             }
+        } else if (null != queryArguments && queryArguments instanceof Query) {
 
+            QueryBuilder queryBuilder = translate((Query) queryArguments);
+            applyLogicalOperator(builder,
+                                 op,
+                                 queryBuilder);
+        } else if (null != queryArguments && queryArguments instanceof QueryBuilder) {
 
-        } else if ( null != queryArguments && queryArguments instanceof Query ) {
-
-            QueryBuilder queryBuilder = translate( (Query) queryArguments );
-            applyLogicalOperator( builder, op, queryBuilder );
-
-        
-        } else if ( null != queryArguments && queryArguments instanceof QueryBuilder ) {
-
-            applyLogicalOperator( builder, op, (QueryBuilder) queryArguments );
-            
+            applyLogicalOperator(builder,
+                                 op,
+                                 (QueryBuilder) queryArguments);
         }
-        
+
         return builder;
     }
-    
-    private void applyLogicalOperator( BoolQueryBuilder builder, 
-                                       int op,
-                                       QueryBuilder argument ) {
-        
-        if ( op == 1 ) {
-            
-            builder.must( argument );
-            
-        } else if ( op == 2 ) {
 
-            builder.should( argument );
-            
-        } else if ( op == 3 ) {
+    private void applyLogicalOperator(BoolQueryBuilder builder,
+                                      int op,
+                                      QueryBuilder argument) {
 
-            builder.mustNot( argument );
+        if (op == 1) {
+
+            builder.must(argument);
+        } else if (op == 2) {
+
+            builder.should(argument);
+        } else if (op == 3) {
+
+            builder.mustNot(argument);
         }
-        
     }
 
     private BoolQueryBuilder translateBool(Query query) {
-        if (query == null) return null;
+        if (query == null) {
+            return null;
+        }
 
         BoolQueryBuilder builder = new BoolQueryBuilder();
-        
+
         // Must clauses.
-        translateBooleanQueries( builder, 1, query.getParam(Query.Parameter.MUST.name()) );
+        translateBooleanQueries(builder,
+                                1,
+                                query.getParam(Query.Parameter.MUST.name()));
 
         // Should clauses.
-        translateBooleanQueries( builder, 2, query.getParam(Query.Parameter.SHOULD.name()) );
+        translateBooleanQueries(builder,
+                                2,
+                                query.getParam(Query.Parameter.SHOULD.name()));
 
         // Must Not clauses.
-        translateBooleanQueries( builder, 3, query.getParam(Query.Parameter.MUST_NOT.name()) );
+        translateBooleanQueries(builder,
+                                3,
+                                query.getParam(Query.Parameter.MUST_NOT.name()));
 
-      
         return builder;
     }
 
     private BoolQueryBuilder translateFiltered(Query query) {
-        if (query == null) return null;
+        if (query == null) {
+            return null;
+        }
 
         Query _query = (Query) query.getParam(Query.Parameter.QUERY.name());
         Query filter = (Query) query.getParam(Query.Parameter.FILTER.name());
 
         BoolQueryBuilder builder = new BoolQueryBuilder();
 
-        QueryBuilder queryBuilder = translate( _query );
-        
-        if ( null != queryBuilder ) {
-            builder.must( queryBuilder );
+        QueryBuilder queryBuilder = translate(_query);
+
+        if (null != queryBuilder) {
+            builder.must(queryBuilder);
         }
 
-        QueryBuilder filterBuilder = translate( filter );
+        QueryBuilder filterBuilder = translate(filter);
 
-        if ( null != filter ) {
-            
-            builder.filter( filterBuilder );
-            
+        if (null != filter) {
+
+            builder.filter(filterBuilder);
         }
 
         return builder;
     }
 
-    private MatchQueryBuilder translateMatch( Query query ) {
-        if (query == null) return null;
+    private MatchQueryBuilder translateMatch(Query query) {
+        if (query == null) {
+            return null;
+        }
 
         String field = query.getField();
         Object value = query.getParam(Query.Parameter.VALUE.name());
         String operator = (String) query.getParam(Query.Parameter.OPERATOR.name());
 
-        MatchQueryBuilder builder = new MatchQueryBuilder( field, value );
-        if ( null != operator ) {
-            builder.operator( getMatchOperator( operator ) );
-            builder.minimumShouldMatch( "1" );
+        MatchQueryBuilder builder = new MatchQueryBuilder(field,
+                                                          value);
+        if (null != operator) {
+            builder.operator(getMatchOperator(operator));
+            builder.minimumShouldMatch("1");
         }
-       
+
         return builder;
     }
-    
-    private MatchQueryBuilder.Operator getMatchOperator( String op ) {
-        
-        if ( "OR".equalsIgnoreCase( op) ) {
-            
-            return MatchQueryBuilder.Operator.OR;
+
+    private Operator getMatchOperator(String op) {
+
+        if ("OR".equalsIgnoreCase(op)) {
+
+            return Operator.OR;
         }
 
-        return MatchQueryBuilder.Operator.AND;
+        return Operator.AND;
     }
 
-    private WildcardQueryBuilder translateWildcard( Query query ) {
-        if (query == null) return null;
+    private WildcardQueryBuilder translateWildcard(Query query) {
+        if (query == null) {
+            return null;
+        }
 
         String field = query.getField();
-        Object value = query.getParam( Query.Parameter.VALUE.name() );
-        return new WildcardQueryBuilder( field, (String) value );        
+        Object value = query.getParam(Query.Parameter.VALUE.name());
+        return new WildcardQueryBuilder(field,
+                                        (String) value);
     }
 
-    private QueryStringQueryBuilder translateQueryString( Query query ) {
-        if (query == null) return null;
+    private QueryStringQueryBuilder translateQueryString(Query query) {
+        if (query == null) {
+            return null;
+        }
 
         Object pattern = query.getParam(Query.Parameter.QUERY.name());
         Object defField = query.getParam(Query.Parameter.DEFAULT_FIELD.name());
         Object defOp = query.getParam(Query.Parameter.DEFAULT_OPERATOR.name());
-        Object lowerCase = query.getParam(Query.Parameter.LOWERCASE_EXPANDED_TERMS.name());
 
-        return new QueryStringQueryBuilder( pattern.toString() )
-                .defaultField( defField.toString() )
-                .defaultOperator( getQueryOperator( defOp.toString() ) )
-                .lowercaseExpandedTerms( Boolean.valueOf( lowerCase.toString() ) );
-        
+        return QueryBuilders.queryStringQuery(pattern.toString())
+                .defaultField(defField.toString())
+                .defaultOperator(getQueryOperator(defOp.toString()));
     }
 
-    private QueryStringQueryBuilder.Operator getQueryOperator( String op ) {
+    private Operator getQueryOperator(String op) {
+        if ("OR".equalsIgnoreCase(op)) {
 
-        if ( "OR".equalsIgnoreCase( op ) ) {
-
-            return QueryStringQueryBuilder.Operator.OR;
+            return Operator.OR;
         }
 
-        return QueryStringQueryBuilder.Operator.AND;
+        return Operator.AND;
     }
 
-    private MatchAllQueryBuilder translateMatchAll( Query query ) {
-        if (query == null) return null;
-        
+    private MatchAllQueryBuilder translateMatchAll(Query query) {
+        if (query == null) {
+            return null;
+        }
+
         return new MatchAllQueryBuilder();
     }
-
 }

@@ -3,15 +3,15 @@
         "_default_" : {
             "properties" : {
                 "FIELD1" : {
-                    "type": "string", 
-                    "index": "analyzed" 
+                    "type": "text",
+                    "index": "analyzed"
                 },
                 "FIELD2" : {
-                    "type": "string", 
+                    "type": "text",
                     "index": "analyzed" ,
                     "fields": {
                         "RAW": {
-                            "type": "string",
+                            "type": "keyword",
                             "index": "not_analyzed",
                             "ignore_above": 256
                         }
