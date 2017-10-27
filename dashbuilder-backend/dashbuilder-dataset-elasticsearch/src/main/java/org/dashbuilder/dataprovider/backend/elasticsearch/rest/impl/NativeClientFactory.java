@@ -20,64 +20,58 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
 
 import java.net.InetAddress;
 
 public class NativeClientFactory {
 
     private static final NativeClientFactory INSTANCE = new NativeClientFactory();
-
+    
     protected static final String EL_CLUTER_NAME = "cluster.name";
     protected static final String EL_CLIENT_TIMEOUT = "client.transport.ping_timeout";
-    protected static final String EL_SECURITY = "transport.type";
 
     private Client testClient;
-
+    
     public static NativeClientFactory getInstance() {
         return INSTANCE;
     }
-
-    public void setTestClient(Client c) {
+    
+    public void setTestClient( Client c ) {
         this.testClient = c;
     }
 
-    public Client newClient(String serverURL,
-                            String clusterName,
-                            long timeout) throws Exception {
+    public Client newClient( String serverURL, String clusterName , long timeout ) throws Exception {
 
-        if (null != testClient) {
-
+        if ( null != testClient ) {
+            
             return testClient;
+            
         }
 
-        if (null == clusterName || clusterName.trim().length() == 0) {
+        if ( null == clusterName || clusterName.trim().length() == 0 ) {
             throw new IllegalArgumentException("Parameter clusterName is missing.");
         }
 
-        if (null == serverURL || serverURL.trim().length() == 0) {
+        if ( null == serverURL || serverURL.trim().length() == 0 ) {
             throw new IllegalArgumentException("Parameter serverURL is missing.");
         }
 
-        String[] url = serverURL.split(":");
-        if (url.length != 2) {
+        String[] url = serverURL.split( ":" );
+        if ( url.length != 2 ) {
             throw new IllegalArgumentException("Invalid serverURL format. Expected format <HOST>:<PORT>");
         }
 
-        String t = (timeout / 1000) + "s";
+        String t = ( timeout / 1000 ) + "s";
 
-        Settings settings = Settings.builder()
-                .put(EL_CLUTER_NAME,
-                     clusterName)
-                .put(EL_CLIENT_TIMEOUT,
-                     t)
-                .put(EL_SECURITY,
-                     "netty3")
+        Settings settings = Settings.settingsBuilder()
+                .put(EL_CLUTER_NAME, clusterName)
+                .put(EL_CLIENT_TIMEOUT, t)
                 .build();
 
-        return new PreBuiltTransportClient(settings)
+        return TransportClient.builder().settings(settings).build()
                 .addTransportAddress(new InetSocketTransportAddress(
-                        InetAddress.getByName(url[0]),
-                        Integer.parseInt(url[1])));
+                        InetAddress.getByName( url[0]), Integer.parseInt( url[1] ) ));
+
     }
+    
 }

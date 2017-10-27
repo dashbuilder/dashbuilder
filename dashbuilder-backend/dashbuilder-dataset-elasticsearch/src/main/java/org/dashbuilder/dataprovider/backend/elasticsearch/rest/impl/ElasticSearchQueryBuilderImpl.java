@@ -15,14 +15,6 @@
  */
 package org.dashbuilder.dataprovider.backend.elasticsearch.rest.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.dashbuilder.dataprovider.backend.elasticsearch.ElasticSearchValueTypeMapper;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.ElasticSearchQueryBuilder;
 import org.dashbuilder.dataprovider.backend.elasticsearch.rest.model.FieldMappingResponse;
@@ -32,14 +24,11 @@ import org.dashbuilder.dataset.ColumnType;
 import org.dashbuilder.dataset.DataSetMetadata;
 import org.dashbuilder.dataset.date.TimeFrame;
 import org.dashbuilder.dataset.def.ElasticSearchDataSetDef;
-import org.dashbuilder.dataset.filter.ColumnFilter;
-import org.dashbuilder.dataset.filter.CoreFunctionFilter;
-import org.dashbuilder.dataset.filter.CoreFunctionType;
-import org.dashbuilder.dataset.filter.DataSetFilter;
-import org.dashbuilder.dataset.filter.LogicalExprFilter;
-import org.dashbuilder.dataset.filter.LogicalExprType;
+import org.dashbuilder.dataset.filter.*;
 import org.dashbuilder.dataset.group.DataSetGroup;
 import org.dashbuilder.dataset.group.Interval;
+
+import java.util.*;
 
 /**
  * <p>Default query builder implementation.</p>

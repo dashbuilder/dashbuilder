@@ -17,47 +17,34 @@ package org.dashbuilder.dataprovider.backend.elasticsearch.rest.model;
 
 public class FieldMappingResponse {
 
-    public static enum FieldType {
-        TEXT,
-        FLOAT,
-        DOUBLE,
-        BYTE,
-        SHORT,
-        INTEGER,
-        LONG,
-        TOKEN_COUNT,
-        DATE,
-        BOOLEAN,
-        BINARY,
-        KEYWORD;
+    public static  enum FieldType {
+        STRING, FLOAT, DOUBLE, BYTE, SHORT, INTEGER, LONG, TOKEN_COUNT, DATE, BOOLEAN, BINARY;
     }
 
-    public static enum IndexType {
-        ANALYZED,
-        NOT_ANALYZED,
-        NO;
+    public static  enum IndexType {
+        ANALYZED, NOT_ANALYZED, NO;
     }
 
-    private final String name;
-    private final FieldType dataType;
-    private final String format;
-    private final IndexType indexType;
-    private final MultiFieldMappingResponse[] multiFields;
+    private final  String name;
+    private final  FieldType dataType;
+    private final  String format;
+    private final  IndexType indexType;
+    private final  MultiFieldMappingResponse[] multiFields;
 
-    public FieldMappingResponse(String name,
-                                FieldType dataType,
-                                IndexType indexType) {
+    public FieldMappingResponse( String name, 
+                                 FieldType dataType, 
+                                 IndexType indexType ) {
         this.name = name;
         this.dataType = dataType;
         this.indexType = indexType;
         this.format = null;
         this.multiFields = null;
     }
-
-    public FieldMappingResponse(String name,
-                                FieldType dataType,
-                                IndexType indexType,
-                                String format) {
+    
+    public FieldMappingResponse( String name, 
+                                 FieldType dataType, 
+                                 IndexType indexType, 
+                                 String format ) {
         this.name = name;
         this.dataType = dataType;
         this.indexType = indexType;
@@ -65,11 +52,11 @@ public class FieldMappingResponse {
         this.multiFields = null;
     }
 
-    public FieldMappingResponse(String name,
-                                FieldType dataType,
-                                IndexType indexType,
-                                String format,
-                                MultiFieldMappingResponse[] multiFields) {
+    public FieldMappingResponse( String name, 
+                                 FieldType dataType, 
+                                 IndexType indexType, 
+                                 String format, 
+                                 MultiFieldMappingResponse[] multiFields ) {
         this.name = name;
         this.dataType = dataType;
         this.indexType = indexType;
