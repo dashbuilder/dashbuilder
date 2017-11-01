@@ -67,8 +67,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.dashbuilder</groupId>
-      <artifactId>dashbuilder-json</artifactId>
+      <groupId>org.kie.soup</groupId>
+      <artifactId>kie-soup-json</artifactId>
     </dependency>
 
     <dependency>
