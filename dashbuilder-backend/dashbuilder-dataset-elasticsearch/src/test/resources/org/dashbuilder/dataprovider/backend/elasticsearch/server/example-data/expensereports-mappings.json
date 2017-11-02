@@ -3,10 +3,10 @@
         "_default_" : {
             "properties" : {
                 "EXPENSES_ID" : {"type": "integer" },
-                "CITY" : {"type": "string", "index": "not_analyzed" },
-                "DEPARTMENT" : { "type" : "string", "index": "not_analyzed" },
-                "EMPLOYEE" : { "type" : "string", "index": "analyzed" },
-                "CREATION_DATE" : { 
+                "CITY" : {"type": "keyword", "index": "not_analyzed" },
+                "DEPARTMENT" : { "type" : "keyword", "index": "not_analyzed" },
+                "EMPLOYEE" : { "type" : "text", "index": "analyzed" },
+                "CREATION_DATE" : {
                     "type" : "date",
                     "format": "MM-dd-yyyy Z"
                 },

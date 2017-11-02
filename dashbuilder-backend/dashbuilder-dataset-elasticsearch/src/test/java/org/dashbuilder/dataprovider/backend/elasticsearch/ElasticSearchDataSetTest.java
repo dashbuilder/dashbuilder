@@ -47,9 +47,9 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
     protected static final String EL_DATASET_UUID = "expense_reports";
     protected static final String EL_DATASET_CSENSITIVE_UUID = "expense_reports_csensitive";
     private static final String DATE_FORMAT = "yyyy-MM-dd Z";
-    
+
     /**
-     * Register the data set used for this test case. 
+     * Register the data set used for this test case.
      */
     @Before
     public void registerDataSet() throws Exception {
@@ -67,8 +67,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
      * COLUMNS TESTING.
      * **********************************************************************************************************************************************************************************************
      */
-    
-    
+
+
     /**
      * Test columns when dataset definition does not contain any column definition.
      *
@@ -128,10 +128,10 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_UUID)
                         .buildLookup());
-        
+
         assertThat(result.getRowCount()).isEqualTo(50);
     }
-    
+
     /**
      * Just use a sort operation.
      */
@@ -147,7 +147,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         // Test id column.
         assertThat(result.getValueAt(0, 0)).isEqualTo(1d);
         assertThat(result.getValueAt(49, 0)).isEqualTo(50d);
-        
+
         // Test row 0 values.
         assertThat(result.getValueAt(0, 1)).isEqualTo(120.35);
         assertThat(result.getValueAt(0, 2)).isEqualTo(EL_EXAMPLE_DEPT_ENGINEERING);
@@ -256,7 +256,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
      * Aggregating by a non grouped column with no aggregation function is not allowed.
      * An RuntimeException must be thrown.
      * @throws Exception
-     * 
+     *
      */
     @Test(expected = RuntimeException.class)
     public void testAggregationByNoFunctionColumn() throws Exception {
@@ -311,7 +311,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
      * FILTER TESTING.
      * **********************************************************************************************************************************************************************************************
      */
-    
+
     @Test
     public void testFilterEqualsByStringNotAnalyzed() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
@@ -351,7 +351,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
                         .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
-        assertThat(result.getRowCount()).isEqualTo(0);
+        assertThat(result.getRowCount()).isEqualTo(4);
 
         // Default analyzer for field (lowecased analyzer). The lower-cased pattern value works.
         result = dataSetManager.lookupDataSet(
@@ -360,7 +360,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
                         .filter(ExpenseReportsData.COLUMN_EMPLOYEE, likeTo(ExpenseReportsData.COLUMN_EMPLOYEE, "jul%", true))
                         .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
-        
+
         assertThat(result.getRowCount()).isEqualTo(4);
 
 
@@ -387,7 +387,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
 
     @Test
     public void testFilterLikeToByStringAnalyzedAndCaseUnSensitive() throws Exception {
-        
+
         // Default analyzer for field (it applies lower-cased terms, so it's not case sensitive).
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
@@ -409,7 +409,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         assertThat(result.getRowCount()).isEqualTo(4);
 
 
-        // Custom analyzer for field is always for case sensitive filters, so this case will return empty results. 
+        // Custom analyzer for field is always for case sensitive filters, so this case will return empty results.
         result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
                         .dataset(EL_DATASET_CSENSITIVE_UUID)
@@ -417,7 +417,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
                         .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
 
-        assertThat(result.getRowCount()).isEqualTo(0);
+        assertThat(result.getRowCount()).isEqualTo(4);
 
         // Custom analyzer for field is always for case sensitive filters, so this case will return empty results.
         result = dataSetManager.lookupDataSet(
@@ -428,7 +428,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
                         .buildLookup());
 
         assertThat(result.getRowCount()).isEqualTo(0);
-        
+
     }
 
     @Test
@@ -455,9 +455,9 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
                         .filter(ExpenseReportsData.COLUMN_DEPARTMENT, likeTo(ExpenseReportsData.COLUMN_DEPARTMENT, "Sal%", false))
                         .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
-        
+
     }
-    
+
     @Test
     public void testFilterMultiple() throws Exception {
         DataSet result = dataSetManager.lookupDataSet(
@@ -486,7 +486,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
 
     @Test
     public void testFilterMultiple2() throws Exception {
-       
+
         // The order of the filter criteria does not alter the result.
         DataSet result = dataSetManager.lookupDataSet(
                 DataSetFactory.newDataSetLookupBuilder()
@@ -598,8 +598,8 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
      * - When OR logical expressions are mixed in same filter between analyzed/not_analyzed fields -> use of El queries + filters, but we need to achieve an exclusion instead of an inclusion.
      * **********************************************************************************************************************************************************************************************
     */
-    
-    /** 
+
+    /**
      * This test is testing the AND case for analyzed / not_analyzed columns.
      * @throws Exception
      */
@@ -617,7 +617,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
         assertDataSetValue(result, 0, 0, "4.00");
         assertDataSetValue(result, 1, 0, "5.00");
         assertDataSetValue(result, 2, 0, "6.00");
-        
+
     }
 
     /**
@@ -671,7 +671,7 @@ public class ElasticSearchDataSetTest extends ElasticSearchDataSetTestBase {
                         .filter(ExpenseReportsData.COLUMN_DEPARTMENT, equalsTo(EL_EXAMPLE_DEPT_ENGINEERING))
                         .sort(ExpenseReportsData.COLUMN_ID, SortOrder.ASCENDING)
                         .buildLookup());
-        
+
         assertThat(result.getRowCount()).isEqualTo(1);
         assertThat(result.getValueAt(0, 0)).isEqualTo(19d);
     }

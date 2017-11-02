@@ -1,5 +1,13 @@
 package org.dashbuilder.dataprovider.backend.elasticsearch;
 
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.dashbuilder.dataset.DataSetFilterTest;
 import org.dashbuilder.dataset.DataSetGroupTest;
 import org.dashbuilder.dataset.DataSetNestedGroupTest;
@@ -7,13 +15,16 @@ import org.dashbuilder.dataset.DataSetTrimTest;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
  * This test case delegates to the common tests from data set core module.
  */
 public class ElasticSearchCommonTests extends ElasticSearchDataSetTestBase {
 
     protected static final String EL_EXAMPLE_DATASET_DEF = "org/dashbuilder/dataprovider/backend/elasticsearch/expensereports.dset";
-    
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -21,7 +32,7 @@ public class ElasticSearchCommonTests extends ElasticSearchDataSetTestBase {
         // Register the data set definition for expense reports index.
         _registerDataSet(EL_EXAMPLE_DATASET_DEF);
     }
-    
+
     @Test
     public void testTrim() throws Exception {
         DataSetTrimTest subTest = new DataSetTrimTest();
