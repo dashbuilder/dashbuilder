@@ -16,7 +16,7 @@
 package org.dashbuilder.client.cms.screen.explorer;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -29,6 +29,7 @@ import org.dashbuilder.client.navigation.event.PerspectivePluginsChangedEvent;
 import org.dashbuilder.client.navigation.widget.editor.NavTreeEditor;
 import org.dashbuilder.navigation.NavTree;
 import org.jboss.errai.common.client.api.IsElement;
+import org.uberfire.backend.events.AuthorizationPolicySavedEvent;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -37,7 +38,7 @@ import org.uberfire.workbench.events.NotificationEvent;
 
 import com.google.gwt.user.client.ui.IsWidget;
 
-@Dependent
+@ApplicationScoped
 @WorkbenchScreen(identifier = ContentExplorerScreen.SCREEN_ID)
 public class ContentExplorerScreen {
 
@@ -130,5 +131,11 @@ public class ContentExplorerScreen {
 
     void onNavTreeSaved() {
         workbenchNotification.fire(new NotificationEvent(i18n.getContentManagerNavigationChanged(), NotificationEvent.NotificationType.SUCCESS));
+    }
+
+    void onAuthzPolicyChanged(@Observes final AuthorizationPolicySavedEvent event) {
+        NavTree navTree = navigationManager.getNavTree();
+        navTreeEditor.edit(navTree);
+        perspectiveExplorer.show();
     }
 }

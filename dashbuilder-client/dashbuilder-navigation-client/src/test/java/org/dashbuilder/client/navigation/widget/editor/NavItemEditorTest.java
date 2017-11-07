@@ -316,4 +316,52 @@ public class NavItemEditorTest {
         presenter.onTargetPerspectiveUpdated();
         verify(view, never()).setItemName("B");
     }
+
+    @Test
+    public void testCancelRestoresLastBackup() {
+        NavItem navItem = NavFactory.get().createNavItem();
+        navItem.setId("id");
+        navItem.setName("name");
+        navItem.setModifiable(true);
+        navItem.setContext(NavWorkbenchCtx.perspective("A").toString());
+
+        // Modify the item
+        when(targetPerspectiveEditor.getPerspectiveId()).thenReturn("A");
+        presenter.edit(navItem);
+        presenter.startEdition();
+        when(view.getItemName()).thenReturn("newName");
+        presenter.onChangesOk();
+        assertEquals(presenter.getNavItem().getName(), "newName");
+
+        // Edit again and cancel edition. The name must match the latest name set.
+        presenter.startEdition();
+        presenter.cancelEdition();
+        assertEquals(presenter.getNavItem().getName(), "newName");
+
+        // Editing a new item resets the latest backup
+        presenter.edit(navItem);
+        presenter.startEdition();
+        presenter.cancelEdition();
+        assertEquals(presenter.getNavItem().getName(), "name");
+    }
+
+    @Test
+    public void testBackupIsNotUpdatedOnError() {
+        NavItem navItem = NavFactory.get().createNavItem();
+        navItem.setId("id");
+        navItem.setName("name");
+        navItem.setModifiable(true);
+        navItem.setContext(NavWorkbenchCtx.perspective("A").toString());
+
+        // Edit with errors (missing perspective selected)
+        presenter.edit(navItem);
+        presenter.startEdition();
+        when(view.getItemName()).thenReturn("newName");
+        presenter.onChangesOk();
+        assertEquals(presenter.getNavItem().getName(), "newName");
+
+        // Cancel edition restores the initial backup
+        presenter.cancelEdition();
+        assertEquals(presenter.getNavItem().getName(), "name");
+    }
 }

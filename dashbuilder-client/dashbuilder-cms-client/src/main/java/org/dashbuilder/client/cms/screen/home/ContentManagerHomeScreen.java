@@ -29,7 +29,7 @@ import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.plugin.client.security.PluginController;
 
 @Dependent
-@WorkbenchScreen(identifier = ContentManagerHomeScreen.SCREEN_ID )
+@WorkbenchScreen(identifier = ContentManagerHomeScreen.SCREEN_ID)
 public class ContentManagerHomeScreen {
 
     public static final String SCREEN_ID = "ContentManagerHomeScreen";
