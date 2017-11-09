@@ -18,8 +18,6 @@ package org.dashbuilder.common.client.editor.list;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -32,12 +30,11 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.common.client.editor.LeafAttributeEditor;
 import org.dashbuilder.common.client.event.ValueChangeEvent;
-import org.dashbuilder.dataset.def.SQLDataSourceDef;
 import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.widgets.common.client.dropdown.LiveSearchCallback;
 import org.uberfire.ext.widgets.common.client.dropdown.LiveSearchDropDown;
-import org.uberfire.ext.widgets.common.client.dropdown.LiveSearchService;
+import org.uberfire.ext.widgets.common.client.dropdown.LiveSearchResults;
 
 @Dependent
 public class DropDownEditor implements IsWidget, LeafAttributeEditor<String> {
@@ -102,10 +99,11 @@ public class DropDownEditor implements IsWidget, LeafAttributeEditor<String> {
     }
 
     public void getDropDownEntries(String pattern, int maxResults, LiveSearchCallback callback) {
-        callback.afterSearch(entries.stream()
-                .map(Entry::getHint)
-                .filter(v -> v.contains(pattern))
-                .collect(Collectors.toList()));
+        final LiveSearchResults results = new LiveSearchResults();
+        entries.stream()
+                .filter(e -> e.getHint().contains(pattern))
+                .forEach(e -> results.add(e.getValue(), e.getHint()));
+        callback.afterSearch(results);
     }
 
     public void onEntrySelected() {
@@ -115,7 +113,7 @@ public class DropDownEditor implements IsWidget, LeafAttributeEditor<String> {
     }
 
     public String getSelectedValue() {
-        String hint = dropDown.getSelectedItem();
+        String hint = dropDown.getSelectedValue();
         Entry entry = getEntryByHint(hint);
         return entry.getValue();
     }
@@ -153,7 +151,7 @@ public class DropDownEditor implements IsWidget, LeafAttributeEditor<String> {
             for (Entry entry : entries) {
                 this.entries.add(entry);
                 if (entry.getValue().equals(value)) {
-                    this.dropDown.setSelectedItem(entry.getHint());
+                    this.dropDown.setSelectedItem(entry.getValue(), entry.getHint());
                 }
             }
         }
@@ -202,9 +200,9 @@ public class DropDownEditor implements IsWidget, LeafAttributeEditor<String> {
         this.value = value;
         Entry entry = getEntryByValue(value);
         if (entry != null) {
-            this.dropDown.setSelectedItem(entry.getHint());
+            this.dropDown.setSelectedItem(value, entry.getHint());
         } else {
-            this.dropDown.setSelectedItem(selectorHint);
+            this.dropDown.setSelectedItem(selectorHint, selectorHint);
         }
     }
 }

@@ -66,14 +66,14 @@ public class DropDownEditorTest {
     public void testEntries() {
         presenter.getDropDownEntries("", -1, itemList -> {
             assertEquals(itemList.size(), 2);
-            assertEquals(itemList.get(0), "Entry 1");
-            assertEquals(itemList.get(1), "Entry 2");
+            assertEquals(itemList.get(0).getKey(), "entry1");
+            assertEquals(itemList.get(1).getKey(), "entry2");
         });
     }
 
     @Test
     public void testSelect() {
-        when(liveSearchDropDown.getSelectedItem()).thenReturn("Entry 1");
+        when(liveSearchDropDown.getSelectedValue()).thenReturn("Entry 1");
         presenter.setValue("entry2");
         presenter.onEntrySelected();
 
@@ -88,24 +88,24 @@ public class DropDownEditorTest {
     @Test
     public void testSetValue() {
         presenter.setValue("entry2");
-        verify(liveSearchDropDown).setSelectedItem("Entry 2");
+        verify(liveSearchDropDown).setSelectedItem("entry2", "Entry 2");
         assertEquals(presenter.getValue(), "entry2");
 
         presenter.setSelectHint("- select - ");
         presenter.setValue(null);
-        verify(liveSearchDropDown).setSelectedItem("- select - ");
+        verify(liveSearchDropDown).setSelectedItem("- select - ", "- select - ");
         assertNull(presenter.getValue());
 
         reset(liveSearchDropDown);
         presenter.clear();
         presenter.setValue("entry2");
         presenter.setEntries(entries);
-        verify(liveSearchDropDown).setSelectedItem("Entry 2");
+        verify(liveSearchDropDown).setSelectedItem("entry2", "Entry 2");
 
         reset(liveSearchDropDown);
         presenter.clear();
         presenter.setEntries(entries);
-        verify(liveSearchDropDown, never()).setSelectedItem(anyString());
+        verify(liveSearchDropDown, never()).setSelectedItem(anyString(), anyString());
     }
 
     @Test
