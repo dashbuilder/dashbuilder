@@ -147,7 +147,7 @@ public class NavTreeEditor extends NavItemEditor {
     // Keep track of the item under edition so as to avoid editing multiple items simultaneously
 
     void onItemEditStarted(@Observes NavItemEditStartedEvent event) {
-        currentlyEditedItem.ifPresent(NavItemEditor::cancelEdition);
+        currentlyEditedItem.filter(e -> !e.equals(event.getNavItemEditor())).ifPresent(NavItemEditor::cancelEdition);
         currentlyEditedItem = Optional.of(event.getNavItemEditor());
     }
 

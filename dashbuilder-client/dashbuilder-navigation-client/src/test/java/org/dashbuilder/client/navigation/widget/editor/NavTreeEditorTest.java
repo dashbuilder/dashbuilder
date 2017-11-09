@@ -33,8 +33,6 @@ import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
 
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -337,7 +335,6 @@ public class NavTreeEditorTest {
         NavTree navTree = navTreeEditor.getNavTree();
         assertNotNull(navTree.getItemById(newEditor.getNavItem().getId()));
     }
-
     @Test
     public void testNewPerspectiveActionAvailable() {
         NavItemEditor navItemEditor = navTreeEditor.newGroup();
@@ -345,5 +342,33 @@ public class NavTreeEditorTest {
 
         perspectivePlugins.clear();
         assertFalse(navItemEditor.isNewPerspectiveEnabled());
+    }
+
+    @Test
+    public void testCancelLastEditedItem() {
+        NavItemEditor navItemEditorA = mock(NavItemEditor.class);
+        navTreeEditor.onItemEditStarted(new NavItemEditStartedEvent(navItemEditorA));
+        assertEquals(navTreeEditor.getCurrentlyEditedItem(), navItemEditorA);
+
+        // No need for cancel if the same item is edited again
+        navTreeEditor.onItemEditStarted(new NavItemEditStartedEvent(navItemEditorA));
+        verify(navItemEditorA, never()).cancelEdition();
+
+        // Last edited item must be cancelled
+        NavItemEditor navItemEditorB = mock(NavItemEditor.class);
+        navTreeEditor.onItemEditStarted(new NavItemEditStartedEvent(navItemEditorB));
+        assertEquals(navTreeEditor.getCurrentlyEditedItem(), navItemEditorB);
+        verify(navItemEditorA).cancelEdition();
+    }
+
+    @Test
+    public void testEditIsNotInvokedTwiceAfterCancel() {
+        navTreeEditor.edit(NAV_TREE);
+
+        // When edit is cancelled avoid the parent's editor to invoke edit again
+        reset(navItemEditor);
+        navItemEditor.startEdition();
+        navItemEditor.cancelEdition();
+        verify(navItemEditor, times(1)).edit(any());
     }
 }

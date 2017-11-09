@@ -702,6 +702,7 @@ public abstract class NavItemEditor implements IsElement {
     // Children callbacks
 
     void onItemUpdated() {
+        navItemBackup = navItem.cloneItem();
         if (onUpdateCommand != null) {
             onUpdateCommand.execute();
         }
@@ -796,11 +797,7 @@ public abstract class NavItemEditor implements IsElement {
     void onCancelChild(NavItem oldItem, NavItemEditor childEditor) {
         NavGroup navGroup = (NavGroup) navItem;
         int idx = navGroup.getChildren().indexOf(oldItem);
-        if (idx != -1) {
-            // Cancel of an existing child edition
-            childEditor.edit(oldItem);
-        }
-        else {
+        if (idx == -1) {
             // Cancel of a brand new child creation
             childEditorList.remove(childEditor);
             refreshChildren();

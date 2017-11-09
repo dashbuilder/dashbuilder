@@ -177,6 +177,14 @@ public class PerspectivePluginManager {
 
     // Sync up both the internals plugin & widget registry
 
+    public void onPlugInAdded(@Observes final PluginAdded event) {
+        Plugin plugin = event.getPlugin();
+        if (isRuntimePerspective(plugin)) {
+            pluginMap.put(plugin.getName(), plugin);
+            perspectivesChangedEvent.fire(new PerspectivePluginsChangedEvent());
+        }
+    }
+
     public void onPlugInSaved(@Observes final PluginSaved event) {
         Plugin plugin = event.getPlugin();
         if (isRuntimePerspective(plugin)) {

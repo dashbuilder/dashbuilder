@@ -16,6 +16,7 @@
 package org.dashbuilder.client.cms.widget;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -101,12 +102,17 @@ public class PerspectivesExplorer implements IsElement {
         view.setPerspectiveName(i18n.capitalizeFirst(i18n.getPerspectiveResourceName()));
 
         perspectivePluginManager.getPerspectivePlugins(perspectivePlugins -> {
-            if (perspectivePlugins.isEmpty()) {
+
+            List<Plugin> filteredPlugins = perspectivePlugins.stream()
+                    .filter(pluginController::canRead)
+                    .sorted((p1, p2) -> p1.getName().compareToIgnoreCase(p2.getName()))
+                    .collect(Collectors.toList());
+
+
+            if (filteredPlugins.isEmpty()) {
                 view.showEmpty(i18n.getNoPerspectives());
             } else {
-                perspectivePlugins.stream()
-                        .sorted((p1, p2) -> p1.getName().compareToIgnoreCase(p2.getName()))
-                        .forEach(p -> view.addPerspective(p.getName(), () -> onPerspectiveClick(p)));
+                filteredPlugins.forEach(p -> view.addPerspective(p.getName(), () -> onPerspectiveClick(p)));
             }
         });
 

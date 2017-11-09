@@ -29,6 +29,7 @@ import org.dashbuilder.client.navigation.event.PerspectivePluginsChangedEvent;
 import org.dashbuilder.client.navigation.widget.editor.NavTreeEditor;
 import org.dashbuilder.navigation.NavTree;
 import org.jboss.errai.common.client.api.IsElement;
+import org.uberfire.backend.events.AuthorizationPolicySavedEvent;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -75,7 +76,7 @@ public class ContentExplorerScreen {
     }
 
     @PostConstruct
-    private void init() {
+    void init() {
         perspectiveExplorer.setOnExpandCommand(this::onPerspectivesExpanded);
         perspectiveExplorer.show();
 
@@ -84,6 +85,9 @@ public class ContentExplorerScreen {
         navTreeEditor.getSettings().setLiteralPerspective(i18n.capitalizeFirst(i18n.getPerspectiveResourceName()));
         navTreeEditor.getSettings().setGotoPerspectiveEnabled(true);
 
+        if (navTreeEditor.getNavTree() == null && navigationManager.getNavTree() != null) {
+            navTreeEditor.edit(navigationManager.getNavTree());
+        }
         view.show(perspectiveExplorer, navTreeEditor);
     }
 
@@ -105,27 +109,33 @@ public class ContentExplorerScreen {
         perspectiveExplorer.createNewPerspective();
     }
 
-    private void onPerspectivesExpanded() {
+    void onPerspectivesExpanded() {
         perspectiveExplorer.setMaximized(perspectiveExplorer.isExpanded() && !navTreeEditor.isExpanded());
         navTreeEditor.setMaximized(!perspectiveExplorer.isExpanded() && navTreeEditor.isExpanded());
     }
 
-    private void onNavTreeExpanded() {
+    void onNavTreeExpanded() {
         perspectiveExplorer.setMaximized(perspectiveExplorer.isExpanded() && !navTreeEditor.isExpanded());
         navTreeEditor.setMaximized(!perspectiveExplorer.isExpanded() && navTreeEditor.isExpanded());
     }
 
-    private void onNavTreeLoaded(@Observes NavTreeLoadedEvent event) {
+    void onNavTreeLoaded(@Observes NavTreeLoadedEvent event) {
+        NavTree navTree = event.getNavTree();
+        navTreeEditor.edit(navTree);
+    }
+
+    void onPerspectivesChanged(@Observes PerspectivePluginsChangedEvent event) {
         NavTree navTree = navigationManager.getNavTree();
         navTreeEditor.edit(navTree);
     }
 
-    private void onPerspectivesChanged(@Observes PerspectivePluginsChangedEvent event) {
-        NavTree navTree = navigationManager.getNavTree();
-        navTreeEditor.edit(navTree);
-    }
-
-    private void onNavTreeSaved() {
+    void onNavTreeSaved() {
         workbenchNotification.fire(new NotificationEvent(i18n.getContentManagerNavigationChanged(), NotificationEvent.NotificationType.SUCCESS));
+    }
+
+    void onAuthzPolicyChanged(@Observes final AuthorizationPolicySavedEvent event) {
+        NavTree navTree = navigationManager.getNavTree();
+        navTreeEditor.edit(navTree);
+        perspectiveExplorer.show();
     }
 }
