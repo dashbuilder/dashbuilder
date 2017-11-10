@@ -15,39 +15,50 @@
  */
 package org.dashbuilder.client.navigation.plugin;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.dashbuilder.navigation.workbench.NavWorkbenchCtx.perspective;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.Collections;
+import java.util.List;
+
+import javax.enterprise.event.Event;
 
 import org.dashbuilder.client.navigation.NavigationManager;
 import org.dashbuilder.client.navigation.event.PerspectivePluginsChangedEvent;
+import org.dashbuilder.navigation.NavItem;
 import org.dashbuilder.navigation.NavTree;
 import org.dashbuilder.navigation.impl.NavTreeBuilder;
 import org.dashbuilder.navigation.service.PerspectivePluginServices;
+import org.dashbuilder.navigation.workbench.NavWorkbenchCtx;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.client.workbench.type.ClientTypeRegistry;
 import org.uberfire.ext.plugin.client.type.PerspectiveLayoutPluginResourceType;
 import org.uberfire.ext.plugin.event.PluginAdded;
 import org.uberfire.ext.plugin.event.PluginDeleted;
+import org.uberfire.ext.plugin.event.PluginRenamed;
+import org.uberfire.ext.plugin.event.PluginSaved;
 import org.uberfire.ext.plugin.model.Plugin;
 import org.uberfire.ext.plugin.model.PluginType;
 import org.uberfire.mocks.CallerMock;
-
-import javax.enterprise.event.Event;
-
-import static org.dashbuilder.navigation.workbench.NavWorkbenchCtx.perspective;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
+import org.uberfire.mvp.Command;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PerspectivePluginManagerTest {
 
     private static final String PERSPECTIVE_ID = "Persp1";
-    public static final NavTree TEST_NAV_TREE = new NavTreeBuilder()
-            .item(PERSPECTIVE_ID, "name1", "desciption1", true, perspective(PERSPECTIVE_ID))
+    private static final NavTree TEST_NAV_TREE = new NavTreeBuilder()
+            .item(PERSPECTIVE_ID, "name1", "description1", true, perspective(PERSPECTIVE_ID))
             .build();
     @Mock
     private NavigationManager navigationManager;
@@ -62,46 +73,81 @@ public class PerspectivePluginManagerTest {
     private Event<PerspectivePluginsChangedEvent> perspectiveChangedEvent;
 
     private PluginAdded pluginAddedEvent;
+    private PluginSaved pluginSavedEvent;
+    private PluginRenamed pluginRenamedEvent;
     private PluginDeleted pluginDeletedEvent;
     private Plugin perspectivePlugin;
+    private Plugin perspectiveRenamedPlugin;
     private PerspectivePluginManager testedPluginManager;
 
     @Before
     public void setUp() {
         when(clientTypeRegistry.resolve(any())).thenReturn(new PerspectiveLayoutPluginResourceType());
+
         perspectivePlugin = new Plugin(PERSPECTIVE_ID, PluginType.PERSPECTIVE_LAYOUT, null);
-        pluginDeletedEvent = new PluginDeleted(perspectivePlugin, null);
+        perspectiveRenamedPlugin = new Plugin("newName", PluginType.PERSPECTIVE_LAYOUT, null);
+
         pluginAddedEvent = new PluginAdded(perspectivePlugin, null);
+        pluginSavedEvent = new PluginSaved(perspectivePlugin, null);
+        pluginRenamedEvent = new PluginRenamed(PERSPECTIVE_ID, perspectiveRenamedPlugin, null);
+        pluginDeletedEvent = new PluginDeleted(perspectivePlugin, null);
+
         when(pluginServices.listPlugins()).thenReturn(Collections.emptyList());
+
         testedPluginManager = new PerspectivePluginManager(clientTypeRegistry, null, navigationManager, new CallerMock<>(pluginServices), perspectiveChangedEvent);
         testedPluginManager.getPerspectivePlugins(plugins -> {});
     }
 
     @Test
     public void testPluginAdded() {
-        testedPluginManager.getPerspectivePlugins(plugins -> {
-            assertEquals(plugins.size(), 0);
-        });
+        testedPluginManager.getPerspectivePlugins(plugins -> assertThat(plugins).isEmpty());
 
         testedPluginManager.onPlugInAdded(pluginAddedEvent);
         verify(perspectiveChangedEvent).fire(anyObject());
 
-        testedPluginManager.getPerspectivePlugins(plugins -> {
-            assertEquals(plugins.size(), 1);
-        });
+        testedPluginManager.getPerspectivePlugins(plugins -> assertThat(plugins).hasSize(1));
+    }
+
+    @Test
+    public void testPluginSaved() {
+        assertThat(testedPluginManager.existsPerspectivePlugin(PERSPECTIVE_ID)).isFalse();
+
+        testedPluginManager.onPlugInSaved(pluginSavedEvent);
+        verify(perspectiveChangedEvent, times(1)).fire(anyObject());
+
+        assertThat(testedPluginManager.existsPerspectivePlugin(PERSPECTIVE_ID)).isTrue();
+    }
+
+    @Test
+    public void testPluginRenamed() {
+        NavTree tree = TEST_NAV_TREE.cloneTree();
+        List<NavItem> items = tree.searchItems(NavWorkbenchCtx.perspective(PERSPECTIVE_ID));
+
+        assertThat((items).get(0).getName()).isEqualTo("name1");
+        assertThat((items).get(0).getContext()).contains("resourceId=" + PERSPECTIVE_ID);
+
+        when(navigationManager.getNavTree()).thenReturn(tree);
+        testedPluginManager.onPlugInRenamed(pluginRenamedEvent);
+
+        assertThat(tree.searchItems(NavWorkbenchCtx.perspective(PERSPECTIVE_ID))).isEmpty();
+        assertThat(tree.searchItems(NavWorkbenchCtx.perspective(perspectiveRenamedPlugin.getName())).get(0).getContext()).contains("resourceId=" + perspectiveRenamedPlugin.getName());
+
+        ArgumentCaptor<Command> argumentCaptor = ArgumentCaptor.forClass(Command.class);
+
+        verify(navigationManager, times(1)).saveNavTree(anyObject(), argumentCaptor.capture());
+        verify(perspectiveChangedEvent).fire(anyObject());
     }
 
     @Test
     public void testPluginDeleted() {
         NavTree testTree = TEST_NAV_TREE.cloneTree();
 
-        assertNotNull(testTree.getItemById(PERSPECTIVE_ID));
+        assertThat(testTree.getItemById(PERSPECTIVE_ID)).isNotNull();
 
         when(navigationManager.getNavTree()).thenReturn(testTree);
-
         testedPluginManager.onPlugInDeleted(pluginDeletedEvent);
 
-        assertNull("Plugin should be removed from the tree when PluginDeleted event occurs", testTree.getItemById(PERSPECTIVE_ID));
+        assertThat(testTree.getItemById(PERSPECTIVE_ID)).isNull();
         verify(navigationManager).saveNavTree(anyObject(), eq(null));
         verify(perspectiveChangedEvent).fire(anyObject());
     }
