@@ -8,7 +8,7 @@
     <groupId>org.jboss.integration-platform</groupId>
     <artifactId>jboss-integration-platform-bom</artifactId>
     <!-- Keep in sync with the parent version of dashbuilder-bom/pom.xml -->
-    <version>8.0.0.CR2</version>
+    <version>7.0.0.Final</version>
   </parent>
 
   <groupId>org.dashbuilder</groupId>
