@@ -17,9 +17,9 @@ package org.dashbuilder.client.navigation.layout.editor;
 
 import org.dashbuilder.client.navigation.widget.NavWidget;
 import org.uberfire.ext.layout.editor.client.api.HasModalConfiguration;
-import org.uberfire.ext.plugin.client.perspective.editor.api.PerspectiveEditorDragComponent;
+import org.uberfire.ext.plugin.client.perspective.editor.api.PerspectiveEditorNavComponent;
 
-public interface NavDragComponent extends PerspectiveEditorDragComponent, HasModalConfiguration {
+public interface NavDragComponent extends PerspectiveEditorNavComponent, HasModalConfiguration {
 
     NavWidget getNavWidget();
 

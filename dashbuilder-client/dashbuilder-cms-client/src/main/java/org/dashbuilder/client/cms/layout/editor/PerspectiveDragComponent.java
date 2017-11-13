@@ -26,7 +26,7 @@ import org.gwtbootstrap3.client.ui.Modal;
 import org.uberfire.ext.layout.editor.client.api.HasModalConfiguration;
 import org.uberfire.ext.layout.editor.client.api.ModalConfigurationContext;
 import org.uberfire.ext.layout.editor.client.api.RenderingContext;
-import org.uberfire.ext.plugin.client.perspective.editor.api.PerspectiveEditorDragComponent;
+import org.uberfire.ext.plugin.client.perspective.editor.api.PerspectiveEditorCoreComponent;
 import org.uberfire.ext.plugin.model.Plugin;
 
 import static org.dashbuilder.navigation.layout.NavDragComponentSettings.*;
@@ -35,7 +35,7 @@ import static org.dashbuilder.navigation.layout.NavDragComponentSettings.*;
  * Runtime perspective drag component.
  */
 @Dependent
-public class PerspectiveDragComponent implements PerspectiveEditorDragComponent, HasModalConfiguration {
+public class PerspectiveDragComponent implements PerspectiveEditorCoreComponent, HasModalConfiguration {
 
     PerspectiveDragConfigModal perspectiveDragConfigModal;
     PerspectiveWidget perspectiveWidget;
