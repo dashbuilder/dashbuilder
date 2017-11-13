@@ -30,7 +30,7 @@ import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.ext.layout.editor.client.api.HasModalConfiguration;
 import org.uberfire.ext.layout.editor.client.api.ModalConfigurationContext;
 import org.uberfire.ext.layout.editor.client.api.RenderingContext;
-import org.uberfire.ext.plugin.client.perspective.editor.api.PerspectiveEditorDragComponent;
+import org.uberfire.ext.plugin.client.perspective.editor.api.PerspectiveEditorCoreComponent;
 import org.uberfire.mvp.Command;
 
 import javax.enterprise.context.Dependent;
@@ -38,7 +38,7 @@ import javax.inject.Inject;
 import java.util.Map;
 
 @Dependent
-public class DisplayerDragComponent implements PerspectiveEditorDragComponent, HasModalConfiguration {
+public class DisplayerDragComponent implements PerspectiveEditorCoreComponent, HasModalConfiguration {
 
     SyncBeanManager beanManager;
     DisplayerViewer viewer;
