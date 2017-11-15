@@ -57,6 +57,10 @@ public class TargetPerspectiveEditorTest {
                 .endGroup()
                 .group("level1b", "level1b", "level1b", true)
                 .endGroup()
+                .group("levelnull", null, null, true)
+                    .group("level2a", "level2a", "level2a", true)
+                    .endGroup()
+                .endGroup()
             .build();
 
     @Before
@@ -76,8 +80,13 @@ public class TargetPerspectiveEditorTest {
         verify(view).clearNavGroupItems();
         verify(view).setNavGroupSelection(eq("root>level1a"), any());
         verify(view).addNavGroupItem(eq("root"), any());
-        verify(view, never()).addNavGroupItem(eq("root>level1a"), any());
         verify(view).addNavGroupItem(eq("root>level1b"), any());
+        verify(view).addNavGroupItem(eq("level2a"), any());
+        verify(view, times(3)).addNavGroupItem(anyString(), any());
+        verify(view, never()).addNavGroupItem(eq("root>level1a"), any());
+        verify(view, never()).addNavGroupItem(eq("root>null"), any());
+        verify(view, never()).addNavGroupItem(eq("null"), any());
+        verify(view, never()).addNavGroupItem(eq("null>level2a"), any());
     }
 
     @Test
@@ -89,7 +98,12 @@ public class TargetPerspectiveEditorTest {
         verify(view).setNavGroupSelection(eq("root>level1b"), any());
         verify(view).addNavGroupItem(eq("root"), any());
         verify(view).addNavGroupItem(eq("root>level1a"), any());
+        verify(view).addNavGroupItem(eq("level2a"), any());
+        verify(view, times(3)).addNavGroupItem(anyString(), any());
         verify(view, never()).addNavGroupItem(eq("root>level1b"), any());
+        verify(view, never()).addNavGroupItem(eq("root>null"), any());
+        verify(view, never()).addNavGroupItem(eq("null"), any());
+        verify(view, never()).addNavGroupItem(eq("null>level2a"), any());
 
         verify(updateCommand).execute();
     }

@@ -143,13 +143,15 @@ public class TargetPerspectiveEditor implements IsElement, PerspectiveNameProvid
     }
 
     private void addNavGroup(NavItem navItem) {
-        // Check if the group is already selected
-        String fullPath = calculateFullPath(navItem);
-        if (navGroupId != null && navItem.getId().equals(navGroupId)) {
-            view.setNavGroupSelection(fullPath, () -> onGroupSelected(null));
-        }
-        else {
-            view.addNavGroupItem(fullPath, () -> onGroupSelected(navItem.getId()));
+        // Discard items with no name
+        if (navItem.getName() != null) {
+            // Check if the group is already selected
+            String fullPath = calculateFullPath(navItem);
+            if (navGroupId != null && navItem.getId().equals(navGroupId)) {
+                view.setNavGroupSelection(fullPath, () -> onGroupSelected(null));
+            } else {
+                view.addNavGroupItem(fullPath, () -> onGroupSelected(navItem.getId()));
+            }
         }
         // Add the children items
         updateNavGroups(((NavGroup) navItem).getChildren());
@@ -158,7 +160,7 @@ public class TargetPerspectiveEditor implements IsElement, PerspectiveNameProvid
     private String calculateFullPath(NavItem navItem) {
         StringBuilder out = new StringBuilder();
         NavItem parent = navItem.getParent();
-        while (parent != null) {
+        while (parent != null && parent.getName() != null) {
             out.insert(0, parent.getName() + ">");
             parent = parent.getParent();
         }
