@@ -44,7 +44,7 @@
 
     <version.javax.xml.stream>1.0-2</version.javax.xml.stream>
     <version.com.allen-sauer.gwt.dnd>3.3.3</version.com.allen-sauer.gwt.dnd>
-    <version.com.google.gwt>2.8.1</version.com.google.gwt>
+    <version.com.google.gwt>2.8.2</version.com.google.gwt>
     <version.com.googlecode.jsonsimple>1.1.1</version.com.googlecode.jsonsimple>
     <version.com.googlecode.jtype>0.1.1</version.com.googlecode.jtype>
 
