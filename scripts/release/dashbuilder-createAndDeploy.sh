@@ -16,9 +16,9 @@ git checkout -b $releaseBranch $baseBranch
 sh scripts/release/update-version.sh $newVersion
 
 # update files that are not automatically changed with the update-version.sh script
+sed -i "$!N;s/<version.org.kie>.*.<\/version.org.kie>/<version.org.kie>$kieVersion<\/version.org.kie>/;P;D" pom.xml
 sed -i "$!N;s/<version.org.uberfire>.*.<\/version.org.uberfire>/<version.org.uberfire>$uberfireVersion<\/version.org.uberfire>/;P;D" pom.xml
 sed -i "$!N;s/<version.org.jboss.errai>.*.<\/version.org.jboss.errai>/<version.org.jboss.errai>$erraiVersion<\/version.org.jboss.errai>/;P;D" pom.xml
-sed -i "$!N;s/<version.org.kie.soup>.*.<\/version.org.kie.soup>/<version.org.kie.soup>$kiesoupVersion<\/version.org.kie.soup>/;P;D" pom.xml
 
 # git add and commit the version update changes 
 git add .
