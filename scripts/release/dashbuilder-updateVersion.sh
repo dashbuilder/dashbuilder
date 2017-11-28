@@ -17,6 +17,7 @@ sh scripts/release/update-version.sh $newVersion
 # change properties via sed as they don't update automatically
 
 sed -i \
+-e "$!N;s/<version.org.kie>.*.<\/version.org.kie>/<version.org.kie>$kieDevelVersion<\/version.org.kie>/;" \
 -e "$!N;s/<version.org.uberfire>.*.<\/version.org.uberfire>/<version.org.uberfire>$uberfireDevelVersion<\/version.org.uberfire>/;" \
 -e "s/<version.org.jboss.errai>.*.<\/version.org.jboss.errai>/<version.org.jboss.errai>$erraiDevelVerison<\/version.org.jboss.errai>/;P;D" \
 pom.xml
