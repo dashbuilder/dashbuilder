@@ -208,6 +208,7 @@ public class SQLTableDataSetLookupTest extends SQLDataSetTestBase {
         DataSetGroupTest subTest = new DataSetGroupTest();
         subTest.testDataSetFunctions();
         subTest.testGroupByLabelDynamic();
+        subTest.testGroupByExludeColumn();
         subTest.testGroupByYearDynamic();
         subTest.testGroupByMonthDynamic();
         subTest.testGroupByMonthDynamicNonEmpty();
