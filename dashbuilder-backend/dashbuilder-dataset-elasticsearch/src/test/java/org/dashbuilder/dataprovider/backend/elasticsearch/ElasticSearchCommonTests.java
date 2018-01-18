@@ -47,6 +47,7 @@ public class ElasticSearchCommonTests extends ElasticSearchDataSetTestBase {
         subTest.testGroupByDateOneRow();
         subTest.testGroupByDateOneDay();
         subTest.testGroupAndCountSameColumn();
+        // Not supported - subTest.testGroupNumberAsLabel();
     }
 
     @Test

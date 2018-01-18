@@ -76,6 +76,7 @@ public class DataSetSubsystemCDITest extends BaseCDITest {
         dataSetGroupTest.testGroupByDateOneRow();
         dataSetGroupTest.testGroupByDateOneDay();
         dataSetGroupTest.testGroupAndCountSameColumn();
+        dataSetGroupTest.testGroupNumberAsLabel();
     }
 
     @Test

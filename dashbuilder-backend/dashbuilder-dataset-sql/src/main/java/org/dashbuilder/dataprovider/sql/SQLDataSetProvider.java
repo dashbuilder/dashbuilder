@@ -956,10 +956,6 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
             ColumnType columnType = metadata.getColumnType(dbColumnId);
             boolean postProcessing = false;
 
-            // Group by Number => not supported
-            if (ColumnType.NUMBER.equals(columnType)) {
-                throw new IllegalArgumentException("Group by number '" + sourceId + "' not supported");
-            }
             // Group by Text => not supported
             if (ColumnType.TEXT.equals(columnType)) {
                 throw new IllegalArgumentException("Group by text '" + sourceId + "' not supported");
@@ -969,7 +965,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                 _query.groupBy(_createColumn(cg));
                 postProcessing = true;
             }
-            // Group by Label
+            // Group by Label or Number (treated as label)
             else {
                 _query.groupBy(SQLFactory.column(dbColumnId));
                 for (GroupFunction gf : groupOp.getGroupFunctions()) {
@@ -1180,9 +1176,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                 DateIntervalType size = calculateDateInterval(cg);
                 return SQLFactory.column(dbColumnId, cg.getStrategy(), size);
             }
-            if (ColumnType.NUMBER.equals(type)) {
-                throw new IllegalArgumentException("Group by number '" + sourceId + "' not supported");
-            }
+
             if (ColumnType.TEXT.equals(type)) {
                 throw new IllegalArgumentException("Group by text '" + sourceId + "' not supported");
             }

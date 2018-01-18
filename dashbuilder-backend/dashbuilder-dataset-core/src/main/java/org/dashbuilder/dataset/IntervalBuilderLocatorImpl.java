@@ -49,7 +49,7 @@ public class IntervalBuilderLocatorImpl implements IntervalBuilderLocator {
             return intervalBuilderDynamicDate;
         }
         if (ColumnType.NUMBER.equals(columnType)) {
-            // TODO
+            return intervalBuilderDynamicLabel;
         }
         if (ColumnType.TEXT.equals(columnType)) {
             throw new IllegalArgumentException("TEXT columns do not support grouping.");
