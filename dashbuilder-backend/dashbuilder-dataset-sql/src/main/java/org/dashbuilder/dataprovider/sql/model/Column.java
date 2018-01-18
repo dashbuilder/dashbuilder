@@ -51,20 +51,24 @@ public class Column {
         return alias;
     }
 
-    public void setName(String name) {
+    public Column setName(String name) {
         this.name = name;
+        return this;
     }
 
-    public void setAlias(String alias) {
+    public Column setAlias(String alias) {
         this.alias = alias;
+        return this;
     }
 
-    public void setType(ColumnType type) {
+    public Column setType(ColumnType type) {
         this.type = type;
+        return this;
     }
 
-    public void setLength(int length) {
+    public Column setLength(int length) {
         this.length = length;
+        return this;
     }
 
     // Column modifier methods

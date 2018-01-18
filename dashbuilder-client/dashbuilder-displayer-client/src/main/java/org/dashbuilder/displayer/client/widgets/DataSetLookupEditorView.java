@@ -105,6 +105,7 @@ public class DataSetLookupEditorView extends Composite
                 expandCollapseGroupDetails();
             }
         }, ClickEvent.getType());
+
     }
 
     @Override

@@ -63,6 +63,7 @@ public class DataSetSubsystemCDITest extends BaseCDITest {
     public void testGroup() throws Exception {
         dataSetGroupTest.testDataSetFunctions();
         dataSetGroupTest.testGroupByLabelDynamic();
+        dataSetGroupTest.testGroupByExludeColumn();
         dataSetGroupTest.testGroupByYearDynamic();
         dataSetGroupTest.testGroupByMonthDynamic();
         dataSetGroupTest.testGroupByMonthDynamicNonEmpty();
