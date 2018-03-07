@@ -673,7 +673,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                     ResultSet _results = logSQL(_query).fetch();
                     List<DataColumn> columns = calculateColumns(null);
                     DataSet dataSet = _buildDataSet(columns, _results);
-                    if (trim) {
+                    if (trim && postProcessingOps.isEmpty()) {
                         dataSet.setRowCountNonTrimmed(totalRows);
                     }
                     return dataSet;
@@ -740,7 +740,9 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
                     ResultSet _results = logSQL(_query).fetch();
                     List<DataColumn> columns = calculateColumns(groupOp);
                     DataSet dataSet = _buildDataSet(columns, _results);
-                    if (trim) dataSet.setRowCountNonTrimmed(totalRows);
+                    if (trim && postProcessingOps.isEmpty()) {
+                        dataSet.setRowCountNonTrimmed(totalRows);
+                    }
                     return dataSet;
                 }
             } finally {
@@ -1121,6 +1123,7 @@ public class SQLDataSetProvider implements DataSetProvider, DataSetDefRegistryLi
             // Some operations requires some in-memory post-processing
             if (!postProcessingOps.isEmpty()) {
                 dataSet = opEngine.execute(dataSet, postProcessingOps);
+                dataSet.setRowCountNonTrimmed(dataSet.getRowCount());
                 dataSet = dataSet.trim(lookup.getRowOffset(), lookup.getNumberOfRows());
                 dataSet.setUUID(def.getUUID());
                 dataSet.setDefinition(def);
