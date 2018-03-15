@@ -37,6 +37,7 @@ import org.uberfire.ext.editor.commons.client.menu.BasicFileMenuBuilder;
 import org.uberfire.ext.editor.commons.client.validation.DefaultFileNameValidator;
 import org.uberfire.mocks.CallerMock;
 import org.uberfire.mocks.EventSourceMock;
+import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 
@@ -163,7 +164,7 @@ public class DataSetDefEditorPresenterTest  {
     @Test
     public void testOnValidateSuccess() {
         when(editWorkflow.hasErrors()).thenReturn(false);
-        presenter.onValidate().execute();
+        presenter.onValidate(mock(Command.class));
         verify(editWorkflow, times(1)).flush();
         final ArgumentCaptor<NotificationEvent> dataCaptor =  ArgumentCaptor.forClass(NotificationEvent.class);
         verify(notification, times(1)).fire(dataCaptor.capture());
@@ -175,7 +176,7 @@ public class DataSetDefEditorPresenterTest  {
     @Test
     public void testOnValidateFailed() {
         when(editWorkflow.hasErrors()).thenReturn(true);
-        presenter.onValidate().execute();
+        presenter.onValidate(mock(Command.class));
         verify(editWorkflow, times(1)).flush();
         final ArgumentCaptor<NotificationEvent> dataCaptor =  ArgumentCaptor.forClass(NotificationEvent.class);
         verify(notification, times(1)).fire(dataCaptor.capture());

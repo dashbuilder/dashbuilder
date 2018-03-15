@@ -1,12 +1,12 @@
 /**
  * Copyright 2015 Red Hat, Inc. and/or its affiliates.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 package org.dashbuilder.dataset.editor.client.screens;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -42,7 +49,11 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.Path;
-import org.uberfire.client.annotations.*;
+import org.uberfire.client.annotations.WorkbenchEditor;
+import org.uberfire.client.annotations.WorkbenchMenu;
+import org.uberfire.client.annotations.WorkbenchPartTitle;
+import org.uberfire.client.annotations.WorkbenchPartTitleDecoration;
+import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
@@ -58,14 +69,11 @@ import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.Menus;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
-import static org.uberfire.ext.editor.commons.client.menu.MenuItems.*;
+import static org.uberfire.ext.editor.commons.client.menu.MenuItems.COPY;
+import static org.uberfire.ext.editor.commons.client.menu.MenuItems.DELETE;
+import static org.uberfire.ext.editor.commons.client.menu.MenuItems.SAVE;
+import static org.uberfire.ext.editor.commons.client.menu.MenuItems.VALIDATE;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.ERROR;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.SUCCESS;
 
@@ -94,14 +102,14 @@ public class DataSetDefEditorPresenter extends BaseEditor {
     public void onStartup(final ObservablePath path, final PlaceRequest place) {
         super.baseView = view;
         init(path,
-                place,
-                resourceType,
-                true,
-                false,
-                VALIDATE,
-                SAVE,
-                COPY,
-                DELETE);
+             place,
+             resourceType,
+             true,
+             false,
+             VALIDATE,
+             SAVE,
+             COPY,
+             DELETE);
     }
 
     @WorkbenchPartTitleDecoration
@@ -147,7 +155,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
             loadDefinition();
         }
     }
-    
+
     private void loadDefinition() {
         services.call(getDefinitionCallback, getDefinitionErrorCallback).get(versionRecordManager.getCurrentPath());
     }
@@ -155,7 +163,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
     public DataSetDef getDataSetDef() {
         return workflow != null ? workflow.getDataSetDef() : null;
     }
-    
+
     private void testDataSet() {
         assert workflow != null;
         workflow.testDataSet(new DataSetEditorWorkflow.TestDataSetCallback() {
@@ -177,7 +185,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
         view.setWidget(workflow);
         workflow.edit(dataSetDef, columnDefs).showPreviewTab();
     }
-    
+
     private void edit(final DataSet dataset) {
         if (dataset != null) {
             final DataSetDef dataSetDef = workflow.getDataSetDef();
@@ -191,29 +199,27 @@ public class DataSetDefEditorPresenter extends BaseEditor {
                 }
 
                 edit(dataSetDef, columnDefs);
-
             } else {
                 showError("Data set has no columns");
             }
         } else {
             showError("Data set is empty.");
         }
-
     }
-    
+
     @Override
-    protected Command onValidate() {
-        return new Command() {
-            @Override
-            public void execute() {
-                workflow.flush();
-                if (!workflow.hasErrors()) {
-                    notification.fire(new NotificationEvent(DataSetAuthoringConstants.INSTANCE.validationOk(), SUCCESS));
-                } else {
-                    notification.fire(new NotificationEvent(DataSetAuthoringConstants.INSTANCE.validationFailed(), ERROR));
-                }
-            }
-        };
+    protected void onValidate(final Command callFinished) {
+        workflow.flush();
+        if (!workflow.hasErrors()) {
+            notifyValidationResult(new NotificationEvent(DataSetAuthoringConstants.INSTANCE.validationOk(), SUCCESS));
+        } else {
+            notifyValidationResult(new NotificationEvent(DataSetAuthoringConstants.INSTANCE.validationFailed(), ERROR));
+        }
+        callFinished.execute();
+    }
+
+    protected void notifyValidationResult(NotificationEvent event) {
+        notification.fire(event);
     }
 
     @Override
@@ -221,27 +227,29 @@ public class DataSetDefEditorPresenter extends BaseEditor {
         workflow.flush();
         if (!workflow.hasErrors()) {
             new SaveOperationService().save(versionRecordManager.getCurrentPath(),
-                    new ParameterizedCommand<String>() {
-                        @Override public void execute(final String commitMessage) {
-                            final DataSetDef def = getDataSetDef();
-                            services.call(new RemoteCallback<Path>() {
-                                @Override
-                                public void callback(final Path path) {
-                                    DataSetDefEditorPresenter.this.getSaveSuccessCallback(getCurrentModelHash()).callback(path);
-                                    placeManager.closePlace(DataSetDefEditorPresenter.this.place);
-                                }
-                            }, errorCallback)
-                                    .save(def, commitMessage);
-
-                        }
-                    }
+                                            new ParameterizedCommand<String>() {
+                                                @Override
+                                                public void execute(final String commitMessage) {
+                                                    final DataSetDef def = getDataSetDef();
+                                                    services.call(new RemoteCallback<Path>() {
+                                                        @Override
+                                                        public void callback(final Path path) {
+                                                            DataSetDefEditorPresenter.this.getSaveSuccessCallback(getCurrentModelHash()).callback(path);
+                                                            placeManager.closePlace(DataSetDefEditorPresenter.this.place);
+                                                        }
+                                                    }, errorCallback)
+                                                            .save(def, commitMessage);
+                                                }
+                                            }
             );
             concurrentUpdateSessionInfo = null;
-        } 
+        }
     }
 
     public int getCurrentModelHash() {
-        if (getDataSetDef() == null) return 0;
+        if (getDataSetDef() == null) {
+            return 0;
+        }
         return getDataSetDef().getUUID().hashCode();
     }
 
@@ -254,7 +262,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
     RemoteCallback<EditDataSetDef> loadCallback = new RemoteCallback<EditDataSetDef>() {
         public void callback(final EditDataSetDef result) {
             load(result != null ? result.getDefinition() : null,
-                    result != null ? result.getColumns(): null);
+                 result != null ? result.getColumns() : null);
         }
     };
 
@@ -275,7 +283,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
             return false;
         }
     };
-    
+
     protected void load(final DataSetDef dataSetDef, List<DataColumnDef> columns) {
         if (dataSetDef == null) {
             view.hideBusyIndicator();
@@ -299,7 +307,7 @@ public class DataSetDefEditorPresenter extends BaseEditor {
     private void onDataSetDefRemovedEvent(@Observes DataSetDefRemovedEvent event) {
         placeManager.closePlace(place);
     }
-    
+
     void showError(final ClientRuntimeError error) {
         final String message = error.getCause() != null ? error.getCause() : error.getMessage();
         showError(message);
@@ -348,5 +356,4 @@ public class DataSetDefEditorPresenter extends BaseEditor {
             }
         }
     }
-    
 }
