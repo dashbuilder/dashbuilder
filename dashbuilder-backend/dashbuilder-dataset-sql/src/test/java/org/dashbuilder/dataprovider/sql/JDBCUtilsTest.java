@@ -15,9 +15,7 @@
  */
 package org.dashbuilder.dataprovider.sql;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Types;
+import java.sql.*;
 import java.util.List;
 
 import org.dashbuilder.dataprovider.sql.JDBCUtils;
@@ -36,14 +34,28 @@ import static org.mockito.Mockito.*;
 public class JDBCUtilsTest {
 
     @Mock
-    ResultSet resultSet;
+    Connection connection;
     
+    @Mock
+    Statement statement;
+
+    @Mock
+    ResultSet resultSet;
+
     @Mock
     ResultSetMetaData metaData;
     
     @Before
     public void setUp() throws Exception {
+        when(connection.createStatement()).thenReturn(statement);
         when(resultSet.getMetaData()).thenReturn(metaData);
+    }
+
+    @Test
+    public void testStatementClose() throws Exception {
+        JDBCUtils.execute(connection, "sql");
+        verify(statement).execute("sql");
+        verify(statement).close();
     }
 
     @Test
