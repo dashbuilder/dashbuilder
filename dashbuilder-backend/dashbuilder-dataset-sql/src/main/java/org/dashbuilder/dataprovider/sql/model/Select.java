@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.dashbuilder.dataprovider.sql.JDBCUtils;
+import org.dashbuilder.dataprovider.sql.ResultSetHandler;
+import org.dashbuilder.dataprovider.sql.ResultSetConsumer;
 import org.dashbuilder.dataprovider.sql.dialect.Dialect;
 
 public class Select extends SQLStatement<Select> {
@@ -170,16 +172,33 @@ public class Select extends SQLStatement<Select> {
 
     public int fetchCount() throws SQLException {
         String countSql = dialect.getCountQuerySQL(this);
-        ResultSet _rs = JDBCUtils.executeQuery(connection, countSql);
-        if (_rs.next()) {
-            return _rs.getInt(1);
-        } else {
-            return 0;
+        ResultSetHandler handler = null;
+        try {
+            handler = JDBCUtils.executeQuery(connection, countSql);
+            ResultSet _rs = handler.getResultSet();
+            return _rs.next() ? _rs.getInt(1) : 0;
+        } finally {
+            if (handler != null) {
+                handler.close();
+            }
         }
     }
 
-    public ResultSet fetch() throws SQLException {
-        String sql = getSQL();
-        return JDBCUtils.executeQuery(connection, sql);
+    public <R> R fetch(ResultSetConsumer<R> consumer) {
+        try {
+            ResultSetHandler handler = null;
+            try {
+                String sql = getSQL();
+                handler = JDBCUtils.executeQuery(connection, sql);
+                return consumer.consume(handler.getResultSet());
+            }
+            finally {
+                if (handler != null) {
+                    handler.close();
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -15,12 +15,7 @@
  */
 package org.dashbuilder.dataprovider.sql;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,23 +53,28 @@ public class JDBCUtils {
     private static final Logger log = LoggerFactory.getLogger(JDBCUtils.class);
 
     public static void execute(Connection connection, String sql) throws SQLException {
+        Statement stmt = connection.createStatement();
         try {
             if (log.isDebugEnabled()) {
                 log.debug(sql);
             }
-            connection.createStatement().execute(sql);
+            stmt.execute(sql);
         } catch (SQLException e) {
             log.error(sql);
             throw e;
+        } finally {
+            stmt.close();
         }
     }
 
-    public static ResultSet executeQuery(Connection connection, String sql) throws SQLException {
+    public static ResultSetHandler executeQuery(Connection connection, String sql) throws SQLException {
         try {
             if (log.isDebugEnabled()) {
                 log.debug(sql);
             }
-            return connection.createStatement().executeQuery(sql);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            return new ResultSetHandler(resultSet, statement);
         } catch (SQLException e) {
             log.error(sql);
             throw e;
@@ -161,28 +161,32 @@ public class JDBCUtils {
         return DEFAULT;
     }
 
-    public static List<Column> getColumns(ResultSet resultSet, String[] exclude) throws SQLException {
-        List<Column> columnList = new ArrayList<Column>();
-        List<String> columnExcluded = exclude == null ? new ArrayList<String>() : Arrays.asList(exclude);
+    public static List<Column> getColumns(ResultSet resultSet, String[] exclude) {
+        try {
+            List<Column> columnList = new ArrayList<>();
+            List<String> columnExcluded = exclude == null ? new ArrayList<String>() : Arrays.asList(exclude);
 
-        ResultSetMetaData meta = resultSet.getMetaData();
-        for (int i = 1; i <= meta.getColumnCount(); i++) {
-            String name = meta.getColumnName(i);
-            String alias = meta.getColumnLabel(i);
-            if (alias != null && !alias.trim().isEmpty()) {
-                name = alias.trim();
-            }
+            ResultSetMetaData meta = resultSet.getMetaData();
+            for (int i = 1; i <= meta.getColumnCount(); i++) {
+                String name = meta.getColumnName(i);
+                String alias = meta.getColumnLabel(i);
+                if (alias != null && !alias.trim().isEmpty()) {
+                    name = alias.trim();
+                }
 
-            if (!columnExcluded.contains(name) && !columnExcluded.contains(alias)) {
-                ColumnType type = JDBCUtils.calculateType(meta.getColumnType(i));
-                if (type != null) {
-                    int size = meta.getColumnDisplaySize(i);
-                    Column column = SQLFactory.column(name, type, size);
-                    columnList.add(column);
+                if (!columnExcluded.contains(name) && !columnExcluded.contains(alias)) {
+                    ColumnType type = JDBCUtils.calculateType(meta.getColumnType(i));
+                    if (type != null) {
+                        int size = meta.getColumnDisplaySize(i);
+                        Column column = SQLFactory.column(name, type, size);
+                        columnList.add(column);
+                    }
                 }
             }
+            return columnList;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return columnList;
     }
 
     public static String fixCase(Connection connection, String id) {
@@ -203,7 +207,7 @@ public class JDBCUtils {
     public static final String[] QUOTES = new String[]{"\"", "'", "`", "´"};
 
     public static List<String> getWordsBetweenQuotes(String s) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         if (s != null) {
             for (int i = 0; i < QUOTES.length; i++) {
                 String quote = QUOTES[i];
