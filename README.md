@@ -1,4 +1,4 @@
-DashBuilder project is active and innovating at a fast pace!
+### DashBuilder project is active and innovating at a fast pace!
 
 DashBuilder project is active and innovating at a fast pace! But how can I keep you with the new features?
 
